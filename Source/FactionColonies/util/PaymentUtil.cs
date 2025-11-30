@@ -352,7 +352,7 @@ namespace FactionColonies
                 case ResourceType.Medicine:
                     filter.SetAllow(ThingCategoryDefOf.Medicine, true);
                     filter.SetAllow(ThingCategoryDefOf.Drugs, true);
-                    filter.SetAllow(DefDatabase<ThingCategoryDef>.GetNamedSilentFail("BodyPartsNatural"), true);
+                    //filter.SetAllow(DefDatabase<ThingCategoryDef>.GetNamedSilentFail("BodyPartsNatural"), true);
                     /* We check if the player has the research or the tech level for an item in canCraftItem. Pre-emptively blocking out bionics here
                      * just means that the player might not be able to order bionics that they do actually have the tech for. */
                     /*switch (techLevel)
@@ -361,9 +361,10 @@ namespace FactionColonies
                         case TechLevel.Ultra:*/
                             filter.SetAllow(DefDatabase<ThingCategoryDef>.GetNamedSilentFail("BodyPartsUltra"), true);
                             filter.SetAllow(DefDatabase<ThingCategoryDef>.GetNamedSilentFail("BodyPartsBionic"), true);
+                            filter.SetAllow(DefDatabase<ThingCategoryDef>.GetNamedSilentFail("BodyPartsArchotech"), true);
                             filter.SetAllow(DefDatabase<ThingCategoryDef>.GetNamedSilentFail("BodyPartsProsthetic"),
                                 true);
-                            filter.SetAllow(DefDatabase<ThingCategoryDef>.GetNamedSilentFail("BodyPartsNatural"), true);
+                            //filter.SetAllow(DefDatabase<ThingCategoryDef>.GetNamedSilentFail("BodyPartsNatural"), true);
                             if (DefDatabase<ThingCategoryDef>.GetNamedSilentFail("BionicProstheses") != null)
                                 filter.SetAllow(DefDatabase<ThingCategoryDef>.GetNamedSilentFail("BionicProstheses"),
                                     true);

@@ -1209,7 +1209,7 @@ namespace FactionColonies
 
         public int silverPerResource = 100;
         public static double silverToCreateSettlement = 1000;
-        public int timeBetweenTaxes = GenDate.TicksPerTwelfth;
+        public int timeBetweenTaxes = GenDate.TicksPerTwelfth; //TicksPerTwelfth = 300k, or 5 days
         public static int updateUiTimer = 150;
         public int productionTitheMod = 25;
         public static int productionResearchBase = 100;
@@ -1299,7 +1299,7 @@ namespace FactionColonies
         string productionTitheMod;
         string workerCost;
         string settlementMaxLevel;
-        int daysBetweenTaxes;
+        int daysBetweenTaxes = GenDate.TicksPerTwelfth;
         IntRange minMaxDaysTillMilitaryAction = new IntRange(4, 10);
         IntRange minMaxDaysTillRandomEvent = new IntRange(0, 6);
 
@@ -1444,7 +1444,7 @@ namespace FactionColonies
 
         public override void WriteSettings()
         {
-            LoadedModManager.GetMod<FactionColoniesMod>().GetSettings<FactionColonies>().timeBetweenTaxes = daysBetweenTaxes * 60000;
+            //LoadedModManager.GetMod<FactionColoniesMod>().GetSettings<FactionColonies>().timeBetweenTaxes = daysBetweenTaxes * 60000;
             base.WriteSettings();
         }
     }

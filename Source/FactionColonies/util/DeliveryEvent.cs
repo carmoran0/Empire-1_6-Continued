@@ -111,7 +111,8 @@ namespace FactionColonies.util
 		{
 			Map playerHomeMap = Find.World.GetComponent<FactionFC>().TaxMap;
 			MakeDeliveryLetterAndMessage(evt);
-			DropPodUtility.DropThingsNear(DropCellFinder.TradeDropSpot(playerHomeMap), playerHomeMap, evt.goods, 110, false, false, false, false);
+			DropPodUtility.DropThingsNear(GetDeliveryCell(DeliveryTraverseParms,playerHomeMap), playerHomeMap, evt.goods, 110, false, false, false, false);
+            //DropPodUtility.DropThingsNear(DropCellFinder.TradeDropSpot(playerHomeMap), playerHomeMap, evt.goods, 110, false, false, false, false);
 		}
 
 		private static bool DoDelayCaravanDueToDanger(FCEvent evt)

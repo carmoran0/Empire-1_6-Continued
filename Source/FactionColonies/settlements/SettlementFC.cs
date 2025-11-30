@@ -14,7 +14,7 @@ namespace FactionColonies
         /// Used by other mods to get to our world object through the list of SettlementFC. Rename at your own risk.
         /// </summary>
         public WorldSettlementFC worldSettlement;
-        private readonly int maxSettlementLevel;
+        private readonly int maxSettlementLevel = 0; //0 to detect a failed initialization
 
         public string GetUniqueLoadID()
         {
@@ -37,6 +37,7 @@ namespace FactionColonies
             mapLocation = location;
             planetName = Find.World.info.name;
             loadID = Find.World.GetComponent<FactionFC>().GetNextSettlementFCID();
+            maxSettlementLevel = LoadedModManager.GetMod<FactionColoniesMod>().GetSettings<FactionColonies>().settlementMaxLevel;
 
             settlementLevel = 1;
 

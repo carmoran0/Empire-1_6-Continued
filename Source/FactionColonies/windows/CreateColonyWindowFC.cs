@@ -186,6 +186,7 @@ namespace FactionColonies
             if (Widgets.ButtonText(new Rect((InitialSize.x - 32 - buttonLength) / 2f, 535, buttonLength, 32), "Settle".Translate() + ": (" + settlementCreationCost + ")")) //add inital cost
             {
                 if (!CanCreateSettlementHere()) return;
+                Log.Message("[Empire] DrawCreateSettlementButton checkpoint 1");
 
                 PaymentUtil.paySilver(settlementCreationCost);
 
@@ -196,10 +197,12 @@ namespace FactionColonies
                 evt.timeTillTrigger = Find.TickManager.TicksGame + timeToTravel;
                 evt.source = faction.capitalLocation;
                 faction.addEvent(evt);
+                Log.Message("[Empire] DrawCreateSettlementButton checkpoint 2");
 
                 faction.settlementCaravansList.Add(evt.location.ToString());
                 Messages.Message("CaravanSentToLocation".Translate() + " " + (evt.timeTillTrigger - Find.TickManager.TicksGame).ToTimeString() + "!", MessageTypeDefOf.PositiveEvent);
 
+                Log.Message("[Empire] DrawCreateSettlementButton checkpoint 3");
                 DoPostEventCreationTraitThings();
             }
         }
@@ -210,8 +213,10 @@ namespace FactionColonies
             if (!WorldTileChecker.IsValidTileForNewSettlement(currentTileSelected, reason) || faction.checkSettlementCaravansList(currentTileSelected.ToString()) || !PlayerHasEnoughSilver(reason))
             {
                 Messages.Message(reason.ToString(), MessageTypeDefOf.RejectInput);
+                Log.Message("[Empire] CanCreateSettlementHere returning FALSE");
                 return false;
             }
+            Log.Message("[Empire] CanCreateSettlementHere returning TRUE");
 
             return true;
         }
