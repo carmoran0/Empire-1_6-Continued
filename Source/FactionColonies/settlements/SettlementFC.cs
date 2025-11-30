@@ -59,7 +59,8 @@ namespace FactionColonies
             //Log.Message(hilliness);
             hillinessDef = DefDatabase<BiomeResourceDef>.GetNamed(hilliness);
 
-            for (int i = 0; i < 8; i++)
+            /* Max buildings is 12 now, instead of 8. */
+            for (int i = 0; i < 12; i++)
             {
                 buildings.Add(BuildingFCDefOf.Empty);
             }
@@ -91,8 +92,10 @@ namespace FactionColonies
             //Log.Message(prisoners.Count().ToString());
         }
 
-        public int NumberBuildings => 3 + (int) Math.Floor(Math.Min(settlementLevel,10) / 2f);
+        public int NumberBuildings => 3 + (int) Math.Floor(Math.Min(settlementLevel,18) / 2f);
         /* Use MIN to enforce a maximum of 8 buildings, even if player rases the max level above 10 */
+        /* With the change to increase total building count to 12, the "min" level was increased to 18.
+         * Now the settlement level can give up to 9 additional slots; add the base 3, and you have 12. */
 
         public void upgradeSettlement(int times = 1)
         {

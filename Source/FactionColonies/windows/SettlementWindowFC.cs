@@ -14,7 +14,8 @@ namespace FactionColonies
     {
         public override Vector2 InitialSize
         {
-            get { return new Vector2(1055f, 545f); }
+            // Original window height: 545f
+            get { return new Vector2(1055f, 650f); }
         }
 
 
@@ -40,7 +41,9 @@ namespace FactionColonies
             base.PreOpen();
             settlement.updateDescription();
             settlement.updateProfitAndProduction();
-            maxScroll = (ResourceUtils.resourceTypes.Length * ScrollSpacing) - ScrollHeight;
+            maxScroll = 0;
+            /*maxScroll = Math.Max(0,
+                (ResourceUtils.resourceTypes.Length * ScrollSpacing) - (ScrollHeight - 100));*/
             //settlement.update description
             factionfc = Find.World.GetComponent<FactionFC>();
         }
@@ -113,7 +116,8 @@ namespace FactionColonies
             if (settlement != null)
             {
                 //Upgrades
-                DrawFacilities(0, 295);
+                // Old y value: 295
+                DrawFacilities(0, 300);
                 DrawDescription(150, 80, 370, 220);
 
                 //Divider
@@ -338,7 +342,7 @@ namespace FactionColonies
             Widgets.DrawHighlight(new Rect(x + 420, y + 30, 45, 40));
             Widgets.Label(new Rect(x + 420, y + 30, 45, 40), "TaxPercentage".Translate());
 
-            DrawResources(x, y, spacing);
+            DrawResources(x, y + 10, spacing);
 
             //Scroll window for resources
             if (Event.current.type == EventType.ScrollWheel)
