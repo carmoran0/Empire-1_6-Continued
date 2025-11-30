@@ -14,13 +14,14 @@ namespace FactionColonies
 {
     class FCEventWindow : Window
     {
+        private static int extraHeight = 172;
 
         public List<FCEvent> events;
         public FactionFC faction;
 
         public int scroll = 0;
         public int maxScroll;
-        public int scrollBoxHeight = 210;
+        public int scrollBoxHeight = 210 + extraHeight;
 
         public int eventHeight = 30;
 
@@ -37,7 +38,8 @@ namespace FactionColonies
         {
             get
             {
-                return new Vector2(628f, 278f);
+                // Original size: 628, 278
+                return new Vector2(628f, 278f + extraHeight);
             }
         }
 
@@ -64,7 +66,7 @@ namespace FactionColonies
             //rect for title
             //Rect titleBox = new Rect(0, 0, 300, 60);
             //rect for box outline
-            eventsBox = new Rect(0, 30, 590, 212);
+            eventsBox = new Rect(0, 30, 590, 212 + extraHeight);
 
             //rect for event name
             eventNameBase = new Rect(0, 0, 250, eventHeight);
