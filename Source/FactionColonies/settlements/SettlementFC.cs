@@ -15,6 +15,7 @@ namespace FactionColonies
         /// </summary>
         public WorldSettlementFC worldSettlement;
         private readonly int maxSettlementLevel = 0; //0 to detect a failed initialization
+        private static int maxNumBuildings = 12;
 
         public string GetUniqueLoadID()
         {
@@ -59,8 +60,8 @@ namespace FactionColonies
             //Log.Message(hilliness);
             hillinessDef = DefDatabase<BiomeResourceDef>.GetNamed(hilliness);
 
-            /* Max buildings is 12 now, instead of 8. */
-            for (int i = 0; i < 12; i++)
+            /* Max buildings used to be 8. */
+            for (int i = 0; i < maxNumBuildings; i++)
             {
                 buildings.Add(BuildingFCDefOf.Empty);
             }
@@ -92,10 +93,11 @@ namespace FactionColonies
             //Log.Message(prisoners.Count().ToString());
         }
 
-        public int NumberBuildings => 3 + (int) Math.Floor(Math.Min(settlementLevel,18) / 2f);
+        public int NumberBuildings => 3 + (int) Math.Floor(Math.Min(settlementLevel,((maxNumBuildings - 3) * 2)) / 2f);
         /* Use MIN to enforce a maximum of 8 buildings, even if player rases the max level above 10 */
         /* With the change to increase total building count to 12, the "min" level was increased to 18.
          * Now the settlement level can give up to 9 additional slots; add the base 3, and you have 12. */
+        /* We use a variable to track max buildings to make it possible to migrate old saves to the new number */
 
         public void upgradeSettlement(int times = 1)
         {
@@ -197,6 +199,17 @@ namespace FactionColonies
                                 TraitUtilsFC.cycleTraits("workerBaseOverMax",
                                     Find.World.GetComponent<FactionFC>().traits, Operation.Addition)) + 
                                     returnOverMaxWorkersFromPrisoners();
+
+            if (buildings.Count < maxNumBuildings)
+            {
+                Log.Message($"[Empire] Increasing building array from size {buildings.Count} to new max size {maxNumBuildings}");
+                buildings.Add(BuildingFCDefOf.Empty);
+            }
+            else if (buildings.Count > maxNumBuildings)
+            {
+                Log.Message($"[Empire] Truncating building array from size {buildings.Count} to new max size {maxNumBuildings}");
+                buildings.RemoveRange(maxNumBuildings, buildings.Count - maxNumBuildings);
+            }
 
         }
         public void updateProfit() //updates profit
