@@ -167,25 +167,25 @@ namespace FactionColonies
                 case ResourceType.Food:
                     if (thisTile.Mutators != null && thisTile.Mutators.Any(m => m.categories.Contains("WildPlants")))
                     {
-                        bonusProd += 0.25d;
+                        bonusProd += 0.1d;
                     }
                     break;
                 case ResourceType.Weapons:
                     if (thisTile.Mutators != null && thisTile.Mutators.Any(m => m.categories.Contains("AncientStructure")))
                     {
-                        bonusProd += 0.25d;
+                        bonusProd += 0.1d;
                     }
                     break;
                 case ResourceType.Apparel:
                     if (thisTile.Mutators != null && thisTile.Mutators.Any(m => m.categories.Contains("AncientStructure")))
                     {
-                        bonusProd += 0.25d;
+                        bonusProd += 0.1d;
                     }
                     break;
                 case ResourceType.Animals:
                     if (thisTile.Mutators != null && thisTile.Mutators.Any(m => m.defName.Equals("AnimalHabitat")))
                     {
-                        bonusProd += 0.25d;
+                        bonusProd += 0.1d;
                     }
                     break;
                 case ResourceType.Logging:
@@ -227,7 +227,7 @@ namespace FactionColonies
             /* If the tile is on a river, apply a universal bonus to represent the ease of shipping/transportation */
             if (thisTile.Mutators != null && thisTile.Mutators.Any(m => m.categories.Contains("River")))
             {
-                bonusMult *= 1.2d;
+                bonusMult *= 1.1d;
             }
             switch (titheType)
             {
