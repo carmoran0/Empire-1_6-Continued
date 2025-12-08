@@ -167,13 +167,16 @@ namespace FactionColonies
 
                     double titheAddBaseProductionCurBiome = currentBiomeSelected.BaseProductionAdditive[titheTypeInt];
                     double titheAddBaseProductionCurHilli = currentHillinessSelected.BaseProductionAdditive[titheTypeInt];
+                    double titheAddBaseProductionCurBonus = SettlementFC.ResourceBiomeBonusProd(titheType, currentTileSelected);
 
                     double titheMultBaseProductionCurBiome = currentBiomeSelected.BaseProductionMultiplicative[titheTypeInt];
                     double titheMultBaseProductionCurHilli = currentHillinessSelected.BaseProductionMultiplicative[titheTypeInt];
+                    double titheMultBaseProductionCurBonus = SettlementFC.ResourceBiomeBonusProdMult(titheType, currentTileSelected);
 
-                    Widgets.Label(baseRect, (titheAddBaseProductionCurBiome + titheAddBaseProductionCurHilli).ToString());
-                    Widgets.Label(baseRect.CopyAndShift(xMod, 0f), (titheMultBaseProductionCurBiome * titheMultBaseProductionCurHilli).ToString());
-                    Widgets.Label(baseRect.CopyAndShift(xMod * 2f, 0f), ((titheAddBaseProductionCurBiome + titheAddBaseProductionCurHilli) * (titheMultBaseProductionCurBiome * titheMultBaseProductionCurHilli)).ToString());
+                    Widgets.Label(baseRect, (titheAddBaseProductionCurBiome + titheAddBaseProductionCurHilli + titheAddBaseProductionCurBonus).ToString());
+                    Widgets.Label(baseRect.CopyAndShift(xMod, 0f), (titheMultBaseProductionCurBiome * titheMultBaseProductionCurHilli * titheMultBaseProductionCurBonus).ToString());
+                    Widgets.Label(baseRect.CopyAndShift(xMod * 2f, 0f), ((titheAddBaseProductionCurBiome + titheAddBaseProductionCurHilli + titheAddBaseProductionCurBonus) *
+                                                                         (titheMultBaseProductionCurBiome * titheMultBaseProductionCurHilli * titheMultBaseProductionCurBonus)).ToString());
                 }
             }
         }
