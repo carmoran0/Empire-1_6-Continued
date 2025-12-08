@@ -179,8 +179,16 @@ namespace FactionColonies
                 case ResourceType.Food:
                     break;
                 case ResourceType.Weapons:
+                    if (thisTile.Mutators?.Any(m => m.categories.Contains("AncientStructure")) != null)
+                    {
+                        bonusProd += 0.25f;
+                    }
                     break;
                 case ResourceType.Apparel:
+                    if (thisTile.Mutators?.Any(m => m.categories.Contains("AncientStructure")) != null)
+                    {
+                        bonusProd += 0.25f;
+                    }
                     break;
                 case ResourceType.Animals:
                     break;
@@ -213,12 +221,17 @@ namespace FactionColonies
             {
                 case ResourceType.Food:
                     bonusMult *= MathF.Max(1f - thisTile.pollution, 0.1f);
-                    /* Both plant density and animal/fish density contribute to food, but only at half impact */
+                    /* Get the total change to the plant, animal, and fish density factors, and then average them together to get the final multiplier */
+                    float plantFactor = 1f;
+                    float animalFactor = 1f;
+                    float fishFactor = 1f;
                     foreach (TileMutatorDef mutator in thisTile.Mutators)
                     {
-                        bonusMult *= ((mutator.plantDensityFactor + 1f) / 2f) *
-                                     ((MathF.Max(mutator.animalDensityFactor, mutator.fishPopulationFactor) + 1f) / 2f);
+                        plantFactor *= mutator.plantDensityFactor;
+                        animalFactor *= mutator.animalDensityFactor;
+                        fishFactor *= mutator.fishPopulationFactor;
                     }
+                    bonusMult = (plantFactor + animalFactor + fishFactor) / 3f;
                     break;
                 case ResourceType.Weapons:
                     break;
@@ -237,13 +250,17 @@ namespace FactionColonies
                      * Assuming the factor is centered on 1, we'll add 1 and divide by 2 to reduce its impact */
                     foreach (TileMutatorDef mutator in thisTile.Mutators)
                     {
-                        bonusMult *= (mutator.plantDensityFactor + 1f) / 2;
+                        bonusMult *= (mutator.plantDensityFactor + 1f) / 2f;
                     }
                     break;
                 case ResourceType.Mining:
                     foreach (TileMutatorDef mutator in thisTile.Mutators)
                     {
-                        bonusMult *= mutator.chunkDensityFactor;
+                        bonusMult *= (1f + mutator.chunkDensityFactor) / 2f;
+                        if (mutator.defName.Equals("MineralRich"))
+                        {
+                            bonusMult *= 1.2f;
+                        }
                     }
                     break;
                 case ResourceType.Research:
@@ -258,7 +275,7 @@ namespace FactionColonies
                      * Assuming the factor is centered on 1, we'll add 3 and divide by 4 to reduce its impact */
                     foreach (TileMutatorDef mutator in thisTile.Mutators)
                     {
-                        bonusMult *= (mutator.plantDensityFactor + 3f) / 4;
+                        bonusMult *= (mutator.plantDensityFactor + 3f) / 4f;
                     }
                     break;
             }
