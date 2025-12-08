@@ -841,5 +841,33 @@
 		</BaseProductionMultiplicative>
 	</FactionColonies.BiomeResourceDef>
 		<!--End Alpha Biomes by Pecha -->
+		
+	<!--Gulden Forest Biome-->
+	<FactionColonies.BiomeResourceDef>
+		<defName>TemperateGuldenForest</defName>
+		<canSettle>true</canSettle>
+		<BaseProductionAdditive> <!-- 0 is default -->
+			<li>1.5</li> <!-- Food -->
+			<li>1</li> <!-- Weapons -->
+			<li>1</li> <!-- Apparel -->
+			<li>1.5</li> <!-- Animals -->
+			<li>1.75</li> <!-- Logging -->
+			<li>0.75</li> <!-- Mining -->
+			<li>1</li> <!-- Research -->
+			<li>1</li> <!-- Power -->
+			<li>1.25</li> <!-- Medicine -->
+		</BaseProductionAdditive>
+		<BaseProductionMultiplicative> <!-- li is default -->
+			<li>1</li> <!-- Food -->
+			<li>1</li> <!-- Weapons -->
+			<li>1</li> <!-- Apparel -->
+			<li>1.25</li> <!-- Animals -->
+			<li>1</li> <!-- Logging -->
+			<li>1</li> <!-- Mining -->
+			<li>1</li> <!-- Research -->
+			<li>1</li> <!-- Power -->
+			<li>1</li> <!-- Medicine -->
+		</BaseProductionMultiplicative>
+	</FactionColonies.BiomeResourceDef>
 
 </Defs>
