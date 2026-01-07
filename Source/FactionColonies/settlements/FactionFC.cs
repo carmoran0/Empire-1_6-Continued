@@ -599,19 +599,40 @@ namespace FactionColonies
             {
                 IncidentWorker_TraderCaravanArrival worker = new IncidentWorker_TraderCaravanArrival();
                 worker.def = IncidentDefOf.TraderCaravanArrival;
-                IncidentParms parms =
-                    StorytellerUtility.DefaultParmsNow(IncidentCategoryDefOf.Misc, returnCapitalMap());
-                parms.faction = FactionColonies.getPlayerColonyFaction();
-                RCellFinder.TryFindRandomPawnEntryCell(out parms.spawnCenter, (Map)parms.target,
-                    CellFinder.EdgeRoadChance_Friendly);
-                parms.spawnRotation = Rot4.FromAngleFlat((((Map)parms.target).Center - parms.spawnCenter).AngleFlat);
-                if (parms.spawnCenter.IsValid)
-                    worker.TryExecute(parms);
+                Map capital = returnCapitalMap();
+                if (capital != null)
+                {
+                    if (capital.Tile.Layer?.Def?.canFormCaravans != true)
+                    {
+                        Log.Message("Empire - Capital Map cannot form caravans");
+                        resetTraitMercantileCaravanTime(true, 1f);
+                    }
+                    else if (capital.Tile.Layer?.Def?.isSpace == true)
+                    {
+                        Log.Message("Empire - Capital Map is in space");
+                        resetTraitMercantileCaravanTime(true, 1f);
+                    }
+                    else
+                    {
+                        IncidentParms parms =
+                                StorytellerUtility.DefaultParmsNow(IncidentCategoryDefOf.Misc, capital);
+                        parms.faction = FactionColonies.getPlayerColonyFaction();
+                        RCellFinder.TryFindRandomPawnEntryCell(out parms.spawnCenter, (Map)parms.target,
+                            CellFinder.EdgeRoadChance_Friendly);
+                        parms.spawnRotation = Rot4.FromAngleFlat((((Map)parms.target).Center - parms.spawnCenter).AngleFlat);
+                        if (parms.spawnCenter.IsValid)
+                            worker.TryExecute(parms);
+                        else
+                            Log.Message("Empire - Mercantile - Spawn Center not valid");
+
+                        resetTraitMercantileCaravanTime();
+                    }
+                }
                 else
-                    Log.Message("Empire - Mercantile - Spawn Center not valid");
-
-
-                resetTraitMercantileCaravanTime();
+                {
+                    Log.Warning("Empire - Mercantile - Could not find capital map");
+                    resetTraitMercantileCaravanTime(true, 1f);
+                }
             }
         }
 
@@ -1094,67 +1115,49 @@ namespace FactionColonies
                 //Log.Message(i + " " + returnResourceByInt(i).amount);  //display total resources by type
             }
         }
-                public void updateDailyResearch()
+        public void updateDailyResearch()
+        {
+            //Research adding
+            if ((Find.ResearchManager.GetProject() == null) && researchPointPool != 0)
+            {
+                Messages.Message("NoResearchExpended".Translate(Math.Round(researchPointPool)),MessageTypeDefOf.NeutralEvent);
+            }
+            else if (researchPointPool != 0 && Find.ResearchManager.GetProject() != null)
+            {
+                /* A soft rewrite to properly take into account research multipliers.
+                 * This code used to ignore any multipliers on the cost of research projects, which, frankly, makes the game too easy, and Empire research too good. */
+                /* All of the cost factor math up-front is meant to ensure that we deduct the correct amount of points from the research pool. */
+                float rawNeededPoints = MathF.Ceiling(Find.ResearchManager.GetProject().CostApparent -
+                                                      Find.ResearchManager.GetProject().ProgressApparent);
+                float realNeededPoints = MathF.Ceiling(rawNeededPoints / (0.00825f * Find.Storyteller.difficulty.researchSpeedFactor));
+
+                float expendedPoints;
+                if (researchPointPool >= realNeededPoints)
                 {
-                    //Research adding
-                    if ((Find.ResearchManager.GetProject() == null) && researchPointPool != 0)
-                    {
-                        Messages.Message("NoResearchExpended".Translate(Math.Round(researchPointPool)),MessageTypeDefOf.NeutralEvent);
-                    }
-                    else if (researchPointPool != 0 && Find.ResearchManager.GetProject() != null)
-                    {
-                        //Log.Message(researchTotal.ToString());
-                        float neededPoints;
-                        neededPoints = (float)Math.Ceiling(Find.ResearchManager.GetProject().CostApparent - 
-                            Find.ResearchManager.GetProject().ProgressApparent);
-                        Log.Message("Needed points: " + neededPoints);
-
-                        float expendedPoints;
-                        if (researchPointPool >= neededPoints)
-                        {
-                            researchPointPool -= neededPoints;
-                            expendedPoints = neededPoints;
-                        }
-                        else
-                        {
-                            expendedPoints = researchPointPool;
-                            researchPointPool = 0;
-                            Log.Message("Used all research points in the pool.");
-                        }
-
-                        Log.Message("Expended points: " + expendedPoints);
-
-                        Find.LetterStack.ReceiveLetter(
-                            "ResearchPointsExpended".Translate(), 
-                            "ResearchExpended".Translate(Math.Round(expendedPoints), 
-                            Find.ResearchManager.GetProject().LabelCap, 
-                            Math.Round(researchPointPool)), 
-                            LetterDefOf.PositiveEvent);
-                Log.Message("Test1");
-                        if (Find.ColonistBar.GetColonistsInOrder().Count > 0)
-                        {
-                            Pawn pawn = Find.ColonistBar.GetColonistsInOrder()[0];
-//Debugging                   Log.Message(pawn);
-//Debugging                   Log.Message("TestIF1");
-                            Find.ResearchManager.ResearchPerformed(
-                                (float)Math.Ceiling(((1 * Find.ResearchManager.GetProject().CostFactor(pawn.Faction.def.techLevel)) / 
-                                    (0.00825 * Find.Storyteller.difficulty.researchSpeedFactor)) * expendedPoints),
-                                pawn);
-//Debugging                    Log.Message("TestIF2");
- //Commented out this section, all it does is throw a NRE exception and spending research points works fine without it
-                    // Log.Message("Passed to function: " + (float)Math.Ceiling(
-                           //     ((1 * Find.ResearchManager.GetProject().CostFactor(pawn.Faction.def.techLevel)) / 
-                             //       (0.00825 * Find.Storyteller.difficulty.researchSpeedFactor)) * expendedPoints));
-//Debugging                    Log.Message("TestIF3");
-                        }
-                        else
-                        {
-//Debugging                    Log.Message("TestElse");
-                            Log.Message("Could not find colonist to research with");
-                            Find.ResearchManager.ResearchPerformed((float)Math.Ceiling((1 / 
-                                (0.00825 * Find.Storyteller.difficulty.researchSpeedFactor)) * expendedPoints), null);
-                        }
+                    researchPointPool -= realNeededPoints;
+                    expendedPoints = realNeededPoints;
                 }
+                else
+                {
+                    expendedPoints = researchPointPool;
+                    researchPointPool = 0;
+                    Log.Message("Used all research points in the pool.");
+                }
+
+                Log.Message("Expended points: " + expendedPoints);
+
+                Find.LetterStack.ReceiveLetter(
+                    "ResearchPointsExpended".Translate(), 
+                    "ResearchExpended".Translate(Math.Round(expendedPoints), 
+                    Find.ResearchManager.GetProject().LabelCap, 
+                    Math.Round(researchPointPool)), 
+                    LetterDefOf.PositiveEvent);
+
+                /* We divide out the tech level cost factor now because we're passing in a NULL pawn, and the game uses the pawn's faction to determine the cost facter,
+                 * rather than just pulling Faction.OfPlayer. Maybe to account for cases where you have a guest pawn that does research? */
+                expendedPoints /= Find.ResearchManager.GetProject().CostFactor(Faction.OfPlayer.def.techLevel);
+                Find.ResearchManager.ResearchPerformed(expendedPoints, null);
+            }
         }
 
 
@@ -1534,9 +1537,17 @@ namespace FactionColonies
             }
         }
 
-        public void resetTraitMercantileCaravanTime()
+        public void resetTraitMercantileCaravanTime(bool useInputDays = false, float inputDays = 0)
         {
-            float days = Rand.RangeInclusive(3, 5);
+            float days;
+            if (useInputDays)
+            {
+                days = inputDays;
+            }
+            else
+            {
+                days = Rand.RangeInclusive(3, 5);
+            }
             traitMercantileTradeCaravanTickDue = Find.TickManager.TicksGame + (int)(days * GenDate.TicksPerDay);
         }
 
