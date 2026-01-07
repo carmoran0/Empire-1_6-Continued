@@ -305,14 +305,15 @@ namespace FactionColonies
                     case "settleNewColony":
                     {
                         //Settle new colony event
+                        //Log.Message(events[i].def.defName + " event triggered" + Find.TickManager.TicksGame)
                         faction.addExperienceToFactionLevel(10f);
                         
                         // Check if this is an orbital platform
                         if (evt.isOrbitalPlatform)
                         {
                             // Create orbital platform
-                            if (Find.World.info.name == evt.planetName)
-                            {
+                        if (Find.World.info.name == evt.planetName)
+                        {
                                 CreateOrbitalPlatformSettlement(evt.location, evt.orbitalTier, evt.planetName);
                             }
                             else
@@ -326,13 +327,13 @@ namespace FactionColonies
                             // Regular settlement creation
                             if (Find.World.info.name == evt.planetName)
                             {
-                                FactionColonies.createPlayerColonySettlement(evt.location, true, evt.planetName);
-                            }
-                            else
-                            {
-                                FactionColonies.createPlayerColonySettlement(evt.location, false, evt.planetName);
-                                faction.createSettlementQueue.Add(new SettlementSoS2Info(evt.planetName, evt.location));
-                            }
+                            FactionColonies.createPlayerColonySettlement(evt.location, true, evt.planetName);
+                        }
+                        else
+                        {
+                            FactionColonies.createPlayerColonySettlement(evt.location, false, evt.planetName);
+                            faction.createSettlementQueue.Add(new SettlementSoS2Info(evt.planetName, evt.location));
+                        }
                         }
 
                         faction.settlementCaravansList.Remove(evt.location.ToString());
@@ -797,7 +798,7 @@ namespace FactionColonies
                 {
                     Log.Error("Failed to create WorldSettlementFC object!");
                     return;
-                }
+    }
 
                 Log.Message($"Created WorldSettlementFC object successfully, setting tile to {orbitalTile.tileId}");
                 

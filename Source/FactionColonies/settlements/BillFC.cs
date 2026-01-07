@@ -99,6 +99,12 @@ namespace FactionColonies
             this.settlement = settlement;
             dueTick = Find.TickManager.TicksGame + 300000;
             taxes = new TaxesFC(this);
+
+            /* If the bill is positive, then let the player put off resolving it for up to a year */
+            if (taxes.silverAmount >= 0)
+            {
+                dueTick = Find.TickManager.TicksGame + GenDate.TicksPerYear;
+            }
         }
 
         public void SetUniqueLoadID()

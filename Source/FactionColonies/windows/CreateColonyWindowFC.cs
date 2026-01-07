@@ -319,6 +319,7 @@ namespace FactionColonies
                     if (Widgets.ButtonImage(new Rect(20, 335 + i * (5 + baseHeight), baseHeight, baseHeight), faction.returnResource(titheType).getIcon()))
                     {
                         string label = faction.returnResource(titheType).label;
+
                         Find.WindowStack.Add(new DescWindowFc("SettlementProductionOf".Translate() + ": " + label, label.CapitalizeFirst()));
                     }
 
@@ -327,13 +328,16 @@ namespace FactionColonies
 
                     double titheAddBaseProductionCurBiome = currentBiomeSelected.BaseProductionAdditive[i];
                     double titheAddBaseProductionCurHilli = currentHillinessSelected.BaseProductionAdditive[i];
+                    double titheAddBaseProductionCurBonus = SettlementFC.ResourceBiomeBonusProd(i, currentTileSelected);
 
                     double titheMultBaseProductionCurBiome = currentBiomeSelected.BaseProductionMultiplicative[i];
                     double titheMultBaseProductionCurHilli = currentHillinessSelected.BaseProductionMultiplicative[i];
+                    double titheMultBaseProductionCurBonus = SettlementFC.ResourceBiomeBonusProdMult(i, currentTileSelected);
 
-                    Widgets.Label(baseRect, (titheAddBaseProductionCurBiome + titheAddBaseProductionCurHilli).ToString());
-                    Widgets.Label(baseRect.CopyAndShift(xMod, 0f), (titheMultBaseProductionCurBiome * titheMultBaseProductionCurHilli).ToString());
-                    Widgets.Label(baseRect.CopyAndShift(xMod * 2f, 0f), ((titheAddBaseProductionCurBiome + titheAddBaseProductionCurHilli) * (titheMultBaseProductionCurBiome * titheMultBaseProductionCurHilli)).ToString());
+                    Widgets.Label(baseRect, (titheAddBaseProductionCurBiome + titheAddBaseProductionCurHilli + titheAddBaseProductionCurBonus).ToString());
+                    Widgets.Label(baseRect.CopyAndShift(xMod, 0f), (titheMultBaseProductionCurBiome * titheMultBaseProductionCurHilli * titheMultBaseProductionCurBonus).ToString());
+                    Widgets.Label(baseRect.CopyAndShift(xMod * 2f, 0f), ((titheAddBaseProductionCurBiome + titheAddBaseProductionCurHilli + titheAddBaseProductionCurBonus) *
+                                                                         (titheMultBaseProductionCurBiome * titheMultBaseProductionCurHilli * titheMultBaseProductionCurBonus)).ToString());
                 }
             }
         }

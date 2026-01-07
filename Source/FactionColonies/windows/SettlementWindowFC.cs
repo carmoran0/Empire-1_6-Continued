@@ -14,7 +14,8 @@ namespace FactionColonies
     {
         public override Vector2 InitialSize
         {
-            get { return new Vector2(1055f, 545f); }
+            // Original window height: 545f
+            get { return new Vector2(1055f, 650f); }
         }
 
 
@@ -27,6 +28,7 @@ namespace FactionColonies
         private int scroll;
         private int maxScroll;
         private FactionFC factionfc;
+        private int maxSettlementLevel;
 
         public void windowUpdateFc()
         {
@@ -40,7 +42,8 @@ namespace FactionColonies
             settlement.updateDescription();
             // Don't recalculate production on UI open - this overwrites saved values
             // settlement.updateProfitAndProduction();
-            maxScroll = (ResourceUtils.GetAvailableResourceTypes(settlement).Length * ScrollSpacing) - ScrollHeight;
+            maxScroll = 0;
+            //maxScroll = (ResourceUtils.GetAvailableResourceTypes(settlement).Length * ScrollSpacing) - ScrollHeight;
             //settlement.update description
             factionfc = Find.World.GetComponent<FactionFC>();
         }
@@ -96,6 +99,7 @@ namespace FactionColonies
             draggable = true;
             doCloseX = true;
             preventCameraMotion = false;
+            maxSettlementLevel = LoadedModManager.GetMod<FactionColoniesMod>().GetSettings<FactionColonies>().settlementMaxLevel;
         }
 
 
@@ -112,7 +116,8 @@ namespace FactionColonies
             if (settlement != null)
             {
                 //Upgrades
-                DrawFacilities(0, 295);
+                // Old y value: 295
+                DrawFacilities(0, 300);
                 DrawDescription(150, 80, 370, 220);
 
                 //Divider
@@ -265,7 +270,7 @@ namespace FactionColonies
                 ResourceType resourceType = availableResources[i];
                 ResourceFC resource = settlement.getResource(resourceType);
                 if (resource == null) continue;
-                
+
                 float rectY = scroll + y + 70 + i * (45 + spacing);
 
                 //Don't draw if outside view
@@ -346,7 +351,7 @@ namespace FactionColonies
             Widgets.DrawHighlight(new Rect(x + 420, y + 30, 45, 40));
             Widgets.Label(new Rect(x + 420, y + 30, 45, 40), "TaxPercentage".Translate());
 
-            DrawResources(x, y, spacing);
+            DrawResources(x, y + 10, spacing);
 
             //Scroll window for resources
             if (Event.current.type == EventType.ScrollWheel)
@@ -403,8 +408,8 @@ namespace FactionColonies
             {
                 // Regular location text for surface settlements
                 locationText = "Located".Translate() + " " +
-                    Find.WorldGrid[settlement.mapLocation].hilliness.GetLabel() + " " +
-                    "LandOf".Translate() + " " +
+                Find.WorldGrid[settlement.mapLocation].hilliness.GetLabel() + " " +
+                "LandOf".Translate() + " " +
                     Find.WorldGrid[settlement.mapLocation].PrimaryBiome.LabelCap.ToLower();
             }
 
@@ -507,10 +512,23 @@ namespace FactionColonies
             {
                 for (int i = 0; i < buttons.Count(); i++)
                 {
-                    if (Widgets.ButtonText(new Rect(x, y + ((size + 10) * i), length, size), buttons[i]))
+                    /* If the settlement is currently upgrading, change the "Upgrade Town" button to say that */
+                    string buttonText = buttons[i];
+                    if (buttonText == "UpgradeTown".Translate())
+                    {
+                        if (settlement.IsBeingUpgraded)
+                        {
+                            buttonText = "UpgradeTownProcessing".Translate();
+                        }
+                        else if (settlement.settlementLevel == maxSettlementLevel)
+                        {
+                            buttonText = "TownMaxLevel".Translate();
+                        }
+                    }
+                    if (Widgets.ButtonText(new Rect(x, y + ((size + 10) * i), length, size), /*buttons[i]*/buttonText))
                     {
                         //If click a button button
-                        if (buttons[i] == "UpgradeTown".Translate())
+                        if (buttonText == "UpgradeTown".Translate())
                         {
                             //if click upgrade town button
                             Find.WindowStack.Add(new SettlementUpgradeWindowFc(settlement));
@@ -758,9 +776,9 @@ namespace FactionColonies
                         else
                         {
                             // Empty or Construction slot - open building window to build
-                            Find.WindowStack.Add(new FCBuildingWindow(settlement, i));
-                        }
+                        Find.WindowStack.Add(new FCBuildingWindow(settlement, i));
                     }
+                }
                 }
                 else
                 {

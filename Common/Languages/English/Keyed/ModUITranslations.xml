@@ -199,6 +199,8 @@
     <!-- SettlementWindowFC -->
     <TownLog>Town Log</TownLog>
     <UpgradeTown>Upgrade Town</UpgradeTown>
+	<UpgradeTownProcessing>Upgrade in Progress</UpgradeTownProcessing>
+	<TownMaxLevel>At Max Level</TownMaxLevel>
     <GoToLocation>Go To Location</GoToLocation>
     <AssignedWorkers>Assigned Workers</AssignedWorkers>
     <IsTithe>Is Tithe</IsTithe>

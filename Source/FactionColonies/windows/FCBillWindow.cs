@@ -10,13 +10,14 @@ namespace FactionColonies
 {
     class FCBillWindow : Window
     {
+        private static int extraHeight = 172;
 
         public List<BillFC> bills;
         public FactionFC faction;
 
         public int scroll;
         public int maxScroll;
-        public int scrollBoxHeight = 210;
+        public int scrollBoxHeight = 210 + extraHeight;
 
         public int billHeight = 30;
 
@@ -34,7 +35,8 @@ namespace FactionColonies
         {
             get
             {
-                return new Vector2(628f, 278f);
+                // Original size: 628, 278
+                return new Vector2(628f, 278f + extraHeight);
             }
         }
 
@@ -61,7 +63,7 @@ namespace FactionColonies
             //rect for title
             //Rect titleBox = new Rect(0, 0, 300, 60);
             //rect for box outline
-            billsBox = new Rect(0, 30, 590, 212);
+            billsBox = new Rect(0, 30, 590, 212 + extraHeight);
 
             //rect for bill name
             billNameBase = new Rect(0, 0, 200, billHeight);

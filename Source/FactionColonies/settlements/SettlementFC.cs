@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using FactionColonies.util;
 using RimWorld;
 using RimWorld.Planet;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.AccessControl;
 using Verse;
-using FactionColonies.util;
 
 namespace FactionColonies
 {
@@ -14,6 +15,8 @@ namespace FactionColonies
         /// Used by other mods to get to our world object through the list of SettlementFC. Rename at your own risk.
         /// </summary>
         public WorldSettlementFC worldSettlement;
+        private readonly int maxSettlementLevel = 0; //0 to detect a failed initialization
+        private static int maxNumBuildings = 12;
 
         public string GetUniqueLoadID()
         {
@@ -27,6 +30,7 @@ namespace FactionColonies
         /// </summary>
         public SettlementFC()
         {
+            maxSettlementLevel = LoadedModManager.GetMod<FactionColoniesMod>().GetSettings<FactionColonies>().settlementMaxLevel;
         }
 
         public SettlementFC(string name, int location)
@@ -35,6 +39,7 @@ namespace FactionColonies
             mapLocation = location;
             planetName = Find.World.info.name;
             loadID = Find.World.GetComponent<FactionFC>().GetNextSettlementFCID();
+            maxSettlementLevel = LoadedModManager.GetMod<FactionColoniesMod>().GetSettings<FactionColonies>().settlementMaxLevel;
 
             settlementLevel = 1;
 
@@ -56,7 +61,8 @@ namespace FactionColonies
             //Log.Message(hilliness);
             hillinessDef = DefDatabase<BiomeResourceDef>.GetNamed(hilliness);
 
-            for (int i = 0; i < 8; i++)
+            /* Max buildings used to be 8. */
+            for (int i = 0; i < maxNumBuildings; i++)
             {
                 buildings.Add(BuildingFCDefOf.Empty);
             }
@@ -88,12 +94,20 @@ namespace FactionColonies
             //Log.Message(prisoners.Count().ToString());
         }
 
-        public int NumberBuildings => 3 + (int) Math.Floor(settlementLevel / 2f);
+        public int NumberBuildings => 3 + (int) Math.Floor(Math.Min(settlementLevel,((maxNumBuildings - 3) * 2)) / 2f);
+        /* Use MIN to enforce a maximum of 8 buildings, even if player rases the max level above 10 */
+        /* With the change to increase total building count to 12, the "min" level was increased to 18.
+         * Now the settlement level can give up to 9 additional slots; add the base 3, and you have 12. */
+        /* We use a variable to track max buildings to make it possible to migrate old saves to the new number */
 
         public void upgradeSettlement(int times = 1)
         {
             settlementLevel += times;
-            if (settlementLevel > 10) settlementLevel = 10;
+            if (settlementLevel > maxSettlementLevel)
+            {
+                settlementLevel = maxSettlementLevel; // This used to assume 10, with no respect for the player's setting
+                Log.Warning($"[Empire] Clamping settlment level to {maxSettlementLevel}");
+            }
             if (settlementLevel < 0) settlementLevel = 0;
             updateStats();
         }
@@ -130,26 +144,26 @@ namespace FactionColonies
                 {
                     hasCustomValues = true;
                     break;
-                }
             }
-            
+        }
+
             // If custom values exist, don't overwrite them (they were loaded from save file)
             if (hasCustomValues)
-            {
+        {
                 Log.Message($"Settlement {name}: Skipping initBaseProduction - custom values detected (loaded from save)");
                 return;
-            }
+        }
             
             foreach (ResourceType titheType in ResourceUtils.GetAvailableResourceTypes(this))
-            {
+        {
                 ResourceFC resource = getResource(titheType);
-                
+
                 // Get the correct index based on the resource type and settlement type. Someone tell me if I can do this better??? I kept crashing and breaking saves until I did this
                 int resourceIndex;
                 if (ResourceUtils.IsOrbitalPlatform(this))
                 {
-                    switch (titheType)
-                    {
+            switch (titheType)
+            {
                         case ResourceType.Food: resourceIndex = 0; break;
                         case ResourceType.Weapons: resourceIndex = 1; break;
                         case ResourceType.Apparel: resourceIndex = 2; break;
@@ -163,11 +177,66 @@ namespace FactionColonies
                         case ResourceType.Chemfuel: resourceIndex = 10; break;
                         default: resourceIndex = 0; break;
                     }
-                }
-                else
-                {
-                    switch (titheType)
+                    break;
+                case ResourceType.Weapons:
+                    if (thisTile.Mutators != null && thisTile.Mutators.Any(m => m.categories.Contains("AncientStructure")))
                     {
+                        bonusProd += 0.1d;
+                    }
+                else
+                    {
+                        bonusProd += 0.1d;
+                    }
+                    break;
+                case ResourceType.Animals:
+                    if (thisTile.Mutators != null && thisTile.Mutators.Any(m => m.defName.Equals("AnimalHabitat")))
+                    {
+                        bonusProd += 0.1d;
+                    }
+                    break;
+                case ResourceType.Logging:
+                    break;
+                case ResourceType.Mining:
+                    double realHilliness = (double)thisTile.HillinessForOreGeneration - (double)thisTile.hilliness;
+                    bonusProd += Math.Clamp((realHilliness / 4d), -1d, 1d);
+                    if (thisTile.Mutators != null && thisTile.Mutators.Any(m => m.IsCave))
+                        bonusProd += 0.25d;
+                    break;
+                case ResourceType.Research:
+                    if (thisTile.Landmark != null)
+                        bonusProd += 0.25d;
+                    foreach (TileMutatorDef mutator in thisTile.Mutators)
+                    {
+                        /* Rivers grant a blanket multiplier bonus, so don't also count them here. */
+                        if (!mutator.categories.Contains("River"))
+                            bonusProd += 0.1d;
+                    }
+                    break;
+                case ResourceType.Power:
+                    break;
+                case ResourceType.Medicine:
+                    break;
+            }
+            return bonusProd;
+        }
+        public static double ResourceBiomeBonusProdMult(ResourceType titheType, int tileLocation)
+        {
+            Tile thisTile = Find.WorldGrid[tileLocation];
+            return (double)Math.Truncate(ResourceBiomeBonusProdMult(titheType, thisTile) * 100d) / 100d;
+        }
+        internal static double ResourceBiomeBonusProdMult(ResourceType titheType, Tile thisTile)
+        {
+            if (thisTile.WaterCovered)
+                return 0d;
+            double bonusMult = 1d;
+            double pollution = Math.Clamp((double)(thisTile.pollution), 0d, 1d);
+            /* If the tile is on a river, apply a universal bonus to represent the ease of shipping/transportation */
+            if (thisTile.Mutators != null && thisTile.Mutators.Any(m => m.categories.Contains("River")))
+            {
+                bonusMult *= 1.1d;
+            }
+            switch (titheType)
+            {
                         case ResourceType.Food: resourceIndex = 0; break;
                         case ResourceType.Weapons: resourceIndex = 1; break;
                         case ResourceType.Apparel: resourceIndex = 2; break;
@@ -179,19 +248,176 @@ namespace FactionColonies
                         case ResourceType.Medicine: resourceIndex = 8; break;
                         default: resourceIndex = 0; break;
                     }
-                }
+                    bonusMult *= (plantFactor + animalFactor + fishFactor) / 3d;
+                    break;
+                case ResourceType.Weapons:
+                    break;
+                case ResourceType.Apparel:
+                    break;
+                case ResourceType.Animals:
+                    bonusMult *= Math.Max((float)(1f - pollution), 0.1f);
+                    foreach (TileMutatorDef mutator in thisTile.Mutators)
+                    {
+                        bonusMult *= (double)mutator.animalDensityFactor;
+                    }
                 
                 // Ensure lists are initialized
                 if (biomeDef != null)
-                {
+                    {
                     biomeDef.EnsureResourceLists();
                     resource.baseProduction = biomeDef.BaseProductionAdditive[resourceIndex]
                                               + hillinessDef.BaseProductionAdditive[resourceIndex];
                     resource.baseProductionMultiplier = biomeDef.BaseProductionMultiplicative[resourceIndex]
                                               + hillinessDef.BaseProductionMultiplicative[resourceIndex];
-                }
+                    }
                 resource.settlement = this;
             }
+        }
+        public static double ResourceBiomeBonusProd(ResourceType titheType, int tileLocation)
+        {
+            Tile thisTile = Find.WorldGrid[tileLocation];
+            return (double)Math.Truncate(ResourceBiomeBonusProd(titheType, thisTile) * 100d) / 100d;
+        }
+        internal static double ResourceBiomeBonusProd(ResourceType titheType, Tile thisTile)
+        {
+            double bonusProd = 0d;
+            if (thisTile.WaterCovered)
+                return 0d;
+            /* If the tile is on the coast, apply a universal bonus to represent the ease of shipping/transportation */
+            if (thisTile.IsCoastal)
+            {
+                bonusProd += 0.1d;
+            }
+
+            switch (titheType)
+            {
+                case ResourceType.Food:
+                    if (thisTile.Mutators != null && thisTile.Mutators.Any(m => m.categories.Contains("WildPlants")))
+                    {
+                        bonusProd += 0.1d;
+                    }
+                    break;
+                case ResourceType.Weapons:
+                    if (thisTile.Mutators != null && thisTile.Mutators.Any(m => m.categories.Contains("AncientStructure")))
+                    {
+                        bonusProd += 0.1d;
+                    }
+                    break;
+                case ResourceType.Apparel:
+                    if (thisTile.Mutators != null && thisTile.Mutators.Any(m => m.categories.Contains("AncientStructure")))
+                    {
+                        bonusProd += 0.1d;
+                    }
+                    break;
+                case ResourceType.Animals:
+                    if (thisTile.Mutators != null && thisTile.Mutators.Any(m => m.defName.Equals("AnimalHabitat")))
+                    {
+                        bonusProd += 0.1d;
+                    }
+                    break;
+                case ResourceType.Logging:
+                    break;
+                case ResourceType.Mining:
+                    double realHilliness = (double)thisTile.HillinessForOreGeneration - (double)thisTile.hilliness;
+                    bonusProd += Math.Clamp((realHilliness / 4d), -1d, 1d);
+                    if (thisTile.Mutators != null && thisTile.Mutators.Any(m => m.IsCave))
+                        bonusProd += 0.25d;
+                    break;
+                case ResourceType.Research:
+                    if (thisTile.Landmark != null)
+                        bonusProd += 0.25d;
+                    foreach (TileMutatorDef mutator in thisTile.Mutators)
+                    {
+                        /* Rivers grant a blanket multiplier bonus, so don't also count them here. */
+                        if (!mutator.categories.Contains("River"))
+                            bonusProd += 0.1d;
+                    }
+                    break;
+                case ResourceType.Power:
+                    break;
+                case ResourceType.Medicine:
+                    break;
+            }
+            return bonusProd;
+        }
+        public static double ResourceBiomeBonusProdMult(ResourceType titheType, int tileLocation)
+        {
+            Tile thisTile = Find.WorldGrid[tileLocation];
+            return (double)Math.Truncate(ResourceBiomeBonusProdMult(titheType, thisTile) * 100d) / 100d;
+        }
+        internal static double ResourceBiomeBonusProdMult(ResourceType titheType, Tile thisTile)
+        {
+            if (thisTile.WaterCovered)
+                return 0d;
+            double bonusMult = 1d;
+            double pollution = Math.Clamp((double)(thisTile.pollution), 0d, 1d);
+            /* If the tile is on a river, apply a universal bonus to represent the ease of shipping/transportation */
+            if (thisTile.Mutators != null && thisTile.Mutators.Any(m => m.categories.Contains("River")))
+            {
+                bonusMult *= 1.1d;
+            }
+            switch (titheType)
+            {
+                case ResourceType.Food:
+                    bonusMult *= Math.Max((float)(1d - pollution), 0.1f);
+                    /* Get the total change to the plant, animal, and fish density factors, and then average them together to get the final multiplier */
+                    double plantFactor = 1f;
+                    double animalFactor = 1f;
+                    double fishFactor = 1f;
+                    foreach (TileMutatorDef mutator in thisTile.Mutators)
+                    {
+                        plantFactor *= (double)mutator.plantDensityFactor;
+                        animalFactor *= (double)mutator.animalDensityFactor;
+                        fishFactor *= (double)mutator.fishPopulationFactor;
+                    }
+                    bonusMult *= (plantFactor + animalFactor + fishFactor) / 3d;
+                    break;
+                case ResourceType.Weapons:
+                    break;
+                case ResourceType.Apparel:
+                    break;
+                case ResourceType.Animals:
+                    bonusMult *= Math.Max((float)(1f - pollution), 0.1f);
+                    foreach (TileMutatorDef mutator in thisTile.Mutators)
+                    {
+                        bonusMult *= (double)mutator.animalDensityFactor;
+                    }
+                    break;
+                case ResourceType.Logging:
+                    bonusMult *= (1d - (pollution / 2d));
+                    /* We only want the plant density to have half as much impact on logging as on food.
+                     * Assuming the factor is centered on 1, we'll add 1 and divide by 2 to reduce its impact */
+                    foreach (TileMutatorDef mutator in thisTile.Mutators)
+                    {
+                        bonusMult *= ((double)mutator.plantDensityFactor + 1d) / 2d;
+                    }
+                    break;
+                case ResourceType.Mining:
+                    foreach (TileMutatorDef mutator in thisTile.Mutators)
+                    {
+                        if (mutator.defName.Equals("MineralRich"))
+                        {
+                            bonusMult *= 1.25d;
+                        }
+                    }
+                    break;
+                case ResourceType.Research:
+                    bonusMult *= (1d + (pollution / 4d));
+                    break;
+                case ResourceType.Power:
+                    bonusMult *= (1d - (pollution / 4d));
+                    break;
+                case ResourceType.Medicine:
+                    bonusMult *= (1d - (pollution / 4d));
+                    /* We only want the plant density to have a quarter of the impact on medicine.
+                     * Assuming the factor is centered on 1, we'll add 3 and divide by 4 to reduce its impact */
+                    foreach (TileMutatorDef mutator in thisTile.Mutators)
+                    {
+                        bonusMult *= ((double)mutator.plantDensityFactor + 3d) / 4d;
+                    }
+                    break;
+            }
+            return bonusMult;
         }
 
         internal void GainUnrestWithReason(Message message, double amount)
@@ -249,6 +475,17 @@ namespace FactionColonies
                                 TraitUtilsFC.cycleTraits("workerBaseOverMax",
                                     Find.World.GetComponent<FactionFC>().traits, Operation.Addition)) + 
                                     returnOverMaxWorkersFromPrisoners();
+
+            if (buildings.Count < maxNumBuildings)
+            {
+                Log.Message($"[Empire] Increasing building array from size {buildings.Count} to new max size {maxNumBuildings}");
+                buildings.Add(BuildingFCDefOf.Empty);
+            }
+            else if (buildings.Count > maxNumBuildings)
+            {
+                Log.Message($"[Empire] Truncating building array from size {buildings.Count} to new max size {maxNumBuildings}");
+                buildings.RemoveRange(maxNumBuildings, buildings.Count - maxNumBuildings);
+            }
 
         }
         public void updateProfit() //updates profit
@@ -401,7 +638,7 @@ namespace FactionColonies
                     resourceMultiplier = 2;
 
                 ResourceFC resource = getResource(resourceType);
-                
+
                 // Get the correct index based on the resource type and settlement type
                 int resourceIndex;
                 if (ResourceUtils.IsOrbitalPlatform(this))
@@ -471,6 +708,7 @@ namespace FactionColonies
                 resource.baseProductionMultiplier = resourceMultiplier *
                                                     biomeMultiplier *
                                                     hillMultiplier *
+                                                    ResourceBiomeBonusProdMult(resourceType, mapLocation) *
                                                     ((100 + egalitarianTaxBoost + isolationistTaxBoost + TraitUtilsFC.cycleTraits("taxBasePercentage", traits, Operation.Addition) + TraitUtilsFC.cycleTraits("taxBasePercentage", Find.World.GetComponent<FactionFC>().traits, Operation.Addition)) / 100);
 
 

@@ -17,7 +17,7 @@ namespace FactionColonies
         private readonly int xoffset = 0;
         private readonly int height = 200;
         private readonly int settlementUpgradeCost;
-        private readonly int maxSettlementLevel;
+        public int maxSettlementLevel;
 
         private readonly SettlementFC settlement;
         private readonly FactionFC factionfc;
