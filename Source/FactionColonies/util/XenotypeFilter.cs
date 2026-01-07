@@ -37,25 +37,28 @@ namespace FactionColonies.util
 
             if (allowedXenotypes.Count == 0)
             {
-                InitializeWithAllXenotypes();
+                InitializeXenotypes();
             }
 
             RefreshPawnGroupMakers();
             WorldSettlementTraderTracker.reloadTraderKind();
         }
 
-        private void InitializeWithAllXenotypes()
+        private void InitializeXenotypes(bool initAllTypes = true)
         {
             allowedXenotypes.Clear();
             securityGuardsByXenotype.Clear();
 
             // Add all available xenotypes by default
-            foreach (XenotypeDef xenotype in DefDatabase<XenotypeDef>.AllDefsListForReading)
+            if (initAllTypes)
             {
-                if (xenotype.IsXenotypeWithLabel() && xenotype != XenotypeDefOf.Baseliner)
+                foreach (XenotypeDef xenotype in DefDatabase<XenotypeDef>.AllDefsListForReading)
                 {
-                    allowedXenotypes.Add(xenotype);
-                    SetupSecurityGuards(xenotype);
+                    if (xenotype.IsXenotypeWithLabel() && xenotype != XenotypeDefOf.Baseliner)
+                    {
+                        allowedXenotypes.Add(xenotype);
+                        SetupSecurityGuards(xenotype);
+                    }
                 }
             }
 
@@ -170,7 +173,12 @@ namespace FactionColonies.util
 
         public void ResetToAllXenotypes()
         {
-            InitializeWithAllXenotypes();
+            InitializeXenotypes();
+            RefreshPawnGroupMakers();
+        }
+        public void ResetToBaselinerXenotypeOnly()
+        {
+            InitializeXenotypes(false);
             RefreshPawnGroupMakers();
         }
 

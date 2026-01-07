@@ -158,42 +158,7 @@ namespace FactionColonies
             {
                 ResourceFC resource = getResource(titheType);
 
-                // Get the correct index based on the resource type and settlement type. Someone tell me if I can do this better??? I kept crashing and breaking saves until I did this
-                int resourceIndex;
-                if (ResourceUtils.IsOrbitalPlatform(this))
-                {
-                    switch (titheType)
-                    {
-                        case ResourceType.Food: resourceIndex = 0; break;
-                        case ResourceType.Weapons: resourceIndex = 1; break;
-                        case ResourceType.Apparel: resourceIndex = 2; break;
-                        case ResourceType.Animals: resourceIndex = 3; break;
-                        case ResourceType.Logging: resourceIndex = 4; break;
-                        case ResourceType.Mining: resourceIndex = 5; break;
-                        case ResourceType.Research: resourceIndex = 6; break;
-                        case ResourceType.Power: resourceIndex = 7; break;
-                        case ResourceType.Medicine: resourceIndex = 8; break;
-                        case ResourceType.Gravtech: resourceIndex = 9; break;
-                        case ResourceType.Chemfuel: resourceIndex = 10; break;
-                        default: resourceIndex = 0; break;
-                    }
-                }
-                else
-                {
-                    switch (titheType)
-                    {
-                        case ResourceType.Food: resourceIndex = 0; break;
-                        case ResourceType.Weapons: resourceIndex = 1; break;
-                        case ResourceType.Apparel: resourceIndex = 2; break;
-                        case ResourceType.Animals: resourceIndex = 3; break;
-                        case ResourceType.Logging: resourceIndex = 4; break;
-                        case ResourceType.Mining: resourceIndex = 5; break;
-                        case ResourceType.Research: resourceIndex = 6; break;
-                        case ResourceType.Power: resourceIndex = 7; break;
-                        case ResourceType.Medicine: resourceIndex = 8; break;
-                        default: resourceIndex = 0; break;
-                    }
-                }
+                int resourceIndex = ResourceUtils.TypeToInt(titheType, this);
 
                 // Ensure lists are initialized
                 if (biomeDef != null)
@@ -574,41 +539,7 @@ namespace FactionColonies
                 ResourceFC resource = getResource(resourceType);
 
                 // Get the correct index based on the resource type and settlement type
-                int resourceIndex;
-                if (ResourceUtils.IsOrbitalPlatform(this))
-                {
-                    switch (resourceType)
-                    {
-                        case ResourceType.Food: resourceIndex = 0; break;
-                        case ResourceType.Weapons: resourceIndex = 1; break;
-                        case ResourceType.Apparel: resourceIndex = 2; break;
-                        case ResourceType.Animals: resourceIndex = 3; break;
-                        case ResourceType.Logging: resourceIndex = 4; break;
-                        case ResourceType.Mining: resourceIndex = 5; break;
-                        case ResourceType.Research: resourceIndex = 6; break;
-                        case ResourceType.Power: resourceIndex = 7; break;
-                        case ResourceType.Medicine: resourceIndex = 8; break;
-                        case ResourceType.Gravtech: resourceIndex = 9; break;
-                        case ResourceType.Chemfuel: resourceIndex = 10; break;
-                        default: resourceIndex = 0; break;
-                    }
-                }
-                else
-                {
-                    switch (resourceType)
-                    {
-                        case ResourceType.Food: resourceIndex = 0; break;
-                        case ResourceType.Weapons: resourceIndex = 1; break;
-                        case ResourceType.Apparel: resourceIndex = 2; break;
-                        case ResourceType.Animals: resourceIndex = 3; break;
-                        case ResourceType.Logging: resourceIndex = 4; break;
-                        case ResourceType.Mining: resourceIndex = 5; break;
-                        case ResourceType.Research: resourceIndex = 6; break;
-                        case ResourceType.Power: resourceIndex = 7; break;
-                        case ResourceType.Medicine: resourceIndex = 8; break;
-                        default: resourceIndex = 0; break;
-                    }
-                }
+                int resourceIndex = ResourceUtils.TypeToInt(resourceType, this);
 
                 // Ensure lists are initialized and get base production values
                 double biomeProduction = 0;

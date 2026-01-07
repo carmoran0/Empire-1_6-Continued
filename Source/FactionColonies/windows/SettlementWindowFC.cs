@@ -776,9 +776,9 @@ namespace FactionColonies
                         else
                         {
                             // Empty or Construction slot - open building window to build
-                        Find.WindowStack.Add(new FCBuildingWindow(settlement, i));
+                            Find.WindowStack.Add(new FCBuildingWindow(settlement, i));
+                        }
                     }
-                }
                 }
                 else
                 {

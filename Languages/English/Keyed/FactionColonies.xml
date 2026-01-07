@@ -17,4 +17,6 @@
 	
 	<!-- Capital management -->
 	<FCCapitalNotSetWarning>No empire capital established. Either use 'Set Capital' in the Empire menu or build and activate a Capital Seat.</FCCapitalNotSetWarning>
+	
+	<Empire_ColonyWindow_NoFactionToCustomize>No faction created to customize</Empire_ColonyWindow_NoFactionToCustomize>
 </LanguageData>

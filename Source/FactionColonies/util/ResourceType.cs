@@ -1,5 +1,6 @@
 ﻿using System;
 using Verse;
+using Verse.Sound;
 
 namespace FactionColonies
 {
@@ -85,6 +86,30 @@ namespace FactionColonies
                 ResourceType.Power,
                 ResourceType.Medicine
             };
+        }
+
+        /* Replaces a switch/case on the enum. This is probably more expensive, but will be better able to flag errors */
+        /* resourceType is just an enum, so we *should* be able to just straight cast to int... but the original switch/case had a comment about crashes,
+         * so this function exists just to be super careful */
+        public static int TypeToInt(ResourceType resourceType, SettlementFC settlement)
+        {
+            int resourceIndex = (int)resourceType;
+            if (resourceIndex < 0)
+            {
+                Logger.DebugLog($"detected less-than-zero ResourceType for settlement {settlement.name}, setting to 0", LogMessageType.Error);
+                return 0;
+            }
+            else if (!IsOrbitalPlatform(settlement) && resourceIndex > 8)
+            {
+                Logger.DebugLog($"detected invalid ResourceType {resourceIndex} for non-orbital platform settlement {settlement.name}, setting to 0", LogMessageType.Error);
+                return 0;
+            }
+            else if (resourceIndex > 10)
+            {
+                Logger.DebugLog($"detected invalid ResourceType {resourceIndex} for orbital platform settlement {settlement.name}, setting to 0", LogMessageType.Error);
+                return 0;
+            }
+            return resourceIndex;
         }
     }
 }

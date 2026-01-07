@@ -536,12 +536,12 @@ namespace FactionColonies
                 if (fact != null)
                     Find.WindowStack.Add(new FactionCustomizeWindowFc(faction));
                 else
-                    Messages.Message("No faction created to customize", MessageTypeDefOf.RejectInput);
+                    Messages.Message("Empire_ColonyWindow_NoFactionToCustomize".Translate(), MessageTypeDefOf.RejectInput);
             }
         }
         private void DrawFactionTitle(Rect inRect)
         {
-            Text.Anchor = TextAnchor.UpperCenter;
+            Text.Anchor = TextAnchor.UpperLeft;
             Text.Font = GameFont.Small;//Tiny;
             Widgets.Label(new Rect(0, 60 * uiscaling, 200 * uiscaling, 20 * uiscaling), faction.title);
         }
@@ -777,7 +777,7 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleCenter;
             int k;
             int j;
-            float resourcesPerRow = 7;
+            float resourcesPerRow = 6;
             int ySpacing = (int)(30 * uiscaling)+25;
             int margin = (int)(5 * uiscaling)+15;
 
