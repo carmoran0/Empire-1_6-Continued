@@ -367,7 +367,24 @@ namespace FactionColonies
 
             Widgets.DrawMenuSection(new Rect(TopDescription.x - 5, TopDescription.y - 5, TopDescription.width + 10, TopDescription.height));
             Text.Font = GameFont.Small;
-            Widgets.Label(TopDescription, buildingDef.desc);
+            string desc = buildingDef.desc;
+            /* If the buildingDef is "Construction", then find the building that's being constructed and list it in the description. */
+            if (buildingDef == BuildingFCDefOf.Construction)
+            {
+                /* This little snippet was yanked from SettlementFC.validConstructBuilding(). Seems really heavy-handed just to get the building that this
+                 * Construction building represents. There must be a better way to do this.
+                 * Although, given the relative rarity of this event (and the total number of events usually being quite low), optimizing this segment of
+                 * the code isn't exactly a priority, I'd say. */
+                foreach (FCEvent event1 in Find.World.GetComponent<FactionFC>().events)
+                {
+                    if (event1.source == settlement.mapLocation && event1.buildingSlot == buildingSlot && event1.def.defName == "constructBuilding")
+                    {
+                        desc = "Empire_BuildingWindow_ConstructionDesc".Translate(event1.building.label);
+                        break;
+                    }
+                }
+            }
+            Widgets.Label(TopDescription, desc);
 
             // Dynamic horizontal line that spans the full width
             Widgets.DrawLineHorizontal(0, TopWindow.y + TopWindow.height, inRect.width);

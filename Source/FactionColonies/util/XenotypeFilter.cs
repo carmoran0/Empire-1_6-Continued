@@ -26,7 +26,7 @@ namespace FactionColonies.util
             this.factionFc = factionFc;
             militaryUtil = factionFc.militaryCustomizationUtil;
             faction = DefDatabase<FactionDef>.GetNamed("PColony");
-            InitializeWithAllXenotypes();
+            InitializeXenotypes();
         }
 
         public void FinalizeInit(FactionFC factionFc)

@@ -543,7 +543,7 @@ namespace FactionColonies
         {
             Text.Anchor = TextAnchor.UpperLeft;
             Text.Font = GameFont.Small;//Tiny;
-            Widgets.Label(new Rect(0, 60 * uiscaling, 200 * uiscaling, 20 * uiscaling), faction.title);
+            Widgets.Label(new Rect(7 * uiscaling, 60 * uiscaling, 200 * uiscaling, 20 * uiscaling), faction.title);
         }
 
         private void DrawFactionIcon(Rect inRect)

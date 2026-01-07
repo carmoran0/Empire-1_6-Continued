@@ -212,10 +212,8 @@ namespace FactionColonies
                 {
                     new FloatMenuOption("Empire_XenotypeMenus_EnableAll".Translate(), delegate { faction.xenotypeFilter.ResetToAllXenotypes(); })
                 };
-                List<FloatMenuOption> disableAll = new List<FloatMenuOption>
-                {
-                    new FloatMenuOption("Empire_XenotypeMenus_DisableNonBaseliner".Translate(), delegate { faction.xenotypeFilter.ResetToBaselinerXenotypeOnly(); })
-                };
+                list.Add(new FloatMenuOption("Empire_XenotypeMenus_DisableNonBaseliner".Translate(),
+                    delegate { faction.xenotypeFilter.ResetToBaselinerXenotypeOnly(); }));
                 List<string> xenotypes = new List<string>();
                 foreach (XenotypeDef def in DefDatabase<XenotypeDef>.AllDefsListForReading.Where(def => def.IsXenotypeWithLabel() && !xenotypes.Contains(def.label)))
                 {
