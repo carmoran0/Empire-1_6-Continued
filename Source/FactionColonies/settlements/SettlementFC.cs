@@ -144,26 +144,26 @@ namespace FactionColonies
                 {
                     hasCustomValues = true;
                     break;
+                }
             }
-        }
 
             // If custom values exist, don't overwrite them (they were loaded from save file)
             if (hasCustomValues)
-        {
+            {
                 Log.Message($"Settlement {name}: Skipping initBaseProduction - custom values detected (loaded from save)");
                 return;
-        }
-            
+            }
+
             foreach (ResourceType titheType in ResourceUtils.GetAvailableResourceTypes(this))
-        {
+            {
                 ResourceFC resource = getResource(titheType);
 
                 // Get the correct index based on the resource type and settlement type. Someone tell me if I can do this better??? I kept crashing and breaking saves until I did this
                 int resourceIndex;
                 if (ResourceUtils.IsOrbitalPlatform(this))
                 {
-            switch (titheType)
-            {
+                    switch (titheType)
+                    {
                         case ResourceType.Food: resourceIndex = 0; break;
                         case ResourceType.Weapons: resourceIndex = 1; break;
                         case ResourceType.Apparel: resourceIndex = 2; break;
@@ -177,66 +177,11 @@ namespace FactionColonies
                         case ResourceType.Chemfuel: resourceIndex = 10; break;
                         default: resourceIndex = 0; break;
                     }
-                    break;
-                case ResourceType.Weapons:
-                    if (thisTile.Mutators != null && thisTile.Mutators.Any(m => m.categories.Contains("AncientStructure")))
-                    {
-                        bonusProd += 0.1d;
-                    }
+                }
                 else
+                {
+                    switch (titheType)
                     {
-                        bonusProd += 0.1d;
-                    }
-                    break;
-                case ResourceType.Animals:
-                    if (thisTile.Mutators != null && thisTile.Mutators.Any(m => m.defName.Equals("AnimalHabitat")))
-                    {
-                        bonusProd += 0.1d;
-                    }
-                    break;
-                case ResourceType.Logging:
-                    break;
-                case ResourceType.Mining:
-                    double realHilliness = (double)thisTile.HillinessForOreGeneration - (double)thisTile.hilliness;
-                    bonusProd += Math.Clamp((realHilliness / 4d), -1d, 1d);
-                    if (thisTile.Mutators != null && thisTile.Mutators.Any(m => m.IsCave))
-                        bonusProd += 0.25d;
-                    break;
-                case ResourceType.Research:
-                    if (thisTile.Landmark != null)
-                        bonusProd += 0.25d;
-                    foreach (TileMutatorDef mutator in thisTile.Mutators)
-                    {
-                        /* Rivers grant a blanket multiplier bonus, so don't also count them here. */
-                        if (!mutator.categories.Contains("River"))
-                            bonusProd += 0.1d;
-                    }
-                    break;
-                case ResourceType.Power:
-                    break;
-                case ResourceType.Medicine:
-                    break;
-            }
-            return bonusProd;
-        }
-        public static double ResourceBiomeBonusProdMult(ResourceType titheType, int tileLocation)
-        {
-            Tile thisTile = Find.WorldGrid[tileLocation];
-            return (double)Math.Truncate(ResourceBiomeBonusProdMult(titheType, thisTile) * 100d) / 100d;
-        }
-        internal static double ResourceBiomeBonusProdMult(ResourceType titheType, Tile thisTile)
-        {
-            if (thisTile.WaterCovered)
-                return 0d;
-            double bonusMult = 1d;
-            double pollution = Math.Clamp((double)(thisTile.pollution), 0d, 1d);
-            /* If the tile is on a river, apply a universal bonus to represent the ease of shipping/transportation */
-            if (thisTile.Mutators != null && thisTile.Mutators.Any(m => m.categories.Contains("River")))
-            {
-                bonusMult *= 1.1d;
-            }
-            switch (titheType)
-            {
                         case ResourceType.Food: resourceIndex = 0; break;
                         case ResourceType.Weapons: resourceIndex = 1; break;
                         case ResourceType.Apparel: resourceIndex = 2; break;
@@ -248,28 +193,17 @@ namespace FactionColonies
                         case ResourceType.Medicine: resourceIndex = 8; break;
                         default: resourceIndex = 0; break;
                     }
-                    bonusMult *= (plantFactor + animalFactor + fishFactor) / 3d;
-                    break;
-                case ResourceType.Weapons:
-                    break;
-                case ResourceType.Apparel:
-                    break;
-                case ResourceType.Animals:
-                    bonusMult *= Math.Max((float)(1f - pollution), 0.1f);
-                    foreach (TileMutatorDef mutator in thisTile.Mutators)
-                    {
-                        bonusMult *= (double)mutator.animalDensityFactor;
-                    }
-                
+                }
+
                 // Ensure lists are initialized
                 if (biomeDef != null)
-                    {
+                {
                     biomeDef.EnsureResourceLists();
                     resource.baseProduction = biomeDef.BaseProductionAdditive[resourceIndex]
                                               + hillinessDef.BaseProductionAdditive[resourceIndex];
                     resource.baseProductionMultiplier = biomeDef.BaseProductionMultiplicative[resourceIndex]
                                               + hillinessDef.BaseProductionMultiplicative[resourceIndex];
-                    }
+                }
                 resource.settlement = this;
             }
         }
