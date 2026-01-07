@@ -1,3 +1,9 @@
+#Notes from Matathias
+
+This is a fork for largely personal changes. The following portion of the README has been left unchanged from the source branch.
+
+Remaining README:
+
 #For 1.6 Only
 I've put together a patch for this mod in hope to bring this over to 1.6. 
 
