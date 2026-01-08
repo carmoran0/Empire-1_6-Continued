@@ -1,6 +1,8 @@
 #Notes from Matathias
 
-This is a fork for largely personal changes. The following portion of the README has been left unchanged from the source branch.
+This branch is for largely personal changes, and is not intended to be merged to the main Empire repo or even to replace it generally. Mods that depend on the main repo may or may not work with this one.
+
+The following portion of the README has been left unchanged from the source branch.
 
 Remaining README:
 
