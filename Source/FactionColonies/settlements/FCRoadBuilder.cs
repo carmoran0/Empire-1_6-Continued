@@ -65,7 +65,7 @@ namespace FactionColonies
             }
         }
 
-        public void RoadTick()
+        public void RoadTick(Faction pfaction)
         {
             if (this.roadDef == null)
             {
@@ -78,6 +78,11 @@ namespace FactionColonies
             {
                 // Log.Message("Empire Debug - RoadTick: roadBuildingEnabled is false, road building disabled");
                 this.wasRoadBuildingDisabled = true;
+                return;
+            }
+
+            if (pfaction == null)
+            {
                 return;
             }
 

@@ -522,16 +522,18 @@ namespace FactionColonies
 
             //If Player Colony Faction does exists
             Faction faction = FactionColonies.getPlayerColonyFaction();
-            if (faction != null)
-            {
-                roadBuilder.RoadTick();
-                TaxTick();
-                UITick();
-                StatTick();
-                MilitaryTick();
-                TickActions();
-            }
-            else if (faction == null && settlements.Count() >= 0 && factionBackup != null)
+            /* Always call the tick functions, but pass faction into them.
+             * We always need to update the interval, even if the faction doesn't exist. Otherwise, if the player delays in creating the faction,
+             * then we'll suddenly hit them with a billion back-taxes and back-events as the timers try to catch up.
+             * Question: why even worry about skipping time? What's the point? Is it a debugging tool? Seems ripe for bugs and errors.
+             */
+            roadBuilder.RoadTick(faction);
+            TaxTick(faction);
+            UITick(faction);
+            StatTick(faction);
+            MilitaryTick(faction);
+            TickActions(faction);
+            if (faction == null && settlements.Count() >= 0 && factionBackup != null)
             {
                 //Log.Message("Moved to new planet - Adding faction copy");
                 //FactionColonies.createPlayerColonyFaction();
@@ -584,8 +586,13 @@ namespace FactionColonies
             }
         }
 
-        public void TickActions()
+        public void TickActions(Faction faction)
         {
+            /* Seems we don't do any weird time-skip-accounting here, so we can just bail on a null faction */
+            if (faction == null)
+            {
+                return;
+            }
             int tick = Find.TickManager.TicksGame;
             foreach (SettlementFC settlement in settlements)
             {
@@ -1282,6 +1289,12 @@ namespace FactionColonies
                     bill.taxes.silverAmount =
                         Convert.ToInt32((settlement.totalIncome * trait_Industrious_TaxPercentageBoost) -
                                         settlement.totalUpkeep) + settlement.returnSilverIncome(true);
+
+                    /* If the bill is positive, then let the player put off resolving it for up to a year */
+                    if (bill.taxes.silverAmount >= 0)
+                    {
+                        bill.dueTick = Find.TickManager.TicksGame + GenDate.TicksPerYear;
+                    }
                     Bills.Add(bill);
 
                     FactionColonies.GetTownTitle(settlement);
@@ -1548,13 +1561,21 @@ namespace FactionColonies
             }
         }
 
-        public void TaxTick()
+        public void TaxTick(Faction faction)
         {
             if (Find.TickManager.TicksGame >= taxTimeDue) // taxTimeDue being used as set interval when skipping time
             {
                 int maxIterations = 100; // Safety limit to prevent infinite loops
                 int iterations = 0;
-                
+
+                if (faction == null)
+                {
+                    var settings = LoadedModManager.GetMod<FactionColoniesMod>().GetSettings<FactionColonies>();
+                    int timeBetweenTaxes = settings.timeBetweenTaxes;
+                    taxTimeDue += timeBetweenTaxes;
+                    return;
+                }
+
                 while (Find.TickManager.TicksGame >= taxTimeDue && iterations < maxIterations) //while updating events
                 {
                     iterations++;
@@ -1700,24 +1721,27 @@ namespace FactionColonies
 
         }
 
-        public void StatTick()
+        public void StatTick(Faction faction)
         {
             if (Find.TickManager.TicksGame >= dailyTimer) // taxTimeDue being used as set interval when skipping time
             {
                 while (Find.TickManager.TicksGame >= dailyTimer) //while updating events
                 {
-                    //update events in this order: regular events: tax events.
+                    if (faction != null)
+                    {
+                        //update events in this order: regular events: tax events.
 
-                    // Log.Message("Tick");
-                    updateSettlementStats();
-                    updateAverages();
-                    RelationsUtilFC.resetPlayerColonyRelations();
+                        // Log.Message("Tick");
+                        updateSettlementStats();
+                        updateAverages();
+                        RelationsUtilFC.resetPlayerColonyRelations();
 
 
-                    updateDailyResearch();
+                        updateDailyResearch();
 
-                    //Random event creation
-                    MakeRandomEvent();
+                        //Random event creation
+                        MakeRandomEvent();
+                    }
 
                     dailyTimer += GenDate.TicksPerDay;
                     //Log.Message(Find.TickManager.TicksGame + " vs " + taxTimeDue + " - Taxing");
@@ -1725,12 +1749,13 @@ namespace FactionColonies
             }
         }
 
-        public void MilitaryTick()
+        public void MilitaryTick(Faction faction)
         {
             if (Find.TickManager.TicksGame >= militaryTimeDue)
             {
-                if (LoadedModManager.GetMod<FactionColoniesMod>().GetSettings<FactionColonies>()
-                        .disableHostileMilitaryActions == false &
+                if (faction != null &&
+                    LoadedModManager.GetMod<FactionColoniesMod>().GetSettings<FactionColonies>()
+                        .disableHostileMilitaryActions == false &&
                     Find.TickManager.TicksGame > (timeStart + GenDate.TicksPerSeason))
                 {
                     //if military actions not disabled or game has not passed through the first season
@@ -1817,17 +1842,20 @@ namespace FactionColonies
         }
 
 
-        public void UITick()
+        public void UITick(Faction faction)
         {
             if (uiTimeUpdate <= 0) //update per time?
             {
                 uiTimeUpdate = FactionColonies.updateUiTimer;
 
-                //already built in ui update -.-
-                Find.WindowStack.WindowsUpdate();
+                if (faction != null)
+                {
+                    //already built in ui update -.-
+                    Find.WindowStack.WindowsUpdate();
 
-                //Pop UI updates
-                uiUpdate();
+                    //Pop UI updates
+                    uiUpdate();
+                }
             }
             else
             {
