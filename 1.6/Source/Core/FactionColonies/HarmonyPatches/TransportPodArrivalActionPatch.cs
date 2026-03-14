@@ -24,6 +24,7 @@ namespace FactionColonies
         [HarmonyPatch(typeof(TransportersArrivalAction_LandInSpecificCell), "Arrived")]
         private static void ArrivePatch(TransportersArrivalAction_LandInSpecificCell __instance, List<ActiveTransporterInfo> transporters, PlanetTile tile)
         {
+            PerfWatchdog.Enter("TransportPodArrive.Postfix");
             if (Traverse.Create(__instance).Field("mapParent").GetValue() is WorldSettlementFC settlement)
             {
                 List<Pawn> pawns = new List<Pawn>();
@@ -43,6 +44,7 @@ namespace FactionColonies
 
                 if (hasAnyPawns) settlement.MilitaryComp?.AddToDefenceFromList(pawns, tile);
             }
+            PerfWatchdog.Exit();
         }
     }
 }

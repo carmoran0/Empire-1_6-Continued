@@ -14,8 +14,10 @@ namespace FactionColonies
     {
         public static void Postfix(WorldObject o)
         {
+            PerfWatchdog.Enter("WorldObjectAdd.Postfix");
             if (o is Settlement)
                 FactionCache.FactionComp?.roadBuilder?.FlagUpdateRoadQueues();
+            PerfWatchdog.Exit();
         }
     }
 
@@ -24,8 +26,10 @@ namespace FactionColonies
     {
         public static void Postfix(WorldObject o)
         {
+            PerfWatchdog.Enter("WorldObjectRemove.Postfix");
             if (o is Settlement)
                 FactionCache.FactionComp?.roadBuilder?.FlagUpdateRoadQueues();
+            PerfWatchdog.Exit();
         }
     }
 
@@ -34,8 +38,10 @@ namespace FactionColonies
     {
         public static void Postfix(WorldObject __instance)
         {
+            PerfWatchdog.Enter("WorldObjectSetFaction.Postfix");
             if (__instance is Settlement)
                 FactionCache.FactionComp?.roadBuilder?.FlagUpdateRoadQueues();
+            PerfWatchdog.Exit();
         }
     }
 
@@ -49,7 +55,10 @@ namespace FactionColonies
     {
         static bool Prefix(Settlement factionBase)
         {
-            return !(factionBase is WorldSettlementFC);
+            PerfWatchdog.Enter("CheckDefeated.Prefix");
+            bool result = !(factionBase is WorldSettlementFC);
+            PerfWatchdog.Exit();
+            return result;
         }
     }
 }

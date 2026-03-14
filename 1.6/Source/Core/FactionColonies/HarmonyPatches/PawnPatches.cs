@@ -9,6 +9,7 @@ namespace FactionColonies
     {
         static bool Prefix(Pawn __instance)
         {
+            PerfWatchdog.Enter("MercenaryDied.Prefix");
             if (__instance.IsMercenary())
             {
                 if (__instance.Faction != FactionCache.PlayerColonyFaction) __instance.SetFaction(FactionCache.PlayerColonyFaction);
@@ -41,9 +42,11 @@ namespace FactionColonies
                 __instance.equipment?.DestroyAllEquipment();
                 __instance.apparel?.DestroyAll();
                 //__instance.Destroy();
+                PerfWatchdog.Exit();
                 return true;
             }
 
+            PerfWatchdog.Exit();
             return true;
         }
     }
@@ -53,13 +56,16 @@ namespace FactionColonies
     {
         static bool Prefix(Corpse corpse)
         {
+            PerfWatchdog.Enter("MercAnimalDied.Prefix");
             if (FactionCache.FactionComp.militaryCustomizationUtil.IsMercenaryPawn(corpse.InnerPawn))
             {
                 //corpse.InnerPawn.SetFaction(FactionColonies.getPlayerColonyFaction());
                 corpse.Destroy();
+                PerfWatchdog.Exit();
                 return false;
             }
 
+            PerfWatchdog.Exit();
             return true;
         }
     }

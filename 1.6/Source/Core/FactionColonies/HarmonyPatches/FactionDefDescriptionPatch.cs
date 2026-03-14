@@ -27,31 +27,37 @@ namespace FactionColonies
 
         static void Postfix(FactionDef __instance, ref string __result)
         {
+            PerfWatchdog.Enter("FactionDefDesc.Postfix");
             if (__instance != FactionCache.EmpireFactionDef)
             {
+                PerfWatchdog.Exit();
                 return;
             }
 
             if (!ModsConfig.BiotechActive)
             {
+                PerfWatchdog.Exit();
                 return;
             }
 
             FactionFC factionComp = FactionCache.FactionComp;
             if (factionComp == null)
             {
+                PerfWatchdog.Exit();
                 return;
             }
 
             XenotypeFilter filter = factionComp.xenotypeFilter;
             if (filter == null)
             {
+                PerfWatchdog.Exit();
                 return;
             }
 
             if (!dirty && cachedDescription != null)
             {
                 __result = cachedDescription;
+                PerfWatchdog.Exit();
                 return;
             }
 
@@ -160,6 +166,7 @@ namespace FactionColonies
             cachedDescription = sb.ToString();
             dirty = false;
             __result = cachedDescription;
+            PerfWatchdog.Exit();
         }
     }
 }

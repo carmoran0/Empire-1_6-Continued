@@ -14,15 +14,18 @@ namespace FactionColonies
 	{
 		public static void Postfix(ref Pawn __instance, ref IEnumerable<Gizmo> __result)
 		{
+			PerfWatchdog.Enter("PawnDraftGizmos.Postfix");
 			// Early exit checks BEFORE any allocations - most pawns will exit here
 			if (__result == null || __instance?.Faction == null || __instance.Map == null)
 			{
+				PerfWatchdog.Exit();
 				return;
 			}
 			
 			WorldSettlementFC settlementFc = __instance.Map.Parent as WorldSettlementFC;
 			if (settlementFc == null)
 			{
+				PerfWatchdog.Exit();
 				return;
 			}
 
@@ -58,6 +61,7 @@ namespace FactionColonies
 				
 				draftColonists.tutorTag = "Draft";
 				__result = __result.Append(draftColonists);
+				PerfWatchdog.Exit();
 				return;
 			}
 			
@@ -110,6 +114,7 @@ namespace FactionColonies
 					__result = output;
 				}
 			}
+			PerfWatchdog.Exit();
 		}
 	}
 
@@ -165,16 +170,19 @@ namespace FactionColonies
 
 		public static void Postfix(ref Pawn __instance, ref IEnumerable<Gizmo> __result)
 		{
+			PerfWatchdog.Enter("PrisonerGizmos.Postfix");
 			// Early exit for non-prisoners (most common case) hmmmm
 			if (__instance.guest == null || !__instance.guest.IsPrisoner)
 			{
+				PerfWatchdog.Exit();
 				return;
 			}
 
-            if (!FactionCache.FactionComp.IsActionAllowed(FCActionType.SendPrisoner)) return;
-            if (!CanSendPrisoner(__instance)) return;
+            if (!FactionCache.FactionComp.IsActionAllowed(FCActionType.SendPrisoner)) { PerfWatchdog.Exit(); return; }
+            if (!CanSendPrisoner(__instance)) { PerfWatchdog.Exit(); return; }
 
 			__result = __result.Append(SendPrisonerAction(__instance));
+			PerfWatchdog.Exit();
 		}
 	}
 
@@ -262,9 +270,10 @@ namespace FactionColonies
 		/// <param name="__result"></param>
 		public static void Postfix(ref WorldObject __instance, ref IEnumerable<Gizmo> __result)
 		{
-			if (__instance.def.defName != "Settlement") return;
-			if (!HasValidFaction(__instance)) return;
-			
+			PerfWatchdog.Enter("NonEmpireGizmos.Postfix");
+			if (__instance.def.defName != "Settlement") { PerfWatchdog.Exit(); return; }
+			if (!HasValidFaction(__instance)) { PerfWatchdog.Exit(); return; }
+
 			int tile = __instance.Tile;
 			Faction faction = __instance.Faction;
 			FactionFC factionFC = FactionCache.FactionComp;
@@ -274,6 +283,7 @@ namespace FactionColonies
 
 			if (factionFC.IsActionAllowed(FCActionType.DeployMilitary))
 				__result = __result.AddItem(HostileAction(factionFC, faction, tile));
+			PerfWatchdog.Exit();
 		}
 	}
 }

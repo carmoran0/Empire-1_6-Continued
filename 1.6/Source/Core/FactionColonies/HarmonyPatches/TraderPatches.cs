@@ -10,10 +10,12 @@ namespace FactionColonies
     {
         static void Postfix(ref bool __result)
         {
+            PerfWatchdog.Enter("TraderEnoughSilver.Postfix");
             if (TradeSession.trader.TraderKind.defName == "FCResearchTrader")
             {
                 __result = true;
             }
+            PerfWatchdog.Exit();
         }
     }
 
@@ -23,10 +25,12 @@ namespace FactionColonies
     {
         static void Postfix(ref Tradeable __instance, ref float __result)
         {
+            PerfWatchdog.Enter("TraderItemPrice.Postfix");
             if (TradeSession.trader.TraderKind.defName == "FCResearchTrader")
             {
                 __result = __instance.AnyThing.MarketValue;
             }
+            PerfWatchdog.Exit();
         }
     }
 
@@ -36,7 +40,7 @@ namespace FactionColonies
     {
         static void Postfix(ref TradeDeal __instance, ref bool __result)
         {
-
+            PerfWatchdog.Enter("TraderFinished.Postfix");
             if (TradeSession.trader.TraderKind.defName == "FCResearchTrader")
             {
                 FactionFC faction = FactionCache.FactionComp;
@@ -46,6 +50,7 @@ namespace FactionColonies
                     faction.tradedAmount = 0;
                 }
             }
+            PerfWatchdog.Exit();
         }
     }
 }

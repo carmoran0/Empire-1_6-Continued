@@ -9,8 +9,11 @@ namespace FactionColonies
     {
         static bool Prefix(Pawn pawn, PawnDiscardDecideMode discardMode = PawnDiscardDecideMode.Decide)
         {
+            PerfWatchdog.Enter("PassToWorld.Prefix");
             FactionFC faction = FactionCache.FactionComp;
-            return faction?.militaryCustomizationUtil == null || !faction.militaryCustomizationUtil.IsMercenaryPawn(pawn);
+            bool result = faction?.militaryCustomizationUtil == null || !faction.militaryCustomizationUtil.IsMercenaryPawn(pawn);
+            PerfWatchdog.Exit();
+            return result;
         }
     }
 }

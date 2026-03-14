@@ -15,6 +15,7 @@ namespace FactionColonies
     {
         public static void Prefix(ref PawnGenerationRequest request)
         {
+            PerfWatchdog.Enter("PawnGenerationPatches.Prefix");
             if (!(request.Faction is null) && request.Faction == FactionCache.PlayerColonyFaction && request.KindDef?.IsHumanLikeRace() == true)
             {
                 /* Respect xenotypes that have already been forced (e.g. from designed military units)
@@ -22,11 +23,12 @@ namespace FactionColonies
                  * But this should preserve the xenotype that a player chooses when designing military units, and that's more important. */
                 if (!(request.ForcedXenotype is null) || !(request.ForcedCustomXenotype is null))
                 {
+                    PerfWatchdog.Exit();
                     return;
                 }
 
                 XenotypeFilter filter = FactionCache.FactionComp?.xenotypeFilter;
-                if (filter is null) return;
+                if (filter is null) { PerfWatchdog.Exit(); return; }
 
                 XenotypeDef chosenXenotype = null;
                 CustomXenotype chosenCustomXenotype = null;
@@ -52,6 +54,7 @@ namespace FactionColonies
                     LogUtil.Warning($"GeneratePawn patch failed to force a xenotype or custom xenotype for pawnKind: {request.KindDef.defName}");
                 }
             }
+            PerfWatchdog.Exit();
         }
     }
 }

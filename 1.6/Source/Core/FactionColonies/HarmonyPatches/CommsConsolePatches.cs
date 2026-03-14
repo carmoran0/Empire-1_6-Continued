@@ -12,9 +12,11 @@ namespace FactionColonies
     {
         static void Postfix(Map map, Faction faction, Pawn negotiator, ref DiaOption __result)
         {
-            if (faction.def.defName != "PColony") return;
+            PerfWatchdog.Enter("DisableMilAid.Postfix");
+            if (faction.def.defName != "PColony") { PerfWatchdog.Exit(); return; }
             __result = new DiaOption("RequestMilitaryAid".Translate(25));
             __result.Disable("Disabled. Use the settlements military tab.");
+            PerfWatchdog.Exit();
         }
     }
 }
