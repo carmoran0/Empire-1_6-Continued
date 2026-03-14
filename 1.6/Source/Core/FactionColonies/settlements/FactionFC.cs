@@ -697,10 +697,12 @@ namespace FactionColonies
 
         private void RecomputeTotalProfit()
         {
+            PerfWatchdog.Enter("FactionFC.RecomputeTotalProfit");
             _income = settlements.Sum(s => s.totalIncome);
             _upkeep = settlements.Sum(s => s.totalUpkeep) + GetEdictUpkeep();
             _profit = _income - _upkeep;
             dirtyFactionProfitCache = false;
+            PerfWatchdog.Exit();
         }
 
         public void DirtyAveragesCache()
@@ -710,6 +712,7 @@ namespace FactionColonies
 
         private void RecomputeAverages()
         {
+            PerfWatchdog.Enter("FactionFC.RecomputeAverages");
             int avgHappiness = 0;
             int avgLoyalty = 0;
             int avgUnrest = 0;
@@ -736,6 +739,7 @@ namespace FactionColonies
             _averageUnrest = avgUnrest;
             _averageProsperity = avgProsperity;
             dirtyAveragesCache = false;
+            PerfWatchdog.Exit();
         }
 
         public void DirtyTechLevelCache()
@@ -1493,6 +1497,7 @@ namespace FactionColonies
 
         public void AddTax()
         {
+            PerfWatchdog.Enter("FactionFC.AddTax");
             TaxTickRegistry.InvokePreTaxResolution(this);
             foreach (ResourcePool pool in resourcePools)
             {
@@ -1550,6 +1555,7 @@ namespace FactionColonies
             }
 
             TaxTickRegistry.InvokePostTaxResolution(this);
+            PerfWatchdog.Exit();
         }
 
         public void TaxTickPrisoner(WorldSettlementFC settlement)

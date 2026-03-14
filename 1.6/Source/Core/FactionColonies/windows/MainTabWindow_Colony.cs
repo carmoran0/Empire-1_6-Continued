@@ -126,6 +126,7 @@ namespace FactionColonies
 
         public override void DoWindowContents(Rect inRect)
         {
+            PerfWatchdog.Enter("MainTabWindow.DoWindowContents");
             GameFont fontBefore = Text.Font;
             TextAnchor anchorBefore = Text.Anchor;
 
@@ -158,6 +159,7 @@ namespace FactionColonies
                 }
                 Text.Font = fontBefore;
                 Text.Anchor = anchorBefore;
+                PerfWatchdog.Exit();
                 return;
             }
 
@@ -189,6 +191,7 @@ namespace FactionColonies
 
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;
+            PerfWatchdog.Exit();
         }
 
         // ===== OVERVIEW TAB =====

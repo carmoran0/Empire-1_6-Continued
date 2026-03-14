@@ -810,6 +810,7 @@ namespace FactionColonies
 
         private void RecomputeStats()
         {
+            PerfWatchdog.Enter("Settlement.RecomputeStats");
             FactionFC factionFc = FactionCache.FactionComp;
 
             int extraWorkersSoftcap = (int)factionFc.GetStatValue(FCStatDefOf.extraWorkersSoftcap, this);
@@ -826,10 +827,12 @@ namespace FactionColonies
 
             dirtyStatsCache = false;
             dirtyProfitCache = true;
+            PerfWatchdog.Exit();
         }
 
         private void RecomputeProfit()
         {
+            PerfWatchdog.Enter("Settlement.RecomputeProfit");
             if (dirtyStatsCache) RecomputeStats();
 
             _upkeepExp = "";
@@ -881,6 +884,7 @@ namespace FactionColonies
             _totalProfit = _totalIncome - _totalUpkeep;
 
             dirtyProfitCache = false;
+            PerfWatchdog.Exit();
         }
 
         private void RecomputeDescription()
@@ -1659,6 +1663,7 @@ namespace FactionColonies
         /// <returns>A list of things produced by tithing resources. May be empty if there are no tithes.</returns>
         public List<Thing> CreateTax(out int silverAmount)
         {
+            PerfWatchdog.Enter("Settlement.CreateTax");
             PreTaxPrep();
             settlementDef.GetSettlementTypeExtension()?.PreTax(this);
             TaxTickRegistry.InvokePreSettlementCreateTax(this);
@@ -1685,6 +1690,7 @@ namespace FactionColonies
             silverAmount = tmpSilverAmount;
             settlementDef.GetSettlementTypeExtension()?.PostTax(this, ref silverAmount, titheThings);
             TaxTickRegistry.InvokePostSettlementCreateTax(this, ref silverAmount, titheThings);
+            PerfWatchdog.Exit();
             return titheThings;
         }
     }

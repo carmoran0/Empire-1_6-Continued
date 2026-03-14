@@ -1,6 +1,9 @@
+using System;
 using System.Diagnostics;
 using System.Threading;
 using UnityEngine;
+
+//#pragma warning disable 612, 618 // Thread.Suspend/Resume and StackTrace(Thread) are deprecated but functional in Mono
 
 namespace FactionColonies
 {
@@ -9,8 +12,8 @@ namespace FactionColonies
     /// Gated behind FCSettings.performanceLogging — no-op when disabled.
     ///
     /// Layer 1 (heartbeat thread): a background thread monitors a counter
-    ///   incremented each tick. If it stalls for 5+ seconds, logs which
-    ///   Empire method the main thread is stuck in.
+    ///   incremented each tick. If it stalls for 5+ seconds, captures the
+    ///   main thread's full stack trace via Thread.Suspend + StackTrace.
     /// Layer 2 (stopwatch): logs a warning if any instrumented call
     ///   exceeds 50ms, catching lag spikes.
     /// </summary>
@@ -25,6 +28,7 @@ namespace FactionColonies
         private static volatile int heartbeat;
         private static volatile bool running;
         private static Thread watchdogThread;
+        private static Thread mainThread;
 
         /// <summary>
         /// Starts the watchdog thread if not already running.
@@ -32,6 +36,10 @@ namespace FactionColonies
         /// </summary>
         public static void EnsureRunning()
         {
+            // Always capture main thread reference (this runs on the main thread)
+            if (mainThread == null)
+                mainThread = Thread.CurrentThread;
+
             if (running || !FCSettings.performanceLogging) return;
             running = true;
             watchdogThread = new Thread(WatchdogLoop);
@@ -66,6 +74,34 @@ namespace FactionColonies
             currentMethod = null;
         }
 
+        /// <summary>
+        /// Attempts to capture the main thread's stack trace using deprecated
+        /// Thread.Suspend/Resume + StackTrace(Thread, bool).
+        /// These APIs are deprecated in .NET Framework 4.x but still functional in Mono.
+        /// Safe here because the main thread is already frozen.
+        /// </summary>
+        private static string CaptureMainThreadStack()
+        {
+            if (mainThread == null) return "(main thread ref not captured)";
+            try
+            {
+                mainThread.Suspend();
+                try
+                {
+                    var st = new StackTrace(mainThread, false);
+                    return st.ToString();
+                }
+                finally
+                {
+                    mainThread.Resume();
+                }
+            }
+            catch (Exception ex)
+            {
+                return "(stack capture failed: " + ex.GetType().Name + ": " + ex.Message + ")";
+            }
+        }
+
         private static void WatchdogLoop()
         {
             int cycle = 0;
@@ -78,11 +114,18 @@ namespace FactionColonies
                 if (heartbeat == snapshot)
                 {
                     string method = currentMethod ?? "(unknown)";
+                    // Capture stack trace twice, 1 second apart.
+                    // Two identical traces = infinite loop. Two different = slow operation.
+                    string stack1 = CaptureMainThreadStack();
+                    Thread.Sleep(1000);
+                    string stack2 = CaptureMainThreadStack();
                     // Use Unity's Debug.LogWarning directly — RimWorld's Log.Warning
                     // acquires lock(logLock) that the frozen main thread may hold,
                     // and can trigger Unity UI calls from this background thread.
                     UnityEngine.Debug.LogWarning("[Empire] PERF FREEZE DETECTED: main thread stuck for "
-                        + FREEZE_DETECT_SECONDS + "+ seconds in: " + method);
+                        + FREEZE_DETECT_SECONDS + "+ seconds in: " + method
+                        + "\n--- Stack Capture 1 ---\n" + stack1
+                        + "\n--- Stack Capture 2 (1s later) ---\n" + stack2);
                 }
                 else if (++cycle >= ALIVE_INTERVAL)
                 {
@@ -98,3 +141,5 @@ namespace FactionColonies
         }
     }
 }
+
+//#pragma warning restore 612, 618

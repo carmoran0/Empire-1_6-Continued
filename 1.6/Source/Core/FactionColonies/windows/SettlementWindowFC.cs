@@ -144,6 +144,7 @@ namespace FactionColonies
 
         public override void DoWindowContents(Rect inRect)
         {
+            PerfWatchdog.Enter("SettlementWindow.DoWindowContents");
             GameFont fontBefore = Text.Font;
             TextAnchor anchorBefore = Text.Anchor;
 
@@ -166,6 +167,7 @@ namespace FactionColonies
 
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;
+            PerfWatchdog.Exit();
         }
 
         /* Left side overview */

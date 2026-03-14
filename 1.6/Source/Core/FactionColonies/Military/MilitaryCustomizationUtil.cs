@@ -81,14 +81,15 @@ namespace FactionColonies
 
         public void CheckMilitaryUtilForErrors()
         {
+            PerfWatchdog.Enter("MilUtil.CheckErrors");
             try
             {
                 if (blankUnit == null)
                 {
                     blankUnit = new MilUnitFC(true);
                 }
-                
-                if (squads == null) return;
+
+                if (squads == null) { PerfWatchdog.Exit(); return; }
                 
                 LogUtil.Message("MilitaryCustomizationUtil: checking for errors on tick " + Find.TickManager.TicksGame);
                 foreach (MilSquadFC squad in squads)
@@ -115,6 +116,7 @@ namespace FactionColonies
             catch (Exception ex)
             {
                 LogUtil.Error($"Error in CheckMilitaryUtilForErrors: {ex.Message}");
+                PerfWatchdog.Exit();
                 return;
             }
 
@@ -146,13 +148,14 @@ namespace FactionColonies
                 }
             }
 
-            if (tickChanged >= GETLatestChange) return;
+            if (tickChanged >= GETLatestChange) { PerfWatchdog.Exit(); return; }
             foreach (var merc in mercenarySquads.Where(merc => merc.outfit != null))
             {
                 merc.OutfitSquad(merc.outfit);
             }
 
             RebuildMercenaryPawnSet();
+            PerfWatchdog.Exit();
         }
 
         public int GETLatestChange
