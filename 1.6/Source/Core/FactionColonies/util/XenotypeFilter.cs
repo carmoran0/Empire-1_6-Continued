@@ -1109,27 +1109,32 @@ namespace FactionColonies.util
                     if (isViolenceCapable)
                     {
                         faction.pawnGroupMakers[2].options.Add(pawnOption); // Settlement
+                        LogUtil.Message("SetPawnGroupMakers: added " + pawnKind.defName + " (combatPower=" + pawnKind.combatPower + ") to Settlement");
                     }
 
                     if (pawnKind.label != "mercenary")
                     {
                         faction.pawnGroupMakers[1].options.Add(pawnOption); // Trader
                         faction.pawnGroupMakers[3].options.Add(pawnOption); // Peaceful
+                        LogUtil.Message("SetPawnGroupMakers: added " + pawnKind.defName + " (combatPower=" + pawnKind.combatPower + ") to Trader, Peaceful");
                     }
 
                     if (pawnKind.isFighter)
                     {
                         faction.pawnGroupMakers[0].options.Add(pawnOption); // Combat
                         faction.pawnGroupMakers[1].guards.Add(pawnOption); // Trader guards
+                        LogUtil.Message("SetPawnGroupMakers: added " + pawnKind.defName + " (combatPower=" + pawnKind.combatPower + ") to Combat, Trader guards");
                     }
                     else if (pawnKind.factionLeader)
                     {
                         faction.pawnGroupMakers[0].options.Add(pawnOption); // Combat (needed for TryGenerateNewLeader)
+                        LogUtil.Message("SetPawnGroupMakers: added " + pawnKind.defName + " (combatPower=" + pawnKind.combatPower + ") to Combat (leader)");
                     }
 
                     if (pawnKind.trader)
                     {
                         faction.pawnGroupMakers[1].traders.Add(pawnOption);
+                        LogUtil.Message("SetPawnGroupMakers: added " + pawnKind.defName + " (combatPower=" + pawnKind.combatPower + ") to Traders");
                     }
                 }
 
@@ -1155,6 +1160,7 @@ namespace FactionColonies.util
 
                         faction.pawnGroupMakers[0].options.Add(guardOption); // Combat
                         faction.pawnGroupMakers[1].guards.Add(guardOption); // Trader guards
+                        LogUtil.Message("SetPawnGroupMakers: added " + guardAnimal.defName + " (combatPower=" + guardAnimal.combatPower + ") to Combat, Trader guards (xenotype guard for " + xenotype.defName + ")");
                     }
                 }
             }
@@ -1177,6 +1183,7 @@ namespace FactionColonies.util
 
                             faction.pawnGroupMakers[0].options.Add(guardOption); // Combat
                             faction.pawnGroupMakers[1].guards.Add(guardOption); // Trader guards
+                            LogUtil.Message("SetPawnGroupMakers: added " + guardAnimal.defName + " (combatPower=" + guardAnimal.combatPower + ") to Combat, Trader guards (custom xenotype guard for " + xenotype + ")");
                         }
                     }
                 }
