@@ -224,8 +224,8 @@ namespace FactionColonies
             "Verse.ThingMaker",
             "Verse.GenSpawn",
             // World pawns
-            "RimWorld.Planet.WorldPawns",
-            "RimWorld.Planet.WorldPawnGC",
+            //"RimWorld.Planet.WorldPawns",
+            //"RimWorld.Planet.WorldPawnGC",
         };
 
         /// <summary>
