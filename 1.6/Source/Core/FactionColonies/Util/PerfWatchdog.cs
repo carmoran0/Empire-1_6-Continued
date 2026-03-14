@@ -41,6 +41,9 @@ namespace FactionColonies
         private static readonly string[] ringBuffer = new string[RING_SIZE];
         private static volatile int ringIndex = 0;
 
+        // Startup audit flag
+        private static bool startupAuditDone;
+
         // Call stack — push on entry, pop on exit, gives live stack at freeze time
         private const int MAX_STACK_DEPTH = 64;
         private static readonly string[] callStack = new string[MAX_STACK_DEPTH];
@@ -70,6 +73,11 @@ namespace FactionColonies
         {
             if (!FCSettings.performanceLogging) return;
             heartbeat++;
+            if (!startupAuditDone)
+            {
+                startupAuditDone = true;
+                RunStartupAudit();
+            }
         }
 
         public static void Enter(string methodName)
@@ -100,7 +108,7 @@ namespace FactionColonies
         {
             if (!FCSettings.performanceLogging) return;
             int idx = ringIndex;
-            ringBuffer[idx % RING_SIZE] = ">> " + method.DeclaringType.Name + "." + method.Name;
+            ringBuffer[idx % RING_SIZE] = ">> " + method.DeclaringType.Name + "." + method.Name + " @" + Environment.TickCount;
             ringIndex = idx + 1;
         }
 
@@ -111,7 +119,7 @@ namespace FactionColonies
         {
             if (!FCSettings.performanceLogging) return;
             int idx = ringIndex;
-            ringBuffer[idx % RING_SIZE] = "<< " + method.DeclaringType.Name + "." + method.Name;
+            ringBuffer[idx % RING_SIZE] = "<< " + method.DeclaringType.Name + "." + method.Name + " @" + Environment.TickCount;
             ringIndex = idx + 1;
         }
 
@@ -256,6 +264,8 @@ namespace FactionColonies
                     if (method.IsSpecialName) continue;
                     if (method.DeclaringType != type) continue;
                     if (method.IsGenericMethodDefinition) continue;
+                    // Skip compiler-generated methods (local functions, lambdas, etc.)
+                    if (method.Name.Contains("<") || method.Name.Contains(">")) continue;
 
                     try
                     {
@@ -272,22 +282,51 @@ namespace FactionColonies
             UnityEngine.Debug.Log("[Empire] PERF: patched " + count + " base game methods for ring buffer (" + failed + " failed)");
         }
 
+        /// <summary>
+        /// Strips the " @timestamp" suffix from a ring buffer entry, returning just the method part.
+        /// </summary>
+        private static string StripTimestamp(string entry)
+        {
+            int atIdx = entry.LastIndexOf(" @");
+            return atIdx >= 0 ? entry.Substring(0, atIdx) : entry;
+        }
+
+        /// <summary>
+        /// Parses the timestamp from a ring buffer entry. Returns 0 if not found.
+        /// </summary>
+        private static int ParseTimestamp(string entry)
+        {
+            int atIdx = entry.LastIndexOf(" @");
+            if (atIdx < 0) return 0;
+            int tick;
+            return int.TryParse(entry.Substring(atIdx + 2), out tick) ? tick : 0;
+        }
+
         private static string DumpRingBuffer()
         {
-            var sb = new StringBuilder(4096);
+            var sb = new StringBuilder(8192);
             int idx = ringIndex; // snapshot volatile
             int start = idx >= RING_SIZE ? idx - RING_SIZE : 0;
+            int prevTick = 0;
             for (int i = start; i < idx; i++)
             {
                 string entry = ringBuffer[i % RING_SIZE];
-                if (entry != null)
-                {
-                    sb.Append("  ");
-                    sb.Append(i - start);
-                    sb.Append(": ");
-                    sb.Append(entry);
-                    sb.Append('\n');
-                }
+                if (entry == null) continue;
+
+                string display = StripTimestamp(entry);
+                int tick = ParseTimestamp(entry);
+                int delta = (prevTick > 0 && tick > 0) ? tick - prevTick : 0;
+
+                sb.Append("  ");
+                sb.Append(i - start);
+                sb.Append(": ");
+                sb.Append(display);
+                if (delta > 100)
+                    sb.Append(" [+" + delta + "ms !!!]");
+                else if (delta > 0)
+                    sb.Append(" [+" + delta + "ms]");
+                sb.Append('\n');
+                if (tick > 0) prevTick = tick;
             }
             return sb.ToString();
         }
@@ -308,13 +347,14 @@ namespace FactionColonies
                 string entry = ringBuffer[i % RING_SIZE];
                 if (entry == null || !entry.StartsWith(">> ")) continue;
 
-                string methodName = entry.Substring(3); // strip ">> "
+                string methodName = StripTimestamp(entry).Substring(3); // strip ">> " after stripping timestamp
+                string exitPrefix = "<< " + methodName;
                 bool matched = false;
                 for (int j = i + 1; j < idx; j++)
                 {
                     string other = ringBuffer[j % RING_SIZE];
                     if (other == null) continue;
-                    if (other == "<< " + methodName)
+                    if (StripTimestamp(other) == exitPrefix)
                     {
                         matched = true;
                         break;
@@ -357,6 +397,119 @@ namespace FactionColonies
                 }
             }
             return sb.Length > 0 ? sb.ToString() : "  (empty)\n";
+        }
+
+        /// <summary>
+        /// At freeze time, dumps all non-Empire Harmony patches on methods that appear in the ring buffer.
+        /// This identifies if another mod's patch is causing the freeze.
+        /// </summary>
+        private static string DumpHarmonyConflicts()
+        {
+            var sb = new StringBuilder(2048);
+
+            // Collect unique method names from ring buffer (strip >> / << prefix and timestamp)
+            var ringMethods = new HashSet<string>();
+            int idx = ringIndex;
+            int start = idx >= RING_SIZE ? idx - RING_SIZE : 0;
+            for (int i = start; i < idx; i++)
+            {
+                string entry = ringBuffer[i % RING_SIZE];
+                if (entry == null) continue;
+                string raw = StripTimestamp(entry);
+                if (raw.StartsWith(">> ")) raw = raw.Substring(3);
+                else if (raw.StartsWith("<< ")) raw = raw.Substring(3);
+                ringMethods.Add(raw);
+            }
+
+            foreach (MethodBase method in Harmony.GetAllPatchedMethods())
+            {
+                string methodId = method.DeclaringType.Name + "." + method.Name;
+                if (!ringMethods.Contains(methodId)) continue;
+
+                Patches patches = Harmony.GetPatchInfo(method);
+                if (patches == null) continue;
+
+                bool hasNonEmpire = false;
+                foreach (HarmonyLib.Patch p in patches.Prefixes)
+                    if (p.owner != "com.Saakra.Empire") { hasNonEmpire = true; break; }
+                if (!hasNonEmpire)
+                    foreach (HarmonyLib.Patch p in patches.Postfixes)
+                        if (p.owner != "com.Saakra.Empire") { hasNonEmpire = true; break; }
+                if (!hasNonEmpire)
+                    foreach (HarmonyLib.Patch p in patches.Transpilers)
+                        if (p.owner != "com.Saakra.Empire") { hasNonEmpire = true; break; }
+
+                if (!hasNonEmpire) continue;
+
+                sb.Append("  ").Append(method.DeclaringType.FullName).Append(".").Append(method.Name).Append(":\n");
+                foreach (HarmonyLib.Patch p in patches.Prefixes)
+                    sb.Append("    PRE [").Append(p.owner).Append("] ").Append(p.PatchMethod.DeclaringType.FullName)
+                      .Append(".").Append(p.PatchMethod.Name).Append('\n');
+                foreach (HarmonyLib.Patch p in patches.Postfixes)
+                    sb.Append("    POST [").Append(p.owner).Append("] ").Append(p.PatchMethod.DeclaringType.FullName)
+                      .Append(".").Append(p.PatchMethod.Name).Append('\n');
+                foreach (HarmonyLib.Patch p in patches.Transpilers)
+                    sb.Append("    TRANS [").Append(p.owner).Append("] ").Append(p.PatchMethod.DeclaringType.FullName)
+                      .Append(".").Append(p.PatchMethod.Name).Append('\n');
+            }
+
+            return sb.Length > 0 ? sb.ToString() : "  (no non-Empire patches on ring buffer methods)\n";
+        }
+
+        /// <summary>
+        /// Runs once on first tick. Logs all methods that have Harmony patches from both Empire and another mod.
+        /// </summary>
+        private static void RunStartupAudit()
+        {
+            var sb = new StringBuilder(4096);
+            sb.AppendLine("[Empire] PERF: Harmony patch audit — methods with both Empire and other mod patches:");
+            int conflicts = 0;
+
+            foreach (MethodBase method in Harmony.GetAllPatchedMethods())
+            {
+                Patches patches = Harmony.GetPatchInfo(method);
+                if (patches == null) continue;
+
+                bool hasEmpire = false;
+                bool hasOther = false;
+                var otherOwners = new HashSet<string>();
+
+                foreach (HarmonyLib.Patch p in patches.Prefixes)
+                {
+                    if (p.owner == "com.Saakra.Empire") hasEmpire = true;
+                    else { hasOther = true; otherOwners.Add(p.owner); }
+                }
+                foreach (HarmonyLib.Patch p in patches.Postfixes)
+                {
+                    if (p.owner == "com.Saakra.Empire") hasEmpire = true;
+                    else { hasOther = true; otherOwners.Add(p.owner); }
+                }
+                foreach (HarmonyLib.Patch p in patches.Transpilers)
+                {
+                    if (p.owner == "com.Saakra.Empire") hasEmpire = true;
+                    else { hasOther = true; otherOwners.Add(p.owner); }
+                }
+
+                if (hasEmpire && hasOther)
+                {
+                    conflicts++;
+                    sb.Append("  ").Append(method.DeclaringType.FullName).Append(".").Append(method.Name);
+                    sb.Append(" — shared with: ");
+                    bool first = true;
+                    foreach (string owner in otherOwners)
+                    {
+                        if (!first) sb.Append(", ");
+                        sb.Append(owner);
+                        first = false;
+                    }
+                    sb.Append('\n');
+                }
+            }
+
+            if (conflicts == 0) sb.AppendLine("  (none)");
+            else sb.Append("  (").Append(conflicts).AppendLine(" conflicts total)");
+
+            UnityEngine.Debug.Log(sb.ToString());
         }
 
         #endregion
@@ -417,6 +570,7 @@ namespace FactionColonies
                     string liveStack = DumpCallStack();
                     string recentCalls = DumpRingBuffer();
                     string unmatchedEntries = FindUnmatchedEntries();
+                    string harmonyConflicts = DumpHarmonyConflicts();
                     // Capture stack trace twice, 1 second apart (best-effort, may fail on Mono).
                     string stack1 = CaptureMainThreadStack();
                     Thread.Sleep(1000);
@@ -430,6 +584,7 @@ namespace FactionColonies
                         + "\n--- Live Call Stack ---\n" + liveStack
                         + "\n--- Recent Method Calls (ring buffer, oldest first) ---\n" + recentCalls
                         + "\n--- Unmatched Entries (reconstructed call stack) ---\n" + unmatchedEntries
+                        + "\n--- Harmony Patches (non-Empire) on Ring Buffer Methods ---\n" + harmonyConflicts
                         + "\n--- Stack Capture 1 ---\n" + stack1
                         + "\n--- Stack Capture 2 (1s later) ---\n" + stack2);
                 }
