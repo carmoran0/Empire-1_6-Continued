@@ -216,6 +216,7 @@ namespace FactionColonies
                 }
 
                 harmony.PatchAll();
+                PerfWatchdog.InstallBulkPatches(harmony);
                 harmonyPatched = true;
             }
         }
