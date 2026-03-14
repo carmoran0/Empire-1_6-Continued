@@ -23,6 +23,7 @@
 	<FCSettingDefenderAdvantage>Defender Advantage</FCSettingDefenderAdvantage>
 	<FCSettingMinMaxRandomEvent>Min/Max Days Until Random Event</FCSettingMinMaxRandomEvent>
 	<FCSettingEnableDebugLogging>Enable Verbose Logging</FCSettingEnableDebugLogging>
+	<FCSettingEnablePerfLogging>Enable Performance Logging (for diagnosing freezes)</FCSettingEnablePerfLogging>
 	<FCSettingResetButton>Reset Settings</FCSettingResetButton>
 	<FCOpenPatchNotes>Open Patch Notes Window</FCOpenPatchNotes>
 

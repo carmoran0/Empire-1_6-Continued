@@ -116,6 +116,8 @@ namespace FactionColonies
             if (Find.TickManager.TicksGame % 250 != 0) return;
             if (Map == null) return;
 
+            PerfWatchdog.Enter("SettlementMilitary.CompTick");
+
             // Clean stale references (null from failed save/load resolution)
             attackers.RemoveAll(p => p == null || p.Destroyed);
             defenders.RemoveAll(p => p == null || p.Destroyed);
@@ -132,6 +134,8 @@ namespace FactionColonies
                         LogUtil.Error(error.Message);
                     });
             }
+
+            PerfWatchdog.Exit();
         }
 
         private static string FoundSettlementString(WorldSettlementFC settlement)

@@ -472,10 +472,20 @@ namespace FactionColonies
                 firstTick = false;
             }
 
-            FCEventMaker.ProcessEvents(in events);
-            billUtility.ProcessBills();
+            PerfWatchdog.EnsureRunning();
+            PerfWatchdog.Heartbeat();
 
+            PerfWatchdog.Enter("FCEventMaker.ProcessEvents");
+            FCEventMaker.ProcessEvents(in events);
+            PerfWatchdog.Exit();
+
+            PerfWatchdog.Enter("BillUtility.ProcessBills");
+            billUtility.ProcessBills();
+            PerfWatchdog.Exit();
+
+            PerfWatchdog.Enter("FireSupportTick");
             FireSupportTick();
+            PerfWatchdog.Exit();
 
             /* Check on the leader */
             //This check used to exist in updateTechLevel(), but it doesn't really seem appropriate there. So, moved it here.
@@ -486,17 +496,42 @@ namespace FactionColonies
                     ColonyUtil.CreatePlayerFactionLeader(faction);
                 }
             }
+
+            PerfWatchdog.Enter("TaxTick");
             TaxTick(faction);
+            PerfWatchdog.Exit();
+
+            PerfWatchdog.Enter("UITick");
             UITick(faction);
+            PerfWatchdog.Exit();
+
+            PerfWatchdog.Enter("StatTick");
             StatTick(faction);
+            PerfWatchdog.Exit();
+
+            PerfWatchdog.Enter("MilitaryTick");
             MilitaryTick(faction);
+            PerfWatchdog.Exit();
+
+            PerfWatchdog.Enter("ThreatAdaptation.Tick");
             threatAdaptation.Tick();
+            PerfWatchdog.Exit();
+
             if (pendingEdictActivations.Count > 0 && Find.TickManager.TicksGame % 250 == 0)
+            {
+                PerfWatchdog.Enter("CheckEdictActivations");
                 CheckEdictActivations();
+                PerfWatchdog.Exit();
+            }
             if (!(faction is null))
             {
+                PerfWatchdog.Enter("RoadTick");
                 roadBuilder.RoadTick();
+                PerfWatchdog.Exit();
+
+                PerfWatchdog.Enter("TickActions");
                 TickActions();
+                PerfWatchdog.Exit();
             }
         }
 

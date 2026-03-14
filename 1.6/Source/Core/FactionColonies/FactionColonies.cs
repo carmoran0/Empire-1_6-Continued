@@ -138,6 +138,9 @@ namespace FactionColonies
         private static bool printDebug = false;
         public static bool PrintDebug => printDebug;
 
+        /* Flag for performance watchdog logging. */
+        public static bool performanceLogging = false;
+
         // Window size settings - add these fields
         public static float buildingWindowWidth = 800f;
         public static float buildingWindowHeight = 600f;
@@ -165,6 +168,7 @@ namespace FactionColonies
             Scribe_Values.Look(ref buildingWindowHeight, "buildingWindowHeight", 600f);
             Scribe_Values.Look(ref difficultyLevel, "difficultyLevel", DEFAULT_DIFFICULTY_LEVEL);
             Scribe_Values.Look(ref printDebug, "printDebug", false);
+            Scribe_Values.Look(ref performanceLogging, "performanceLogging", false);
             Scribe_Values.Look(ref maxThreatMultiplier, "maxThreatMultiplier", DEFAULT_MAX_THREAT_MULTIPLIER);
             Scribe_Values.Look(ref defenderAdvantage, "defenderAdvantage", DEFAULT_DEFENDER_ADVANTAGE);
 
@@ -488,6 +492,7 @@ namespace FactionColonies
             maxDaysTillRandomEvent = Math.Max(1, minMaxDaysTillRandomEvent.max);
 
             ls.CheckboxLabeled("FCSettingEnableDebugLogging".Translate(), ref printDebug);
+            ls.CheckboxLabeled("FCSettingEnablePerfLogging".Translate(), ref performanceLogging);
 
             if (ls.ButtonText("FCOpenPatchNotes".Translate())) DebugActionsMisc.PatchNotesDisplayWindow();
 

@@ -28,6 +28,7 @@ namespace FactionColonies
 
             SettlementTypeExtension_Orbital.InvalidateCache();
             FactionDefDescriptionPatch.Invalidate();
+            PerfWatchdog.Shutdown();
         }
     }
 }
