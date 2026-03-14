@@ -217,6 +217,7 @@ namespace FactionColonies
 
                 harmony.PatchAll();
                 PerfWatchdog.InstallBulkPatches(harmony);
+                PerfWatchdog.InstallBaseGamePatches(harmony);
                 harmonyPatched = true;
             }
         }
@@ -797,7 +798,7 @@ namespace FactionColonies
             }
 
             Faction playerColonyfaction = FactionCache.PlayerColonyFaction;
-            if (playerColonyfaction != null && playerColonyfaction.def.techLevel < _techLevel)
+            if (playerColonyfaction != null && playerColonyfaction.def.techLevel != _techLevel)
             {
                 LogUtil.Message("Updating Tech Level");
                 UpdateFactionDef(_techLevel, ref playerColonyfaction);

@@ -1,12 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Threading;
 using HarmonyLib;
 using UnityEngine;
-
-#pragma warning disable 612, 618 // Thread.Suspend/Resume and StackTrace(Thread) are deprecated but functional in Mono
 
 namespace FactionColonies
 {
@@ -19,8 +18,8 @@ namespace FactionColonies
     ///   method calls from a ring buffer + attempts stack trace capture.
     /// Layer 2 (stopwatch): logs a warning if any instrumented call
     ///   exceeds 50ms, catching lag spikes.
-    /// Layer 3 (ring buffer): every Empire method call is recorded via
-    ///   Harmony bulk patching. On freeze, the last 256 calls are dumped.
+    /// Layer 3 (ring buffer): every Empire + targeted base game method call is recorded via
+    ///   Harmony bulk patching. On freeze, the last 1024 calls are dumped.
     /// Layer 4 (call stack): push on method entry, pop on exit — gives
     ///   exact live call stack at freeze time.
     /// </summary>
@@ -37,8 +36,8 @@ namespace FactionColonies
         private static Thread watchdogThread;
         private static Thread mainThread;
 
-        // Ring buffer — records every Empire method call for freeze diagnostics
-        private const int RING_SIZE = 256;
+        // Ring buffer — records every Empire + base game method call for freeze diagnostics
+        private const int RING_SIZE = 1024;
         private static readonly string[] ringBuffer = new string[RING_SIZE];
         private static volatile int ringIndex = 0;
 
@@ -193,6 +192,86 @@ namespace FactionColonies
             UnityEngine.Debug.Log("[Empire] PERF: bulk-patched " + count + " methods for ring buffer recording (" + failed + " failed)");
         }
 
+        // Base game classes to instrument for freeze diagnosis
+        private static readonly string[] targetBaseGameTypes = new string[]
+        {
+            // Pawn generation pipeline
+            "Verse.PawnGenerator",
+            "RimWorld.PawnBioAndNameGenerator",
+            "RimWorld.PawnApparelGenerator",
+            "RimWorld.PawnWeaponGenerator",
+            "RimWorld.PawnTechHediffsGenerator",
+            // Trading & stock generation
+            "RimWorld.ThingSetMaker_TraderStock",
+            "RimWorld.StockGeneratorUtility",
+            "RimWorld.StockGenerator_Animals",
+            "RimWorld.StockGenerator_BuyCategory",
+            "RimWorld.StockGenerator_Category",
+            "RimWorld.StockGenerator_MarketValue",
+            "RimWorld.StockGenerator_SingleDef",
+            "RimWorld.StockGenerator_MultiDef",
+            "RimWorld.StockGenerator_Tag",
+            "RimWorld.StockGenerator_Slaves",
+            "RimWorld.StockGenerator_WeaponsRanged",
+            // Incident & group spawning
+            "RimWorld.IncidentWorker_TraderCaravanArrival",
+            "RimWorld.IncidentWorker_NeutralGroup",
+            "RimWorld.PawnGroupKindWorker_Trader",
+            "RimWorld.PawnGroupMakerUtility",
+            "RimWorld.TraderCaravanUtility",
+            // Stuff/material selection (IsDerpWeapon lives here)
+            "RimWorld.GenStuff",
+            "Verse.ThingMaker",
+            "Verse.GenSpawn",
+            // World pawns
+            "RimWorld.Planet.WorldPawns",
+            "RimWorld.Planet.WorldPawnGC",
+        };
+
+        /// <summary>
+        /// Installs prefix + postfix on targeted base game methods for freeze diagnosis.
+        /// Covers pawn generation, stock generation, trading, and incident systems.
+        /// Call once after InstallBulkPatches(). Only patches when performanceLogging is enabled.
+        /// </summary>
+        public static void InstallBaseGamePatches(Harmony harmony)
+        {
+            if (!FCSettings.performanceLogging) return;
+
+            var targets = new HashSet<string>(targetBaseGameTypes);
+            var prefix = new HarmonyMethod(typeof(PerfWatchdog).GetMethod("BulkPrefix", BindingFlags.Public | BindingFlags.Static));
+            var postfix = new HarmonyMethod(typeof(PerfWatchdog).GetMethod("BulkPostfix", BindingFlags.Public | BindingFlags.Static));
+            int count = 0;
+            int failed = 0;
+
+            Assembly baseGameAssembly = typeof(Verse.Pawn).Assembly;
+
+            foreach (Type type in baseGameAssembly.GetTypes())
+            {
+                if (type.FullName == null || !targets.Contains(type.FullName)) continue;
+
+                foreach (MethodInfo method in type.GetMethods(
+                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly))
+                {
+                    if (method.IsAbstract) continue;
+                    if (method.IsSpecialName) continue;
+                    if (method.DeclaringType != type) continue;
+                    if (method.IsGenericMethodDefinition) continue;
+
+                    try
+                    {
+                        harmony.Patch(method, prefix: prefix, postfix: postfix);
+                        count++;
+                    }
+                    catch (Exception ex)
+                    {
+                        failed++;
+                        UnityEngine.Debug.Log("[Empire] PERF: failed to patch base game " + type.Name + "." + method.Name + ": " + ex.Message);
+                    }
+                }
+            }
+            UnityEngine.Debug.Log("[Empire] PERF: patched " + count + " base game methods for ring buffer (" + failed + " failed)");
+        }
+
         private static string DumpRingBuffer()
         {
             var sb = new StringBuilder(4096);
@@ -314,6 +393,7 @@ namespace FactionColonies
         private static void WatchdogLoop()
         {
             int cycle = 0;
+            int totalFreezeMs = 0;
             int freezeDumpCount = 0;
             const int ALIVE_INTERVAL = 6; // log "alive" every 6 cycles (30s at 5s sleep)
             while (running)
@@ -341,11 +421,12 @@ namespace FactionColonies
                     string stack1 = CaptureMainThreadStack();
                     Thread.Sleep(1000);
                     string stack2 = CaptureMainThreadStack();
+                    totalFreezeMs += sleepMs;
                     // Use Unity's Debug.LogWarning directly — RimWorld's Log.Warning
                     // acquires lock(logLock) that the frozen main thread may hold,
                     // and can trigger Unity UI calls from this background thread.
                     UnityEngine.Debug.LogWarning("[Empire] PERF FREEZE DETECTED (dump #" + freezeDumpCount
-                        + "): main thread stuck for " + (sleepMs / 1000) + "+ seconds in: " + method
+                        + "): main thread stuck for " + (totalFreezeMs / 1000) + "+ seconds in: " + method
                         + "\n--- Live Call Stack ---\n" + liveStack
                         + "\n--- Recent Method Calls (ring buffer, oldest first) ---\n" + recentCalls
                         + "\n--- Unmatched Entries (reconstructed call stack) ---\n" + unmatchedEntries
@@ -370,5 +451,3 @@ namespace FactionColonies
         }
     }
 }
-
-#pragma warning restore 612, 618
