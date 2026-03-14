@@ -166,12 +166,17 @@ namespace FactionColonies
                 if (type.Namespace == null || !type.Namespace.StartsWith("FactionColonies")) continue;
                 // Skip the watchdog itself to avoid recursion
                 if (type == typeof(PerfWatchdog)) continue;
+                // Skip test infrastructure — generics/throwing stubs cause Harmony IL errors
+                string fullName = type.FullName ?? "";
+                if (fullName.Contains("TestAssert") || fullName.Contains("TestRunner")
+                    || fullName.Contains("Throwing") || fullName.Contains("Tests+")) continue;
 
                 foreach (MethodInfo method in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly))
                 {
                     if (method.IsAbstract) continue;
                     if (method.IsSpecialName) continue; // skip property getters/setters, operators
                     if (method.DeclaringType != type) continue; // skip inherited
+                    if (method.IsGenericMethodDefinition) continue; // Harmony can't patch open generics
 
                     try
                     {
