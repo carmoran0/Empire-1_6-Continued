@@ -118,12 +118,12 @@ namespace FactionColonies
         public void InitiateSquad()
         {
             mercenaries = new List<Mercenary>();
+            animals = new List<Mercenary>();
             UsedApparelList = new List<Apparel>();
             UsedWeaponList = new List<ThingWithComps>();
 
             if (outfit == null)
             {
-                animals = new List<Mercenary>();
                 for (int k = 0; k < 30; k++)
                 {
                     Mercenary pawn = new Mercenary(true);
@@ -132,6 +132,7 @@ namespace FactionColonies
                     if (pawn?.pawn != null)
                     {
                         mercenaries.Add(pawn);
+                        TryAssignSecurityGuard(pawn);
                     }
                     else
                     {
@@ -149,6 +150,7 @@ namespace FactionColonies
                     if (pawn?.pawn != null)
                     {
                         mercenaries.Add(pawn);
+                        TryAssignSecurityGuard(pawn);
                     }
                     else
                     {
@@ -331,6 +333,7 @@ namespace FactionColonies
                 LogUtil.Warning($"Pawn generation failed for {raceChoice?.defName}. Trying fallback without faction.");
                 try
                 {
+                    bool requireViolence = !(FactionCache.FactionComp?.xenotypeFilter?.OnlyNonViolentXenos == true);
                     var simpleRequest = new PawnGenerationRequest(
                         kind: PawnKindDefOf.Colonist,
                         faction: null,
@@ -340,7 +343,7 @@ namespace FactionColonies
                         allowDead: false,
                         allowDowned: false,
                         canGeneratePawnRelations: false,
-                        mustBeCapableOfViolence: true,
+                        mustBeCapableOfViolence: requireViolence,
                         colonistRelationChanceFactor: 0,
                         forceAddFreeWarmLayerIfNeeded: false,
                         allowGay: true,
@@ -459,6 +462,7 @@ namespace FactionColonies
             if (pawn2?.pawn != null)
             {
                 mercenaries.Replace(merc, pawn2);
+                TryAssignSecurityGuard(pawn2);
             }
             else
             {
@@ -569,6 +573,7 @@ namespace FactionColonies
                         else
                         {
                             mercenaries[count].animal = null;
+                            TryAssignSecurityGuard(mercenaries[count]);
                         }
 
                         mercenaries[count].loadout = loadout;
@@ -631,7 +636,8 @@ namespace FactionColonies
                 }
             }
 
-            if (merc.pawn.equipment != null)
+            // Non-violent pawns (e.g. Highmate) rely on guard animals — skip weapons
+            if (merc.pawn.equipment != null && !merc.pawn.WorkTagIsDisabled(WorkTags.Violent))
             {
                 foreach (SavedThing weaponDef in loadout.weapons)
                 {

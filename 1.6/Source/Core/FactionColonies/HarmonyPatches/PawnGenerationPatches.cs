@@ -47,6 +47,11 @@ namespace FactionColonies
                 XenotypeFilter filter = FactionCache.FactionComp?.xenotypeFilter;
                 if (filter is null) return;
 
+                if (request.MustBeCapableOfViolence && filter.OnlyNonViolentXenos)
+                {
+                    request.MustBeCapableOfViolence = false;
+                }
+
                 XenotypeDef chosenXenotype = null;
                 CustomXenotype chosenCustomXenotype = null;
 

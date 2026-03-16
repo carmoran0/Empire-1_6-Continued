@@ -7,6 +7,15 @@ namespace FactionColonies.util
 	class FCPawnGenerator
 	{
 		/// <summary>
+		/// Returns false if the faction has violence-capable xenotypes.
+		/// True when all enabled xenotypes are non-violent (guard animals handle combat instead).
+		/// </summary>
+		private static bool FactionOnlyNonViolent()
+		{
+			return (FactionCache.FactionComp?.xenotypeFilter?.OnlyNonViolentXenos == true);
+		}
+
+		/// <summary>
 		/// Generates a pawn with a specific forced xenotype that the PawnGenerationPatches prefix
 		/// will respect (instead of overriding with the xenotype filter).
 		/// Use this for designed military units where the player chose a specific xenotype.
@@ -53,7 +62,7 @@ namespace FactionColonies.util
 				allowDead: false,
 				allowDowned: false,
 				canGeneratePawnRelations: true,
-				mustBeCapableOfViolence: true,
+				mustBeCapableOfViolence: !FactionOnlyNonViolent(),
 				colonistRelationChanceFactor: 0,
 				forceAddFreeWarmLayerIfNeeded: false,
 				allowGay: true,
@@ -172,7 +181,7 @@ namespace FactionColonies.util
 				allowDead: false,
 				allowDowned: false,
 				canGeneratePawnRelations: true,
-				mustBeCapableOfViolence: true,
+				mustBeCapableOfViolence: !FactionOnlyNonViolent(),
 				colonistRelationChanceFactor: 0,
 				forceAddFreeWarmLayerIfNeeded: false,
 				allowGay: true,

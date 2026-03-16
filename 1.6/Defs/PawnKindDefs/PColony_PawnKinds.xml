@@ -26,7 +26,7 @@
 			<li>Gun</li>
 			<li>MedievalMeleeBasic</li>
 		</weaponTags>
-		<requiredWorkTags>Violent</requiredWorkTags>
+
 		<apparelMoney>400~600</apparelMoney>
 		<apparelTags>
 			<li>IndustrialMilitaryBasic</li>
@@ -56,7 +56,7 @@
 			<li>Gun</li>
 			<li>MedievalMeleeBasic</li>
 		</weaponTags>
-		<requiredWorkTags>Violent</requiredWorkTags>
+
 		<apparelMoney>600~1000</apparelMoney>
 		<apparelTags>
 			<li>IndustrialMilitaryBasic</li>
@@ -148,7 +148,7 @@
 		<weaponTags>
 			<li>Gun</li>
 		</weaponTags>
-		<requiredWorkTags>Violent</requiredWorkTags>
+
 		<apparelMoney>400~600</apparelMoney>
 		<apparelTags>
 			<li>IndustrialMilitaryBasic</li>
