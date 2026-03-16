@@ -590,9 +590,7 @@ namespace FactionColonies.util
             {
                 return false;
             }
-            bool needsViolence = request.MustBeCapableOfViolence
-                || (request.KindDef.weaponTags != null && request.KindDef.weaponTags.Count > 0)
-                || (request.KindDef.requiredWorkTags & WorkTags.Violent) != WorkTags.None;
+            bool needsViolence = request.MustBeCapableOfViolence;
             if (needsViolence && FactionCache.XenotypeIsNonViolent(xenotype))
             {
                 return false;
