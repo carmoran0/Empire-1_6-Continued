@@ -146,6 +146,10 @@ namespace FactionColonies
                 if (canConfirm)
                 {
                     unit.xenotype = selectedDef;
+                    if (FactionCache.XenotypeIsNonViolent(selectedDef))
+                    {
+                        unit.ClearWeapon();
+                    }
                     unit.RerollPreviewPawn();
                     Close();
                 }

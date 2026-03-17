@@ -455,7 +455,13 @@ namespace FactionColonies
             }
 
             // --- Weapon Slot ---
-            if (!isSelectedUnitDeployed && Widgets.ButtonInvisible(EquipmentWeapon))
+            bool unitIsNonViolent = FactionCache.XenotypeIsNonViolent(selectedUnit.xenotype);
+            if (unitIsNonViolent)
+            {
+                Widgets.DrawBoxSolid(EquipmentWeapon, new Color(0.2f, 0.2f, 0.2f, 0.5f));
+                TooltipHandler.TipRegion(EquipmentWeapon, "FCNonViolentNoWeapons".Translate());
+            }
+            else if (!isSelectedUnitDeployed && Widgets.ButtonInvisible(EquipmentWeapon))
             {
                 List<ThingDef> weaponDefs = DefDatabase<ThingDef>.AllDefs
                     .Where(t => t.IsWeapon && t.BaseMarketValue != 0 && CraftUtil.CanCraftItem(t)
@@ -539,7 +545,7 @@ namespace FactionColonies
                 }
             }
 
-            if (selectedUnit.HasWeapon)
+            if (selectedUnit.HasWeapon && !FactionCache.XenotypeIsNonViolent(selectedUnit.xenotype))
             {
                 Widgets.ButtonImage(EquipmentWeapon, selectedUnit.weapons[0].thing.uiIcon);
             }
