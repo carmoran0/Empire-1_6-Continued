@@ -48,11 +48,11 @@ namespace FactionColonies
             Rect searchRect = new Rect(0, 40f, inRect.width, SearchBarHeight);
             searchTerm = Widgets.TextField(searchRect, searchTerm);
 
-            // Build xeno list (same logic as DesignUnitsWindow lines 214-236)
+            // Build xeno list — includes non-violent xenotypes (they get a warning label)
             List<string> seenXenos = new List<string>();
             List<(XenotypeDef def, string label)> xenoOptions = new List<(XenotypeDef, string)>();
 
-            foreach (XenotypeDef def in FactionCache.ViolentXenotypeDefs)
+            foreach (XenotypeDef def in FactionCache.XenotypeDefs)
             {
                 xenoOptions.Add((def, def.label.CapitalizeFirst()));
             }
@@ -79,6 +79,7 @@ namespace FactionColonies
             for (int i = 0; i < filtered.Count; i++)
             {
                 var (def, label) = filtered[i];
+                bool isNonViolent = FactionCache.XenotypeIsNonViolent(def);
                 Rect row = new Rect(0, i * RowHeight, scrollViewRect.width, RowHeight);
 
                 if (def == selectedDef)
@@ -93,8 +94,25 @@ namespace FactionColonies
                 Text.Anchor = TextAnchor.MiddleLeft;
                 Rect labelRect = new Rect(iconRect.xMax + 5f, row.y, row.width - IconSize - 10f, RowHeight);
                 float xenoFactor = def.genes.Aggregate(1f, (acc, g) => acc * g.marketValueFactor);
+                if (isNonViolent) xenoFactor *= 0.25f;
                 string costText = xenoFactor != 1f ? " (x" + xenoFactor.ToString("F2") + $" {"Cost".Translate()})" : "";
-                Widgets.Label(labelRect, label + costText);
+
+                Color prevColor = GUI.color;
+                if (isNonViolent)
+                {
+                    GUI.color = new Color(1f, 0.85f, 0.4f); // amber warning
+                    Widgets.Label(labelRect, label + costText + " [" + "FCNonViolent".Translate() + "]");
+                }
+                else
+                {
+                    Widgets.Label(labelRect, label + costText);
+                }
+                GUI.color = prevColor;
+
+                if (isNonViolent)
+                {
+                    TooltipHandler.TipRegion(row, "FCNonViolentXenoTooltip".Translate());
+                }
 
                 if (Widgets.ButtonInvisible(row))
                 {

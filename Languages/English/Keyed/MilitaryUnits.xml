@@ -65,6 +65,8 @@
 	<!-- Unit Race/PawnKind Errors -->
 	<changeUnitRaceNoRaces>No available races</changeUnitRaceNoRaces>
 	<changeUnitXenoNoXenos>No available Xeno</changeUnitXenoNoXenos>
+	<FCNonViolent>Non-Violent</FCNonViolent>
+	<FCNonViolentXenoTooltip>This xenotype is incapable of violence. They will not carry weapons and require a guard animal for combat.</FCNonViolentXenoTooltip>
 	<noPawnKindDefOfTypeOfRaceWarning>Couldn't find any{0}PawnKindDefs for techlevels: {1} with the {2} race. Empire will generate {2}{3}using the techlevel: {4}.</noPawnKindDefOfTypeOfRaceWarning>
 	<noPawnKindDefOfTypeOfRaceError>Couldn't find any{0}PawnKindDefs for any techlevel with the {1} race. They will not be able to be generated!</noPawnKindDefOfTypeOfRaceError>
 	<missingPawnKindDefsCriticalError>The races you selected are missing critical PawnKindDefs! Your faction may generate Humans to fill the gap.</missingPawnKindDefsCriticalError>

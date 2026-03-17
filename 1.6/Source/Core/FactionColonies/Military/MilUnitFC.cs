@@ -302,6 +302,11 @@ namespace FactionColonies
                             xenoFactor *= gene.marketValueFactor;
                     }
                 }
+                // Non-violent xenotypes cost much less — they can't fight, relying on guard animals
+                if (FactionCache.XenotypeIsNonViolent(xenotype))
+                {
+                    xenoFactor *= 0.25f;
+                }
                 totalCost += Math.Floor(pawnKind.race.BaseMarketValue * FCSettings.militaryRaceCostMultiplier * xenoFactor);
             }
 

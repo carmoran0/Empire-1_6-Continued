@@ -663,6 +663,24 @@ namespace FactionColonies
                         IncidentParmsUtility.GetDefaultPawnGroupMakerParms(
                             PawnGroupKindDefOf.Combat, parms, true)).ToList();
                     if (!friendlies.Any()) LogUtil.Error("Got no pawns spawning raid from parms " + parms);
+
+                    // Add guard animals for non-violent factions
+                    XenotypeFilter xenoFilter = FactionCache.FactionComp?.xenotypeFilter;
+                    if (xenoFilter != null && xenoFilter.OnlyNonViolentXenos)
+                    {
+                        List<PawnKindDef> guardAnimals = xenoFilter.GuardAnimals;
+                        if (guardAnimals != null && guardAnimals.Any())
+                        {
+                            int humanCount = friendlies.Count(p => p.RaceProps.Humanlike);
+                            int animalCount = Math.Max(1, humanCount / 2);
+                            for (int i = 0; i < animalCount; i++)
+                            {
+                                PawnKindDef animalKind = guardAnimals.RandomElement();
+                                Pawn animal = PawnGenerator.GeneratePawn(FCPawnGenerator.AnimalRequest(animalKind));
+                                if (animal != null) friendlies.Add(animal);
+                            }
+                        }
+                    }
                 }
             } // end else (no external defender pawns)
 

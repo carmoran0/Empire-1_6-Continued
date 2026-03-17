@@ -989,43 +989,11 @@ namespace FactionColonies.util
 
             ReweightPawnGroupMakers();
 
-            // Add security guard animals for non-violent xenotypes
-            foreach (XenotypeDef xenotype in XenotypeWeights.Keys)
-            {
-                if (securityGuardsByXenotype.ContainsKey(xenotype) && securityGuardsByXenotype[xenotype].List.Any())
-                {
-                    foreach (var guardAnimal in securityGuardsByXenotype[xenotype].List)
-                    {
-                        var guardOption = new PawnGenOption
-                        {
-                            kind = guardAnimal,
-                            selectionWeight = 1
-                        };
-                        faction.pawnGroupMakers[0].options.Add(guardOption); // Combat
-                        faction.pawnGroupMakers[1].guards.Add(guardOption); // Trader guards
-                    }
-                }
-            }
-
-            if (customXenotypeWeights.Count > 0)
-            {
-                foreach (string xenotype in CustomXenotypeWeights.Keys)
-                {
-                    if (securityGuardsByCustomXenotype.ContainsKey(xenotype) && securityGuardsByCustomXenotype[xenotype].List.Any())
-                    {
-                        foreach (var guardAnimal in securityGuardsByCustomXenotype[xenotype].List)
-                        {
-                            var guardOption = new PawnGenOption
-                            {
-                                kind = guardAnimal,
-                                selectionWeight = 1
-                            };
-                            faction.pawnGroupMakers[0].options.Add(guardOption); // Combat
-                            faction.pawnGroupMakers[1].guards.Add(guardOption); // Trader guards
-                        }
-                    }
-                }
-            }
+            // Guard animals for non-violent xenotypes are NOT added to pawnGroupMakers here.
+            // Vanilla's GetOptions pipeline (XenotypesAvailableFor) silently drops animal PawnKindDefs.
+            // Instead, guard animals are injected via:
+            //   - TraderCaravanPatches postfix (for trader caravans)
+            //   - TryAssignSecurityGuard (for Empire military squads)
         }
         private void RefreshPawnGroupMakers()
         {
