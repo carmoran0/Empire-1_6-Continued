@@ -293,6 +293,7 @@ namespace FactionColonies
         }
         public static bool XenotypeIsNonViolent(XenotypeDef xenotype)
         {
+            if (xenotype == null) return false;
             if (XenotypeViolence?.TryGetValue(xenotype, out bool violent) == true)
             {
                 return !violent;
