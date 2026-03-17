@@ -28,7 +28,7 @@ namespace FactionColonies
 
 			Faction playerColonyFaction = FactionCache.PlayerColonyFaction;
 			
-			if (__instance.Faction == playerColonyFaction)
+			if (__instance.Faction == playerColonyFaction && !__instance.RaceProps.Animal)
 			{
 				Pawn pawn = __instance;
 

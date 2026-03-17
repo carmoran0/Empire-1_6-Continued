@@ -714,20 +714,22 @@ namespace FactionColonies
                         var pair = riders.FirstOrDefault(p => p.Value.thingIDNumber == friendly.thingIDNumber);
                         if (pair.Key == null)
                         {
-                            var isAnimal = friendly.RaceProps.Animal ? "animal" : "human";
-                            LogUtil.Error("No rider pair found for " + isAnimal + ": " + friendly.thingIDNumber + ", and riders dictionary is not empty!");
-                            continue;
+                            // No rider pair — guard animal without a handler, spawn at regular location
+                            tryFindLoc(out loc, friendly);
                         }
-                        var owner = pair.Key;
-                        CellFinder.TryFindRandomCellInsideWith(new CellRect((int)owner.DrawPos.x - 5,
-                                (int)owner.DrawPos.z - 5, 10, 10),
-                            testing => testing.Standable(Map) && Map.reachability.CanReachMapEdge(testing,
-                                TraverseParms.For(TraverseMode.PassDoors)), out loc);
+                        else
+                        {
+                            var owner = pair.Key;
+                            CellFinder.TryFindRandomCellInsideWith(new CellRect((int)owner.DrawPos.x - 5,
+                                    (int)owner.DrawPos.z - 5, 10, 10),
+                                testing => testing.Standable(Map) && Map.reachability.CanReachMapEdge(testing,
+                                    TraverseParms.For(TraverseMode.PassDoors)), out loc);
+                        }
                     }
                     else
                     {
-                        LogUtil.Error("Rider Dictionary is empty but animal was still generated?");
-                        continue;
+                        // No riders at all — guard animals from auto-generated defenders
+                        tryFindLoc(out loc, friendly);
                     }
                 }
                 else
