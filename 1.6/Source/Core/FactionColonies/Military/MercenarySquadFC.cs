@@ -637,7 +637,7 @@ namespace FactionColonies
             }
 
             // Non-violent pawns (e.g. Highmate) rely on guard animals — skip weapons
-            if (merc.pawn.equipment != null && !merc.pawn.WorkTagIsDisabled(WorkTags.Violent))
+            if (merc.pawn.equipment != null && !FactionCache.XenotypeIsNonViolent(loadout.xenotype))
             {
                 foreach (SavedThing weaponDef in loadout.weapons)
                 {
