@@ -56,6 +56,7 @@ namespace FactionColonies
         // ══════════════════════════════════════════════
 
         private static volatile int _heartbeat = 0;
+        private static volatile bool _hasReceivedPulse = false;
         private static Thread _heartbeatThread;
         private static Thread _mainThread;
         private const int HeartbeatIntervalMs = 5000;
@@ -63,6 +64,7 @@ namespace FactionColonies
         public static void Pulse()
         {
             if (!_enabled) return;
+            _hasReceivedPulse = true;
             Interlocked.Increment(ref _heartbeat);
         }
 
@@ -87,6 +89,13 @@ namespace FactionColonies
                 Thread.Sleep(HeartbeatIntervalMs);
                 if (!_enabled) break;
 
+                // Don't count missed beats until WorldComponentTick has started pulsing
+                if (!_hasReceivedPulse)
+                {
+                    lastHeartbeat = _heartbeat;
+                    continue;
+                }
+
                 int current = _heartbeat;
                 if (current == lastHeartbeat)
                 {
@@ -103,7 +112,7 @@ namespace FactionColonies
                     aliveLogCounter++;
                     if (aliveLogCounter >= 6) // every 30s
                     {
-                        LogUtil.MessageForce("PerfWatchdog: main thread alive");
+                        UnityEngine.Debug.Log("[Empire] PerfWatchdog: main thread alive");
                         aliveLogCounter = 0;
                     }
                 }
@@ -246,7 +255,7 @@ namespace FactionColonies
             sb.AppendLine();
             sb.AppendLine("=== END FREEZE REPORT ===");
 
-            Log.Error("[Empire] " + sb.ToString());
+            UnityEngine.Debug.LogError("[Empire] " + sb.ToString());
         }
 
         private static void DumpCallStack(StringBuilder sb)
