@@ -176,42 +176,50 @@ namespace FactionColonies
     {
         static void Postfix(Faction __instance, Faction other, bool __result)
         {
-            if (!__result) return;
-
-            Faction pcFaction = FactionCache.PlayerColonyFaction;
-            if (pcFaction == null) return;
-
-            Faction player = Find.FactionManager.OfPlayer;
-
-            Faction thirdParty;
-            if (__instance == player && other != pcFaction)
+            PerfWatchdog.Enter("MirrorGoodwillToEmpire.Postfix");
+            try
             {
-                thirdParty = other;
+                if (!__result) return;
+
+                Faction pcFaction = FactionCache.PlayerColonyFaction;
+                if (pcFaction == null) return;
+
+                Faction player = Find.FactionManager.OfPlayer;
+
+                Faction thirdParty;
+                if (__instance == player && other != pcFaction)
+                {
+                    thirdParty = other;
+                }
+                else if (other == player && __instance != pcFaction)
+                {
+                    thirdParty = __instance;
+                }
+                else
+                {
+                    return;
+                }
+
+                int playerGoodwill = player.RelationWith(thirdParty).baseGoodwill;
+                int empireGoodwill = pcFaction.RelationWith(thirdParty).baseGoodwill;
+                int delta = playerGoodwill - empireGoodwill;
+
+                if (delta != 0)
+                {
+                    pcFaction.TryAffectGoodwillWith(thirdParty, delta, canSendMessage: false, canSendHostilityLetter: false);
+                    LogUtil.Message($"TryAffectGoodwillWith Postfix: Empire faction changing relations with {thirdParty.Name} by {delta}");
+                }
+
+                FactionRelationKind playerKind = player.RelationKindWith(thirdParty);
+                if (pcFaction.RelationKindWith(thirdParty) != playerKind)
+                {
+                    RelationsUtilFC.TrySetRelationKind(pcFaction, thirdParty, playerKind, canSendLetter: false);
+                    LogUtil.Message($"TryAffectGoodwillWith Postfix: Empire faction changing relationkind with {thirdParty.Name} to {playerKind}");
+                }
             }
-            else if (other == player && __instance != pcFaction)
+            finally
             {
-                thirdParty = __instance;
-            }
-            else
-            {
-                return;
-            }
-
-            int playerGoodwill = player.RelationWith(thirdParty).baseGoodwill;
-            int empireGoodwill = pcFaction.RelationWith(thirdParty).baseGoodwill;
-            int delta = playerGoodwill - empireGoodwill;
-
-            if (delta != 0)
-            {
-                pcFaction.TryAffectGoodwillWith(thirdParty, delta, canSendMessage: false, canSendHostilityLetter: false);
-                LogUtil.Message($"TryAffectGoodwillWith Postfix: Empire faction changing relations with {thirdParty.Name} by {delta}");
-            }
-
-            FactionRelationKind playerKind = player.RelationKindWith(thirdParty);
-            if (pcFaction.RelationKindWith(thirdParty) != playerKind)
-            {
-                RelationsUtilFC.TrySetRelationKind(pcFaction, thirdParty, playerKind, canSendLetter: false);
-                LogUtil.Message($"TryAffectGoodwillWith Postfix: Empire faction changing relationkind with {thirdParty.Name} to {playerKind}");
+                PerfWatchdog.Exit("MirrorGoodwillToEmpire.Postfix");
             }
         }
     }

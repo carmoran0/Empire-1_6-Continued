@@ -14,101 +14,109 @@ namespace FactionColonies
     {
         public static void Postfix(ref Pawn __instance, ref IEnumerable<Gizmo> __result)
         {
-            // Early exit checks BEFORE any allocations - most pawns will exit here
-            if (__result == null || __instance?.Faction == null || __instance.Map == null)
+            PerfWatchdog.Enter("PawnDraftGizmos.Postfix");
+            try
             {
-                return;
-            }
-
-            WorldSettlementFC settlementFc = __instance.Map.Parent as WorldSettlementFC;
-            if (settlementFc == null)
-            {
-                return;
-            }
-
-            Faction playerColonyFaction = FactionCache.PlayerColonyFaction;
-
-            if (__instance.Faction == playerColonyFaction)
-            {
-                Pawn pawn = __instance;
-
-                Command_Toggle draftColonists = new Command_Toggle
+                // Early exit checks BEFORE any allocations - most pawns will exit here
+                if (__result == null || __instance?.Faction == null || __instance.Map == null)
                 {
-                    hotKey = KeyBindingDefOf.Command_ColonistDraft,
-                    isActive = () => false,
-                    toggleAction = () =>
-                    {
-                        if (pawn.Faction == Faction.OfPlayer) return;
-                        pawn.SetFaction(Faction.OfPlayer);
-                        // SetFaction → AddAndRemoveDynamicComponents creates pawn.drafter for OfPlayer pawns
-                        if (pawn.drafter != null)
-                            pawn.drafter.Drafted = true;
-                    },
-                    defaultDesc = "CommandToggleDraftDesc".Translate(),
-                    icon = TexCommand.Draft,
-                    turnOnSound = SoundDefOf.DraftOn,
-                    groupKey = 81729172,
-                    defaultLabel = "CommandDraftLabel".Translate()
-                };
-
-                if (pawn.Downed)
-                {
-                    draftColonists.Disable("IsIncapped".Translate(pawn.LabelShort, pawn));
+                    return;
                 }
 
-                draftColonists.tutorTag = "Draft";
-                __result = __result.Append(draftColonists);
-                return;
-            }
-
-            if (__instance.Faction == Faction.OfPlayer && __instance.Drafted && settlementFc.MilitaryComp != null)
-            {
-                // Check if pawn is in a supporting caravan (avoid LINQ closure allocations)
-                Pawn found = __instance;
-                bool isSupporting = false;
-                foreach (var caravan in settlementFc.MilitaryComp.supporting)
+                WorldSettlementFC settlementFc = __instance.Map.Parent as WorldSettlementFC;
+                if (settlementFc == null)
                 {
-                    if (caravan.pawns.Contains(found))
-                    {
-                        isSupporting = true;
-                        break;
-                    }
+                    return;
                 }
 
-                if (!isSupporting)
-                {
-                    // Only convert to list when we actually need to modify existing gizmos
-                    List<Gizmo> output = __result.ToList();
+                Faction playerColonyFaction = FactionCache.PlayerColonyFaction;
 
-                    foreach (Gizmo gizmo in output)
+                if (__instance.Faction == playerColonyFaction)
+                {
+                    Pawn pawn = __instance;
+
+                    Command_Toggle draftColonists = new Command_Toggle
                     {
-                        Command_Toggle action = gizmo as Command_Toggle;
-                        if (action != null && action.hotKey == KeyBindingDefOf.Command_ColonistDraft)
+                        hotKey = KeyBindingDefOf.Command_ColonistDraft,
+                        isActive = () => false,
+                        toggleAction = () =>
                         {
-                            action.toggleAction = () =>
-                            {
-                                found.SetFaction(FactionCache.PlayerColonyFaction);
-                                // Re-add to defenders list and defense lord after undrafting
-                                var milComp = settlementFc.MilitaryComp;
-                                if (milComp != null && milComp.defenders.Any())
-                                {
-                                    if (!milComp.defenders.Contains(found))
-                                        milComp.defenders.Add(found);
+                            if (pawn.Faction == Faction.OfPlayer) return;
+                            pawn.SetFaction(Faction.OfPlayer);
+                            // SetFaction → AddAndRemoveDynamicComponents creates pawn.drafter for OfPlayer pawns
+                            if (pawn.drafter != null)
+                                pawn.drafter.Drafted = true;
+                        },
+                        defaultDesc = "CommandToggleDraftDesc".Translate(),
+                        icon = TexCommand.Draft,
+                        turnOnSound = SoundDefOf.DraftOn,
+                        groupKey = 81729172,
+                        defaultLabel = "CommandDraftLabel".Translate()
+                    };
 
-                                    var defenderLord = milComp.defenders[0].GetLord();
-                                    if (defenderLord != null && !defenderLord.ownedPawns.Contains(found))
-                                    {
-                                        defenderLord.AddPawn(found);
-                                        defenderLord.CurLordToil.UpdateAllDuties();
-                                    }
-                                }
-                            };
+                    if (pawn.Downed)
+                    {
+                        draftColonists.Disable("IsIncapped".Translate(pawn.LabelShort, pawn));
+                    }
+
+                    draftColonists.tutorTag = "Draft";
+                    __result = __result.Append(draftColonists);
+                    return;
+                }
+
+                if (__instance.Faction == Faction.OfPlayer && __instance.Drafted && settlementFc.MilitaryComp != null)
+                {
+                    // Check if pawn is in a supporting caravan (avoid LINQ closure allocations)
+                    Pawn found = __instance;
+                    bool isSupporting = false;
+                    foreach (var caravan in settlementFc.MilitaryComp.supporting)
+                    {
+                        if (caravan.pawns.Contains(found))
+                        {
+                            isSupporting = true;
                             break;
                         }
                     }
 
-                    __result = output;
+                    if (!isSupporting)
+                    {
+                        // Only convert to list when we actually need to modify existing gizmos
+                        List<Gizmo> output = __result.ToList();
+
+                        foreach (Gizmo gizmo in output)
+                        {
+                            Command_Toggle action = gizmo as Command_Toggle;
+                            if (action != null && action.hotKey == KeyBindingDefOf.Command_ColonistDraft)
+                            {
+                                action.toggleAction = () =>
+                                {
+                                    found.SetFaction(FactionCache.PlayerColonyFaction);
+                                    // Re-add to defenders list and defense lord after undrafting
+                                    var milComp = settlementFc.MilitaryComp;
+                                    if (milComp != null && milComp.defenders.Any())
+                                    {
+                                        if (!milComp.defenders.Contains(found))
+                                            milComp.defenders.Add(found);
+
+                                        var defenderLord = milComp.defenders[0].GetLord();
+                                        if (defenderLord != null && !defenderLord.ownedPawns.Contains(found))
+                                        {
+                                            defenderLord.AddPawn(found);
+                                            defenderLord.CurLordToil.UpdateAllDuties();
+                                        }
+                                    }
+                                };
+                                break;
+                            }
+                        }
+
+                        __result = output;
+                    }
                 }
+            }
+            finally
+            {
+                PerfWatchdog.Exit("PawnDraftGizmos.Postfix");
             }
         }
     }
@@ -165,16 +173,24 @@ namespace FactionColonies
 
         public static void Postfix(ref Pawn __instance, ref IEnumerable<Gizmo> __result)
         {
-            // Early exit for non-prisoners (most common case) hmmmm
-            if (__instance.guest == null || !__instance.guest.IsPrisoner)
+            PerfWatchdog.Enter("PrisonerGizmosPatch.Postfix");
+            try
             {
-                return;
+                // Early exit for non-prisoners (most common case) hmmmm
+                if (__instance.guest == null || !__instance.guest.IsPrisoner)
+                {
+                    return;
+                }
+
+                if (!FactionCache.FactionComp.IsActionAllowed(FCActionType.SendPrisoner)) return;
+                if (!CanSendPrisoner(__instance)) return;
+
+                __result = __result.Append(SendPrisonerAction(__instance));
             }
-
-            if (!FactionCache.FactionComp.IsActionAllowed(FCActionType.SendPrisoner)) return;
-            if (!CanSendPrisoner(__instance)) return;
-
-            __result = __result.Append(SendPrisonerAction(__instance));
+            finally
+            {
+                PerfWatchdog.Exit("PrisonerGizmosPatch.Postfix");
+            }
         }
     }
 
@@ -262,18 +278,26 @@ namespace FactionColonies
         /// <param name="__result"></param>
         public static void Postfix(ref WorldObject __instance, ref IEnumerable<Gizmo> __result)
         {
-            if (__instance.def.defName != "Settlement") return;
-            if (!HasValidFaction(__instance)) return;
+            PerfWatchdog.Enter("AddButtonsToNonEmpireObjects.Postfix");
+            try
+            {
+                if (__instance.def.defName != "Settlement") return;
+                if (!HasValidFaction(__instance)) return;
 
-            int tile = __instance.Tile;
-            Faction faction = __instance.Faction;
-            FactionFC factionFC = FactionCache.FactionComp;
+                int tile = __instance.Tile;
+                Faction faction = __instance.Faction;
+                FactionFC factionFC = FactionCache.FactionComp;
 
-            if (factionFC.IsActionAllowed(FCActionType.SendDiplomat))
-                __result = __result.AddItem(PeacefulAction(factionFC, faction));
+                if (factionFC.IsActionAllowed(FCActionType.SendDiplomat))
+                    __result = __result.AddItem(PeacefulAction(factionFC, faction));
 
-            if (factionFC.IsActionAllowed(FCActionType.DeployMilitary))
-                __result = __result.AddItem(HostileAction(factionFC, faction, tile));
+                if (factionFC.IsActionAllowed(FCActionType.DeployMilitary))
+                    __result = __result.AddItem(HostileAction(factionFC, faction, tile));
+            }
+            finally
+            {
+                PerfWatchdog.Exit("AddButtonsToNonEmpireObjects.Postfix");
+            }
         }
     }
 }

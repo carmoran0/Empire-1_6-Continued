@@ -110,26 +110,34 @@ namespace FactionColonies
 
         public override void CompTick()
         {
-            base.CompTick();
-            if (!isUnderAttack || endingBattle) return;
-            if (Find.TickManager.TicksGame % 250 != 0) return;
-            if (Map == null) return;
-
-            // Clean stale references (null from failed save/load resolution)
-            attackers.RemoveAll(p => p == null || p.Destroyed);
-            defenders.RemoveAll(p => p == null || p.Destroyed);
-
-            if (!attackers.Any() || !defenders.Any())
+            long _t = PerfWatchdog.EnterTimed("SettlementMilitary.CompTick");
+            try
             {
-                LogUtil.Warning($"Stuck battle detected at {WorldSettlement.Name}, forcing resolution.");
-                endingBattle = true;
-                LongEventHandler.QueueLongEvent(EndAttack,
-                    "EndingAttack", false, error =>
-                    {
-                        DelayedErrorWindowRequest.Add("ErrorEndingAttack".Translate(),
-                            "ErrorEndingAttackDescription".Translate());
-                        LogUtil.Error(error.Message);
-                    });
+                base.CompTick();
+                if (!isUnderAttack || endingBattle) return;
+                if (Find.TickManager.TicksGame % 250 != 0) return;
+                if (Map == null) return;
+
+                // Clean stale references (null from failed save/load resolution)
+                attackers.RemoveAll(p => p == null || p.Destroyed);
+                defenders.RemoveAll(p => p == null || p.Destroyed);
+
+                if (!attackers.Any() || !defenders.Any())
+                {
+                    LogUtil.Warning($"Stuck battle detected at {WorldSettlement.Name}, forcing resolution.");
+                    endingBattle = true;
+                    LongEventHandler.QueueLongEvent(EndAttack,
+                        "EndingAttack", false, error =>
+                        {
+                            DelayedErrorWindowRequest.Add("ErrorEndingAttack".Translate(),
+                                "ErrorEndingAttackDescription".Translate());
+                            LogUtil.Error(error.Message);
+                        });
+                }
+            }
+            finally
+            {
+                PerfWatchdog.ExitTimed("SettlementMilitary.CompTick", _t);
             }
         }
 

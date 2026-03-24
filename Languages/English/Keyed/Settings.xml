@@ -69,4 +69,6 @@ Values in between dampen the effect of military efficiency on the auto combat.</
 	<FCTaxDeliveryNotSetWarning>No tax delivery location set. Either set a tax delivery map or enable tax delivery on a tax spot.</FCTaxDeliveryNotSetWarning>
 	<FCCapitalNotSetWarning>No empire capital established. Either use 'Set Capital' in the Empire menu or build and activate a Capital Seat.</FCCapitalNotSetWarning>
 
+	<FCSettingPerfLogging>Enable Performance Logging (diagnostic)</FCSettingPerfLogging>
+
 </LanguageData>

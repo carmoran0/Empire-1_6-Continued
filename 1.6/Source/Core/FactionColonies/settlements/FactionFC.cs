@@ -457,6 +457,7 @@ namespace FactionColonies
         public override void WorldComponentTick()
         {
             base.WorldComponentTick();
+            PerfWatchdog.Pulse();
             Faction faction = FactionCache.PlayerColonyFaction;
             if (firstTick)
             {
@@ -502,13 +503,25 @@ namespace FactionColonies
                     startingLongLat = Find.WorldGrid.LongLatOf(playerHome.Tile);
                 }
 
+                if (FCSettings.PerformanceLogging)
+                    PerfWatchdog.SetEnabled(true);
+
                 firstTick = false;
             }
 
-            FCEventMaker.ProcessEvents(in events);
-            BillUtility.ProcessBills();
+            long _t;
 
+            _t = PerfWatchdog.EnterTimed("FCEventMaker.ProcessEvents");
+            FCEventMaker.ProcessEvents(in events);
+            PerfWatchdog.ExitTimed("FCEventMaker.ProcessEvents", _t);
+
+            _t = PerfWatchdog.EnterTimed("BillUtility.ProcessBills");
+            BillUtility.ProcessBills();
+            PerfWatchdog.ExitTimed("BillUtility.ProcessBills", _t);
+
+            _t = PerfWatchdog.EnterTimed("FireSupportTick");
             FireSupportTick();
+            PerfWatchdog.ExitTimed("FireSupportTick", _t);
 
             /* Check on the leader */
             //This check used to exist in updateTechLevel(), but it doesn't really seem appropriate there. So, moved it here.
@@ -519,21 +532,49 @@ namespace FactionColonies
                     ColonyUtil.CreatePlayerFactionLeader(faction);
                 }
             }
+
+            _t = PerfWatchdog.EnterTimed("TaxTick");
             TaxTick(faction);
+            PerfWatchdog.ExitTimed("TaxTick", _t);
+
+            _t = PerfWatchdog.EnterTimed("UITick");
             UITick(faction);
+            PerfWatchdog.ExitTimed("UITick", _t);
+
+            _t = PerfWatchdog.EnterTimed("StatTick");
             StatTick(faction);
+            PerfWatchdog.ExitTimed("StatTick", _t);
+
+            _t = PerfWatchdog.EnterTimed("MilitaryTick");
             MilitaryTick(faction);
+            PerfWatchdog.ExitTimed("MilitaryTick", _t);
+
             if (Find.TickManager.TicksGame % MercenaryHealTickInterval == 0)
             {
+                _t = PerfWatchdog.EnterTimed("TickMercenaryHealing");
                 militaryCustomizationUtil?.TickMercenaryHealing(MercenaryHealTickInterval);
+                PerfWatchdog.ExitTimed("TickMercenaryHealing", _t);
             }
+
+            _t = PerfWatchdog.EnterTimed("ThreatAdaptation.Tick");
             threatAdaptation.Tick();
+            PerfWatchdog.ExitTimed("ThreatAdaptation.Tick", _t);
+
             if (pendingEdictActivations.Count > 0 && Find.TickManager.TicksGame % 250 == 0)
+            {
+                _t = PerfWatchdog.EnterTimed("CheckEdictActivations");
                 CheckEdictActivations();
+                PerfWatchdog.ExitTimed("CheckEdictActivations", _t);
+            }
             if (!(faction is null))
             {
+                _t = PerfWatchdog.EnterTimed("RoadTick");
                 roadBuilder.RoadTick();
+                PerfWatchdog.ExitTimed("RoadTick", _t);
+
+                _t = PerfWatchdog.EnterTimed("TickActions");
                 TickActions();
+                PerfWatchdog.ExitTimed("TickActions", _t);
             }
         }
 

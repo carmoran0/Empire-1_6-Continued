@@ -586,12 +586,14 @@ namespace FactionColonies
 
         public override void CompTick()
         {
+            long _t = PerfWatchdog.EnterTimed("SettlementBuildings.CompTick");
             base.CompTick();
 
             foreach (SettlementBuildingComp comp in settlementBuildingComps)
             {
                 comp.Tick();
             }
+            PerfWatchdog.ExitTimed("SettlementBuildings.CompTick", _t);
         }
 
         public override void PostExposeData()

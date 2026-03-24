@@ -126,69 +126,77 @@ namespace FactionColonies
 
         public override void DoWindowContents(Rect inRect)
         {
-            GameFont fontBefore = Text.Font;
-            TextAnchor anchorBefore = Text.Anchor;
-
-            Faction gfaction = FactionCache.PlayerColonyFaction;
-            if (gfaction == null)
-            {
-                Text.Anchor = TextAnchor.MiddleCenter;
-                Text.Font = GameFont.Medium;
-                Rect btn = new Rect(inRect.x + inRect.width / 2f - 150f, inRect.y + inRect.height / 2f - 20f, 300f, 40f);
-                if (Widgets.ButtonText(btn, "FCCreateNewFaction".Translate()))
-                {
-                    ColonyUtil.CreatePlayerColonyFaction();
-                    faction = FactionCache.FactionComp;
-                    if (faction != null)
-                    {
-                        faction.factionCreated = true;
-                        Find.WindowStack.Add(new FactionCustomizeWindowFc(faction));
-                        if (Find.CurrentMap.Parent != null &&
-                            Find.WorldObjects.WorldObjectAt<WorldSettlementFC>(Find.CurrentMap.Parent.Tile) != null)
-                        {
-                            Messages.Message(
-                                "SetAsFactionCapital".Translate(Find.WorldObjects.SettlementAt(Find.CurrentMap.Parent.Tile).Name),
-                                MessageTypeDefOf.NeutralEvent);
-                        }
-                    }
-                    else
-                    {
-                        LogUtil.Error("FactionFC world component is still null after creating new faction!");
-                    }
-                }
-                Text.Font = fontBefore;
-                Text.Anchor = anchorBefore;
-                return;
-            }
-
-            // Calculate minimum tab width from the longest label
-            Text.Font = GameFont.Small;
-            float maxLabelWidth = 0f;
-            foreach (TabRecord tab in tabs)
-            {
-                float w = Text.CalcSize(tab.label).x;
-                if (w > maxLabelWidth) maxLabelWidth = w;
-            }
-            float minTabWidth = maxLabelWidth + 16f;
-
-            // Content area sits below the tab strip (dynamic height for overflow rows)
-            float tabHeight = TabDrawer.GetOverflowTabHeight(inRect, tabs, minTabWidth, 200f);
-            Rect contentRect = new Rect(inRect.x, inRect.y + tabHeight, inRect.width, inRect.height - tabHeight);
-            Widgets.DrawMenuSection(contentRect);
-            TabDrawer.DrawTabsOverflow(inRect, tabs, minTabWidth, 200f);
-
+            long _t = PerfWatchdog.EnterTimed("MainTabWindow_Colony.DoWindowContents");
             try
             {
-                overviewFuncs[curTab](contentRect);
-            }
-            catch (Exception e)
-            {
-                LogUtil.Error($"Error drawing tab '{curTab}': {e}");
-                curTab = overviewTabs[0];
-            }
+                GameFont fontBefore = Text.Font;
+                TextAnchor anchorBefore = Text.Anchor;
 
-            Text.Font = fontBefore;
-            Text.Anchor = anchorBefore;
+                Faction gfaction = FactionCache.PlayerColonyFaction;
+                if (gfaction == null)
+                {
+                    Text.Anchor = TextAnchor.MiddleCenter;
+                    Text.Font = GameFont.Medium;
+                    Rect btn = new Rect(inRect.x + inRect.width / 2f - 150f, inRect.y + inRect.height / 2f - 20f, 300f, 40f);
+                    if (Widgets.ButtonText(btn, "FCCreateNewFaction".Translate()))
+                    {
+                        ColonyUtil.CreatePlayerColonyFaction();
+                        faction = FactionCache.FactionComp;
+                        if (faction != null)
+                        {
+                            faction.factionCreated = true;
+                            Find.WindowStack.Add(new FactionCustomizeWindowFc(faction));
+                            if (Find.CurrentMap.Parent != null &&
+                                Find.WorldObjects.WorldObjectAt<WorldSettlementFC>(Find.CurrentMap.Parent.Tile) != null)
+                            {
+                                Messages.Message(
+                                    "SetAsFactionCapital".Translate(Find.WorldObjects.SettlementAt(Find.CurrentMap.Parent.Tile).Name),
+                                    MessageTypeDefOf.NeutralEvent);
+                            }
+                        }
+                        else
+                        {
+                            LogUtil.Error("FactionFC world component is still null after creating new faction!");
+                        }
+                    }
+                    Text.Font = fontBefore;
+                    Text.Anchor = anchorBefore;
+                    return;
+                }
+
+                // Calculate minimum tab width from the longest label
+                Text.Font = GameFont.Small;
+                float maxLabelWidth = 0f;
+                foreach (TabRecord tab in tabs)
+                {
+                    float w = Text.CalcSize(tab.label).x;
+                    if (w > maxLabelWidth) maxLabelWidth = w;
+                }
+                float minTabWidth = maxLabelWidth + 16f;
+
+                // Content area sits below the tab strip (dynamic height for overflow rows)
+                float tabHeight = TabDrawer.GetOverflowTabHeight(inRect, tabs, minTabWidth, 200f);
+                Rect contentRect = new Rect(inRect.x, inRect.y + tabHeight, inRect.width, inRect.height - tabHeight);
+                Widgets.DrawMenuSection(contentRect);
+                TabDrawer.DrawTabsOverflow(inRect, tabs, minTabWidth, 200f);
+
+                try
+                {
+                    overviewFuncs[curTab](contentRect);
+                }
+                catch (Exception e)
+                {
+                    LogUtil.Error($"Error drawing tab '{curTab}': {e}");
+                    curTab = overviewTabs[0];
+                }
+
+                Text.Font = fontBefore;
+                Text.Anchor = anchorBefore;
+            }
+            finally
+            {
+                PerfWatchdog.ExitTimed("MainTabWindow_Colony.DoWindowContents", _t);
+            }
         }
 
         // ===== OVERVIEW TAB =====

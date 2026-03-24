@@ -142,28 +142,36 @@ namespace FactionColonies
 
         public override void DoWindowContents(Rect inRect)
         {
-            GameFont fontBefore = Text.Font;
-            TextAnchor anchorBefore = Text.Anchor;
+            long _t = PerfWatchdog.EnterTimed("SettlementWindowFC.DoWindowContents");
+            try
+            {
+                GameFont fontBefore = Text.Font;
+                TextAnchor anchorBefore = Text.Anchor;
 
-            float validWidth = InitialSize.x - (Margin * 2);
-            float validHeight = InitialSize.y - (Margin * 2);
+                float validWidth = InitialSize.x - (Margin * 2);
+                float validHeight = InitialSize.y - (Margin * 2);
 
-            float leftWidth = 150f;
-            float rightWidth = 415f;
-            float centerWidth = validWidth - leftWidth - rightWidth - (margin * 2);
+                float leftWidth = 150f;
+                float rightWidth = 415f;
+                float centerWidth = validWidth - leftWidth - rightWidth - (margin * 2);
 
-            Rect headerBox = new Rect(inRect.x, inRect.y, leftWidth + centerWidth + margin, 30 + (margin * 2) + 60);
-            Rect leftBox = new Rect(inRect.x, headerBox.yMax + (margin * 2), leftWidth, validHeight - headerBox.height - (margin * 2));
-            Rect centerBox = new Rect(leftBox.xMax + margin, headerBox.yMax + (margin * 2), centerWidth, validHeight - headerBox.height - (margin * 2));
-            Rect rightBox = new Rect(centerBox.xMax + margin, inRect.y, rightWidth, validHeight);
+                Rect headerBox = new Rect(inRect.x, inRect.y, leftWidth + centerWidth + margin, 30 + (margin * 2) + 60);
+                Rect leftBox = new Rect(inRect.x, headerBox.yMax + (margin * 2), leftWidth, validHeight - headerBox.height - (margin * 2));
+                Rect centerBox = new Rect(leftBox.xMax + margin, headerBox.yMax + (margin * 2), centerWidth, validHeight - headerBox.height - (margin * 2));
+                Rect rightBox = new Rect(centerBox.xMax + margin, inRect.y, rightWidth, validHeight);
 
-            DrawCenterHeader(headerBox);
-            DrawLeftInfo(leftBox);
-            DrawCenterInfo(centerBox);
-            DrawRightInfo(rightBox);
+                DrawCenterHeader(headerBox);
+                DrawLeftInfo(leftBox);
+                DrawCenterInfo(centerBox);
+                DrawRightInfo(rightBox);
 
-            Text.Font = fontBefore;
-            Text.Anchor = anchorBefore;
+                Text.Font = fontBefore;
+                Text.Anchor = anchorBefore;
+            }
+            finally
+            {
+                PerfWatchdog.ExitTimed("SettlementWindowFC.DoWindowContents", _t);
+            }
         }
 
         /* Left side overview */
