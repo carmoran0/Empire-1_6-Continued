@@ -162,4 +162,20 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_1_11</defName>
+		<label>Hotfixes</label>
+		<description>Handful of hotfixes.</description>
+		<releaseDate>2026-04-10</releaseDate>
+		<patchNoteType>Hotfix</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: loading Empire into an in-progress game caused everything to break</li>
+		<li>Bugfix: capturing a settlement with an Empire squad would apply penalties to the squad&apos;s home settlement instead of the captured settlement</li>
+		<li>Bugfix: Create New Colony window could error out if the road builder is null</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
