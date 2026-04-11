@@ -178,4 +178,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_1_12</defName>
+		<label>Custom Xenotype Hotfix</label>
+		<description>Hardens the protection against reading custom xenotypes from disk while the game is loading.</description>
+		<releaseDate>2026-04-11</releaseDate>
+		<patchNoteType>Hotfix</patchNoteType>
+		<patchNoteLines>
+		<li>Guards the actual call to CustomXenotypesForReading by a LoadSaveMod.Inactive check</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

@@ -104,21 +104,31 @@ namespace FactionColonies
             }
 
             // Global disk entries (fill in anything not already in per-save)
-            try
+            // Skip during active Scribe loading. CharacterCardUtility.CustomXenotypesForReading
+            // reads files via InitLoadingMetaHeaderOnly, which calls Scribe.ForceStop() when the
+            // Scribe is already active, destroying the entire save-load pipeline.
+            if (Scribe.mode == LoadSaveMode.Inactive)
             {
-                List<CustomXenotype> disk = CharacterCardUtility.CustomXenotypesForReading;
-                if (disk != null)
+                try
                 {
-                    foreach (CustomXenotype x in disk)
+                    List<CustomXenotype> disk = CharacterCardUtility.CustomXenotypesForReading;
+                    if (disk != null)
                     {
-                        if (x?.name != null && seenNames.Add(x.name))
-                            merged.Add(x);
+                        foreach (CustomXenotype x in disk)
+                        {
+                            if (x?.name != null && seenNames.Add(x.name))
+                                merged.Add(x);
+                        }
                     }
                 }
+                catch (Exception ex)
+                {
+                    LogUtil.Warning($"Failed to load disk custom xenotypes: {ex.Message}");
+                }
             }
-            catch (Exception ex)
+            else
             {
-                LogUtil.Warning($"Failed to load disk custom xenotypes: {ex.Message}");
+                LogUtil.Warning($"BuildMergedCustomXenotypeList called while Scribe mode is not Inactive. Skipping CustomXenotypesForReading");
             }
 
             return merged;
