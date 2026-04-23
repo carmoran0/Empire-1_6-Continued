@@ -100,7 +100,7 @@ namespace FactionColonies.WD
             if (attacker == null || attacker.homeSettlement == null) return;
 
             WorldObjectComp_SettlementMilitary milComp = attacker.homeSettlement.MilitaryComp;
-            if (milComp == null || milComp.militaryLocation < 0) return;
+            if (milComp == null || !milComp.militaryLocation.Valid) return;
 
             Settlement target = Find.WorldObjects.SettlementAt(milComp.militaryLocation);
             if (target == null) return;

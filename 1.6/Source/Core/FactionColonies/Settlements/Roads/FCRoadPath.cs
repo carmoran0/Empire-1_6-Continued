@@ -6,6 +6,8 @@ using Verse;
 
 namespace FactionColonies
 {
+    /* Surface-only invariant: see FCRoadQueue. Tile IDs stored as int here
+       are safe because the road system never handles non-surface tiles. */
     public class FCRoadPath : IExposable
     {
         public WorldPath Path { get; protected set; }

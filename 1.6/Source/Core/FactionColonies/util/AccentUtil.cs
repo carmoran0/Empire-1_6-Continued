@@ -82,7 +82,7 @@ namespace FactionColonies
                 if (milComp.militaryJob == MilitaryJobDefOf.Cooldown)
                     return GetCooldownLabel(settlement);
                 if (milComp.militaryJob == MilitaryJobDefOf.DefendFriendlySettlement
-                    && milComp.militaryLocation != -1)
+                    && milComp.militaryLocation.Valid)
                 {
                     WorldObject target = Find.WorldObjects.WorldObjectAt<WorldObject>(milComp.militaryLocation);
                     if (target != null)

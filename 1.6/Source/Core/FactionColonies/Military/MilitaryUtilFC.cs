@@ -215,7 +215,7 @@ namespace FactionColonies
                         factionfc.ReturnSettlementByLocation(evt.location), true);
             }
 
-            factionfc.militaryTargets.Remove(evt.location);
+            factionfc.RemoveMilitaryTarget(evt.location);
             evt.militaryForceDefending =
                 MilitaryForce.CreateMilitaryForceFromSettlement(settlementOfMilitaryForce,
                     homeDefendingForce: tmpMilitaryForce);
@@ -266,7 +266,7 @@ namespace FactionColonies
             }
 
             // Assign new external defender
-            factionfc.militaryTargets.Remove(evt.location);
+            factionfc.RemoveMilitaryTarget(evt.location);
             evt.militaryForceDefending = defender.CreateDefendingForce();
             evt.externalDefenderSource = defender.WorldObject;
             defender.OnDefenseStarted(evt.settlementFCDefending);

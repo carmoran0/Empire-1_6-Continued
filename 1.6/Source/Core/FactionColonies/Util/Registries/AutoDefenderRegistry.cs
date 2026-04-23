@@ -21,7 +21,7 @@ namespace FactionColonies
         /// Finds the strongest available <see cref="IAutoDefender"/> that can defend the given tile
         /// and is stronger than <paramref name="minMilitaryLevel"/>.
         /// </summary>
-        public static IAutoDefender FindBestDefender(int targetTile, int minMilitaryLevel)
+        public static IAutoDefender FindBestDefender(PlanetTile targetTile, int minMilitaryLevel)
         {
             IAutoDefender best = null;
             foreach (IAutoDefender defender in _defenders)

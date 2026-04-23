@@ -21,7 +21,7 @@ namespace FactionColonies.util
             mode = TraverseMode.ByPawn
         };
 
-        public static void CreateDeliveryEvent(List<Thing> things, int source, Letter let = null, Message msg = null)
+        public static void CreateDeliveryEvent(List<Thing> things, PlanetTile source, Letter let = null, Message msg = null)
         {
             CreateDeliveryEvent(new FCEvent()
             {
@@ -117,7 +117,7 @@ namespace FactionColonies.util
                     evt.isDelayed = true;
                 }
 
-                if (evt.source == -1) evt.source = playerHomeMap.Tile;
+                if (!evt.source.Valid) evt.source = playerHomeMap.Tile;
 
                 evt.timeTillTrigger = Find.TickManager.TicksGame + 1000;
                 CreateDeliveryEvent(evt);
@@ -148,7 +148,7 @@ namespace FactionColonies.util
                     evt.isDelayed = true;
                 }
 
-                if (evt.source == -1) evt.source = playerHomeMap.Tile;
+                if (!evt.source.Valid) evt.source = playerHomeMap.Tile;
 
                 evt.timeTillTrigger = Find.TickManager.TicksGame + 1000;
                 CreateDeliveryEvent(evt);

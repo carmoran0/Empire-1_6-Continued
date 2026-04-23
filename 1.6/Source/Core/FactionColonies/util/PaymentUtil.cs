@@ -1,5 +1,6 @@
 ﻿using FactionColonies.util;
 using RimWorld;
+using RimWorld.Planet;
 using System.Collections.Generic;
 using System.Linq;
 using Verse;
@@ -160,7 +161,7 @@ namespace FactionColonies
         }
 
 
-        public static void DeliverThings(List<Thing> things, int source, Letter let = null, Message msg = null)
+        public static void DeliverThings(List<Thing> things, PlanetTile source, Letter let = null, Message msg = null)
         {
             DeliveryEvent.CreateDeliveryEvent(things, source, let, msg);
         }

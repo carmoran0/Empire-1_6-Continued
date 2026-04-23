@@ -15,7 +15,7 @@ namespace FactionColonies.util
 
         public override bool ChoseWorldTarget(GlobalTargetInfo target)
         {
-            int tile = caravan.Tile;
+            PlanetTile tile = caravan.Tile;
             return CompLaunchable.ChoseWorldTarget(target, tile, Gen.YieldSingle(caravan), ShuttleRange, Launch, null);
         }
 

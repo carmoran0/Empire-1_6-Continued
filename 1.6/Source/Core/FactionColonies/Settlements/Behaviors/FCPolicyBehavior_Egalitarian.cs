@@ -1,4 +1,5 @@
 using RimWorld;
+using RimWorld.Planet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace FactionColonies
 {
     public class FCPolicyBehavior_Egalitarian : FCPolicyBehavior
     {
-        private Dictionary<int, TaxBreakData> taxBreaks = new Dictionary<int, TaxBreakData>();
+        private Dictionary<PlanetTile, TaxBreakData> taxBreaks = new Dictionary<PlanetTile, TaxBreakData>();
 
         public override void OnSettlementCreated(FactionFC faction, WorldSettlementFC settlement)
         {
@@ -109,9 +110,9 @@ namespace FactionColonies
             }
         }
 
-        private bool IsOnTaxBreak(int tile) => taxBreaks.TryGetValue(tile, out var d) && d.enabled;
+        private bool IsOnTaxBreak(PlanetTile tile) => taxBreaks.TryGetValue(tile, out var d) && d.enabled;
 
-        private TaxBreakData GetOrCreate(int tile)
+        private TaxBreakData GetOrCreate(PlanetTile tile)
         {
             if (!taxBreaks.TryGetValue(tile, out var data))
             {
@@ -124,7 +125,7 @@ namespace FactionColonies
         public override void ExposeData()
         {
             Scribe_Collections.Look(ref taxBreaks, "taxBreaks", LookMode.Value, LookMode.Deep);
-            taxBreaks = taxBreaks ?? new Dictionary<int, TaxBreakData>();
+            taxBreaks = taxBreaks ?? new Dictionary<PlanetTile, TaxBreakData>();
         }
 
         // Debug accessors

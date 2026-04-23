@@ -6,6 +6,8 @@ using System.Collections.Generic;
 
 namespace FactionColonies
 {
+    /* Surface-only invariant: see FCRoadQueue. Tile IDs stored as int here
+       are safe because the road system never handles non-surface tiles. */
     public class FCRoadBuilder : IExposable
     {
         public FCRoadQueue roadQueue;

@@ -46,16 +46,16 @@ namespace FactionColonies
                 }
             }
 
-            var mainPlanetLayer = Find.WorldGrid.PlanetLayers[0];
-            var fromTile = new PlanetTile(currentTile, mainPlanetLayer);
-            var toTile = new PlanetTile(destinationTile, mainPlanetLayer);
-            using (var pathing = new WorldPathing(mainPlanetLayer))
+            // Both tiles are on the same layer here (cross-layer returns above).
+            // Use that layer's pathing rather than hardcoding surface.
+            var layer = currentTile.Layer;
+            using (var pathing = new WorldPathing(layer))
             {
-                using (WorldPath tempPath = pathing.FindPath(fromTile, toTile, null))
+                using (WorldPath tempPath = pathing.FindPath(currentTile, destinationTile, null))
                 {
                     if (tempPath == WorldPath.NotFound) return timespanFallback;
 
-                    return CaravanArrivalTimeEstimator.EstimatedTicksToArrive(fromTile, toTile, tempPath, 0f, CaravanTicksPerMoveUtility.GetTicksPerMove(null), Find.TickManager.TicksAbs);
+                    return CaravanArrivalTimeEstimator.EstimatedTicksToArrive(currentTile, destinationTile, tempPath, 0f, CaravanTicksPerMoveUtility.GetTicksPerMove(null), Find.TickManager.TicksAbs);
                 }
             }
         }

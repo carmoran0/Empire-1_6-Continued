@@ -964,4 +964,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_3_68</defName>
+		<label>Backport PlanetTile fix.</label>
+		<description>Backports a PlanetTile fix so that orbital settlements don&apos;t bug out when doing location-based calculations</description>
+		<releaseDate>2026-05-22</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Stop casting PlanetTile down to int, and explicitly use PlanetTile everywhere it&apos;s appropriate to do so</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

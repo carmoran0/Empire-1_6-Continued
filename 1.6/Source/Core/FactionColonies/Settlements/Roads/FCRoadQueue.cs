@@ -8,6 +8,13 @@ using Verse;
 
 namespace FactionColonies
 {
+    /* Surface-only invariant: the road system operates exclusively on the
+       root surface layer — see UpdateSettlementsToProcess, which filters
+       orbital settlements out before enqueueing. That guarantee is the
+       reason this class and its helpers (FCRoadPath, FCRoadBuilder) can
+       safely store tiles as bare ints without risking layer aliasing.
+       Revisit (migrate the int collections to PlanetTile) if orbital
+       settlements ever need to participate in road building. */
     public class FCRoadQueue : IExposable
     {
         public int nextRoadTick;

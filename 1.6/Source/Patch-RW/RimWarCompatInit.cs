@@ -58,7 +58,7 @@ namespace FactionColonies.RW
             if (attacker?.homeSettlement is null) return;
 
             WorldObjectComp_SettlementMilitary milComp = attacker.homeSettlement.MilitaryComp;
-            if (milComp is null || milComp.militaryLocation < 0) return;
+            if (milComp is null || !milComp.militaryLocation.Valid) return;
 
             Settlement target = Find.WorldObjects.SettlementAt(milComp.militaryLocation);
             if (target is null) return;

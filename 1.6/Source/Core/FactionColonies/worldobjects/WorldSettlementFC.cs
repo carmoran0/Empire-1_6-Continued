@@ -740,7 +740,7 @@ namespace FactionColonies
                 return false;
             }
             StringBuilder reason = new StringBuilder();
-            if (!newExt.TileIsValidForTypeTransition(new PlanetTile(Tile), reason))
+            if (!newExt.TileIsValidForTypeTransition(Tile, reason))
             {
                 LogUtil.Warning($"Cannot transition {Name} from {oldDef.defName} to {newDef.defName}: {reason}");
                 return false;

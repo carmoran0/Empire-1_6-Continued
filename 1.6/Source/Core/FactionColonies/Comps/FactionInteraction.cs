@@ -31,7 +31,7 @@ namespace FactionColonies
             if (factionFC is null) yield break;
 
             Faction faction = parent.Faction;
-            int tile = parent.Tile;
+            PlanetTile tile = parent.Tile;
 
             if (factionFC.IsActionAllowed(FCActionType.SendDiplomat))
                 yield return PeacefulAction(factionFC, faction);
@@ -49,7 +49,7 @@ namespace FactionColonies
             settlement.MilitaryComp.IsMilitaryValid() &&
             !settlement.MilitaryComp.militaryBusy;
 
-        private static FloatMenuOption NewOption(FactionFC factionFC, Faction faction, int tile, MilitaryJobDef job) =>
+        private static FloatMenuOption NewOption(FactionFC factionFC, Faction faction, PlanetTile tile, MilitaryJobDef job) =>
             new FloatMenuOption((job.floatMenuLabelKey ?? "FCUnsupportedMilJobError").Translate(), delegate
             {
                 List<FloatMenuOption> settlementList = new List<FloatMenuOption>();
@@ -74,7 +74,7 @@ namespace FactionColonies
                 Find.WindowStack.Add(new FloatMenu(settlementList));
             });
 
-        private static Command_Action HostileAction(FactionFC factionFC, Faction faction, int tile) =>
+        private static Command_Action HostileAction(FactionFC factionFC, Faction faction, PlanetTile tile) =>
             new Command_Action
             {
                 defaultLabel = "FCAttackSettlement".Translate(

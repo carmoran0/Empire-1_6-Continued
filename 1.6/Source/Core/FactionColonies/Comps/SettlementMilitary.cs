@@ -65,7 +65,7 @@ namespace FactionColonies
         //     for attacks
         public bool isUnderAttack;
         public bool militaryBusy;
-        public int militaryLocation = -1;
+        public PlanetTile militaryLocation = PlanetTile.Invalid;
         public MilitaryJobDef militaryJob;
         public Faction militaryEnemy;
         public MercenarySquadFC militarySquad;
@@ -113,7 +113,7 @@ namespace FactionColonies
             Scribe_Deep.Look(ref attackerForce, "attackerForce");
             Scribe_Values.Look(ref isUnderAttack, "isUnderAttack");
             Scribe_Values.Look(ref militaryBusy, "militaryBusy");
-            Scribe_Values.Look(ref militaryLocation, "militaryLocation");
+            Scribe_Values.Look(ref militaryLocation, "militaryLocation", PlanetTile.Invalid);
             Scribe_Defs.Look(ref militaryJob, "militaryJob");
             Scribe_References.Look(ref militaryEnemy, "militaryEnemy");
             Scribe_References.Look(ref militarySquad, "militarySquad");
@@ -1556,7 +1556,7 @@ namespace FactionColonies
             militaryLocation = location;
 
             if (enemy != null) militaryEnemy = enemy;
-            if (job.occupiesTarget) FactionCache.FactionComp.militaryTargets.Add(location);
+            if (job.occupiesTarget) FactionCache.FactionComp.AddMilitaryTarget(location);
 
             job.Handler?.OnDeployed(this, location, timeToFinish, enemy);
 
@@ -1565,7 +1565,7 @@ namespace FactionColonies
 
         public Settlement ReturnMilitaryTarget()
         {
-            return militaryLocation == -1 ? null : Find.WorldObjects.SettlementAt(militaryLocation);
+            return !militaryLocation.Valid ? null : Find.WorldObjects.SettlementAt(militaryLocation);
         }
 
         public void ProcessMilitaryEvent()
@@ -1577,9 +1577,9 @@ namespace FactionColonies
             }
 
             FactionFC faction = FactionCache.FactionComp;
-            if (faction.militaryTargets.Contains(militaryLocation))
+            if (faction.HasMilitaryTarget(militaryLocation))
             {
-                faction.militaryTargets.Remove(militaryLocation);
+                faction.RemoveMilitaryTarget(militaryLocation);
             }
 
             BattleResult result = null;
@@ -1601,7 +1601,7 @@ namespace FactionColonies
 
             militaryBusy = false;
             militaryJob = MilitaryJobDefOf.Undefined;
-            militaryLocation = -1;
+            militaryLocation = PlanetTile.Invalid;
             militaryEnemy = null;
 
             LifecycleRegistry.InvokeOnSquadRecalled(WorldSettlement);
@@ -1711,9 +1711,9 @@ namespace FactionColonies
             return settlementMilitaryLevel > 0;
         }
 
-        public bool IsTargetOccupied(int location)
+        public bool IsTargetOccupied(PlanetTile location)
         {
-            if (FactionCache.FactionComp.militaryTargets.Contains(location))
+            if (FactionCache.FactionComp.HasMilitaryTarget(location))
             {
                 Messages.Message("FCTargetAlreadyBeingAttacked".Translate(), MessageTypeDefOf.RejectInput);
                 return true;
