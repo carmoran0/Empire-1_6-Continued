@@ -879,4 +879,19 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_3_62</defName>
+		<label>Merc Healing Fixes</label>
+		<description>Backports some fixes for merc healing, which is currently completely broken.</description>
+		<releaseDate>2026-05-20</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Don&apos;t remove a merc from the healing list just because they&apos;re on a map</li>
+		<li>Remove hediffs that get fully healed so that the healtick can actually target the next hediff</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
