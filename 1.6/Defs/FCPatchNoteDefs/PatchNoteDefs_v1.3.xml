@@ -922,4 +922,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_3_65</defName>
+		<label>Vehicle Framework Compat Fix</label>
+		<description>Fixes an issue where joining a manual battle with a vehicle and never dismounting can result in both the vehicle and the pawns within being swallowed and spat into the void upon battle conclusion.</description>
+		<releaseDate>2026-05-20</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>When checking if it&apos;s safe to delete a map, check AllPawnsSpawned with a faction filter, rather than checking FreeColonistsSpawned</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

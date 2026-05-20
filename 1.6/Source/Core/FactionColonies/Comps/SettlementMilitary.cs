@@ -640,11 +640,16 @@ namespace FactionColonies
             }
             draftedNPCs.Clear();
 
-            // Check for player pawns on the map (spawned as Faction.OfPlayer free colonists)
+            // Check for player units on the map. Use AllPawnsSpawned + faction filter
+            // instead of FreeColonistsSpawned so VehiclePawns (and player animals) count.
+            // Pawns aboard a VehiclePawn are not directly spawned, but the vehicle itself
+            // is a player-faction Pawn; detecting the vehicle is enough to keep the map
+            // alive so the player can drive off and reform the caravan.
             List<Pawn> playerPawns = new List<Pawn>();
             bool anyMobile = false;
-            foreach (Pawn pawn in map.mapPawns.FreeColonistsSpawned)
+            foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
             {
+                if (pawn.Faction != Faction.OfPlayer) continue;
                 playerPawns.Add(pawn);
                 if (!pawn.Downed) anyMobile = true;
             }
