@@ -908,4 +908,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_3_64</defName>
+		<label>Mercantile Exotic Caravan Fix</label>
+		<description>Fixes an issue where having the Mercantile trait wouldn&apos;t actually unlock the exotic caravan type.</description>
+		<releaseDate>2026-05-20</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Use faction.HasTrait() to check for mercantile, not faction.HasPolicy(). I knew keeping traits and policies as the same deftype would bite me in the ass one day</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

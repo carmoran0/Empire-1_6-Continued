@@ -214,7 +214,7 @@ namespace FactionColonies
             }
 
             // Exotic
-            bool exoticUnlocked = faction.factionLevel >= 4 || faction.HasPolicy(FCPolicyDefOf.mercantile);
+            bool exoticUnlocked = faction.factionLevel >= 4 || faction.HasTrait(FCPolicyDefOf.mercantile);
             entries.Add(new CaravanTypeEntry
             {
                 typeId = "Exotic",
