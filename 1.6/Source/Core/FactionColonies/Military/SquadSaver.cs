@@ -274,11 +274,9 @@ namespace FactionColonies
 
         public MilUnitFC CreateMilUnit()
         {
+            // Race weight controls random race selection only - an exported unit's race is
+            // an explicit player choice and must be respected on import, even at weight 0.
             PawnKindDef resolvedKind = pawnKind;
-            if (pawnKind != null && FactionCache.FactionComp.xenotypeFilter.GetRaceWeight(pawnKind.race) <= 0)
-            {
-                resolvedKind = FactionCache.PlayerColonyFaction.RandomPawnKind();
-            }
 
             if (resolvedKind == null)
             {
