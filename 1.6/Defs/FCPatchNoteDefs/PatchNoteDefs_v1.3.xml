@@ -978,4 +978,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_3_69</defName>
+		<label>Tax Spot Delivery Fix</label>
+		<description>Fixes an issue where getting taxes delivered without an active tax spot may cause errors and send all of your tax items into the void.</description>
+		<releaseDate>2026-05-24</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>When finding the tax map, don&apos;t clobber an already-found map with a null value just because CheckForActiveTaxDeliverySpot returned false</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

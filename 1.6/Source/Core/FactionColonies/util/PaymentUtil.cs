@@ -135,24 +135,32 @@ namespace FactionColonies
         public static void PlaceThing(Thing thing)
         {
             Map taxMap = GetActiveTaxDeliveryMap();
-
             IntVec3 intvec;
-            if (CheckForActiveTaxDeliverySpot(out intvec, out taxMap))
+
+            // CheckForActiveTaxDeliverySpot writes null to its out-map on failure,
+            // so use a separate local to avoid clobbering taxMap above.
+            if (CheckForActiveTaxDeliverySpot(out intvec, out Map activeMap))
             {
-                // Found an active tax delivery spot, use it
-                GenPlace.TryPlaceThing(thing, intvec, taxMap, ThingPlaceMode.Near);
+                GenPlace.TryPlaceThing(thing, intvec, activeMap, ThingPlaceMode.Near);
+                return;
             }
-            else if (CheckForTaxSpot(taxMap, out intvec))
+
+            if (CheckForTaxSpot(taxMap, out intvec))
             {
-                // Found regular tax spot on the tax map
                 GenPlace.TryPlaceThing(thing, intvec, taxMap, ThingPlaceMode.Near);
+                return;
             }
-            else
+
+            if (taxMap is null)
             {
-                // Fallback to drop spot on tax map
-                intvec = DropCellFinder.TradeDropSpot(taxMap);
-                GenPlace.TryPlaceThing(thing, intvec, taxMap, ThingPlaceMode.Near);
+                LogUtil.Error(
+                    "PlaceThing: no tax spot and no fallback map; cannot deliver '" + thing.LabelCap + "'. " +
+                    "Set a capital tile and a tax map on the faction main tab, or build a Tax Spot.");
+                return;
             }
+
+            intvec = DropCellFinder.TradeDropSpot(taxMap);
+            GenPlace.TryPlaceThing(thing, intvec, taxMap, ThingPlaceMode.Near);
         }
 
         public static void DeliverThings(FCEvent evt, Letter let = null, Message msg = null)
