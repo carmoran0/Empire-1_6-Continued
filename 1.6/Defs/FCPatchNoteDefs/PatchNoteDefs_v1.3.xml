@@ -992,4 +992,20 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_3_70</defName>
+		<label>Settlement Cost Fixes</label>
+		<description>The SettlementTypeExtension would cache a reference to the main world component, but never invalidate it. This could lead to things like settlement cost evaluations referring to the wrong world component. This update fixes that, and a couple of other minor issues.</description>
+		<releaseDate>2026-05-25</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Don&apos;t cache the FactionFC WorldComponent in SettlementTypeExtension</li>
+		<li>Skip invalid events in ValidateSettlementCaravansList()</li>
+		<li>Snapshot settlement cost in the settle confirmation dialog so the actual cost paid matches what the user sees in all cases</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

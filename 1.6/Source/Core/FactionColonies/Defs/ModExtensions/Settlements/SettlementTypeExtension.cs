@@ -15,18 +15,7 @@ namespace FactionColonies
     public class SettlementTypeExtension : DefModExtension
     {
         protected WorldSettlementDef parentDef;
-        protected FactionFC localfaction = null;
-        protected FactionFC faction
-        {
-            get
-            {
-                if (localfaction == null)
-                {
-                    localfaction = FactionCache.FactionComp;
-                }
-                return localfaction;
-            }
-        }
+        protected FactionFC faction => FactionCache.FactionComp;
 
         public override void ResolveReferences(Def parentDef_l)
         {
