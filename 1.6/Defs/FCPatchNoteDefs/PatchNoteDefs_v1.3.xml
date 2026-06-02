@@ -1022,4 +1022,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_3_72</defName>
+		<label>Bugfix for &apos;Androids for RW 1.6&apos;</label>
+		<description>An overly-broad prefix from Androids for RW 1.6 can cause problems when generating pawns for Empire&apos;s manual defense battles, particularly if the player has enabled androids in their faction&apos;s xenotype filter. This patch doesn&apos;t fix the underlying code (that lies with Androids for RW 1.6), but it does provide better protections for Empire&apos;s pawn spawning. A bad spawn shouldn&apos;t crash the game anymore.</description>
+		<releaseDate>2026-06-02</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Include the PawnGenerator.GeneratePawn() call in the try/catch in SettlementMilitary.RecruitMapInhabitants()</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
