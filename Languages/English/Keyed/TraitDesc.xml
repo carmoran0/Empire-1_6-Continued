@@ -36,6 +36,8 @@
 	<FCTraitDesc_createSettlementBaseCost>{0} Base Settlement Cost</FCTraitDesc_createSettlementBaseCost>
 	<FCTraitDesc_createSettlementMultiplier>{0} Settlement Cost</FCTraitDesc_createSettlementMultiplier>
 	<FCTraitDesc_buildTimeMultiplier>{0} Build Time</FCTraitDesc_buildTimeMultiplier>
+	<FCTraitDesc_buildingCostBase>{0} Base Building Cost</FCTraitDesc_buildingCostBase>
+	<FCTraitDesc_buildingCostMultiplier>{0} Building Cost</FCTraitDesc_buildingCostMultiplier>
 
 	<FCTraitDesc_militaryLevelBonusDefending>{0} Military Level (Defending)</FCTraitDesc_militaryLevelBonusDefending>
 	<FCTraitDesc_militaryEfficiencyBonusAttacking>{0} Combat Efficiency (Attacking)</FCTraitDesc_militaryEfficiencyBonusAttacking>

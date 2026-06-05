@@ -40,6 +40,8 @@ namespace FactionColonies
         public static FCStatDef lootMultiplier;
         public static FCStatDef settlementCostMultiplier;
         public static FCStatDef buildTimeMultiplier;
+        public static FCStatDef buildingCostBase;
+        public static FCStatDef buildingCostMultiplier;
         public static FCStatDef createSettlementBaseCost;
         public static FCStatDef createSettlementMultiplier;
         public static FCStatDef researchContributionMultiplier;

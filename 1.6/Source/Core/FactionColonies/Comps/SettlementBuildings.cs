@@ -270,7 +270,7 @@ namespace FactionColonies
                 Messages.Message("FCBuildingAlreadyType".Translate() + "!", MessageTypeDefOf.RejectInput);
             }
 
-            if (PaymentUtil.GetSilver() < building.cost) //check if the player has enough money
+            if (PaymentUtil.GetSilver() < GetBuildingCost(building)) //check if the player has enough money
             {
                 valid = false;
                 Messages.Message("FCNotEnoughSilverConstructBuilding".Translate() + "!", MessageTypeDefOf.RejectInput);
@@ -516,6 +516,25 @@ namespace FactionColonies
             upkeep = FindFC.PolicyManager.FoldBehaviors(upkeep, (b, u) => b.ModifyBuildingUpkeep(building, u, WorldSettlement));
 
             return (int)upkeep;
+        }
+
+        /// <summary>
+        /// Stat-modified silver cost to construct the given building in this settlement.
+        /// Formula: (def.cost + buildingCostBase) * buildingCostMultiplier, floored at 0.
+        /// Single source of truth for both the UI display and the actual payment.
+        /// </summary>
+        public int GetBuildingCost(BuildingFCDef building)
+        {
+            if (building is null)
+                return 0;
+
+            double cost = (building.cost + WorldSettlement.GetStatValue(FCStatDefOf.buildingCostBase))
+                          * WorldSettlement.GetStatValue(FCStatDefOf.buildingCostMultiplier);
+
+            if (cost < 0)
+                cost = 0;
+
+            return Convert.ToInt32(cost);
         }
 
         public TaggedString GetBuildingDesc(BuildingFCDef building)

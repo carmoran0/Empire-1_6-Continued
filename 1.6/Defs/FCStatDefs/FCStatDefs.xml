@@ -249,6 +249,24 @@
     </FactionColonies.FCStatDef>
 
     <FactionColonies.FCStatDef>
+        <defName>buildingCostBase</defName>
+        <label>building cost base</label>
+        <aggregation>Additive</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_buildingCostBase</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>buildingCostMultiplier</defName>
+        <label>building cost multiplier</label>
+        <aggregation>Multiplicative</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_buildingCostMultiplier</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
         <defName>researchContributionMultiplier</defName>
         <label>research contribution multiplier</label>
         <aggregation>Multiplicative</aggregation>
