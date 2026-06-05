@@ -216,7 +216,15 @@ namespace FactionColonies.util
             faction.colorFromSpectrum = FactionGenerator.NewRandomColorFromSpectrum(faction);
             faction.Name = "FCPlayerColony".Translate();
             faction.def.classicIdeo = Faction.OfPlayer.def.classicIdeo;
-            faction.ideos = Faction.OfPlayer.ideos;
+            // Inherit only the player's primary ideology, in an independent tracker
+            // (assigning Faction.OfPlayer.ideos wholesale would copy every minor ideo
+            // and share the player's tracker instance by reference).
+            faction.ideos = new FactionIdeosTracker(faction);
+            Ideo playerPrimary = Faction.OfPlayer.ideos?.PrimaryIdeo;
+            if (playerPrimary is object)
+            {
+                faction.ideos.SetPrimary(playerPrimary);
+            }
 
             worldcomp.DirtyTechLevelCache();
             //<DevAdd> Copy player faction relationships  
