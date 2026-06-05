@@ -17,14 +17,53 @@ namespace FactionColonies
         public MilUnitFC ownedLoadout;
         /* Truth of equipped gear right now. Always populated when the pawn is alive.
          * Re-cloned on every gear-touching event (hire / fill / upgrade / per-pawn
-         * edit / reset). All cost / gear queries should read this, not loadout. */
-        public MilUnitFC currentLoadout;
+         * edit / reset). All cost / gear queries should read this, not loadout.
+         * Assigning it re-seeds this merc's design-sourced stat modifiers from the new
+         * loadout (unit scope) — the natural copy point at hire/fill/upgrade/edit. */
+        private MilUnitFC _currentLoadout;
+        public MilUnitFC currentLoadout
+        {
+            get => _currentLoadout;
+            set { _currentLoadout = value; SyncDesignStatModifiers(value); }
+        }
         public MercenarySquadFC squad;
         public WorldSettlementFC settlement;
         public Mercenary handler;
         public Mercenary animal;
         public Pawn pawn;
         public int loadID;
+
+        /// <summary>Source tag for design modifiers copied from the loadout template.</summary>
+        public const string DesignModifierSource = "__design";
+
+        /// <summary>
+        /// Effective per-unit stat modifiers read in combat/healing (unit scope). Holds a flattened copy of
+        /// the loadout design's modifiers (sourceId == DesignModifierSource) plus any earned accolades.
+        /// </summary>
+        public List<PermanentStatModifier> statModifiers = new List<PermanentStatModifier>();
+
+        public void AddStatModifier(PermanentStatModifier mod) { statModifiers.Add(mod); }
+        public void RemoveStatModifiersBySource(string sourceId) { statModifiers.RemoveAll(m => m.sourceId == sourceId); }
+
+        /// <summary>
+        /// Re-seed design-sourced modifiers from the given loadout, preserving non-design (e.g. accolades, upgrades)
+        /// entries. A null source keeps the existing copy.
+        /// </summary>
+        private void SyncDesignStatModifiers(MilUnitFC source)
+        {
+            if (source is null) return;
+            if (statModifiers is null) statModifiers = new List<PermanentStatModifier>();
+            statModifiers.RemoveAll(m => m.sourceId == DesignModifierSource);
+            if (source.statModifiers != null)
+            {
+                foreach (PermanentStatModifier m in source.statModifiers)
+                {
+                    PermanentStatModifier copy = m.Clone();
+                    copy.sourceId = DesignModifierSource;
+                    statModifiers.Add(copy);
+                }
+            }
+        }
 
         /// <summary>True when this merc has a real (non-blank) loadout assigned and is
         /// therefore eligible to be sent on a deployment. Derived — there is no field to
@@ -87,7 +126,8 @@ namespace FactionColonies
             Scribe_Values.Look(ref isExternallyOwned, "isOnMap", false);
             Scribe_References.Look(ref loadout, "loadout");
             Scribe_Deep.Look(ref ownedLoadout, "ownedLoadout");
-            Scribe_Deep.Look(ref currentLoadout, "currentLoadout");
+            Scribe_Deep.Look(ref _currentLoadout, "currentLoadout");
+            Scribe_Collections.Look(ref statModifiers, "statModifiers", LookMode.Deep);
             Scribe_References.Look(ref squad, "squad");
             Scribe_References.Look(ref settlement, "settlement");
             Scribe_References.Look(ref handler, "handler");
@@ -128,6 +168,7 @@ namespace FactionColonies
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
+                if (statModifiers is null) statModifiers = new List<PermanentStatModifier>();
                 /* currentLoadout migration. Three save shapes:
                  *   1. Pre-refactor saves: only loadout (ref) populated.
                  *   2. Intermediate-refactor saves: loadout + ownedLoadout, no currentLoadout.
@@ -135,7 +176,7 @@ namespace FactionColonies
                  * Adopt ownedLoadout when present (it was the truth in shape 2), else
                  * clone the unit template for shape 1. Mercs without a pawn or loadout
                  * stay null (empty slot or fresh-created). */
-                if (currentLoadout == null)
+                if (currentLoadout is null)
                 {
                     if (ownedLoadout != null)
                         currentLoadout = ownedLoadout;
@@ -154,7 +195,7 @@ namespace FactionColonies
 
         public void SetCustomData(string key, IExposable data)
         {
-            if (customData == null) customData = new Dictionary<string, IExposable>();
+            if (customData is null) customData = new Dictionary<string, IExposable>();
             customData[key] = data;
         }
 

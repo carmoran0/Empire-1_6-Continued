@@ -1139,23 +1139,19 @@ namespace FactionColonies
         /// Entry point for stat queries. Combines settlement-level and faction-level cached partials,
         /// then applies uncached behavior ModifyStat adjustments.
         /// </summary>
-        public double GetStatValue(FCStatDef stat, WorldSettlementFC settlement = null)
+        public double GetStatValue(FCStatDef stat, WorldSettlementFC settlement = null,
+                                   MercenarySquadFC squad = null, Mercenary unit = null)
         {
-            double value;
-            double factionPart = GetFactionStatValue(stat);
+            double value = GetFactionStatValue(stat);
 
+            // Scope chain: faction (cached) -> settlement (cached) -> squad-instance -> unit-instance.
+            // Each scope folds in only if the stat opts into it and context is supplied.
             if (settlement != null && stat.appliesToSettlements)
-            {
-                double settlementPart = settlement.GetSettlementStatValue(stat);
-                if (stat.aggregation == FCStatAggregation.Additive)
-                    value = settlementPart + factionPart;
-                else
-                    value = settlementPart * factionPart;
-            }
-            else
-            {
-                value = factionPart;
-            }
+                value = CombineScoped(value, settlement.GetSettlementStatValue(stat), stat);
+            if (squad != null && stat.appliesToSquads)
+                value = CombineScoped(value, AccumulatePermanentModifiers(stat.IdentityValue, stat, squad.statModifiers), stat);
+            if (unit != null && stat.appliesToUnits)
+                value = CombineScoped(value, AccumulatePermanentModifiers(stat.IdentityValue, stat, unit.statModifiers), stat);
 
             // Apply runtime-dependent behavior modifiers (uncached — may depend on settlement state)
             foreach (FCPolicyBehavior b in policyManager.CachedBehaviors)
@@ -1170,6 +1166,20 @@ namespace FactionColonies
                 }
             }
 
+            return value;
+        }
+
+        /// <summary>Combines two scope values per the stat's aggregation (sum or product).</summary>
+        private static double CombineScoped(double a, double b, FCStatDef stat) =>
+            stat.aggregation == FCStatAggregation.Additive ? a + b : a * b;
+
+        /// <summary>Folds a per-entity PermanentStatModifier list (squad/unit scope) into a running value.</summary>
+        private double AccumulatePermanentModifiers(double value, FCStatDef stat, List<PermanentStatModifier> mods)
+        {
+            if (mods == null) return value;
+            foreach (PermanentStatModifier mod in mods)
+                if (mod.stat == stat)
+                    value = CombineScoped(value, mod.value, stat);
             return value;
         }
 

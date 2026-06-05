@@ -18,6 +18,7 @@
         <defName>militaryCombatEfficiency</defName>
         <label>military combat efficiency</label>
         <aggregation>Multiplicative</aggregation>
+        <appliesToSquads>true</appliesToSquads>
         <descriptionKey>FCTraitDesc_MilitaryCombatEfficiency</descriptionKey>
     </FactionColonies.FCStatDef>
 
@@ -83,6 +84,7 @@
         <label>mercenary heal rate</label>
         <aggregation>Multiplicative</aggregation>
         <appliesToSettlements>true</appliesToSettlements>
+        <appliesToUnits>true</appliesToUnits>
         <descriptionKey>FCTraitDesc_mercHealRateMultiplier</descriptionKey>
     </FactionColonies.FCStatDef>
 

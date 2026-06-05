@@ -33,6 +33,18 @@ namespace FactionColonies
         public bool appliesToSettlements = true;
 
         /// <summary>
+        /// Whether this stat can be modified per-squad. When true and a squad context is supplied to
+        /// GetStatValue, the squad's statModifiers fold into the result.
+        /// </summary>
+        public bool appliesToSquads = false;
+
+        /// <summary>
+        /// Whether this stat can be modified per-unit (individual mercenary). When true and a unit context
+        /// is supplied to GetStatValue, that soldier's statModifiers fold into the result.
+        /// </summary>
+        public bool appliesToUnits = false;
+
+        /// <summary>
         /// Translation key for description display (e.g., "FCTraitDesc_MilitaryLevel").
         /// </summary>
         public string descriptionKey;

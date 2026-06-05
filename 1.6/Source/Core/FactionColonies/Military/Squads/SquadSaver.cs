@@ -271,6 +271,7 @@ namespace FactionColonies
         public XenotypeDef xenotype;
         public string customXenotypeName;
         public Gender? forcedGender;
+        public List<PermanentStatModifier> statModifiers;
 
         // Set during load when defs fail to resolve (e.g. mod removed). Not serialized.
         public bool isDegraded;
@@ -290,6 +291,7 @@ namespace FactionColonies
             xenotype = unit.xenotype;
             customXenotypeName = unit.customXenotypeName;
             forcedGender = unit.forcedGender;
+            statModifiers = unit.statModifiers?.Select(m => m.Clone()).ToList() ?? new List<PermanentStatModifier>();
         }
 
         public MilUnitFC CreateMilUnit()
@@ -317,6 +319,7 @@ namespace FactionColonies
             unit.apparel = apparel?.Where(a => a.thing != null).ToList() ?? new List<SavedThing>();
             unit.inventory = inventory?.Where(i => i.thing != null).ToList() ?? new List<SavedThing>();
             unit.implants = implants?.Where(im => im.recipe != null).ToList() ?? new List<SavedImplant>();
+            unit.statModifiers = statModifiers?.Select(m => m.Clone()).ToList() ?? new List<PermanentStatModifier>();
 
             unit.LoadFromSaved(this);
             unit.ChangeTick();
@@ -353,6 +356,7 @@ namespace FactionColonies
             Scribe_Collections.Look(ref apparel, "apparel", LookMode.Deep);
             Scribe_Collections.Look(ref inventory, "inventory", LookMode.Deep);
             Scribe_Collections.Look(ref implants, "implants", LookMode.Deep);
+            Scribe_Collections.Look(ref statModifiers, "statModifiers", LookMode.Deep);
 
             // forcedGender nullable — save only if set
             bool hasGender = forcedGender.HasValue;
@@ -413,6 +417,7 @@ namespace FactionColonies
         public string name;
         public List<SavedUnitFC> unitTemplates = new List<SavedUnitFC>();
         public List<int> units = new List<int>(30);
+        public List<PermanentStatModifier> statModifiers;
         public bool IsDegraded => unitTemplates != null && unitTemplates.Any(u => u.isDegraded);
 
         public SavedSquadFC() { }
@@ -426,6 +431,7 @@ namespace FactionColonies
 
             unitTemplates = squadTemplates.Select(unit => unit.ToSavedUnit()).ToList();
             units = squad.Units.Select(unit => squadTemplates.IndexOf(unit)).ToList();
+            statModifiers = squad.statModifiers?.Select(m => m.Clone()).ToList() ?? new List<PermanentStatModifier>();
         }
 
         public MilSquadFC CreateMilSquad()
@@ -445,6 +451,7 @@ namespace FactionColonies
                     squad.AddUnit(milUnits[i]);
             }
 
+            squad.statModifiers = statModifiers?.Select(m => m.Clone()).ToList() ?? new List<PermanentStatModifier>();
             squad.LoadFromSaved(this);
             return squad;
         }
@@ -470,6 +477,7 @@ namespace FactionColonies
             Scribe_Values.Look(ref name, "name");
             Scribe_Collections.Look(ref unitTemplates, "unitTemplates", LookMode.Deep);
             Scribe_Collections.Look(ref units, "units", LookMode.Value);
+            Scribe_Collections.Look(ref statModifiers, "statModifiers", LookMode.Deep);
         }
     }
 

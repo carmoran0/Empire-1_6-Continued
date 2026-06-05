@@ -46,8 +46,9 @@ namespace FactionColonies
 
             WorldSettlementFC settlement = merc.settlement ?? merc.squad?.getSettlement;
             FactionFC faction = FindFC.FactionComp;
-            double settlementMult = (faction is object && settlement is object)
-                ? faction.GetStatValue(FCStatDefOf.mercHealRateMultiplier, settlement)
+            // unit context (the merc) lets per-unit design/accolade heal-rate modifiers fold in for this soldier
+            double settlementMult = (faction is object)
+                ? faction.GetStatValue(FCStatDefOf.mercHealRateMultiplier, settlement, null, merc)
                 : 1.0;
 
             factor = RebaselineFactor * FCSettings.mercenaryHealRatePerHour * (float)settlementMult;

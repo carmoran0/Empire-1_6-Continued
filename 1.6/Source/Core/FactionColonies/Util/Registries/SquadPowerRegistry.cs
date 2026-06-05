@@ -84,7 +84,8 @@ namespace FactionColonies
             FactionFC faction = FindFC.FactionComp;
             if (faction is object && squad.settlement is object)
             {
-                efficiency = faction.GetStatValue(FCStatDefOf.militaryCombatEfficiency, squad.settlement);
+                // squad context lets per-squad (design + accolade) combat-efficiency modifiers fold in
+                efficiency = faction.GetStatValue(FCStatDefOf.militaryCombatEfficiency, squad.settlement, squad);
             }
             return new SquadPower(level, efficiency);
         }

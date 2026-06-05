@@ -14,6 +14,10 @@ namespace FactionColonies
         public string sourceId;
         public string sourceLabel;
 
+        /// <summary>Deep copy — used when seeding design modifiers onto squad/unit instances.</summary>
+        public PermanentStatModifier Clone() =>
+            new PermanentStatModifier { stat = stat, value = value, sourceId = sourceId, sourceLabel = sourceLabel };
+
         public void ExposeData()
         {
             Scribe_Defs.Look(ref stat, "stat");

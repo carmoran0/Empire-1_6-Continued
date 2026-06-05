@@ -2,6 +2,7 @@ using FactionColonies.util;
 using RimWorld;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Verse;
 
@@ -35,6 +36,16 @@ namespace FactionColonies
 
         // Forced gender for spawned pawns (null = any).
         public Gender? forcedGender;
+
+        /// <summary>
+        /// Design-level stat modifiers for this unit template (unit scope). Copied into a clone's modifier
+        /// list, and seeded onto a mercenary's own statModifiers when set as their currentLoadout.
+        /// Groundwork for a unit-accolade system.
+        /// </summary>
+        public List<PermanentStatModifier> statModifiers = new List<PermanentStatModifier>();
+
+        public void AddStatModifier(PermanentStatModifier mod) { statModifiers.Add(mod); }
+        public void RemoveStatModifiersBySource(string sourceId) { statModifiers.RemoveAll(m => m.sourceId == sourceId); }
 
         // Lazy preview pawn for UI rendering only — not serialized
         private Pawn previewPawn;
@@ -190,6 +201,7 @@ namespace FactionColonies
             Scribe_Collections.Look(ref apparel, "apparel", LookMode.Deep);
             Scribe_Collections.Look(ref inventory, "inventory", LookMode.Deep);
             Scribe_Collections.Look(ref implants, "implants", LookMode.Deep);
+            Scribe_Collections.Look(ref statModifiers, "statModifiers", LookMode.Deep);
 
             // forcedGender nullable — save only if set
             bool hasGender = forcedGender.HasValue;
@@ -206,6 +218,7 @@ namespace FactionColonies
                 if (apparel == null) apparel = new List<SavedThing>();
                 if (inventory == null) inventory = new List<SavedThing>();
                 if (implants == null) implants = new List<SavedImplant>();
+                if (statModifiers == null) statModifiers = new List<PermanentStatModifier>();
                 // Mutual exclusivity: prefer XenotypeDef if both are set
                 if (xenotype != null && customXenotypeName != null)
                     customXenotypeName = null;
@@ -881,6 +894,7 @@ namespace FactionColonies
             copy.apparel = new List<SavedThing>(apparel ?? new List<SavedThing>());
             copy.inventory = new List<SavedThing>(inventory ?? new List<SavedThing>());
             copy.implants = new List<SavedImplant>(implants ?? new List<SavedImplant>());
+            copy.statModifiers = statModifiers?.Select(m => m.Clone()).ToList() ?? new List<PermanentStatModifier>();
             CopyExtraFieldsTo(copy);
             copy.ChangeTick();
             copy.UpdateEquipmentTotalCost();

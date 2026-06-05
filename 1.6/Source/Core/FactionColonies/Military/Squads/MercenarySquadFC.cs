@@ -19,9 +19,51 @@ namespace FactionColonies
         public WorldSettlementFC settlement;
         public bool isExtraSquad;
         public int dead;
-        public MilSquadFC outfit;
+        private MilSquadFC _outfit;
+        /// <summary>
+        /// The design template this squad follows. Assigning it re-seeds this squad's design-sourced
+        /// stat modifiers from the template (squad scope). Setting it null (template deleted) keeps the
+        /// last copied modifiers.
+        /// </summary>
+        public MilSquadFC outfit
+        {
+            get => _outfit;
+            set { _outfit = value; SyncDesignStatModifiers(value); }
+        }
         public SquadEquipmentTracker Equipment;
         public SquadDeploymentState Deployment;
+
+        /// <summary>Source tag for design modifiers copied from the outfit template.</summary>
+        public const string DesignModifierSource = "__design";
+
+        /// <summary>
+        /// Effective per-squad stat modifiers read in combat (squad scope). Holds a flattened copy of the
+        /// outfit template's modifiers (sourceId == DesignModifierSource) plus any earned accolades (other sources).
+        /// </summary>
+        public List<PermanentStatModifier> statModifiers = new List<PermanentStatModifier>();
+
+        public void AddStatModifier(PermanentStatModifier mod) { statModifiers.Add(mod); }
+        public void RemoveStatModifiersBySource(string sourceId) { statModifiers.RemoveAll(m => m.sourceId == sourceId); }
+
+        /// <summary>
+        /// Re-seed design-sourced modifiers from the given template, preserving non-design (e.g. accolades, upgrades)
+        /// entries. A null source keeps the existing copy (squad no longer has a backing template).
+        /// </summary>
+        private void SyncDesignStatModifiers(MilSquadFC source)
+        {
+            if (source is null) return;
+            if (statModifiers is null) statModifiers = new List<PermanentStatModifier>();
+            statModifiers.RemoveAll(m => m.sourceId == DesignModifierSource);
+            if (source.statModifiers != null)
+            {
+                foreach (PermanentStatModifier m in source.statModifiers)
+                {
+                    PermanentStatModifier copy = m.Clone();
+                    copy.sourceId = DesignModifierSource;
+                    statModifiers.Add(copy);
+                }
+            }
+        }
 
         /* -*-*-*-*- Squad-first refactor fields -*-*-*-*-
          * nextAvailableTick: per-squad cooldown expiry. Updated in MilitaryOperation.EnterCooldown.
@@ -70,7 +112,8 @@ namespace FactionColonies
             Scribe_Collections.Look(ref mercenaries, "mercenaries", LookMode.Deep);
             Scribe_Collections.Look(ref animals, "animals", LookMode.Deep);
             Scribe_Values.Look(ref isExtraSquad, "isExtraSquad");
-            Scribe_References.Look(ref outfit, "outfit");
+            Scribe_References.Look(ref _outfit, "outfit");
+            Scribe_Collections.Look(ref statModifiers, "statModifiers", LookMode.Deep);
             Scribe_Values.Look(ref dead, "dead");
             Scribe_Deep.Look(ref Equipment, "equipment", new object[] { this });
             Scribe_Deep.Look(ref Deployment, "deployment", new object[] { this });
@@ -93,6 +136,7 @@ namespace FactionColonies
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
+                if (statModifiers is null) statModifiers = new List<PermanentStatModifier>();
                 if (Equipment is null) Equipment = CreateEquipment();
                 Equipment.AdoptLegacyLists(_legacyUsedWeaponList, _legacyUsedApparelList);
                 _legacyUsedWeaponList = null;
