@@ -11,6 +11,7 @@
         <defName>militaryBaseLevel</defName>
         <label>military base level</label>
         <aggregation>Additive</aggregation>
+        <appliesToSquads>true</appliesToSquads>
         <descriptionKey>FCTraitDesc_MilitaryLevel</descriptionKey>
     </FactionColonies.FCStatDef>
 
@@ -27,6 +28,7 @@
         <label>military level bonus (defending)</label>
         <aggregation>Additive</aggregation>
         <appliesToSettlements>false</appliesToSettlements>
+        <appliesToSquads>true</appliesToSquads>
         <descriptionKey>FCTraitDesc_militaryLevelBonusDefending</descriptionKey>
     </FactionColonies.FCStatDef>
 
@@ -35,6 +37,7 @@
         <label>military level bonus (attacking)</label>
         <aggregation>Additive</aggregation>
         <appliesToSettlements>false</appliesToSettlements>
+        <appliesToSquads>true</appliesToSquads>
     </FactionColonies.FCStatDef>
 
     <FactionColonies.FCStatDef>
@@ -42,6 +45,7 @@
         <label>military efficiency bonus (attacking)</label>
         <aggregation>Multiplicative</aggregation>
         <appliesToSettlements>false</appliesToSettlements>
+        <appliesToSquads>true</appliesToSquads>
         <descriptionKey>FCTraitDesc_militaryEfficiencyBonusAttacking</descriptionKey>
     </FactionColonies.FCStatDef>
 
@@ -50,6 +54,7 @@
         <label>military efficiency bonus (defending)</label>
         <aggregation>Multiplicative</aggregation>
         <appliesToSettlements>false</appliesToSettlements>
+        <appliesToSquads>true</appliesToSquads>
         <descriptionKey>FCTraitDesc_militaryEfficiencyBonusDefending</descriptionKey>
     </FactionColonies.FCStatDef>
 
@@ -93,6 +98,8 @@
         <label>mercenary death chance multiplier</label>
         <aggregation>Multiplicative</aggregation>
         <appliesToSettlements>true</appliesToSettlements>
+        <appliesToSquads>true</appliesToSquads>
+        <appliesToUnits>true</appliesToUnits>
         <descriptionKey>FCTraitDesc_mercenaryDeathChanceMultiplier</descriptionKey>
     </FactionColonies.FCStatDef>
 
@@ -101,6 +108,7 @@
         <label>mercenary casualty rate multiplier</label>
         <aggregation>Multiplicative</aggregation>
         <appliesToSettlements>true</appliesToSettlements>
+        <appliesToSquads>true</appliesToSquads>
         <descriptionKey>FCTraitDesc_mercenaryCasualtyRateMultiplier</descriptionKey>
     </FactionColonies.FCStatDef>
 

@@ -70,6 +70,7 @@ namespace FactionColonies
             if (victimCount <= 0) return;
             if (victimCount > candidates.Count) victimCount = candidates.Count;
 
+            FactionFC faction = FindFC.FactionComp;
             candidates.Shuffle();
             for (int i = 0; i < victimCount; i++)
             {
@@ -77,13 +78,34 @@ namespace FactionColonies
                 if (victim is null || victim.Dead) continue;
                 try
                 {
-                    ApplyCasualtyOutcome(victim, rate, deathChance);
+                    // Per-unit death-chance scope: scale the squad-wide chance by this soldier's own modifiers.
+                    double victimDeathChance = deathChance;
+                    if (faction is object)
+                    {
+                        double unitMult = faction.GetUnitStatValue(FCStatDefOf.mercenaryDeathChanceMultiplier, FindMercForPawn(squad, victim));
+                        victimDeathChance *= (unitMult > 0 ? unitMult : 1.0);
+                        if (victimDeathChance < 0) victimDeathChance = 0;
+                        if (victimDeathChance > 1) victimDeathChance = 1;
+                    }
+                    ApplyCasualtyOutcome(victim, rate, victimDeathChance);
                 }
                 catch (Exception e)
                 {
                     LogUtil.Error($"BattleCasualtyApplicator: failed to apply casualty to {victim?.LabelShortCap}: {e}");
                 }
             }
+        }
+
+        /// <summary>Finds the Mercenary owning <paramref name="pawn"/> within the squad (mercs or animals), or null.</summary>
+        private static Mercenary FindMercForPawn(MercenarySquadFC squad, Pawn pawn)
+        {
+            if (squad?.mercenaries != null)
+                foreach (Mercenary m in squad.mercenaries)
+                    if (m?.pawn == pawn) return m;
+            if (squad?.animals != null)
+                foreach (Mercenary m in squad.animals)
+                    if (m?.pawn == pawn) return m;
+            return null;
         }
 
         /// <summary>
@@ -105,8 +127,9 @@ namespace FactionColonies
             if (rawRate > 1) rawRate = 1;
 
             FactionFC faction = FindFC.FactionComp;
+            // squad context folds per-squad casualty-rate modifiers on top of faction/settlement
             double rateMult = faction is object
-                ? faction.GetStatValue(FCStatDefOf.mercenaryCasualtyRateMultiplier, statsContext)
+                ? faction.GetStatValue(FCStatDefOf.mercenaryCasualtyRateMultiplier, statsContext, squad)
                 : 1.0;
             double finalRate = rawRate * (rateMult > 0 ? rateMult : 1.0);
             if (finalRate < 0) finalRate = 0;
@@ -134,8 +157,10 @@ namespace FactionColonies
                 deathChance = ((rate - threshold) / (1.0 - threshold)) * maxDeathFraction;
 
             FactionFC faction = FindFC.FactionComp;
+            // squad context folds per-squad death-chance modifiers; per-unit modifiers are applied per-victim
+            // in ApplyCasualtiesToSquad (so individual soldiers can differ).
             double deathMult = faction is object
-                ? faction.GetStatValue(FCStatDefOf.mercenaryDeathChanceMultiplier, statsContext)
+                ? faction.GetStatValue(FCStatDefOf.mercenaryDeathChanceMultiplier, statsContext, squad)
                 : 1.0;
             deathChance *= (deathMult > 0 ? deathMult : 1.0);
             if (deathChance < 0) deathChance = 0;

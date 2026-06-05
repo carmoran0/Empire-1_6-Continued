@@ -49,7 +49,7 @@ namespace FactionColonies
             if (squad?.settlement is null) return null;
 
             SquadPower power = SquadPowerRegistry.Resolve(squad);
-            return CombineForce(power.militaryLevel, power.militaryEfficiency, squad.settlement, isAttacking, homeDefendingForce);
+            return CombineForce(power.militaryLevel, power.militaryEfficiency, squad.settlement, isAttacking, homeDefendingForce, squad);
         }
 
         /// <summary>Half-power synthetic force for a settlement with squad capacity but no
@@ -85,7 +85,8 @@ namespace FactionColonies
          * bonuses. Used by every public force factory so the bonus chain stays in one
          * place. */
         private static MilitaryForce CombineForce(double reinforcerLevel, double reinforcerEff,
-            WorldSettlementFC anchorSettlement, bool isAttacking, MilitaryForce homeDefendingForce)
+            WorldSettlementFC anchorSettlement, bool isAttacking, MilitaryForce homeDefendingForce,
+            MercenarySquadFC squad = null)
         {
             FactionFC faction = FindFC.FactionComp;
 
@@ -109,15 +110,17 @@ namespace FactionColonies
 
             if (faction is object)
             {
+                // squad context folds per-squad (design + accolade) bonuses on top of the faction values.
+                // settlement stays unapplied here (these bonuses are faction/squad scoped, as before).
                 if (isAttacking)
                 {
-                    combinedLevel += faction.GetStatValue(FCStatDefOf.militaryLevelBonusAttacking);
-                    blendedEff *= faction.GetStatValue(FCStatDefOf.militaryEfficiencyBonusAttacking);
+                    combinedLevel += faction.GetStatValue(FCStatDefOf.militaryLevelBonusAttacking, null, squad);
+                    blendedEff *= faction.GetStatValue(FCStatDefOf.militaryEfficiencyBonusAttacking, null, squad);
                 }
                 else
                 {
-                    combinedLevel += faction.GetStatValue(FCStatDefOf.militaryLevelBonusDefending);
-                    blendedEff *= faction.GetStatValue(FCStatDefOf.militaryEfficiencyBonusDefending);
+                    combinedLevel += faction.GetStatValue(FCStatDefOf.militaryLevelBonusDefending, null, squad);
+                    blendedEff *= faction.GetStatValue(FCStatDefOf.militaryEfficiencyBonusDefending, null, squad);
                 }
             }
 

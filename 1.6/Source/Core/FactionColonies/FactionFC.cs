@@ -1183,6 +1183,27 @@ namespace FactionColonies
             return value;
         }
 
+        /// <summary>
+        /// The squad-instance contribution to a stat (squad scope only), relative to identity — i.e. just
+        /// this squad's own statModifiers, not the faction/settlement parts. Returns IdentityValue (0 additive /
+        /// 1 multiplicative) when the squad is null or the stat does not opt into squad scope. Use this to layer
+        /// a squad-scoped delta onto a value that already carries the faction/settlement contribution elsewhere.
+        /// </summary>
+        public double GetSquadStatValue(FCStatDef stat, MercenarySquadFC squad) =>
+            (squad != null && stat.appliesToSquads)
+                ? AccumulatePermanentModifiers(stat.IdentityValue, stat, squad.statModifiers)
+                : stat.IdentityValue;
+
+        /// <summary>
+        /// The unit-instance contribution to a stat (unit scope only), relative to identity — just this
+        /// mercenary's own statModifiers. Returns IdentityValue when the unit is null or the stat does not opt
+        /// into unit scope.
+        /// </summary>
+        public double GetUnitStatValue(FCStatDef stat, Mercenary unit) =>
+            (unit != null && stat.appliesToUnits)
+                ? AccumulatePermanentModifiers(stat.IdentityValue, stat, unit.statModifiers)
+                : stat.IdentityValue;
+
         private double AccumulateStatModifiersValue(double value, FCStatDef stat, List<FCStatModifier> statModifiers)
         {
             foreach (FCStatModifier mod in statModifiers)
