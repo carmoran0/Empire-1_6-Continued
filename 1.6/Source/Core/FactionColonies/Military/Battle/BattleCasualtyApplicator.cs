@@ -225,9 +225,12 @@ namespace FactionColonies
 
             int woundCount = rate >= 0.75 ? Rand.RangeInclusive(2, 3) : Rand.RangeInclusive(1, 2);
 
+            // casualtyWoundSeverityMultiplier (faction-wide) scales wound severity; the lethal budget below still caps applied damage.
+            float severityMult = (float)(FindFC.FactionComp?.GetStatValue(FCStatDefOf.casualtyWoundSeverityMultiplier) ?? 1);
+
             float t = (float)Math.Min(1.0, rate / 0.75);
-            float sevMin = Mathf.Lerp(MildSeverityMin, SevereSeverityMin, t);
-            float sevMax = Mathf.Lerp(MildSeverityMax, SevereSeverityMax, t);
+            float sevMin = Mathf.Lerp(MildSeverityMin, SevereSeverityMin, t) * severityMult;
+            float sevMax = Mathf.Lerp(MildSeverityMax, SevereSeverityMax, t) * severityMult;
 
             for (int i = 0; i < woundCount; i++)
             {

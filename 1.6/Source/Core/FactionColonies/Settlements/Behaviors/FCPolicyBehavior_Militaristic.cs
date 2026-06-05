@@ -12,8 +12,7 @@ namespace FactionColonies
         public override void PostInitialize()
         {
             var ext = Ext<FCPolicyBehaviorExt_Militaristic>();
-            if (extraSquadCooldown.cooldownTicks == 0)
-                extraSquadCooldown.cooldownTicks = GenDate.TicksPerDay * ext.extraSquadCooldownDays;
+            extraSquadCooldown.SetCooldown(GenDate.TicksPerDay * ext.extraSquadCooldownDays);
         }
 
         public override void OnEnacted(FactionFC faction)

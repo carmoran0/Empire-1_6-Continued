@@ -19,11 +19,12 @@ namespace FactionColonies.util
         /// <summary>
         /// Calculates worker upkeep including overwork penalty.
         /// Overwork occurs when workers exceed workersMax, adding a penalty of (overwork / 20) * base upkeep.
+        /// <paramref name="overworkPenaltyMult"/> (workerOverworkPenaltyMultiplier stat) scales that penalty.
         /// </summary>
-        public static double CalculateWorkerUpkeep(double workers, double workersMax, double baseWorkerCost)
+        public static double CalculateWorkerUpkeep(double workers, double workersMax, double baseWorkerCost, double overworkPenaltyMult = 1)
         {
             double overWork = workers > workersMax ? (int)(workers - workersMax) : 0;
-            return (workers * baseWorkerCost) + ((workers * baseWorkerCost) * (overWork / 20));
+            return (workers * baseWorkerCost) + ((workers * baseWorkerCost) * (overWork / 20) * overworkPenaltyMult);
         }
 
         /// <summary>
@@ -59,9 +60,10 @@ namespace FactionColonies.util
         /// Policy-specific modifiers (e.g. feudal, resilient) are applied via FCStatDef stats.
         /// </summary>
         public static (double prosperity, double happiness, double loyalty) CalculateBattleLossPenalties(
-            double happinessLostMultiplier, double loyaltyLostMultiplier)
+            double happinessLostMultiplier, double loyaltyLostMultiplier,
+            double prosperityBase = 0, double happinessBase = 0, double loyaltyBase = 0)
         {
-            return (20, 25 * happinessLostMultiplier, 15 * loyaltyLostMultiplier);
+            return (20 + prosperityBase, (25 + happinessBase) * happinessLostMultiplier, (15 + loyaltyBase) * loyaltyLostMultiplier);
         }
 
         /// <summary>

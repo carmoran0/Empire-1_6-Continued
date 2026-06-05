@@ -180,7 +180,7 @@ namespace FactionColonies
             Find.Targeter.BeginTargeting(targetParams,
                 delegate (LocalTargetInfo target)
                 {
-                    float cost = support.ReturnTotalCost();
+                    float cost = support.ReturnTotalCost(settlement);
                     if (DebugSettings.godMode || PaymentUtil.GetSilver() > cost)
                     {
                         if (!DebugSettings.godMode)

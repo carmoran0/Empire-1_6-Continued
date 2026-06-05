@@ -2102,10 +2102,10 @@ namespace FactionColonies
                 if (support.projectiles == null || support.projectiles.Count == 0)
                     continue;
 
-                float cost = support.ReturnTotalCost();
+                float cost = support.ReturnTotalCost(settlement);
                 list.Add(new FloatMenuOption(support.name + " - $" + cost, delegate
                 {
-                    if (support.ReturnTotalCost() <=
+                    if (support.ReturnTotalCost(settlement) <=
                         MilitaryFC.CalculateFireSupportBudget(settlement.settlementMilitaryLevel))
                     {
                         if (settlement.BuildingsComp?.HasBuilding(BuildingFCDefOf.artilleryOutpost) == true)

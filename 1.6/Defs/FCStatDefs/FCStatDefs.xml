@@ -657,4 +657,133 @@
         <linkedResource>RTD_Gravtech</linkedResource>
     </FactionColonies.FCStatDef>
 
+    <!-- Settlement lifecycle -->
+
+    <FactionColonies.FCStatDef>
+        <defName>settlementUpgradeCostBase</defName>
+        <label>settlement upgrade cost base</label>
+        <aggregation>Additive</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_settlementUpgradeCostBase</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>settlementUpgradeCostMultiplier</defName>
+        <label>settlement upgrade cost multiplier</label>
+        <aggregation>Multiplicative</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_settlementUpgradeCostMultiplier</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>settlementExpansionCostPerSettlement</defName>
+        <label>settlement expansion cost per settlement</label>
+        <aggregation>Additive</aggregation>
+        <appliesToSettlements>false</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_settlementExpansionCostPerSettlement</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>buildingSlotsPerLevelBonus</defName>
+        <label>building slots per level bonus</label>
+        <aggregation>Additive</aggregation>
+        <appliesToSettlements>false</appliesToSettlements>
+        <descriptionKey>FCTraitDesc_buildingSlotsPerLevelBonus</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>workerOverworkPenaltyMultiplier</defName>
+        <label>worker overwork penalty multiplier</label>
+        <aggregation>Multiplicative</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_workerOverworkPenaltyMultiplier</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <!-- Battle morale -->
+
+    <FactionColonies.FCStatDef>
+        <defName>battleLossProsperityBase</defName>
+        <label>battle loss prosperity penalty base</label>
+        <aggregation>Additive</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_battleLossProsperityBase</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>battleLossHappinessBase</defName>
+        <label>battle loss happiness penalty base</label>
+        <aggregation>Additive</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_battleLossHappinessBase</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>battleLossLoyaltyBase</defName>
+        <label>battle loss loyalty penalty base</label>
+        <aggregation>Additive</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_battleLossLoyaltyBase</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>victoryHappinessBonus</defName>
+        <label>victory happiness bonus</label>
+        <aggregation>Additive</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <descriptionKey>FCTraitDesc_victoryHappinessBonus</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>victoryLoyaltyBonus</defName>
+        <label>victory loyalty bonus</label>
+        <aggregation>Additive</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <descriptionKey>FCTraitDesc_victoryLoyaltyBonus</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <!-- Military -->
+
+    <FactionColonies.FCStatDef>
+        <defName>fireSupportCostMultiplier</defName>
+        <label>fire support cost multiplier</label>
+        <aggregation>Multiplicative</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_fireSupportCostMultiplier</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>policyActionCooldownMultiplier</defName>
+        <label>policy action cooldown multiplier</label>
+        <aggregation>Multiplicative</aggregation>
+        <appliesToSettlements>false</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_policyActionCooldownMultiplier</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>casualtyWoundSeverityMultiplier</defName>
+        <label>casualty wound severity multiplier</label>
+        <aggregation>Multiplicative</aggregation>
+        <appliesToSettlements>false</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_casualtyWoundSeverityMultiplier</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>threatAdaptationGrowthMultiplier</defName>
+        <label>threat adaptation growth multiplier</label>
+        <aggregation>Multiplicative</aggregation>
+        <appliesToSettlements>false</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_threatAdaptationGrowthMultiplier</descriptionKey>
+    </FactionColonies.FCStatDef>
+
 </Defs>

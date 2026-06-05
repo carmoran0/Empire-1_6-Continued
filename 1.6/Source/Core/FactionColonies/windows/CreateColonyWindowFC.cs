@@ -26,8 +26,28 @@ namespace FactionColonies
         private int settlementCreationCost = 0;
         private readonly FactionFC faction = null;
 
-        private int SettlementCreationBaseCost => (int)(faction.GetStatValue(FCStatDefOf.createSettlementMultiplier) *
-                                                        (currentSettlementType.GetSettlementTypeExtension().GetCreationCost() + faction.GetStatValue(FCStatDefOf.createSettlementBaseCost)));
+        private int SettlementCreationBaseCost => (int)(CombinedFoundingStat(FCStatDefOf.createSettlementMultiplier) *
+                                                        (currentSettlementType.GetSettlementTypeExtension().GetCreationCost() + CombinedFoundingStat(FCStatDefOf.createSettlementBaseCost)));
+
+        /// <summary>
+        /// Faction stat value for the selected tile's biome, folding in the biome's own statModifiers.
+        /// Lets a BiomeResourceDef carry settlement-cost modifiers that apply at founding time (before the
+        /// settlement object exists, so the normal settlement-stat aggregation can't see them yet).
+        /// </summary>
+        private double CombinedFoundingStat(FCStatDef stat)
+        {
+            double biome = stat.IdentityValue;
+            if (currentBiomeSelected?.statModifiers != null)
+            {
+                foreach (FCStatModifier m in currentBiomeSelected.statModifiers)
+                {
+                    if (m.stat == stat)
+                        biome = stat.aggregation == FCStatAggregation.Additive ? biome + m.value : biome * m.value;
+                }
+            }
+            double fac = faction.GetStatValue(stat);
+            return stat.aggregation == FCStatAggregation.Additive ? fac + biome : fac * biome;
+        }
 
         /* UI math stuff! Yaaaay!
          * what a pain
@@ -244,7 +264,7 @@ namespace FactionColonies
         private void CalculateSettlementCreationCost()
         {
             double baseCost = SettlementCreationBaseCost;
-            settlementCreationCost = (int)(baseCost * faction.GetStatValue(FCStatDefOf.settlementCostMultiplier));
+            settlementCreationCost = (int)(baseCost * CombinedFoundingStat(FCStatDefOf.settlementCostMultiplier));
 
             settlementCostModified = settlementCreationCost != (int)baseCost;
         }

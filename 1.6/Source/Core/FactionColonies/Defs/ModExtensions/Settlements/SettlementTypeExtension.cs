@@ -187,7 +187,8 @@ namespace FactionColonies
             }
             else
             {
-                return (int)(FCSettings.silverToCreateSettlement + (500 * (faction.settlements.Count() + faction.settlementCaravansList.Count())));
+                double perSettlement = 500 + faction.GetStatValue(FCStatDefOf.settlementExpansionCostPerSettlement);
+                return (int)Math.Max(FCSettings.silverToCreateSettlement + (perSettlement * (faction.settlements.Count() + faction.settlementCaravansList.Count())), 0);
             }
         }
         /// <summary>
@@ -269,7 +270,18 @@ namespace FactionColonies
         /// </summary>
         public virtual int GetBuildingSlots(int level, int maxCount)
         {
-            return SettlementFormulas.CalculateBuildingSlots(level, maxCount, parentDef.baseUnlockedBuildings, parentDef.perLevelUnlockedBuildings);
+            return SettlementFormulas.CalculateBuildingSlots(level, maxCount, parentDef.baseUnlockedBuildings, EffectivePerLevelSlots());
+        }
+
+        /// <summary>
+        /// Per-level building slot growth, including the buildingSlotsPerLevelBonus stat (faction-wide).
+        /// Used by both slot-count and slot-unlock-level math so they stay consistent.
+        /// Note: a large negative bonus could strand buildings in newly-locked slots; the slot count is still
+        /// clamped to maxBuildingCount.
+        /// </summary>
+        protected float EffectivePerLevelSlots()
+        {
+            return parentDef.perLevelUnlockedBuildings + (float)(faction?.GetStatValue(FCStatDefOf.buildingSlotsPerLevelBonus) ?? 0);
         }
 
         /// <summary>
@@ -279,7 +291,7 @@ namespace FactionColonies
         /// </summary>
         public virtual int GetRequiredLevelForSlot(int slotIndex, int maxCount)
         {
-            return SettlementFormulas.CalculateLevelForSlot(slotIndex, parentDef.baseUnlockedBuildings, parentDef.perLevelUnlockedBuildings);
+            return SettlementFormulas.CalculateLevelForSlot(slotIndex, parentDef.baseUnlockedBuildings, EffectivePerLevelSlots());
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 using RimWorld;
+using System;
 using Verse;
 
 namespace FactionColonies
@@ -31,6 +32,17 @@ namespace FactionColonies
         {
             tickLastUsed = Find.TickManager.TicksGame;
             wasReady = false;
+        }
+
+        /// <summary>
+        /// Sets the cooldown duration from a base tick count, scaled by the faction-wide
+        /// policyActionCooldownMultiplier stat. Call from a behavior's PostInitialize so changes to
+        /// the multiplier are picked up on each policy init/load. Does not affect tickLastUsed (the live state).
+        /// </summary>
+        public void SetCooldown(int baseTicks)
+        {
+            double mult = FindFC.FactionComp?.GetStatValue(FCStatDefOf.policyActionCooldownMultiplier) ?? 1;
+            cooldownTicks = (int)Math.Round(baseTicks * mult);
         }
 
         /// <summary>

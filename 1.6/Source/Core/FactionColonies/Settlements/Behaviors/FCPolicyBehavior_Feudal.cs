@@ -15,8 +15,7 @@ namespace FactionColonies
             var ext = Ext<FCPolicyBehaviorExt_Feudal>();
             mercenaryCooldown.readyLetterKey = ext.readyLetterKey;
             mercenaryCooldown.cooldownMessageKey = ext.cooldownMessageKey;
-            if (mercenaryCooldown.cooldownTicks == 0)
-                mercenaryCooldown.cooldownTicks = ext.mercenaryCooldownTicks;
+            mercenaryCooldown.SetCooldown(ext.mercenaryCooldownTicks);
         }
 
         public override void Tick(FactionFC faction)

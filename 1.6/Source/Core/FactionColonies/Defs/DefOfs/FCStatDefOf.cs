@@ -21,16 +21,25 @@ namespace FactionColonies
         public static FCStatDef mercenaryDeathHappinessPenalty;
         public static FCStatDef squadCapPerSettlement;
         public static FCStatDef maxSquadSize;
+        public static FCStatDef fireSupportCostMultiplier;
+        public static FCStatDef policyActionCooldownMultiplier;
+        public static FCStatDef casualtyWoundSeverityMultiplier;
 
         /* Threat Scaling */
         public static FCStatDef threatScalingBase;
         public static FCStatDef threatScalingMultiplier;
+        public static FCStatDef threatAdaptationGrowthMultiplier;
 
         /* Battle Penalties */
         public static FCStatDef battleProsperityLossMultiplier;
         public static FCStatDef battleHappinessLossMultiplier;
         public static FCStatDef battleLoyaltyLossMultiplier;
         public static FCStatDef buildingDestructionChance;
+        public static FCStatDef battleLossProsperityBase;
+        public static FCStatDef battleLossHappinessBase;
+        public static FCStatDef battleLossLoyaltyBase;
+        public static FCStatDef victoryHappinessBonus;
+        public static FCStatDef victoryLoyaltyBonus;
 
         /* Economy */
         public static FCStatDef taxBasePercentage;
@@ -55,6 +64,10 @@ namespace FactionColonies
         public static FCStatDef createSettlementBaseCost;
         public static FCStatDef createSettlementMultiplier;
         public static FCStatDef researchContributionMultiplier;
+        public static FCStatDef settlementUpgradeCostBase;
+        public static FCStatDef settlementUpgradeCostMultiplier;
+        public static FCStatDef settlementExpansionCostPerSettlement;
+        public static FCStatDef buildingSlotsPerLevelBonus;
 
         /* Workers */
         public static FCStatDef workerBaseCost;
@@ -62,6 +75,7 @@ namespace FactionColonies
         public static FCStatDef workerBaseOverMax;
         public static FCStatDef extraWorkersSoftcap;
         public static FCStatDef overMaxWorkersAdjustment;
+        public static FCStatDef workerOverworkPenaltyMultiplier;
         public static FCStatDef workerProductionBase;
         public static FCStatDef workerProductionMultiplier;
 
