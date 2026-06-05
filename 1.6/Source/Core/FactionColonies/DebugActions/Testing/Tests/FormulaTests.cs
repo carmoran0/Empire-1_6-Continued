@@ -134,32 +134,6 @@ namespace FactionColonies
             TestAssert.AreEqual(-1, SettlementFormulas.CalculateLevelForSlot(3, 3, 0f));
         }
 
-        // --- CalculateBuildingUpkeep ---
-
-        [EmpireTest("Formula")]
-        public static void BuildingUpkeep_NonMilitary_ReturnsBase()
-        {
-            TestAssert.AreEqual(200, SettlementFormulas.CalculateBuildingUpkeep(200, false, false));
-        }
-
-        [EmpireTest("Formula")]
-        public static void BuildingUpkeep_MilitaryWithPolicy_Gets100Discount()
-        {
-            TestAssert.AreEqual(100, SettlementFormulas.CalculateBuildingUpkeep(200, true, true));
-        }
-
-        [EmpireTest("Formula")]
-        public static void BuildingUpkeep_MilitaryWithPolicy_MinimumZero()
-        {
-            TestAssert.AreEqual(0, SettlementFormulas.CalculateBuildingUpkeep(50, true, true));
-        }
-
-        [EmpireTest("Formula")]
-        public static void BuildingUpkeep_ZeroBase_MilitaryWithPolicy_StaysZero()
-        {
-            TestAssert.AreEqual(0, SettlementFormulas.CalculateBuildingUpkeep(0, true, true));
-        }
-
         // --- CalculateBattleLossPenalties ---
 
         [EmpireTest("Formula")]

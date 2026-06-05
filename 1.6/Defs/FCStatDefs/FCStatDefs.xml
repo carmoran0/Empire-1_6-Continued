@@ -267,6 +267,96 @@
     </FactionColonies.FCStatDef>
 
     <FactionColonies.FCStatDef>
+        <defName>buildingCostBase_Military</defName>
+        <label>military building cost base</label>
+        <aggregation>Additive</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_buildingCostBase_Military</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>buildingCostBase_Civilian</defName>
+        <label>civilian building cost base</label>
+        <aggregation>Additive</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_buildingCostBase_Civilian</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>buildingCostMultiplier_Military</defName>
+        <label>military building cost multiplier</label>
+        <aggregation>Multiplicative</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_buildingCostMultiplier_Military</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>buildingCostMultiplier_Civilian</defName>
+        <label>civilian building cost multiplier</label>
+        <aggregation>Multiplicative</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_buildingCostMultiplier_Civilian</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>buildingUpkeepBase</defName>
+        <label>building upkeep base</label>
+        <aggregation>Additive</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_buildingUpkeepBase</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>buildingUpkeepBase_Military</defName>
+        <label>military building upkeep base</label>
+        <aggregation>Additive</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_buildingUpkeepBase_Military</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>buildingUpkeepBase_Civilian</defName>
+        <label>civilian building upkeep base</label>
+        <aggregation>Additive</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_buildingUpkeepBase_Civilian</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>buildingUpkeepMultiplier</defName>
+        <label>building upkeep multiplier</label>
+        <aggregation>Multiplicative</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_buildingUpkeepMultiplier</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>buildingUpkeepMultiplier_Military</defName>
+        <label>military building upkeep multiplier</label>
+        <aggregation>Multiplicative</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_buildingUpkeepMultiplier_Military</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
+        <defName>buildingUpkeepMultiplier_Civilian</defName>
+        <label>civilian building upkeep multiplier</label>
+        <aggregation>Multiplicative</aggregation>
+        <appliesToSettlements>true</appliesToSettlements>
+        <invertedForDisplay>true</invertedForDisplay>
+        <descriptionKey>FCTraitDesc_buildingUpkeepMultiplier_Civilian</descriptionKey>
+    </FactionColonies.FCStatDef>
+
+    <FactionColonies.FCStatDef>
         <defName>researchContributionMultiplier</defName>
         <label>research contribution multiplier</label>
         <aggregation>Multiplicative</aggregation>

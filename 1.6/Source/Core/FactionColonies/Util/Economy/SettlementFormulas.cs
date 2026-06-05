@@ -47,17 +47,6 @@ namespace FactionColonies.util
         }
 
         /// <summary>
-        /// Calculates building upkeep, applying militaristic policy discount for military buildings.
-        /// Military buildings under militaristic policy get a 100 silver discount (minimum 0).
-        /// </summary>
-        public static int CalculateBuildingUpkeep(int baseUpkeep, bool isMilitary, bool hasMilitaristicPolicy)
-        {
-            if (baseUpkeep != 0 && (!isMilitary || !hasMilitaristicPolicy))
-                return baseUpkeep;
-            return Math.Max(0, baseUpkeep - 100);
-        }
-
-        /// <summary>
         /// Calculates the XP goal for the next faction level.
         /// </summary>
         public static float CalculateFactionLevelGoalXP(int currentLevel)

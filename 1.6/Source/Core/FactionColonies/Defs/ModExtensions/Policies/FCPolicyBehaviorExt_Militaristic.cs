@@ -4,7 +4,6 @@ namespace FactionColonies
     {
         public int extraSquadCooldownDays = 5;
         public float extraSquadCostFraction = 0.2f;
-        public int militaryBuildingUpkeepDiscount = 100;
         public string autoPlaceBuildingDefName = "barracks";
     }
 }

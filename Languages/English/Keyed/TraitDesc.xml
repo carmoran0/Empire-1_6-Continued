@@ -38,6 +38,16 @@
 	<FCTraitDesc_buildTimeMultiplier>{0} Build Time</FCTraitDesc_buildTimeMultiplier>
 	<FCTraitDesc_buildingCostBase>{0} Base Building Cost</FCTraitDesc_buildingCostBase>
 	<FCTraitDesc_buildingCostMultiplier>{0} Building Cost</FCTraitDesc_buildingCostMultiplier>
+	<FCTraitDesc_buildingCostBase_Military>{0} Base Military Building Cost</FCTraitDesc_buildingCostBase_Military>
+	<FCTraitDesc_buildingCostBase_Civilian>{0} Base Civilian Building Cost</FCTraitDesc_buildingCostBase_Civilian>
+	<FCTraitDesc_buildingCostMultiplier_Military>{0} Military Building Cost</FCTraitDesc_buildingCostMultiplier_Military>
+	<FCTraitDesc_buildingCostMultiplier_Civilian>{0} Civilian Building Cost</FCTraitDesc_buildingCostMultiplier_Civilian>
+	<FCTraitDesc_buildingUpkeepBase>{0} Base Building Upkeep</FCTraitDesc_buildingUpkeepBase>
+	<FCTraitDesc_buildingUpkeepBase_Military>{0} Base Military Building Upkeep</FCTraitDesc_buildingUpkeepBase_Military>
+	<FCTraitDesc_buildingUpkeepBase_Civilian>{0} Base Civilian Building Upkeep</FCTraitDesc_buildingUpkeepBase_Civilian>
+	<FCTraitDesc_buildingUpkeepMultiplier>{0} Building Upkeep</FCTraitDesc_buildingUpkeepMultiplier>
+	<FCTraitDesc_buildingUpkeepMultiplier_Military>{0} Military Building Upkeep</FCTraitDesc_buildingUpkeepMultiplier_Military>
+	<FCTraitDesc_buildingUpkeepMultiplier_Civilian>{0} Civilian Building Upkeep</FCTraitDesc_buildingUpkeepMultiplier_Civilian>
 
 	<FCTraitDesc_militaryLevelBonusDefending>{0} Military Level (Defending)</FCTraitDesc_militaryLevelBonusDefending>
 	<FCTraitDesc_militaryEfficiencyBonusAttacking>{0} Combat Efficiency (Attacking)</FCTraitDesc_militaryEfficiencyBonusAttacking>

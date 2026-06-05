@@ -50,14 +50,6 @@ namespace FactionColonies
             }
         }
 
-        public override double ModifyBuildingUpkeep(BuildingFCDef building, double currentUpkeep, WorldSettlementFC settlement)
-        {
-            if (building.statModifiers.Any(m => m.stat == FCStatDefOf.militaryBaseLevel
-                                             || m.stat == FCStatDefOf.militaryCombatEfficiency))
-                return Math.Max(currentUpkeep - Ext<FCPolicyBehaviorExt_Militaristic>().militaryBuildingUpkeepDiscount, 0);
-            return currentUpkeep;
-        }
-
         public override void OnSquadDeployed(FactionFC faction, MilitaryOperation op, WorldSettlementFC settlement, bool isExtraSquad)
         {
             if (isExtraSquad)
