@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
-	<!-- ═══════════════════════════════════════════════════════════
+	<!-- *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 	     Existing orbital buildings
-	     ═══════════════════════════════════════════════════════════ -->
+	     *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* -->
 
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
 		<defName>orbitalFuelDepot</defName>
@@ -48,9 +48,9 @@
 		<iconPath>GUI/Buildings/Orbital/orbitalSolarArray</iconPath>
 	</FactionColonies.BuildingFCDef>
 
-	<!-- ═══════════════════════════════════════════════════════════
+	<!-- *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 	     Universal orbital buildings (all orbital types)
-	     ═══════════════════════════════════════════════════════════ -->
+	     *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* -->
 
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
 		<defName>orbitalHydroponicsBay</defName>
@@ -203,9 +203,9 @@
 		<iconPath>GUI/Buildings/Orbital/orbitalLuxury</iconPath>
 	</FactionColonies.BuildingFCDef>
 
-	<!-- ═══════════════════════════════════════════════════════════
+	<!-- *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 	     Logistics-exclusive orbital buildings
-	     ═══════════════════════════════════════════════════════════ -->
+	     *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* -->
 
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
 		<defName>orbitalTradeHub</defName>
@@ -243,9 +243,9 @@
 		</settlementTypeAllowList>
 	</FactionColonies.BuildingFCDef>
 
-	<!-- ═══════════════════════════════════════════════════════════
+	<!-- *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 	     Advanced-exclusive orbital buildings
-	     ═══════════════════════════════════════════════════════════ -->
+	     *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* -->
 
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
 		<defName>orbitalShipyard</defName>
@@ -283,9 +283,9 @@
 		</settlementTypeAllowList>
 	</FactionColonies.BuildingFCDef>
 
-	<!-- ═══════════════════════════════════════════════════════════
+	<!-- *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 	     Glitter-exclusive orbital buildings
-	     ═══════════════════════════════════════════════════════════ -->
+	     *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* -->
 
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
 		<defName>orbitalAcademy</defName>

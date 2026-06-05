@@ -22,7 +22,7 @@
 	<successEvent>exampleEventSuccess</successEvent>
 	<!-- The event that fires if the player fails. If null, nothing happens on failure. Default: null -->
 	<failEvent>exampleEventFail</failEvent>
-	<!-- ── Policy Requirements ── -->
+	<!-- *=*=* Policy Requirements *=*=* -->
 	<!-- Policies that must be active for this option to be available. If empty, always available. -->
 	<requiredPolicies>
 		<li>examplePolicy</li>

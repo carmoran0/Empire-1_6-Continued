@@ -33,7 +33,7 @@
 	<!-- Type identifier string. -->
 	<type>policyType</type>
 
-	<!-- ── UI Display ── -->
+	<!-- *=*=* UI Display *=*=* -->
 	<!-- Translation keys for positive and negative effect descriptions shown in the policy info UI. -->
 	<positiveEffects>
 		<li>Translation key for a positive effect</li>
@@ -46,7 +46,7 @@
 	<iconPathLight>path/to/icon/light</iconPathLight>
 	<iconPathDark>path/to/icon/dark</iconPathDark>
 
-	<!-- ── Stat Modifiers ── -->
+	<!-- *=*=* Stat Modifiers *=*=* -->
 	<!-- Stat bonuses/penalties applied while this policy is active. -->
 	<!-- See FCStatDef.xml for details on FCStatModifier. -->
 	<statModifiers>
@@ -56,7 +56,7 @@
 		</li>
 	</statModifiers>
 
-	<!-- ── Action Restrictions ── -->
+	<!-- *=*=* Action Restrictions *=*=* -->
 	<!-- These lists control what actions the player can and cannot perform while the policy is active. -->
 	<!-- Valid FCActionType values: DeployMilitary, SendDiplomat, DeployExtraSquad, BuildRoadsToAllies, -->
 	<!--   UseFireSupport, SendPrisoner, SellPrisoner, DemolishBuilding, UpgradeSettlement, TradeWithSettlement -->
@@ -69,7 +69,7 @@
 		<li>TradeWithSettlement</li>
 	</enabledActions>
 
-	<!-- ── Military Job Restrictions ── -->
+	<!-- *=*=* Military Job Restrictions *=*=* -->
 	<!-- MilitaryJobDefs blocked while this policy is active. -->
 	<blockedMilitaryJobs>
 		<li>defNameOfMilitaryJob</li>
@@ -79,13 +79,13 @@
 		<li>defNameOfAnotherMilitaryJob</li>
 	</enabledMilitaryJobs>
 
-	<!-- ── Special Flags ── -->
+	<!-- *=*=* Special Flags *=*=* -->
 	<!-- If true, buildings cannot be destroyed while this policy is active. Default: false -->
 	<preventBuildingDestruction>false</preventBuildingDestruction>
 	<!-- If true, suppresses the happiness/loyalty penalty when faction members die. Default: false -->
 	<suppressMemberDeathPenalty>false</suppressMemberDeathPenalty>
 
-	<!-- ── Behavior Extension ── -->
+	<!-- *=*=* Behavior Extension *=*=* -->
 	<!-- Optional modExtension for policies with procedural logic (ticking, hooks, custom UI, abilities). -->
 	<!-- Subclass FCPolicyBehaviorExtension for XML-configurable parameters. -->
 	<!-- behaviorClass must be a subclass of FCPolicyBehavior. Omit modExtensions for purely XML-driven policies. -->
@@ -97,13 +97,13 @@
 		</li>
 	</modExtensions>
 
-	<!-- ── Incompatible Policies ── -->
+	<!-- *=*=* Incompatible Policies *=*=* -->
 	<!-- Policies that cannot be active at the same time as this one (mutual exclusion in the UI). -->
 	<incompatiblePolicies>
 		<li>anotherPolicy</li>
 	</incompatiblePolicies>
 
-	<!-- ── Required Policies (Prerequisites) ── -->
+	<!-- *=*=* Required Policies (Prerequisites) *=*=* -->
 	<!-- Policies, traits, or edicts that must be active before this one can be enacted. -->
 	<!-- For edicts: checked at enactment time and shown grayed-out in the UI if unmet. -->
 	<!-- For traits: checked at selection time; traits with unmet prerequisites are hidden. -->

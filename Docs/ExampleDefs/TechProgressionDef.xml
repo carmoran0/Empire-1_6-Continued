@@ -12,14 +12,14 @@
       <!-- Each barrier is a TechLevelBarrier with three fields: -->
       <!--   techLevel: The tech level this barrier gates. -->
       <!--   researchProjects: The research projects that must be completed. -->
-      <!--   mode: TechBarrierMode — "All" or "Any". -->
+      <!--   mode: TechBarrierMode - "All" or "Any". -->
       <!--     All = every listed project must be finished. Empty list = satisfied (nothing required). -->
       <!--     Any = at least one listed project must be finished. Empty list = unsatisfied (unreachable). -->
 
       <li>
         <techLevel>Neolithic</techLevel>
         <!-- No projects required; Neolithic is the starting floor. -->
-        <!-- mode="All" with an empty list is satisfied — nothing is required. -->
+        <!-- mode="All" with an empty list is satisfied - nothing is required. -->
         <researchProjects />
         <mode>All</mode>
       </li>

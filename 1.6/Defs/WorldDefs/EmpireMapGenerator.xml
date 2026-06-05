@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Defs>
 
-  <!-- Empire settlement map generator — like Base_Faction but uses GenStep_Colony (no inhabitant pawn spawning) -->
+  <!-- Empire settlement map generator - like Base_Faction but uses GenStep_Colony (no inhabitant pawn spawning) -->
   <MapGeneratorDef ParentName="MapCommonBase">
     <defName>Empire_Base</defName>
     <genSteps>

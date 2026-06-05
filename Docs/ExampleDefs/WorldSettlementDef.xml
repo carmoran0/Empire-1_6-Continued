@@ -16,7 +16,7 @@
 	<expandingIconTexture>path/to/settlement/icon</expandingIconTexture>
 	<texture>path/to/settlement/map/texture</texture>
 
-	<!-- ── Resources ── -->
+	<!-- *=*=* Resources *=*=* -->
 	<!-- Per-resource availability and base production values for this settlement type. -->
 	<!-- Each entry is a ResourceAvailability: {resourceDef, additive, multiplier}. -->
 	<!-- If additive is omitted, it defaults to 0 at ResolveReferences time. -->
@@ -36,7 +36,7 @@
 	<!-- Explicit entries take priority over defaults. Default: false -->
 	<defaultResources>true</defaultResources>
 
-	<!-- ── Workers ── -->
+	<!-- *=*=* Workers *=*=* -->
 	<!-- Worker cap formula: maxWorkers = workersMaxBase + (workersMaxMult * settlementLevel) -->
 	<!-- Ultra max (hard cap): workersUltraMaxBase + (workersUltraMaxMult * settlementLevel) -->
 	<workersMaxBase>0</workersMaxBase>
@@ -44,8 +44,8 @@
 	<workersUltraMaxBase>5</workersUltraMaxBase>
 	<workersUltraMaxMult>0</workersUltraMaxMult>
 
-	<!-- ── Biome Restrictions ── -->
-	<!-- These two lists are mutually exclusive — specify at most one. -->
+	<!-- *=*=* Biome Restrictions *=*=* -->
+	<!-- These two lists are mutually exclusive - specify at most one. -->
 	<!-- If allowedBiomes is set, settlements of this type can ONLY be placed in those biomes. -->
 	<!-- If blockedBiomes is set, settlements of this type can be placed in all biomes EXCEPT those listed. -->
 	<!-- If neither is set, all biomes are valid. -->
@@ -57,7 +57,7 @@
 		<!-- mutually exclusive with allowedBiomes -->
 	</blockedBiomes>
 
-	<!-- ── Stat Modifiers ── -->
+	<!-- *=*=* Stat Modifiers *=*=* -->
 	<!-- Stat modifiers inherent to this settlement type. Applied to all settlements of this type. -->
 	<!-- See FCStatDef.xml for details on FCStatModifier. -->
 	<statModifiers>
@@ -67,12 +67,12 @@
 		</li>
 	</statModifiers>
 
-	<!-- ── Biome Resource Override ── -->
+	<!-- *=*=* Biome Resource Override *=*=* -->
 	<!-- If set, the settlement uses this BiomeResourceDef instead of the tile's actual biome resources. -->
 	<!-- Useful for settlement types that have fixed resource profiles regardless of location (e.g. orbital). -->
 	<biomeResourceOverride>defNameOfBiomeResourceDef</biomeResourceOverride>
 
-	<!-- ── Unlock Requirements ── -->
+	<!-- *=*=* Unlock Requirements *=*=* -->
 	<!-- List of research projects that must all be completed before this settlement type is available. -->
 	<researchProjects>
 		<li>Electricity</li>
@@ -80,7 +80,7 @@
 	<!-- Minimum faction tech level required. Default: Undefined (no restriction) -->
 	<techLevel>Undefined</techLevel>
 
-	<!-- ── Settlement Type Inheritance ── -->
+	<!-- *=*=* Settlement Type Inheritance *=*=* -->
 	<!-- Optional parent settlement type for building allow/block list inheritance. -->
 	<!-- When a BuildingFCDef's settlementTypeAllowList or settlementTypeBlockList is checked, -->
 	<!-- the chain of baseSettlementType references is walked upward, so subtypes automatically -->
@@ -89,14 +89,14 @@
 	<!-- WorldSettlementDef_Orbital in its allow list. -->
 	<baseSettlementType>WorldSettlementDef_Orbital</baseSettlementType>
 
-	<!-- ── Planet Layers ── -->
+	<!-- *=*=* Planet Layers *=*=* -->
 	<!-- For settlement types that exist on non-surface planet layers (e.g. orbital). -->
 	<!-- List of PlanetLayerDefs this settlement type can exist on. -->
 	<planetLayers>
 		<li>defNameOfPlanetLayer</li>
 	</planetLayers>
 
-	<!-- ── Limits ── -->
+	<!-- *=*=* Limits *=*=* -->
 	<!-- Maximum settlement level. Default: 99 -->
 	<!-- This is the hard programmatic cap. Settlement max level can also be changed in the mod settings,
 	       so you only need to specify this field if you expect it to impact the normal max level (which is 10).-->
@@ -111,7 +111,7 @@
 	<!-- Formula: unlocked = min(baseUnlockedBuildings + floor(perLevelUnlockedBuildings * level), maxBuildingCount) -->
 	<perLevelUnlockedBuildings>0.5</perLevelUnlockedBuildings>
 
-	<!-- ── UI / Flavor ── -->
+	<!-- *=*=* UI / Flavor *=*=* -->
 	<!-- Optional key for settlement-type-specific town titles. -->
 	<!-- When set, the title system tries FCTitle_{titleKey}_{resourceDefName}_{level} first, -->
 	<!-- falling back to FCTitle_{resourceDefName}_{level} if the type-specific key doesn't exist. -->
@@ -149,7 +149,7 @@
 	<!-- Use for settlement types whose maps cannot be generated (e.g. orbital stations). -->
 	<supportsManualBattle>true</supportsManualBattle>
 
-	<!-- ── Required Mod Extension ── -->
+	<!-- *=*=* Required Mod Extension *=*=* -->
 	<!-- Every WorldSettlementDef MUST include a SettlementTypeExtension (or a subclass). -->
 	<!-- This extension controls: tile validation, creation cost/time, settlement naming, -->
 	<!-- tax delivery mode, building slot progression, upgrade costs/times, and lifecycle hooks. -->

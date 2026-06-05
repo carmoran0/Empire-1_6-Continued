@@ -9,7 +9,7 @@
 	<defName>exampleEvent</defName>
 	<label>Example Event</label>
 
-	<!-- ── Core Fields ── -->
+	<!-- *=*=* Core Fields *=*=* -->
 	<!-- Description shown in the event notification. -->
 	<desc>Description of what happened in this event.</desc>
 	<!-- The event category, which controls the UI accent color. References an FCEventCategoryDef. -->
@@ -21,7 +21,7 @@
 	     Default: -1 (no variable duration, uses exact timeTillTrigger). -->
 	<timeTillTriggerMax>120000</timeTillTriggerMax>
 
-	<!-- ── Random Event Configuration ── -->
+	<!-- *=*=* Random Event Configuration *=*=* -->
 	<!-- Set to true if this event should be eligible for random selection. Default: false -->
 	<isRandomEvent>false</isRandomEvent>
 	<!-- Controls when the options window is shown for events that have options.
@@ -39,7 +39,7 @@
 	<targetAllSettlements>false</targetAllSettlements>
 	<!-- If true, affected settlements carry over to follow-up events. Default: true -->
 	<settlementsCarryOver>true</settlementsCarryOver>
-	<!-- Weight for random selection — higher weight = more likely to be picked. Default: 0 -->
+	<!-- Weight for random selection - higher weight = more likely to be picked. Default: 0 -->
 	<weight>10</weight>
 	<!-- Stat range requirements for the random event to fire. -->
 	<!-- The event will only fire if the faction's average stats fall within these ranges. -->
@@ -92,7 +92,7 @@
 	<!-- Minimum days since faction founding. 1 day = 60,000 ticks. Default: 0 -->
 	<minDaysSinceFounded>30</minDaysSinceFounded>
 
-	<!-- ── Options ── -->
+	<!-- *=*=* Options *=*=* -->
 	<!-- If this event presents choices to the player, list the FCOptionDefs here. -->
 	<!-- See FCOptionDef.xml for details. -->
 	<options>
@@ -102,7 +102,7 @@
 	<!-- Optional description shown in the options window. If empty, falls back to desc. -->
 	<optionDescription>Choose how to respond to this event.</optionDescription>
 
-	<!-- ── Event Chains ── -->
+	<!-- *=*=* Event Chains *=*=* -->
 	<!-- If true, another event follows after this one resolves. Default: false -->
 	<eventFollows>false</eventFollows>
 	<!-- The event that follows this one. Only used if eventFollows is true. -->
@@ -114,7 +114,7 @@
 	<!-- Percent chance (0-100) to follow followingEvent. The remainder goes to followingEvent2. Default: 50 -->
 	<splitEventChance>50</splitEventChance>
 
-	<!-- ── Rewards ── -->
+	<!-- *=*=* Rewards *=*=* -->
 	<!-- Specific ThingDefs to give as loot when this event resolves. -->
 	<loot>
 		<li>Silver</li>
@@ -136,7 +136,7 @@
 		<li>ExtremeDesert</li>
 	</restrictedBiomes>
 
-	<!-- ── Stat Modifiers ── -->
+	<!-- *=*=* Stat Modifiers *=*=* -->
 	<!-- Stat modifiers applied while this event is active. Removed when the event resolves. -->
 	<!-- See FCStatDef.xml for details on FCStatModifier. -->
 	<statModifiers>
@@ -154,22 +154,22 @@
 		</li>
 	</permanentStatModifiers>
 
-	<!-- ── Settlement Selection ── -->
+	<!-- *=*=* Settlement Selection *=*=* -->
 	<!-- If true, random settlement selection uses proximity-based weighting (closer settlements more likely). Default: true -->
 	<useProximity>true</useProximity>
 	<!-- Falloff distance for proximity weighting. Higher values make distance matter less. Default: 20 -->
 	<proximityFalloff>20</proximityFalloff>
 
-	<!-- ── Classification ── -->
+	<!-- *=*=* Classification *=*=* -->
 	<!-- If true, this event involves military combat (e.g. settlement attacks). Default: false -->
 	<isMilitaryEvent>false</isMilitaryEvent>
 	<!-- If true, this event is classified as negative (for UI and behavioral purposes). Default: false -->
 	<isNegative>false</isNegative>
 
-	<!-- ── Mod Extensions ── -->
+	<!-- *=*=* Mod Extensions *=*=* -->
 	<!-- FCEventHandlerExtension: provides custom event resolution logic. -->
 	<!-- Extend FCEventHandlerExtension and override ResolveEvent() and/or OnEventTriggered(). -->
-	<!-- ResolveEvent() is called when the event triggers — return true to skip built-in resolution. -->
+	<!-- ResolveEvent() is called when the event triggers - return true to skip built-in resolution. -->
 	<!-- OnEventTriggered() is called after all standard processing (loot, stats, cascading events). -->
 	<!-- <modExtensions>
 		<li Class="YourNamespace.YourEventHandlerExtension" />

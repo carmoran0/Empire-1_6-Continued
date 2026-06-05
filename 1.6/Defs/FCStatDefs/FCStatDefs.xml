@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Defs>
-    <!-- ═══════════════════════════════════════════════════════════
-         FCStatDef definitions — typed stat system for policies,
+    <!-- *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
+         FCStatDef definitions - typed stat system for policies,
          buildings, events, and settlement modifiers.
-         ═══════════════════════════════════════════════════════════ -->
+         *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* -->
 
-    <!-- ── Military ────────────────────────────────────────────── -->
+    <!-- *=*=* Military *=*=* -->
 
     <FactionColonies.FCStatDef>
         <defName>militaryBaseLevel</defName>
@@ -128,7 +128,7 @@
         <descriptionKey>FCTraitDesc_maxSquadSize</descriptionKey>
     </FactionColonies.FCStatDef>
 
-    <!-- ── Battle Penalties ────────────────────────────────────── -->
+    <!-- *=*=* Battle Penalties *=*=* -->
 
     <FactionColonies.FCStatDef>
         <defName>battleProsperityLossMultiplier</defName>
@@ -166,7 +166,7 @@
         <descriptionKey>FCTraitDesc_BuildingDestructionChance</descriptionKey>
     </FactionColonies.FCStatDef>
 
-    <!-- ── Threat Scaling ──────────────────────────────────────── -->
+    <!-- *=*=* Threat Scaling *=*=* -->
 
     <FactionColonies.FCStatDef>
         <defName>threatScalingBase</defName>
@@ -182,7 +182,7 @@
         <appliesToSettlements>false</appliesToSettlements>
     </FactionColonies.FCStatDef>
 
-    <!-- ── Economy ─────────────────────────────────────────────── -->
+    <!-- *=*=* Economy *=*=* -->
 
     <FactionColonies.FCStatDef>
         <defName>taxBasePercentage</defName>
@@ -374,7 +374,7 @@
         <descriptionKey>FCTraitDesc_researchContributionMultiplier</descriptionKey>
     </FactionColonies.FCStatDef>
 
-    <!-- ── Workers ─────────────────────────────────────────────── -->
+    <!-- *=*=* Workers *=*=* -->
 
     <FactionColonies.FCStatDef>
         <defName>workerBaseCost</defName>
@@ -428,7 +428,7 @@
         <descriptionKey>FCTraitDesc_workerProductionMultiplier</descriptionKey>
     </FactionColonies.FCStatDef>
 
-    <!-- ── Prosperity ──────────────────────────────────────────── -->
+    <!-- *=*=* Prosperity *=*=* -->
 
     <FactionColonies.FCStatDef>
         <defName>prosperityGainedBase</defName>
@@ -445,7 +445,7 @@
         <descriptionKey>FCTraitDesc_prosperityLostBase</descriptionKey>
     </FactionColonies.FCStatDef>
 
-    <!-- ── Happiness ───────────────────────────────────────────── -->
+    <!-- *=*=* Happiness *=*=* -->
 
     <FactionColonies.FCStatDef>
         <defName>happinessLostBase</defName>
@@ -477,7 +477,7 @@
         <descriptionKey>FCTraitDesc_happinessGainedMultiplier</descriptionKey>
     </FactionColonies.FCStatDef>
 
-    <!-- ── Loyalty ─────────────────────────────────────────────── -->
+    <!-- *=*=* Loyalty *=*=* -->
 
     <FactionColonies.FCStatDef>
         <defName>loyaltyLostBase</defName>
@@ -509,7 +509,7 @@
         <descriptionKey>FCTraitDesc_loyaltyGainedMultiplier</descriptionKey>
     </FactionColonies.FCStatDef>
 
-    <!-- ── Unrest ──────────────────────────────────────────────── -->
+    <!-- *=*=* Unrest *=*=* -->
 
     <FactionColonies.FCStatDef>
         <defName>unrestLostBase</defName>
@@ -541,10 +541,10 @@
         <descriptionKey>FCTraitDesc_unrestGainedMultiplier</descriptionKey>
     </FactionColonies.FCStatDef>
 
-    <!-- ── Resource Production ───────────────────────────────────
+    <!-- *=*=* Resource Production *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
          Two stats per ResourceTypeDef: additive base and multiplier.
          linkedResource ties the stat to its resource for UI formatting.
-         ──────────────────────────────────────────────────────────── -->
+         *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*= -->
 
     <FactionColonies.FCStatDef>
         <defName>RTD_Food_ProductionAdditive</defName>

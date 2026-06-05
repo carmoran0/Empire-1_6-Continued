@@ -3,7 +3,7 @@
 
   <!-- This file shows all options for FCStatDef, and explains what they do and their default values -->
   <!-- FCStatDefs are named stats that policies, buildings, and events can modify via FCStatModifier entries. -->
-  <!-- They are referenced by defName in XML and resolved at load time — typos will produce XML errors at startup. -->
+  <!-- They are referenced by defName in XML and resolved at load time - typos will produce XML errors at startup. -->
   <FactionColonies.FCStatDef>
 	<defName>myCustomStat</defName>
 	<label>My Custom Stat</label>
@@ -32,7 +32,7 @@
   </FactionColonies.FCStatDef>
 
 
-  <!-- FCStatModifier — not a Def, but a helper class used in many defs' statModifiers lists. -->
+  <!-- FCStatModifier - not a Def, but a helper class used in many defs' statModifiers lists. -->
   <!-- It appears on: BuildingFCDef, FCEventDef, FCPolicyDef, WorldSettlementDef, -->
   <!-- BiomeResourceDef, TileMutatorResourceExtension, and TileLandmarkResourceExtension. -->
   <!-- Each entry is a {stat, value} pair that modifies the referenced FCStatDef. -->

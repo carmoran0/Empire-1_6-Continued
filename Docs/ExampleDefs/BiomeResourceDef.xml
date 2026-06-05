@@ -31,7 +31,7 @@
 		</li>
 	</resources>
 	<!-- Resources that are completely unavailable in this biome. -->
-	<!-- This takes precedence over the resources list — if a resource is on this list, it cannot be produced here. -->
+	<!-- This takes precedence over the resources list - if a resource is on this list, it cannot be produced here. -->
 	<!-- Note: ResourceTypeDef also has its own biomeAllowList/biomeBlockList for the reverse direction. -->
 	<resourceBlockList>
 		<li>RTD_Example_Blocked</li>
