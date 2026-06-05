@@ -349,4 +349,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_23</defName>
+		<label>Faction Ideology Update</label>
+		<description>Changes how the Empire faction&apos;s ideology is assigned on creation. It now only has the player&apos;s primary ideology, instead of all of the player&apos;s ideologies.</description>
+		<releaseDate>2026-06-05</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Assign only the player&apos;s primary ideology to the Empire faction on creation</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
