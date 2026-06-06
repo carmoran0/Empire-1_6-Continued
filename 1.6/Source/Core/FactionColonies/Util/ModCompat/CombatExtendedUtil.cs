@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Verse;
 
 namespace FactionColonies
@@ -10,16 +8,9 @@ namespace FactionColonies
     /// </summary>
     public interface ICombatExtendedBridge
     {
-        void EquipWeaponWithAmmo(Pawn pawn, ThingWithComps weapon);
         void UpdateInventory(Pawn pawn);
         bool LaunchFireSupportProjectile(ThingDef ammoDef, Map map, IntVec3 source, IntVec3 target);
         bool IsIndirectFireAmmo(ThingDef ammoDef);
-
-        /// <summary>Returns all ammo ThingDefs compatible with a weapon. Empty if weapon has no ammo set.</summary>
-        IReadOnlyList<ThingDef> GetAmmoOptionsForWeapon(ThingDef weaponDef);
-
-        /// <summary>Equip a pawn with a specific ammo type. Falls back to random ammo if not compatible.</summary>
-        void EquipWeaponWithSpecificAmmo(Pawn pawn, ThingWithComps weapon, ThingDef preferredAmmo);
     }
 
     /// <summary>
@@ -41,9 +32,6 @@ namespace FactionColonies
         /// </summary>
         public static bool IsCELoaded => FCSettings.IsModLoaded("CETeam.CombatExtended");
 
-        public static void EquipWeaponWithAmmo(Pawn pawn, ThingWithComps weapon)
-            => Bridge?.EquipWeaponWithAmmo(pawn, weapon);
-
         public static void UpdateInventory(Pawn pawn)
             => Bridge?.UpdateInventory(pawn);
 
@@ -56,20 +44,5 @@ namespace FactionColonies
         /// </summary>
         public static bool IsIndirectFireAmmo(ThingDef ammoDef)
             => Bridge?.IsIndirectFireAmmo(ammoDef) ?? true;
-
-        /// <summary>
-        /// Returns all ammo ThingDefs compatible with the given weapon.
-        /// Returns an empty list when CE is not loaded or the weapon has no ammo set.
-        /// </summary>
-        public static IReadOnlyList<ThingDef> GetAmmoOptionsForWeapon(ThingDef weaponDef)
-            => Bridge?.GetAmmoOptionsForWeapon(weaponDef) ?? Array.Empty<ThingDef>();
-
-        /// <summary>
-        /// Equip a pawn with a specific ammo type for their weapon.
-        /// Falls back to random ammo if the preferred ammo is incompatible.
-        /// No-ops when CE is not loaded.
-        /// </summary>
-        public static void EquipWeaponWithSpecificAmmo(Pawn pawn, ThingWithComps weapon, ThingDef preferredAmmo)
-            => Bridge?.EquipWeaponWithSpecificAmmo(pawn, weapon, preferredAmmo);
     }
 }

@@ -10,6 +10,8 @@
 	<FCSettingWorkerCost>Cost Per Worker</FCSettingWorkerCost>
 	<FCSettingMaxSettlementLevel>Max Settlement Level</FCSettingMaxSettlementLevel>
 	<FCSettingDisableHostileMilActions>Disable Hostile Military Actions</FCSettingDisableHostileMilActions>
+	<FCSettingAntiExploit>Anti-Exploit (mercenary gear)</FCSettingAntiExploit>
+	<FCSettingAntiExploitTip>When enabled (default), mercenary weapons and apparel are biocoded to their wielder and destroyed on death (along with the corpse), so you can't farm free gear from your own squads.</FCSettingAntiExploitTip>
 	<FCSettingDisableRandomEvents>Disable Random Events</FCSettingDisableRandomEvents>
 	<FCSettingConfigureEvents>Enable or disable individual events below. Disabled events will not fire in any save.</FCSettingConfigureEvents>
 	<FCSettingsTabGeneral>General</FCSettingsTabGeneral>

@@ -82,6 +82,7 @@ namespace FactionColonies
         public const float DEFAULT_MAX_THREAT_MULTIPLIER = 3.0f;
         public const float DEFAULT_DEFENDER_ADVANTAGE = 1.15f;
         public const float DEFAULT_EFFICIENCY_DAMPING = 0.5f;
+        public const bool DEFAULT_ANTI_EXPLOIT = true;
         /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* 
          *           ~  DEFAULTS END ~
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
@@ -107,6 +108,7 @@ namespace FactionColonies
         public static bool medievalTechOnly = DEFAULT_MEDIEVAL_TECH_ONLY;
         public static bool mirrorPlayerTechLevel = DEFAULT_MIRROR_PLAYER_TECH_LEVEL;
         public static bool disableHostileMilitaryActions = DEFAULT_DISABLE_HOSTILE_MILITARY_ACTIONS;
+        public static bool antiExploit = DEFAULT_ANTI_EXPLOIT;
         public static bool disableRandomEvents = DEFAULT_DISABLE_RANDOM_EVENTS;
         public static bool disableEventsWithOptions = DEFAULT_DISABLE_EVENTS_WITH_OPTIONS;
         public static float eventOptionDelaySeconds = DEFAULT_EVENT_OPTION_DELAY_SECONDS;
@@ -309,6 +311,7 @@ namespace FactionColonies
             Scribe_Values.Look(ref medievalTechOnly, "medievalTechOnly", DEFAULT_MEDIEVAL_TECH_ONLY);
             Scribe_Values.Look(ref mirrorPlayerTechLevel, "mirrorPlayerTechLevel", DEFAULT_MIRROR_PLAYER_TECH_LEVEL);
             Scribe_Values.Look(ref disableHostileMilitaryActions, "disableHostileMilitaryActions", DEFAULT_DISABLE_HOSTILE_MILITARY_ACTIONS);
+            Scribe_Values.Look(ref antiExploit, "antiExploit", DEFAULT_ANTI_EXPLOIT);
             Scribe_Values.Look(ref disableRandomEvents, "disableRandomEvents", DEFAULT_DISABLE_RANDOM_EVENTS);
             Scribe_Values.Look(ref disableEventsWithOptions, "disableEventsWithOptions", DEFAULT_DISABLE_EVENTS_WITH_OPTIONS);
             Scribe_Values.Look(ref eventOptionDelaySeconds, "eventOptionDelaySeconds", DEFAULT_EVENT_OPTION_DELAY_SECONDS);
@@ -756,6 +759,7 @@ namespace FactionColonies
                 crushingDefeatPenaltyMultiplier = DEFAULT_CRUSHING_DEFEAT_PENALTY_MULTIPLIER;
                 overwhelmingVictoryRewardMultiplier = DEFAULT_OVERWHELMING_VICTORY_REWARD_MULTIPLIER;
                 respectLethalDamageThreshold = DEFAULT_RESPECT_LETHAL_DAMAGE_THRESHOLD;
+                antiExploit = DEFAULT_ANTI_EXPLOIT;
                 mercenaryHealRatePerHour = 1f;
                 squadHireCostMultiplier = DEFAULT_SQUAD_HIRE_COST_MULTIPLIER;
                 squadUpgradeCostMultiplier = DEFAULT_SQUAD_UPGRADE_COST_MULTIPLIER;
@@ -884,6 +888,7 @@ namespace FactionColonies
             ls.Begin(listRect);
 
             ls.CheckboxLabeled("FCSettingDisableHostileMilActions".Translate(), ref disableHostileMilitaryActions);
+            ls.CheckboxLabeled("FCSettingAntiExploit".Translate(), ref antiExploit, "FCSettingAntiExploitTip".Translate());
             if (ls.ButtonText("FCSettingBattleMode".Translate() + battleMode)) Find.WindowStack.Add(new FloatMenu(BattleModeOptions));
 
             ls.Gap(10f);
@@ -912,6 +917,7 @@ namespace FactionColonies
             DrawSectionResetButton(ls, delegate
             {
                 disableHostileMilitaryActions = DEFAULT_DISABLE_HOSTILE_MILITARY_ACTIONS;
+                antiExploit = DEFAULT_ANTI_EXPLOIT;
                 battleMode = DEFAULT_BATTLE_MODE;
                 minDaysTillMilitaryAction = DEFAULT_MIN_DAYS_TIL_MILITARY_ACTION;
                 maxDaysTillMilitaryAction = DEFAULT_MAX_DAYS_TIL_MILITARY_ACTION;

@@ -157,13 +157,16 @@ namespace FactionColonies
                         Color resolved = factionComp?.ResolveApparelColor(apparelDef) ?? Color.white;
                         thing.SetColor(resolved, reportFailure: false);
                         merc.pawn.apparel.Wear(ap);
+                        // Anti-exploit: biocode worn apparel to the merc so looted gear is unusable.
+                        // No-op on apparel without CompBiocodable.
+                        if (FCSettings.antiExploit)
+                            ap.TryGetComp<CompBiocodable>()?.CodeFor(merc.pawn);
                     }
                 }
             }
 
-            // Carried inventory. Populate BEFORE CE auto-loads the weapon so CE can draw on
-            // player-chosen ammo already in the pack. Counts above the item's stack limit are
-            // split across multiple stacks.
+            // Carried inventory — the unit's player-chosen loadout (including any ammo). Counts
+            // above the item's stack limit are split across multiple stacks.
             if (merc.pawn.inventory?.innerContainer != null && loadout.inventory != null)
             {
                 foreach (SavedThing invDef in loadout.inventory)
@@ -190,12 +193,11 @@ namespace FactionColonies
                     if (weaponThing is ThingWithComps twc)
                     {
                         merc.pawn.equipment.AddEquipment(twc);
+                        // Anti-exploit: biocode equipped weapons to the merc so looted gear is
+                        // useless to other pawns. No-op on weapons without CompBiocodable.
+                        if (FCSettings.antiExploit)
+                            twc.TryGetComp<CompBiocodable>()?.CodeFor(merc.pawn);
                     }
-                }
-
-                if (CombatExtendedUtil.IsCELoaded && merc.pawn.equipment.Primary != null)
-                {
-                    CombatExtendedUtil.EquipWeaponWithAmmo(merc.pawn, merc.pawn.equipment.Primary);
                 }
             }
 

@@ -84,6 +84,17 @@ namespace FactionColonies
             }
 
             equippedPawns.ForEach(pawn => pawn.ApplyIdeologyRitualWounds());
+
+            // Apply the squad's combat-efficiency hediff to the deployed pawns, mirroring the
+            // manual-battle pipeline (BattlefieldContext). The hediff is stripped automatically
+            // on every map-exit path by the StripCombatEfficiencyOnDeSpawn patch on Pawn.DeSpawn,
+            // so no explicit recall cleanup is needed.
+            double efficiency = MilitaryForce.CreateMilitaryForceFromSquad(squad)?.militaryEfficiency ?? 1.0;
+            foreach (Pawn pawn in equippedPawns)
+            {
+                MilitaryEfficiencyUtil.ApplyCombatEfficiencyHediff(pawn, efficiency);
+            }
+
             // Start the deployment from a clean order. MilitaryOrder is persistent squad state, so
             // a leftover order from a PRIOR deployment (e.g. RecoverWoundedAndLeave from a dismiss)
             // would otherwise make this new lord execute it the moment it's ready — the squad would

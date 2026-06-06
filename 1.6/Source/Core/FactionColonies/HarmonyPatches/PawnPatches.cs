@@ -43,16 +43,21 @@ namespace FactionColonies
                         FindFC.Military?.RebuildMercenaryPawnSet();
                     }
 
-                    squad.Equipment.RemoveDroppedEquipment();
+                    // Anti-exploit: sweep gear this squad dropped/left behind so it can't be looted.
+                    if (FCSettings.antiExploit) squad.Equipment.RemoveDroppedEquipment();
                 }
                 else
                 {
                     LogUtil.Warning("Mercenary Errored out. Did not find squad.");
                 }
 
-                __instance.equipment?.DestroyAllEquipment();
-                __instance.apparel?.DestroyAll();
-                //__instance.Destroy();
+                // Anti-exploit: destroy the dying merc's own gear. When disabled, the gear (and the
+                // corpse, via MercenaryAnimalDied) is left intact for the player to loot.
+                if (FCSettings.antiExploit)
+                {
+                    __instance.equipment?.DestroyAllEquipment();
+                    __instance.apparel?.DestroyAll();
+                }
                 return true;
             }
 
@@ -68,8 +73,13 @@ namespace FactionColonies
             if (FindFC.Military?.IsMercenaryPawn(corpse.InnerPawn) == true)
             {
                 //corpse.InnerPawn.SetFaction(FactionColonies.getPlayerColonyFaction());
-                corpse.Destroy();
-                return false;
+                // Anti-exploit: destroy the merc corpse (taking implants/gear with it). When disabled,
+                // let the corpse persist normally so the player can loot/butcher/harvest it.
+                if (FCSettings.antiExploit)
+                {
+                    corpse.Destroy();
+                    return false;
+                }
             }
 
             return true;
