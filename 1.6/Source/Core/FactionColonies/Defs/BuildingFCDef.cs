@@ -26,6 +26,11 @@ namespace FactionColonies
         public List<FCStatModifier> statModifiers = new List<FCStatModifier>();
         public List<string> applicableBiomes = new List<string>();
         public int upkeep;
+        /// <summary>
+        /// Marks this as a military building for cost/upkeep classification (buildingCost*_Military,
+        /// buildingUpkeepBase_Military, the Militaristic upkeep discount).
+        /// </summary>
+        public bool isMilitary = false;
         public string iconPath = "GUI/unrest";
         public Texture2D iconLoaded;
         public List<WorldSettlementDef> settlementTypeBlockList = new List<WorldSettlementDef>();

@@ -363,4 +363,22 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_24</defName>
+		<label>More Stat Modifiers = More Extensibility!</label>
+		<description>Adds numerous new stat modifiers for buildings, policies, and other things to interact with Empire&apos;s systems. The design space should open up a good bit!</description>
+		<releaseDate>2026-06-05</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: the settlement cost modifier, when added to a biome, would not actually affect the cost of founding a new settlement in that biome</li>
+		<li>Added stats for building cost base, building cost multiplier, building upkeep base, and building upkeep multiplier. Each has a military and civilian version that stacks</li>
+		<li>BuildingFCDef has a new IsMilitary field. Moving forward, this field is what determines whether a building is military or civilian</li>
+		<li>Add numerous other new stats: fireSupportCostMultiplier, policyActionCooldownMultiplier, casualtyWoundSeverityMultiplier, threatAdaptationGrowthMultiplier, battleLossProsperityBase, battleLossHappinessBase, battleLossLoyaltyBase, victoryHappinessBonus, victoryLoyaltyBonus, settlementUpgradeCostBase, settlementUpgradeCostMultiplier, settlementExpansionCostPerSettlement, buildingSlotsPerLevelBonus, workerOverworkPenaltyMultiplier</li>
+		<li>Add new stat scopes: squads, and units. Stats can now be set to apply their bonuses directly to a military squad or even an individual unit. This feature currently isn&apos;t actually used, but it opens the door to some neat future feature</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

@@ -80,9 +80,11 @@ namespace FactionColonies
             return CalculateAccuracyCostPercentage(accuracy);
         }
 
-        public float ReturnTotalCost()
+        public float ReturnTotalCost(WorldSettlementFC settlement = null)
         {
             totalCost = CalculateTotalCost(accuracy, projectiles.Select(def => def.BaseMarketValue));
+            if (settlement != null)
+                totalCost *= (float)settlement.GetStatValue(FCStatDefOf.fireSupportCostMultiplier);
             return totalCost;
         }
 

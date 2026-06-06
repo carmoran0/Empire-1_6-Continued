@@ -472,7 +472,7 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleLeft;
             Widgets.Label(nameText, building.LabelCap);
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(nameText, "FCCost".Translate() + ": " + building.cost);
+            Widgets.Label(nameText, "FCCost".Translate() + ": " + (settlement.BuildingsComp?.GetBuildingCost(building) ?? (int)building.cost));
 
             // Icon below the name row
             float contentY = nameRect.yMax + smallMargin;
@@ -704,7 +704,7 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleLeft;
 
             Rect costRect = new Rect(statsX, curY, statsW, 22f);
-            Widgets.Label(costRect, "FCCost".Translate() + ": " + selectedBuilding.cost);
+            Widgets.Label(costRect, "FCCost".Translate() + ": " + (settlement.BuildingsComp?.GetBuildingCost(selectedBuilding) ?? (int)selectedBuilding.cost));
 
             int buildTime = (int)(selectedBuilding.constructionDuration * settlement.GetStatValue(FCStatDefOf.buildTimeMultiplier));
             Rect timeRect = new Rect(statsX, costRect.yMax + smallMargin, statsW, 22f);
@@ -1325,7 +1325,7 @@ namespace FactionColonies
             tmpEvt.hasCustomDescription = true;
             FindFC.EventManager.AddEvent(tmpEvt);
 
-            PaymentUtil.PaySilver(Convert.ToInt32(selectedBuilding.cost), PaymentUtil.Reason_BuildingConstruction, settlement);
+            PaymentUtil.PaySilver(settlement.BuildingsComp.GetBuildingCost(selectedBuilding), PaymentUtil.Reason_BuildingConstruction, settlement);
             Messages.Message(selectedBuilding.label + " " + "FCWillBeConstructedIn".Translate() + " " + (tmpEvt.timeTillTrigger - Find.TickManager.TicksGame).ToTimeString(), MessageTypeDefOf.PositiveEvent);
             settlement.BuildingsComp.StartConstruction(selectedBuilding, buildingSlot, tmpEvt.timeTillTrigger);
             Find.WindowStack.TryRemove(this);

@@ -87,6 +87,7 @@
 
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Ultra">
 		<defName>OrbitalSpaceLaser</defName>
+		<isMilitary>true</isMilitary>
 		<!--Name of Def -->
 		<label>Orbital Space Laser</label>
 		<!--Lable of Def -->

@@ -15,6 +15,7 @@
 
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Medieval">
 		<defName>adventurersGuild</defName> <!--Name of Def -->
+		<isMilitary>true</isMilitary>
 		<label>Adventurer's Guild</label> <!--Lable of Def -->
 		<desc>A place for traveling adventurers to meet up and spend a night.</desc> <!-- Description of trait -->
 		<cost>500</cost>

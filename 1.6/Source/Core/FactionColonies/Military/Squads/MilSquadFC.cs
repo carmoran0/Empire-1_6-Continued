@@ -21,6 +21,15 @@ namespace FactionColonies
         /// names so every hire produces a unique number even after dismissals.</summary>
         public int hiresEverMade;
 
+        /// <summary>
+        /// Design-level stat modifiers for this squad template (squad scope). Seeded onto deployed
+        /// squads' own statModifiers when assigned as their outfit. Groundwork for a squad-upgrade system.
+        /// </summary>
+        public List<PermanentStatModifier> statModifiers = new List<PermanentStatModifier>();
+
+        public void AddStatModifier(PermanentStatModifier mod) { statModifiers.Add(mod); }
+        public void RemoveStatModifiersBySource(string sourceId) { statModifiers.RemoveAll(m => m.sourceId == sourceId); }
+
         public static void UpdateEquipmentTotalCostOfSquadsContaining(MilUnitFC unit)
         {
             FindFC.Military.squads.ForEach(delegate (MilSquadFC squad)
@@ -52,9 +61,11 @@ namespace FactionColonies
             Scribe_Values.Look(ref equipmentTotalCost, "equipmentTotalCost", -1);
             Scribe_Values.Look(ref tickChanged, "tickChanged");
             Scribe_Values.Look(ref hiresEverMade, "hiresEverMade", 0);
+            Scribe_Collections.Look(ref statModifiers, "statModifiers", LookMode.Deep);
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
+                if (statModifiers is null) statModifiers = new List<PermanentStatModifier>();
                 UpdateEquipmentTotalCost();
             }
         }

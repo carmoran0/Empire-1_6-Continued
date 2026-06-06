@@ -2,6 +2,7 @@
 <Defs>
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Undefined">
 		<defName>barracks</defName> <!--Name of Def -->
+		<isMilitary>true</isMilitary>
 		<label>Barracks</label> <!--Lable of Def -->
 		<desc>A buildings to house the local troops.</desc> <!-- Description of trait -->
 		<cost>250</cost>
@@ -52,6 +53,7 @@
 
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Undefined">
 		<defName>trainingYard</defName> <!--Name of Def -->
+		<isMilitary>true</isMilitary>
 		<label>Training Yard</label> <!--Lable of Def -->
 		<desc>A place for your soldiers to train.</desc> <!-- Description of trait -->
 		<cost>250</cost>

@@ -21,16 +21,25 @@ namespace FactionColonies
         public static FCStatDef mercenaryDeathHappinessPenalty;
         public static FCStatDef squadCapPerSettlement;
         public static FCStatDef maxSquadSize;
+        public static FCStatDef fireSupportCostMultiplier;
+        public static FCStatDef policyActionCooldownMultiplier;
+        public static FCStatDef casualtyWoundSeverityMultiplier;
 
         /* Threat Scaling */
         public static FCStatDef threatScalingBase;
         public static FCStatDef threatScalingMultiplier;
+        public static FCStatDef threatAdaptationGrowthMultiplier;
 
         /* Battle Penalties */
         public static FCStatDef battleProsperityLossMultiplier;
         public static FCStatDef battleHappinessLossMultiplier;
         public static FCStatDef battleLoyaltyLossMultiplier;
         public static FCStatDef buildingDestructionChance;
+        public static FCStatDef battleLossProsperityBase;
+        public static FCStatDef battleLossHappinessBase;
+        public static FCStatDef battleLossLoyaltyBase;
+        public static FCStatDef victoryHappinessBonus;
+        public static FCStatDef victoryLoyaltyBonus;
 
         /* Economy */
         public static FCStatDef taxBasePercentage;
@@ -40,9 +49,25 @@ namespace FactionColonies
         public static FCStatDef lootMultiplier;
         public static FCStatDef settlementCostMultiplier;
         public static FCStatDef buildTimeMultiplier;
+        public static FCStatDef buildingCostBase;
+        public static FCStatDef buildingCostBase_Military;
+        public static FCStatDef buildingCostBase_Civilian;
+        public static FCStatDef buildingCostMultiplier;
+        public static FCStatDef buildingCostMultiplier_Military;
+        public static FCStatDef buildingCostMultiplier_Civilian;
+        public static FCStatDef buildingUpkeepBase;
+        public static FCStatDef buildingUpkeepBase_Military;
+        public static FCStatDef buildingUpkeepBase_Civilian;
+        public static FCStatDef buildingUpkeepMultiplier;
+        public static FCStatDef buildingUpkeepMultiplier_Military;
+        public static FCStatDef buildingUpkeepMultiplier_Civilian;
         public static FCStatDef createSettlementBaseCost;
         public static FCStatDef createSettlementMultiplier;
         public static FCStatDef researchContributionMultiplier;
+        public static FCStatDef settlementUpgradeCostBase;
+        public static FCStatDef settlementUpgradeCostMultiplier;
+        public static FCStatDef settlementExpansionCostPerSettlement;
+        public static FCStatDef buildingSlotsPerLevelBonus;
 
         /* Workers */
         public static FCStatDef workerBaseCost;
@@ -50,6 +75,7 @@ namespace FactionColonies
         public static FCStatDef workerBaseOverMax;
         public static FCStatDef extraWorkersSoftcap;
         public static FCStatDef overMaxWorkersAdjustment;
+        public static FCStatDef workerOverworkPenaltyMultiplier;
         public static FCStatDef workerProductionBase;
         public static FCStatDef workerProductionMultiplier;
 

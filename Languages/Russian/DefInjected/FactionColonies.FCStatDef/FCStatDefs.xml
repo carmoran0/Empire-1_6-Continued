@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
 
-  <!-- ── Военные ────────────────────────────────────────────── -->
+  <!-- *=*=* Военные *=*=* -->
 
   <militaryBaseLevel.label>базовый военный уровень</militaryBaseLevel.label>
   <militaryCombatEfficiency.label>боевая эффективность</militaryCombatEfficiency.label>
@@ -14,7 +14,7 @@
   <deadPawnCooldownOffset.label>сдвиг перезарядки за мертвых персонажей</deadPawnCooldownOffset.label>
 
 
-  <!-- ── Штрафы за битву ────────────────────────────────────── -->
+  <!-- *=*=* Штрафы за битву *=*=* -->
 
   <battleProsperityLossMultiplier.label>множитель потери процветания от битвы</battleProsperityLossMultiplier.label>
   <battleHappinessLossMultiplier.label>множитель потери счастья от битвы</battleHappinessLossMultiplier.label>
@@ -22,13 +22,13 @@
   <buildingDestructionChance.label>шанс разрушения зданий</buildingDestructionChance.label>
 
 
-  <!-- ── Масштабирование угрозы ──────────────────────────────── -->
+  <!-- *=*=* Масштабирование угрозы *=*=* -->
 
   <threatScalingBase.label>база масштабирования угрозы</threatScalingBase.label>
   <threatScalingMultiplier.label>множитель масштабирования угрозы</threatScalingMultiplier.label>
 
 
-  <!-- ── Экономика ─────────────────────────────────────────────── -->
+  <!-- *=*=* Экономика *=*=* -->
 
   <taxBasePercentage.label>базовый процент налога</taxBasePercentage.label>
   <taxBaseRandomModifier.label>случайный модификатор базы налога</taxBaseRandomModifier.label>
@@ -42,7 +42,7 @@
   <researchContributionMultiplier.label>множитель вклада в исследования</researchContributionMultiplier.label>
 
 
-  <!-- ── Рабочие ─────────────────────────────────────────────── -->
+  <!-- *=*=* Рабочие *=*=* -->
 
   <workerBaseCost.label>базовая стоимость рабочего</workerBaseCost.label>
   <workerBaseMax.label>базовый максимум рабочих</workerBaseMax.label>
@@ -53,13 +53,13 @@
   <workerProductionMultiplier.label>множитель производства рабочего</workerProductionMultiplier.label>
 
 
-  <!-- ── Процветание ──────────────────────────────────────────── -->
+  <!-- *=*=* Процветание *=*=* -->
 
   <prosperityGainedBase.label>базовый прирост процветания</prosperityGainedBase.label>
   <prosperityLostBase.label>базовая потеря процветания</prosperityLostBase.label>
 
 
-  <!-- ── Счастье ───────────────────────────────────────────── -->
+  <!-- *=*=* Счастье *=*=* -->
 
   <happinessLostBase.label>базовая потеря счастья</happinessLostBase.label>
   <happinessGainedBase.label>базовый прирост счастья</happinessGainedBase.label>
@@ -67,7 +67,7 @@
   <happinessGainedMultiplier.label>множитель прироста счастья</happinessGainedMultiplier.label>
 
 
-  <!-- ── Лояльность ─────────────────────────────────────────────── -->
+  <!-- *=*=* Лояльность *=*=* -->
 
   <loyaltyLostBase.label>базовая потеря лояльности</loyaltyLostBase.label>
   <loyaltyGainedBase.label>базовый прирост лояльности</loyaltyGainedBase.label>
@@ -75,7 +75,7 @@
   <loyaltyGainedMultiplier.label>множитель прироста лояльности</loyaltyGainedMultiplier.label>
 
 
-  <!-- ── Нестабильность ──────────────────────────────────────────────── -->
+  <!-- *=*=* Нестабильность *=*=* -->
 
   <unrestLostBase.label>базовая потеря нестабильности</unrestLostBase.label>
   <unrestGainedBase.label>базовый прирост нестабильности</unrestGainedBase.label>

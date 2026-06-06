@@ -19,11 +19,12 @@ namespace FactionColonies.util
         /// <summary>
         /// Calculates worker upkeep including overwork penalty.
         /// Overwork occurs when workers exceed workersMax, adding a penalty of (overwork / 20) * base upkeep.
+        /// <paramref name="overworkPenaltyMult"/> (workerOverworkPenaltyMultiplier stat) scales that penalty.
         /// </summary>
-        public static double CalculateWorkerUpkeep(double workers, double workersMax, double baseWorkerCost)
+        public static double CalculateWorkerUpkeep(double workers, double workersMax, double baseWorkerCost, double overworkPenaltyMult = 1)
         {
             double overWork = workers > workersMax ? (int)(workers - workersMax) : 0;
-            return (workers * baseWorkerCost) + ((workers * baseWorkerCost) * (overWork / 20));
+            return (workers * baseWorkerCost) + ((workers * baseWorkerCost) * (overWork / 20) * overworkPenaltyMult);
         }
 
         /// <summary>
@@ -47,17 +48,6 @@ namespace FactionColonies.util
         }
 
         /// <summary>
-        /// Calculates building upkeep, applying militaristic policy discount for military buildings.
-        /// Military buildings under militaristic policy get a 100 silver discount (minimum 0).
-        /// </summary>
-        public static int CalculateBuildingUpkeep(int baseUpkeep, bool isMilitary, bool hasMilitaristicPolicy)
-        {
-            if (baseUpkeep != 0 && (!isMilitary || !hasMilitaristicPolicy))
-                return baseUpkeep;
-            return Math.Max(0, baseUpkeep - 100);
-        }
-
-        /// <summary>
         /// Calculates the XP goal for the next faction level.
         /// </summary>
         public static float CalculateFactionLevelGoalXP(int currentLevel)
@@ -70,9 +60,10 @@ namespace FactionColonies.util
         /// Policy-specific modifiers (e.g. feudal, resilient) are applied via FCStatDef stats.
         /// </summary>
         public static (double prosperity, double happiness, double loyalty) CalculateBattleLossPenalties(
-            double happinessLostMultiplier, double loyaltyLostMultiplier)
+            double happinessLostMultiplier, double loyaltyLostMultiplier,
+            double prosperityBase = 0, double happinessBase = 0, double loyaltyBase = 0)
         {
-            return (20, 25 * happinessLostMultiplier, 15 * loyaltyLostMultiplier);
+            return (20 + prosperityBase, (25 + happinessBase) * happinessLostMultiplier, (15 + loyaltyBase) * loyaltyLostMultiplier);
         }
 
         /// <summary>

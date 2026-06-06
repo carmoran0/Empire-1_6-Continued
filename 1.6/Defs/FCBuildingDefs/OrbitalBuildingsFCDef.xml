@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Defs>
 
-	<!-- ═══════════════════════════════════════════════════════════
+	<!-- *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 	     Existing orbital buildings
-	     ═══════════════════════════════════════════════════════════ -->
+	     *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* -->
 
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
 		<defName>orbitalFuelDepot</defName>
@@ -48,9 +48,9 @@
 		<iconPath>GUI/Buildings/Orbital/orbitalSolarArray</iconPath>
 	</FactionColonies.BuildingFCDef>
 
-	<!-- ═══════════════════════════════════════════════════════════
+	<!-- *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 	     Universal orbital buildings (all orbital types)
-	     ═══════════════════════════════════════════════════════════ -->
+	     *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* -->
 
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
 		<defName>orbitalHydroponicsBay</defName>
@@ -143,6 +143,7 @@
 
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
 		<defName>orbitalDefenseArray</defName>
+		<isMilitary>true</isMilitary>
 		<label>Orbital Defense Array</label>
 		<desc>Heavy weapons platform providing overwhelming defensive firepower against orbital threats.</desc>
 		<cost>5000</cost>
@@ -158,6 +159,7 @@
 
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
 		<defName>pointDefenseBattery</defName>
+		<isMilitary>true</isMilitary>
 		<label>Point Defense Battery</label>
 		<desc>Close-range interceptor turrets protecting the station from incoming projectiles and boarding parties.</desc>
 		<cost>2500</cost>
@@ -201,9 +203,9 @@
 		<iconPath>GUI/Buildings/Orbital/orbitalLuxury</iconPath>
 	</FactionColonies.BuildingFCDef>
 
-	<!-- ═══════════════════════════════════════════════════════════
+	<!-- *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 	     Logistics-exclusive orbital buildings
-	     ═══════════════════════════════════════════════════════════ -->
+	     *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* -->
 
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
 		<defName>orbitalTradeHub</defName>
@@ -241,9 +243,9 @@
 		</settlementTypeAllowList>
 	</FactionColonies.BuildingFCDef>
 
-	<!-- ═══════════════════════════════════════════════════════════
+	<!-- *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 	     Advanced-exclusive orbital buildings
-	     ═══════════════════════════════════════════════════════════ -->
+	     *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* -->
 
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
 		<defName>orbitalShipyard</defName>
@@ -281,9 +283,9 @@
 		</settlementTypeAllowList>
 	</FactionColonies.BuildingFCDef>
 
-	<!-- ═══════════════════════════════════════════════════════════
+	<!-- *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*
 	     Glitter-exclusive orbital buildings
-	     ═══════════════════════════════════════════════════════════ -->
+	     *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=* -->
 
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
 		<defName>orbitalAcademy</defName>
@@ -305,6 +307,7 @@
 
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Orbital" MayRequire="Ludeon.RimWorld.Odyssey">
 		<defName>navalAcademy</defName>
+		<isMilitary>true</isMilitary>
 		<label>Naval Academy</label>
 		<desc>Trains elite officers for fleet command. Significantly improves military readiness and reduces deployment cooldowns.</desc>
 		<cost>7000</cost>

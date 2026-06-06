@@ -72,6 +72,8 @@ namespace FactionColonies.util
             if (home is null || ovMult <= 0f) return (0.0, 0.0);
 
             var (hap, loy) = SettlementFormulas.CalculateBattleVictoryRewards();
+            hap += home.GetStatValue(FCStatDefOf.victoryHappinessBonus);
+            loy += home.GetStatValue(FCStatDefOf.victoryLoyaltyBonus);
             double gainedHap = home.GainHappiness(hap * ovMult);
             double gainedLoy = home.GainLoyalty(loy * ovMult);
             return (gainedHap, gainedLoy);

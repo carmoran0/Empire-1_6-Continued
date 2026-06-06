@@ -11,8 +11,7 @@ namespace FactionColonies
         public override void PostInitialize()
         {
             var ext = Ext<FCPolicyBehaviorExt_Pacifist>();
-            if (diplomatCooldown.cooldownTicks == 0)
-                diplomatCooldown.cooldownTicks = GenDate.TicksPerDay * ext.diplomatCooldownDays;
+            diplomatCooldown.SetCooldown(GenDate.TicksPerDay * ext.diplomatCooldownDays);
         }
 
         public override bool HandleDiplomaticEnvoy(FactionFC faction, Faction targetFaction)

@@ -434,33 +434,32 @@ namespace FactionColonies
                 PolicyTestHelper.ClearAll(faction);
                 var policy = PolicyTestHelper.EnactPolicy(faction, FCPolicyDefOf.militaristic);
 
-                var behavior = policy.behavior as FCPolicyBehavior_Militaristic;
-                TestAssert.IsNotNull(behavior, "Militaristic should have a behavior");
+                TestAssert.IsNotNull(policy.behavior as FCPolicyBehavior_Militaristic, "Militaristic should have a behavior");
 
-                // Find a military building (one with militaryBaseLevel or militaryCombatEfficiency stat)
+                var settlement = faction.settlements.First();
+
+                // The Militaristic discount is now the buildingUpkeepBase_Military stat (-50), applied
+                // via the live GetBuildingUpkeep path. Military classification is the explicit isMilitary flag.
                 BuildingFCDef milBuilding = DefDatabase<BuildingFCDef>.AllDefsListForReading
-                    .FirstOrDefault(b => b.statModifiers.Any(m =>
-                        m.stat == FCStatDefOf.militaryBaseLevel || m.stat == FCStatDefOf.militaryCombatEfficiency));
+                    .FirstOrDefault(b => b.isMilitary && b.upkeep > 0);
 
                 if (milBuilding == null)
-                    TestAssert.Skip("No military buildings found");
+                    TestAssert.Skip("No military buildings with upkeep found");
 
-                double baseUpkeep = 200;
-                double modified = behavior.ModifyBuildingUpkeep(milBuilding, baseUpkeep, faction.settlements.First());
-                TestAssert.AreEqual(Math.Max(baseUpkeep - 50, 0), modified, 0.001,
-                    $"Military building upkeep should be discounted by 50 (from {baseUpkeep} to {modified})");
+                TestAssert.AreEqual(Math.Max(milBuilding.upkeep - 50, 0),
+                    settlement.BuildingsComp.GetBuildingUpkeep(milBuilding), 0.001,
+                    $"Military building '{milBuilding.defName}' upkeep should be discounted by 50 (base {milBuilding.upkeep})");
 
-                // Non-military building should not be discounted
+                // Non-military (unflagged) building should not be discounted
                 BuildingFCDef civBuilding = DefDatabase<BuildingFCDef>.AllDefsListForReading
-                    .FirstOrDefault(b => !b.statModifiers.Any(m =>
-                        m.stat == FCStatDefOf.militaryBaseLevel || m.stat == FCStatDefOf.militaryCombatEfficiency)
+                    .FirstOrDefault(b => !b.isMilitary && b.upkeep > 0
                         && b != BuildingFCDefOf.Empty && b != BuildingFCDefOf.Construction);
 
                 if (civBuilding != null)
                 {
-                    double civModified = behavior.ModifyBuildingUpkeep(civBuilding, baseUpkeep, faction.settlements.First());
-                    TestAssert.AreEqual(baseUpkeep, civModified, 0.001,
-                        "Non-military building upkeep should not be discounted");
+                    TestAssert.AreEqual(civBuilding.upkeep,
+                        settlement.BuildingsComp.GetBuildingUpkeep(civBuilding), 0.001,
+                        $"Civilian building '{civBuilding.defName}' upkeep should not be discounted");
                 }
             }
             finally

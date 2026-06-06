@@ -270,7 +270,7 @@ namespace FactionColonies
                 Messages.Message("FCBuildingAlreadyType".Translate() + "!", MessageTypeDefOf.RejectInput);
             }
 
-            if (PaymentUtil.GetSilver() < building.cost) //check if the player has enough money
+            if (PaymentUtil.GetSilver() < GetBuildingCost(building)) //check if the player has enough money
             {
                 valid = false;
                 Messages.Message("FCNotEnoughSilverConstructBuilding".Translate() + "!", MessageTypeDefOf.RejectInput);
@@ -510,12 +510,49 @@ namespace FactionColonies
             if (building == null)
                 return 0;
 
-            double upkeep = building.upkeep;
+            double upkeep = building.upkeep + WorldSettlement.GetStatValue(FCStatDefOf.buildingUpkeepBase);
+            upkeep += building.isMilitary
+                ? WorldSettlement.GetStatValue(FCStatDefOf.buildingUpkeepBase_Military)
+                : WorldSettlement.GetStatValue(FCStatDefOf.buildingUpkeepBase_Civilian);
 
-            FactionFC faction = FindFC.FactionComp;
+            double mult = WorldSettlement.GetStatValue(FCStatDefOf.buildingUpkeepMultiplier)
+                * (building.isMilitary
+                    ? WorldSettlement.GetStatValue(FCStatDefOf.buildingUpkeepMultiplier_Military)
+                    : WorldSettlement.GetStatValue(FCStatDefOf.buildingUpkeepMultiplier_Civilian));
+            upkeep *= mult;
+
             upkeep = FindFC.PolicyManager.FoldBehaviors(upkeep, (b, u) => b.ModifyBuildingUpkeep(building, u, WorldSettlement));
 
+            if (upkeep < 0) upkeep = 0;   // central floor (previously done inside the Militaristic override)
             return (int)upkeep;
+        }
+
+        /// <summary>
+        /// Stat-modified silver cost to construct the given building in this settlement.
+        /// Formula: (def.cost + buildingCostBase + military/civilian base) * buildingCostMultiplier * military/civilian multiplier, floored at 0.
+        /// Single source of truth for both the UI display and the actual payment.
+        /// </summary>
+        public int GetBuildingCost(BuildingFCDef building)
+        {
+            if (building is null)
+                return 0;
+
+            double baseCost = building.cost + WorldSettlement.GetStatValue(FCStatDefOf.buildingCostBase);
+            baseCost += building.isMilitary
+                ? WorldSettlement.GetStatValue(FCStatDefOf.buildingCostBase_Military)
+                : WorldSettlement.GetStatValue(FCStatDefOf.buildingCostBase_Civilian);
+
+            double mult = WorldSettlement.GetStatValue(FCStatDefOf.buildingCostMultiplier)
+                * (building.isMilitary
+                    ? WorldSettlement.GetStatValue(FCStatDefOf.buildingCostMultiplier_Military)
+                    : WorldSettlement.GetStatValue(FCStatDefOf.buildingCostMultiplier_Civilian));
+
+            double cost = baseCost * mult;
+
+            if (cost < 0)
+                cost = 0;
+
+            return Convert.ToInt32(cost);
         }
 
         public TaggedString GetBuildingDesc(BuildingFCDef building)

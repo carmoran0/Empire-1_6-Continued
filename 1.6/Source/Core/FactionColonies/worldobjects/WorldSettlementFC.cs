@@ -69,7 +69,10 @@ namespace FactionColonies
 
         public int GetUpgradeCost(int baseCost)
         {
-            return settlementDef.GetSettlementTypeExtension().GetUpgradeCost(settlementLevel, baseCost);
+            int raw = settlementDef.GetSettlementTypeExtension().GetUpgradeCost(settlementLevel, baseCost);
+            double cost = (raw + GetStatValue(FCStatDefOf.settlementUpgradeCostBase))
+                          * GetStatValue(FCStatDefOf.settlementUpgradeCostMultiplier);
+            return (int)Math.Max(0, cost);
         }
 
         public int GetUpgradeTime(double buildTimeMult)
@@ -1345,7 +1348,8 @@ namespace FactionColonies
             double upkeep = 0;
             double income = 0;
 
-            _workerTotalUpkeep = SettlementFormulas.CalculateWorkerUpkeep(_workers, _workersMax, GetBaseWorkerCost());
+            _workerTotalUpkeep = SettlementFormulas.CalculateWorkerUpkeep(_workers, _workersMax, GetBaseWorkerCost(),
+                GetStatValue(FCStatDefOf.workerOverworkPenaltyMultiplier));
             if (_workerTotalUpkeep > 0)
             {
                 _upkeepExp += $"+{Math.Round(_workerTotalUpkeep, 2)} - {"FCWorkers".Translate()}\n";

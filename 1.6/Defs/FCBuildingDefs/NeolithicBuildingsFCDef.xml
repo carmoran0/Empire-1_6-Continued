@@ -227,6 +227,7 @@
 	<!-- Militia -->
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Neolithic">
 		<defName>militia</defName> <!--Name of Def -->
+		<isMilitary>true</isMilitary>
 		<label>Militia</label> <!--Lable of Def -->
 		<desc>Ready to fight for their families, though not very effectively.</desc> <!-- Description of trait -->
 		<cost>300</cost>

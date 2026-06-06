@@ -44,7 +44,7 @@ namespace FactionColonies
             StorytellerDef def = Find.Storyteller.def;
             if (def.adaptDaysGrowthRateCurve == null) return;
 
-            float growth = 0.5f * def.adaptDaysGrowthRateCurve.Evaluate(adaptDays);
+            float growth = 0.5f * def.adaptDaysGrowthRateCurve.Evaluate(adaptDays) * GrowthMultiplier;
             if (adaptDays > 0f)
                 growth *= Find.Storyteller.difficulty.adaptationGrowthRateFactorOverZero;
 
@@ -52,9 +52,12 @@ namespace FactionColonies
             adaptDays = Mathf.Clamp(adaptDays, def.adaptDaysMin, def.adaptDaysMax);
         }
 
+        // threatAdaptationGrowthMultiplier (faction-wide) scales how fast threat escalates, on both passive growth and battle wins.
+        private static float GrowthMultiplier => (float)(FindFC.FactionComp?.GetStatValue(FCStatDefOf.threatAdaptationGrowthMultiplier) ?? 1);
+
         public void Notify_BattleWon()
         {
-            adaptDays += 2f;
+            adaptDays += 2f * GrowthMultiplier;
             adaptDays = Mathf.Min(adaptDays, Find.Storyteller.def.adaptDaysMax);
         }
 

@@ -28,6 +28,7 @@
 
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Spacer">
 		<defName>automatedDefenseSystems</defName> <!--Name of Def -->
+		<isMilitary>true</isMilitary>
 		<label>Automated Defense Systems</label> <!--Lable of Def -->
 		<desc>Androids roam the streets, keeping the colonists safe from external and internal harm.</desc> <!-- Description of trait -->
 		<cost>4000</cost>

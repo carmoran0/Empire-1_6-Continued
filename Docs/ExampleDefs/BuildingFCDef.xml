@@ -23,7 +23,7 @@
 	<!-- Silver upkeep cost deducted periodically. Default: 0 -->
 	<upkeep>0</upkeep>
 
-	<!-- ── Stat Modifiers ── -->
+	<!-- *=*=* Stat Modifiers *=*=* -->
 	<!-- Stat bonuses this building provides while built. See FCStatDef.xml for details on FCStatModifier. -->
 	<statModifiers>
 		<li>
@@ -36,7 +36,7 @@
 		</li>
 	</statModifiers>
 
-	<!-- ── Biome Restrictions ── -->
+	<!-- *=*=* Biome Restrictions *=*=* -->
 	<!-- List of BiomeResourceDef defNames where this building can be built. -->
 	<!-- If empty, the building is available in all biomes. -->
 	<applicableBiomes>
@@ -44,14 +44,14 @@
 		<li>temperateForest</li>
 	</applicableBiomes>
 
-	<!-- ── Hilliness Restrictions ── -->
+	<!-- *=*=* Hilliness Restrictions *=*=* -->
 	<!-- Minimum and maximum hilliness for the settlement tile. Default: Undefined (no restriction) -->
 	<!-- Valid values: Undefined, Flat, SmallHills, LargeHills, Mountainous, Impassable -->
 	<minhilliness>Undefined</minhilliness>
 	<maxhilliness>Undefined</maxhilliness>
 
-	<!-- ── Settlement Type Restrictions ── -->
-	<!-- These two lists are mutually exclusive — specify at most one. -->
+	<!-- *=*=* Settlement Type Restrictions *=*=* -->
+	<!-- These two lists are mutually exclusive - specify at most one. -->
 	<!-- If an allowList is specified, the building can ONLY be built in those settlement types. -->
 	<!-- If a blockList is specified, the building can be built in all settlement types EXCEPT those listed. -->
 	<settlementTypeAllowList>
@@ -61,19 +61,19 @@
 		<!-- mutually exclusive with settlementTypeAllowList -->
 	</settlementTypeBlockList>
 
-	<!-- ── Build Slot Behavior ── -->
+	<!-- *=*=* Build Slot Behavior *=*=* -->
 	<!-- If true, this building can be built directly from the building window into an empty slot. -->
 	<!-- If false, it can only be obtained by upgrading another building. Default: true -->
 	<baseBuilding>true</baseBuilding>
 
-	<!-- ── Upgrade Chain ── -->
+	<!-- *=*=* Upgrade Chain *=*=* -->
 	<!-- Buildings that this building can be upgraded into. The player selects an upgrade from this list -->
 	<!-- in the building window. Must not form circular references. -->
 	<upgrades>
 		<li>ExampleBuildingUpgraded</li>
 	</upgrades>
 
-	<!-- ── Required Buildings ── -->
+	<!-- *=*=* Required Buildings *=*=* -->
 	<!-- Other buildings that must already be built in the same settlement before this building can be constructed. -->
 	<!-- Must not form circular references. -->
 	<requiredBuildings>

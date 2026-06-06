@@ -160,7 +160,11 @@ namespace FactionColonies
             double happinessLostMultiplier = settlement.GetStatValue(FCStatDefOf.happinessLostMultiplier);
             double loyaltyLostMultiplier = settlement.GetStatValue(FCStatDefOf.loyaltyLostMultiplier);
 
-            var (prosperityLoss, happinessLoss, loyaltyLoss) = SettlementFormulas.CalculateBattleLossPenalties(happinessLostMultiplier, loyaltyLostMultiplier);
+            var (prosperityLoss, happinessLoss, loyaltyLoss) = SettlementFormulas.CalculateBattleLossPenalties(
+                happinessLostMultiplier, loyaltyLostMultiplier,
+                settlement.GetStatValue(FCStatDefOf.battleLossProsperityBase),
+                settlement.GetStatValue(FCStatDefOf.battleLossHappinessBase),
+                settlement.GetStatValue(FCStatDefOf.battleLossLoyaltyBase));
             prosperityLoss *= faction.GetStatValue(FCStatDefOf.battleProsperityLossMultiplier);
             happinessLoss *= faction.GetStatValue(FCStatDefOf.battleHappinessLossMultiplier);
             loyaltyLoss *= faction.GetStatValue(FCStatDefOf.battleLoyaltyLossMultiplier);

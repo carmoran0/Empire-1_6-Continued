@@ -12,8 +12,7 @@ namespace FactionColonies
         public override void PostInitialize()
         {
             var ext = Ext<FCPolicyBehaviorExt_Militaristic>();
-            if (extraSquadCooldown.cooldownTicks == 0)
-                extraSquadCooldown.cooldownTicks = GenDate.TicksPerDay * ext.extraSquadCooldownDays;
+            extraSquadCooldown.SetCooldown(GenDate.TicksPerDay * ext.extraSquadCooldownDays);
         }
 
         public override void OnEnacted(FactionFC faction)
@@ -48,14 +47,6 @@ namespace FactionColonies
                     return;
                 }
             }
-        }
-
-        public override double ModifyBuildingUpkeep(BuildingFCDef building, double currentUpkeep, WorldSettlementFC settlement)
-        {
-            if (building.statModifiers.Any(m => m.stat == FCStatDefOf.militaryBaseLevel
-                                             || m.stat == FCStatDefOf.militaryCombatEfficiency))
-                return Math.Max(currentUpkeep - Ext<FCPolicyBehaviorExt_Militaristic>().militaryBuildingUpkeepDiscount, 0);
-            return currentUpkeep;
         }
 
         public override void OnSquadDeployed(FactionFC faction, MilitaryOperation op, WorldSettlementFC settlement, bool isExtraSquad)
