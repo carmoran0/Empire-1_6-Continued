@@ -381,4 +381,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_25</defName>
+		<label>Biomes! Caverns update</label>
+		<description>Updates the Biomes! Caverns compat patch.</description>
+		<releaseDate>2026-06-05</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Updates the Biomes! Caverns compat patch</li>
+		</patchNoteLines>
+		<authors>
+		<li>Pecha</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
