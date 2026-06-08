@@ -424,7 +424,10 @@ namespace FactionColonies
         private void DrawLoadoutPanel(Rect rect, MilUnitFC unit)
         {
             Rect content;
-            activeTab = LoadoutTabStrip.Draw(rect, activeTab, out content);
+            // Only show the Abilities tab when an ability system is actually available
+            // (Royalty, VPE, or another provider) — otherwise it's an empty, useless tab.
+            bool showAbilities = AbilitySystemRegistry.Active != null;
+            activeTab = LoadoutTabStrip.Draw(rect, activeTab, out content, includeAbilities: showAbilities);
             content = content.ContractedBy(4f);
 
             if (activeTab == LoadoutTab.Apparel)
