@@ -5,10 +5,13 @@ using Verse;
 
 namespace FactionColonies
 {
-    /* Shared abilities/psycasts panel for the unit designer's Abilities tab. Reads from displayUnit;
-     * routes mutations through opts.getEditTarget. A psylink-level stepper at the top gates which
-     * abilities are pickable; the "Add Ability" button either opens the generic FCWindow_AbilityPicker
-     * (base game) or hands off to the active provider's own editor (e.g. VPE's psycast window). */
+    /* Shared abilities/psycasts panel for the unit designer's Abilities tab. A psylink-level stepper at
+     * the top gates how powerful the unit's psycasts are. Below it the panel adapts to the active ability
+     * system:
+     *   - VPE (SupportsExplicitSelection): an "Edit Psycasts" button opens VPE's own picker window, and a
+     *     read-only list shows the chosen psycasts with cost.
+     *   - Base game (Royalty): no picker — a note explains psycasts are granted randomly at this psylink
+     *     level when the unit deploys (vanilla behavior). */
     public static class AbilityListWidget
     {
         public struct Options
@@ -21,7 +24,6 @@ namespace FactionColonies
 
         private const float headerHeight = 25f;
         private const float rowHeight = 28f;
-        private const float removeButtonSize = 20f;
         private const float IconSize = 24f;
         private const float stepperButtonW = 24f;
 
@@ -55,7 +57,8 @@ namespace FactionColonies
             Rect psyLabelRect = new Rect(headerRect.x, headerRect.y, 120f, headerHeight);
             Widgets.Label(psyLabelRect, "fcPsylinkLevel".Translate() + ": " + curLevel);
 
-            if (opts.canEdit && opts.showHeaderButtons && target != null)
+            bool editable = opts.canEdit && opts.showHeaderButtons && target != null;
+            if (editable)
             {
                 Rect minusRect = new Rect(psyLabelRect.xMax, headerRect.y + (headerHeight - stepperButtonW) / 2f, stepperButtonW, stepperButtonW);
                 Rect plusRect = new Rect(minusRect.xMax + 2f, minusRect.y, stepperButtonW, stepperButtonW);
@@ -65,46 +68,49 @@ namespace FactionColonies
                 if (Widgets.ButtonText(plusRect, "+") && curLevel < maxLevel)
                     target.SetPsylinkLevel(curLevel + 1);
 
-                // Add button (right-aligned)
-                float addW = 120f;
-                Rect addBtnRect = new Rect(headerRect.xMax - addW, headerRect.y, addW, headerHeight);
-                bool canAdd = curLevel > 0;
-                if (canAdd)
+                // VPE: "Edit Psycasts" button (right-aligned). Base game: none.
+                if (active.SupportsExplicitSelection)
                 {
-                    if (Widgets.ButtonText(addBtnRect, "fcAddAbility".Translate()))
+                    float btnW = 130f;
+                    Rect editBtnRect = new Rect(headerRect.xMax - btnW, headerRect.y, btnW, headerHeight);
+                    bool canEditAbilities = curLevel > 0;
+                    if (canEditAbilities)
                     {
-                        if (active.UsesCustomEditor)
-                        {
+                        if (Widgets.ButtonText(editBtnRect, "fcEditAbilities".Translate()))
                             active.OpenEditor(target, delegate { target.ChangeTick(); });
-                        }
-                        else
-                        {
-                            Func<MilUnitFC> getDisplay = opts.getDisplayUnit ?? (() => displayUnit);
-                            Find.WindowStack.Add(new FCWindow_AbilityPicker(getDisplay, opts.getEditTarget));
-                        }
                     }
-                }
-                else
-                {
-                    GUI.color = Color.gray;
-                    Widgets.ButtonText(addBtnRect, "fcAddAbility".Translate(), active: false);
-                    GUI.color = Color.white;
-                    TooltipHandler.TipRegion(addBtnRect, "fcAbilitiesNeedPsylink".Translate());
+                    else
+                    {
+                        GUI.color = Color.gray;
+                        Widgets.ButtonText(editBtnRect, "fcEditAbilities".Translate(), active: false);
+                        GUI.color = Color.white;
+                        TooltipHandler.TipRegion(editBtnRect, "fcAbilitiesNeedPsylink".Translate());
+                    }
                 }
             }
 
-            // --- Chosen abilities list ---
-            Rect listOutRect = new Rect(rect.x, headerRect.yMax + 2f, rect.width, rect.height - headerHeight - 4f);
+            Rect bodyRect = new Rect(rect.x, headerRect.yMax + 2f, rect.width, rect.height - headerHeight - 4f);
 
+            // --- Base game: explanatory note, no list ---
+            if (!active.SupportsExplicitSelection)
+            {
+                Text.Font = GameFont.Tiny;
+                Text.Anchor = TextAnchor.UpperLeft;
+                Widgets.Label(bodyRect.ContractedBy(4f), "fcAbilitiesRandomNote".Translate());
+                Text.Font = fontBefore;
+                Text.Anchor = anchorBefore;
+                return;
+            }
+
+            // --- VPE: read-only list of chosen psycasts ---
             var items = displayUnit?.abilities;
             int count = items?.Count ?? 0;
             float viewHeight = count * rowHeight;
-            Rect scrollViewRect = ScrollUtil.BeginScrollView(listOutRect, ref scrollPos, viewHeight);
+            Rect scrollViewRect = ScrollUtil.BeginScrollView(bodyRect, ref scrollPos, viewHeight);
 
             for (int i = 0; i < count; i++)
             {
                 SavedAbility item = items[i];
-                int index = i;
                 Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + i * rowHeight, scrollViewRect.width, rowHeight);
                 if (i % 2 == 0) Widgets.DrawHighlight(row);
 
@@ -112,31 +118,16 @@ namespace FactionColonies
                 AbilityPickEntry entry = null;
                 bool resolved = provider is object && provider.TryGetDisplay(item.abilityDef, out entry);
 
-                // Icon
                 Rect iconRect = new Rect(row.x + 2f, row.y + 2f, IconSize, IconSize);
                 if (resolved && entry.icon != null)
                     GUI.DrawTexture(iconRect, entry.icon);
 
-                // Remove button
-                Rect removeRect = Rect.zero;
-                if (opts.canEdit)
-                {
-                    removeRect = new Rect(row.xMax - removeButtonSize - 2f, row.y + (rowHeight - removeButtonSize) / 2f, removeButtonSize, removeButtonSize);
-                    Text.Font = GameFont.Small;
-                    Text.Anchor = TextAnchor.MiddleCenter;
-                    if (Widgets.ButtonText(removeRect, "X") && target != null)
-                        target.RemoveAbility(index);
-                }
-
-                // Cost
-                float costRight = opts.canEdit ? removeRect.x - 4f : row.xMax - 4f;
-                Rect costRect = new Rect(costRight - 60f, row.y, 60f, rowHeight);
+                Rect costRect = new Rect(row.xMax - 4f - 60f, row.y, 60f, rowHeight);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleRight;
                 double cost = resolved ? entry.cost : 0;
                 Widgets.Label(costRect, "$" + cost.ToString("F0"));
 
-                // Label
                 string label = resolved ? entry.label : (item.abilityDef + " (?)");
                 Rect labelRect = new Rect(iconRect.xMax + 6f, row.y, costRect.x - iconRect.xMax - 10f, rowHeight);
                 Text.Font = GameFont.Tiny;

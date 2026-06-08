@@ -746,25 +746,6 @@ namespace FactionColonies
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
         }
 
-        public void AddAbility(string systemKey, string abilityDefName)
-        {
-            if (string.IsNullOrEmpty(systemKey) || string.IsNullOrEmpty(abilityDefName)) return;
-            if (abilities.Any(a => a.systemKey == systemKey && a.abilityDef == abilityDefName)) return;
-            abilities.Add(new SavedAbility(systemKey, abilityDefName));
-            MarkIdentityDirty();
-            ChangeTick();
-            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
-        }
-
-        public void RemoveAbility(int index)
-        {
-            if (index < 0 || index >= abilities.Count) return;
-            abilities.RemoveAt(index);
-            MarkIdentityDirty();
-            ChangeTick();
-            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
-        }
-
         /// <summary>
         /// Replaces all ability entries belonging to <paramref name="systemKey"/> with the given set,
         /// preserving entries from other systems. Used by a provider's custom editor (e.g. VPE) to

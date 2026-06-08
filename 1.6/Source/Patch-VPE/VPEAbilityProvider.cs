@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using RimWorld;
 using VanillaPsycastsExpanded;
 using VEF.Abilities;
@@ -28,13 +26,7 @@ namespace FactionColonies.VPE
         public bool IsActive => ModsConfig.IsActive("VanillaExpanded.VPsycastsE");
         public int Priority => 100;
         public int MaxPsylinkLevel => PsycastsMod.Settings != null ? PsycastsMod.Settings.maxLevel : 30;
-        public bool UsesCustomEditor => true;
-
-        // Generic-picker path is unused for VPE; the custom editor handles selection.
-        public IEnumerable<AbilityPickEntry> ListPickable(int psylinkLevel)
-        {
-            yield break;
-        }
+        public bool SupportsExplicitSelection => true;
 
         public void OpenEditor(MilUnitFC unit, Action onClosed)
         {

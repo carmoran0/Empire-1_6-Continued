@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
@@ -49,19 +48,17 @@ namespace FactionColonies
         int MaxPsylinkLevel { get; }
 
         /// <summary>
-        /// When true, the tab's "Add Ability" button calls <see cref="OpenEditor"/> (the provider
-        /// brings its own UI). When false, the generic <c>FCWindow_AbilityPicker</c> drives the pick
-        /// via <see cref="ListPickable"/>.
+        /// When true (VPE), the player explicitly chooses psycasts: the tab shows an "Edit Psycasts"
+        /// button (<see cref="OpenEditor"/>) and a read-only list of the chosen abilities. When
+        /// false (base game), psycasts are granted randomly at spawn from the psylink level — no
+        /// picker, no stored abilities — exactly as base RimWorld does.
         /// </summary>
-        bool UsesCustomEditor { get; }
-
-        /// <summary>Abilities pickable at the given psylink level (generic-picker path only).</summary>
-        IEnumerable<AbilityPickEntry> ListPickable(int psylinkLevel);
+        bool SupportsExplicitSelection { get; }
 
         /// <summary>
-        /// Opens the provider-owned editor (custom-editor path only). The editor is responsible for
-        /// writing the chosen abilities back into <paramref name="unit"/>.abilities; it should invoke
-        /// <paramref name="onClosed"/> when done so the tab can refresh cost/preview.
+        /// Opens the provider-owned editor (only when <see cref="SupportsExplicitSelection"/>). The
+        /// editor writes the chosen abilities back into <paramref name="unit"/>.abilities; it should
+        /// invoke <paramref name="onClosed"/> when done so the tab can refresh cost/preview.
         /// </summary>
         void OpenEditor(MilUnitFC unit, Action onClosed);
 

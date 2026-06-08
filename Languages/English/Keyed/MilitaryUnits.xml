@@ -85,11 +85,11 @@
 	<fcPickImplant>Select Implant</fcPickImplant>
 
 	<!-- Abilities / Psycasts -->
-	<fcAddAbility>+ Add Ability</fcAddAbility>
-	<fcPickAbility>Select Ability</fcPickAbility>
+	<fcEditAbilities>Edit Psycasts</fcEditAbilities>
 	<fcPsylinkLevel>Psylink level</fcPsylinkLevel>
 	<fcAbilitiesNoSystem>No psycast system is available. Install Royalty or Vanilla Psycasts Expanded to assign abilities.</fcAbilitiesNoSystem>
-	<fcAbilitiesNeedPsylink>Raise the unit's psylink level above 0 to choose abilities.</fcAbilitiesNeedPsylink>
+	<fcAbilitiesNeedPsylink>Raise the unit's psylink level above 0 to choose psycasts.</fcAbilitiesNeedPsylink>
+	<fcAbilitiesRandomNote>Psycasts are granted randomly at this psylink level when the unit is recruited.</fcAbilitiesRandomNote>
 	<fcVPEEditorTitle>Psycasts</fcVPEEditorTitle>
 	<fcVPEEditorHint>Unlock paths and abilities below. Your selections are saved to the unit design and applied to every mercenary built from it.</fcVPEEditorHint>
 	<fcVPEEditorUnavailable>Could not prepare a preview psycaster for this unit.</fcVPEEditorUnavailable>
