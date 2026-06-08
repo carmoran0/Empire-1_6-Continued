@@ -4,13 +4,15 @@ using Verse;
 
 namespace FactionColonies
 {
-    /* The three sub-tabs of a unit's loadout editor (shared by DesignUnitsWindow and
-     * Dialog_PawnLoadout). */
+    /* The sub-tabs of a unit's loadout editor (shared by DesignUnitsWindow and Dialog_PawnLoadout).
+     * Abilities is last so that omitting it (includeAbilities: false) leaves the other tab indices
+     * unchanged. */
     public enum LoadoutTab
     {
         Apparel,
         Inventory,
-        Implants
+        Implants,
+        Abilities
     }
 
     /* Draws the loadout tab row using the shared ButtonFlat tab drawer (UIUtil.DrawTabRow) and
@@ -19,7 +21,7 @@ namespace FactionColonies
     {
         public const float TabHeight = 28f;
 
-        public static LoadoutTab Draw(Rect boundingBox, LoadoutTab selected, out Rect contentRect)
+        public static LoadoutTab Draw(Rect boundingBox, LoadoutTab selected, out Rect contentRect, bool includeAbilities = true)
         {
             List<string> labels = new List<string>
             {
@@ -27,7 +29,14 @@ namespace FactionColonies
                 "fcTabInventory".Translate(),
                 "fcTabImplants".Translate()
             };
-            int idx = UIUtil.DrawTabRow(boundingBox, labels, (int)selected, out contentRect,
+            if (includeAbilities)
+                labels.Add("fcTabAbilities".Translate());
+
+            // Guard against a stale Abilities selection when the tab is hidden.
+            int selectedIdx = (int)selected;
+            if (selectedIdx >= labels.Count) selectedIdx = 0;
+
+            int idx = UIUtil.DrawTabRow(boundingBox, labels, selectedIdx, out contentRect,
                 tabHeight: TabHeight, minTabWidth: 70f);
             return (LoadoutTab)idx;
         }

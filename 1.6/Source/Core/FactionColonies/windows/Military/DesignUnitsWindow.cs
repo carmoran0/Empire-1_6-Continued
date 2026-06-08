@@ -21,6 +21,7 @@ namespace FactionColonies
         private Vector2 apparelListScrollPos;
         private Vector2 inventoryListScrollPos;
         private Vector2 implantListScrollPos;
+        private Vector2 abilityListScrollPos;
         private LoadoutTab activeTab = LoadoutTab.Apparel;
 
         // Layout sizing constants
@@ -444,9 +445,19 @@ namespace FactionColonies
                     getEditTarget = () => unit,
                 });
             }
-            else
+            else if (activeTab == LoadoutTab.Implants)
             {
                 ImplantListWidget.Draw(content, unit, ref implantListScrollPos, new ImplantListWidget.Options
+                {
+                    canEdit = true,
+                    showHeaderButtons = true,
+                    getEditTarget = () => unit,
+                    getDisplayUnit = () => unit,
+                });
+            }
+            else
+            {
+                AbilityListWidget.Draw(content, unit, ref abilityListScrollPos, new AbilityListWidget.Options
                 {
                     canEdit = true,
                     showHeaderButtons = true,

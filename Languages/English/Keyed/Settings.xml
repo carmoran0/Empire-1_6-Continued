@@ -54,6 +54,10 @@ At 1, military efficiency fully affects each round of auto combat. Military forc
 Values in between dampen the effect of military efficiency on the auto combat.</FCSettingEfficiencyDampingTooltip>
 	<FCSettingMercHealRate>Mercenary Heal Rate Multiplier</FCSettingMercHealRate>
 	<FCSettingMercHealRateTip>Multiplier on the healing rate for off-map mercenaries. At 1.0 (default), an Empire merc heals at roughly the same per-day rate as a vanilla pawn in a basic bed being tended with industrial medicine by an unskilled doctor. Higher values heal faster; lower values heal slower.</FCSettingMercHealRateTip>
+	<FCSettingPsylinkCostMult>Unit Psylink Cost Multiplier</FCSettingPsylinkCostMult>
+	<FCSettingPsylinkCostMultTip>Multiplier on the silver cost added to a unit design per psylink level. At 1.0 (default), each level costs roughly the value of one psylink neuroformer. Set to 0 to make psylink levels free.</FCSettingPsylinkCostMultTip>
+	<FCSettingPsycastCostMult>Unit Psycast Cost Multiplier</FCSettingPsycastCostMult>
+	<FCSettingPsycastCostMultTip>Multiplier on the silver cost added to a unit design per chosen psycast/ability. Higher-level psycasts cost more. Set to 0 to make psycasts free.</FCSettingPsycastCostMultTip>
 	<FCEmpireMercHealRateStatExplanation>Empire mercenary at base recovering</FCEmpireMercHealRateStatExplanation>
 
 	<!-- Auto-resolve casualties + Crushing Defeat -->

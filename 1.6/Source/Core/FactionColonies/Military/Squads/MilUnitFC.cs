@@ -34,6 +34,12 @@ namespace FactionColonies
         public List<SavedImplant> implants = new List<SavedImplant>();
         public bool HasWeapon => weapons.Any(w => w.thing != null);
 
+        // Psycast/ability design (Abilities tab). psylinkLevel gates which abilities are pickable
+        // and is applied the "neuroformer way" at spawn; abilities carry their owning ability-system
+        // provider's Key so they apply through the right system (base game / VPE) on load.
+        public int psylinkLevel;
+        public List<SavedAbility> abilities = new List<SavedAbility>();
+
         // Forced gender for spawned pawns (null = any).
         public Gender? forcedGender;
 
@@ -203,6 +209,10 @@ namespace FactionColonies
             Scribe_Collections.Look(ref implants, "implants", LookMode.Deep);
             Scribe_Collections.Look(ref statModifiers, "statModifiers", LookMode.Deep);
 
+            // Psycast/ability design
+            Scribe_Values.Look(ref psylinkLevel, "psylinkLevel", 0);
+            Scribe_Collections.Look(ref abilities, "abilities", LookMode.Deep);
+
             // forcedGender nullable — save only if set
             bool hasGender = forcedGender.HasValue;
             Gender genderVal = forcedGender ?? Gender.None;
@@ -218,6 +228,7 @@ namespace FactionColonies
                 if (apparel == null) apparel = new List<SavedThing>();
                 if (inventory == null) inventory = new List<SavedThing>();
                 if (implants == null) implants = new List<SavedImplant>();
+                if (abilities == null) abilities = new List<SavedAbility>();
                 if (statModifiers == null) statModifiers = new List<PermanentStatModifier>();
                 // Mutual exclusivity: prefer XenotypeDef if both are set
                 if (xenotype != null && customXenotypeName != null)
@@ -286,7 +297,10 @@ namespace FactionColonies
                 // generation time (not in RefreshPreviewEquipment, which runs on equipment-only
                 // changes and would otherwise double-install).
                 if (previewPawn != null)
+                {
                     ApplyImplantsToPawn(previewPawn, this);
+                    ApplyAbilitiesToPawn(previewPawn, this);
+                }
             }
             catch (Exception ex)
             {
@@ -372,6 +386,43 @@ namespace FactionColonies
                 catch (Exception ex)
                 {
                     LogUtil.Warning($"Failed to apply implant {im.recipe?.defName} to {target.LabelShortCap}: {ex.Message}");
+                }
+            }
+        }
+
+        /* Applies this unit's psylink level + chosen psycasts to the target pawn, dispatching to the
+         * ability-system provider each ability was designed under (base game / VPE). Psylink is granted
+         * the "neuroformer way" (a PsychicAmplifier hediff), which is what lets VPE's own Harmony patches
+         * pick up the level and attach its psycast tracker. Each entry is wrapped so an absent provider
+         * (e.g. template made with VPE, loaded without it) or an invalid def is skipped, not fatal.
+         * Used by the preview pawn and the real spawned pawn. */
+        public static void ApplyAbilitiesToPawn(Pawn target, MilUnitFC source)
+        {
+            if (target?.health is null || target.Dead || target.Destroyed) return;
+            if (source is null) return;
+
+            if (source.psylinkLevel > 0)
+            {
+                IAbilitySystemProvider active = AbilitySystemRegistry.Active;
+                if (active is object)
+                {
+                    try { active.ApplyPsylink(target, source.psylinkLevel); }
+                    catch (Exception ex)
+                    {
+                        LogUtil.Warning($"Failed to apply psylink {source.psylinkLevel} to {target.LabelShortCap}: {ex.Message}");
+                    }
+                }
+            }
+
+            if (source.abilities is null) return;
+            foreach (SavedAbility a in source.abilities)
+            {
+                IAbilitySystemProvider provider = AbilitySystemRegistry.ByKey(a.systemKey);
+                if (provider is null) continue; // originating system not loaded — skip silently
+                try { provider.GrantAbility(target, a.abilityDef); }
+                catch (Exception ex)
+                {
+                    LogUtil.Warning($"Failed to grant ability {a.abilityDef} ({a.systemKey}) to {target.LabelShortCap}: {ex.Message}");
                 }
             }
         }
@@ -540,8 +591,10 @@ namespace FactionColonies
             apparel.Clear();
             inventory.Clear();
             implants.Clear();
+            abilities.Clear();
+            psylinkLevel = 0;
             pawnEquipmentDirty = true;
-            pawnIdentityDirty = true; // implants cleared — preview pawn must regenerate
+            pawnIdentityDirty = true; // implants/psylink cleared — preview pawn must regenerate
             ChangeTick();
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
         }
@@ -661,6 +714,75 @@ namespace FactionColonies
         {
             if (index < 0 || index >= implants.Count) return;
             implants.RemoveAt(index);
+            MarkIdentityDirty();
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
+        // --- Abilities / Psycasts ---
+
+        public void SetPsylinkLevel(int level)
+        {
+            int max = AbilitySystemRegistry.Active?.MaxPsylinkLevel ?? 6;
+            int clamped = Mathf.Clamp(level, 0, max);
+            if (clamped == psylinkLevel) return;
+            psylinkLevel = clamped;
+            // Drop any chosen abilities that now exceed the (possibly lowered) psylink level.
+            if (psylinkLevel <= 0)
+            {
+                abilities.Clear();
+            }
+            else
+            {
+                abilities.RemoveAll(a =>
+                {
+                    IAbilitySystemProvider p = AbilitySystemRegistry.ByKey(a.systemKey);
+                    AbilityPickEntry e;
+                    return p is object && p.TryGetDisplay(a.abilityDef, out e) && e.level > psylinkLevel;
+                });
+            }
+            MarkIdentityDirty(); // psylink hediff changes pawn identity
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
+        public void AddAbility(string systemKey, string abilityDefName)
+        {
+            if (string.IsNullOrEmpty(systemKey) || string.IsNullOrEmpty(abilityDefName)) return;
+            if (abilities.Any(a => a.systemKey == systemKey && a.abilityDef == abilityDefName)) return;
+            abilities.Add(new SavedAbility(systemKey, abilityDefName));
+            MarkIdentityDirty();
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
+        public void RemoveAbility(int index)
+        {
+            if (index < 0 || index >= abilities.Count) return;
+            abilities.RemoveAt(index);
+            MarkIdentityDirty();
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
+        /// <summary>
+        /// Replaces all ability entries belonging to <paramref name="systemKey"/> with the given set,
+        /// preserving entries from other systems. Used by a provider's custom editor (e.g. VPE) to
+        /// write back the full chosen set when its window closes.
+        /// </summary>
+        public void SetAbilitiesForSystem(string systemKey, IEnumerable<string> abilityDefNames)
+        {
+            if (string.IsNullOrEmpty(systemKey)) return;
+            abilities.RemoveAll(a => a.systemKey == systemKey);
+            if (abilityDefNames is object)
+            {
+                foreach (string defName in abilityDefNames)
+                {
+                    if (string.IsNullOrEmpty(defName)) continue;
+                    if (abilities.Any(a => a.systemKey == systemKey && a.abilityDef == defName)) continue;
+                    abilities.Add(new SavedAbility(systemKey, defName));
+                }
+            }
             MarkIdentityDirty();
             ChangeTick();
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
@@ -833,10 +955,35 @@ namespace FactionColonies
             foreach (SavedImplant im in implants)
                 totalCost += ImplantCost(im.recipe);
 
+            totalCost += PsylinkCost(psylinkLevel);
+            foreach (SavedAbility a in abilities)
+                totalCost += AbilityCost(a);
+
             if (animal != null)
                 totalCost += Math.Floor(animal.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier);
 
             equipmentTotalCost = Math.Ceiling(totalCost);
+        }
+
+        /* Cost of the unit's psylink levels, mirroring the psylink neuroformer item's value
+         * (def "PsychicAmplifier", ~2600 silver) scaled per level and by the settings multiplier. */
+        public static double PsylinkCost(int level)
+        {
+            if (level <= 0) return 0;
+            ThingDef neuroformer = DefDatabase<ThingDef>.GetNamedSilentFail("PsychicAmplifier");
+            double perLevel = neuroformer is object ? neuroformer.BaseMarketValue : 2600.0;
+            return Math.Floor(perLevel * FCSettings.militaryPsylinkCostMultiplier * level);
+        }
+
+        /* Cost of a chosen ability, resolved from its owning provider's display entry (which already
+         * folds in FCSettings.militaryPsycastCostMultiplier). Zero if the system isn't loaded. */
+        public static double AbilityCost(SavedAbility ability)
+        {
+            IAbilitySystemProvider provider = AbilitySystemRegistry.ByKey(ability.systemKey);
+            AbilityPickEntry entry;
+            if (provider is object && provider.TryGetDisplay(ability.abilityDef, out entry))
+                return entry.cost;
+            return 0;
         }
 
         /* Approximate cost of an implant from its install recipe: the market value of the fixed
@@ -894,6 +1041,8 @@ namespace FactionColonies
             copy.apparel = new List<SavedThing>(apparel ?? new List<SavedThing>());
             copy.inventory = new List<SavedThing>(inventory ?? new List<SavedThing>());
             copy.implants = new List<SavedImplant>(implants ?? new List<SavedImplant>());
+            copy.psylinkLevel = psylinkLevel;
+            copy.abilities = new List<SavedAbility>(abilities ?? new List<SavedAbility>());
             copy.statModifiers = statModifiers?.Select(m => m.Clone()).ToList() ?? new List<PermanentStatModifier>();
             CopyExtraFieldsTo(copy);
             copy.ChangeTick();

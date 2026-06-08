@@ -4,7 +4,7 @@ using Verse;
 
 namespace FactionColonies.util
 {
-    internal static class FCPawnGenerator
+    public static class FCPawnGenerator
     {
         /// <summary>
         /// Generates a pawn with a specific forced xenotype that the PawnGenerationPatches prefix

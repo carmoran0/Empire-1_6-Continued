@@ -268,6 +268,8 @@ namespace FactionColonies
         public List<SavedThing> apparel;
         public List<SavedThing> inventory;
         public List<SavedImplant> implants;
+        public int psylinkLevel;
+        public List<SavedAbility> abilities;
         public XenotypeDef xenotype;
         public string customXenotypeName;
         public Gender? forcedGender;
@@ -286,6 +288,8 @@ namespace FactionColonies
             apparel = new List<SavedThing>(unit.apparel);
             inventory = new List<SavedThing>(unit.inventory ?? new List<SavedThing>());
             implants = new List<SavedImplant>(unit.implants ?? new List<SavedImplant>());
+            psylinkLevel = unit.psylinkLevel;
+            abilities = new List<SavedAbility>(unit.abilities ?? new List<SavedAbility>());
             animal = unit.animal;
             pawnKind = unit.pawnKind;
             xenotype = unit.xenotype;
@@ -319,6 +323,8 @@ namespace FactionColonies
             unit.apparel = apparel?.Where(a => a.thing != null).ToList() ?? new List<SavedThing>();
             unit.inventory = inventory?.Where(i => i.thing != null).ToList() ?? new List<SavedThing>();
             unit.implants = implants?.Where(im => im.recipe != null).ToList() ?? new List<SavedImplant>();
+            unit.psylinkLevel = psylinkLevel;
+            unit.abilities = abilities?.Where(a => !string.IsNullOrEmpty(a.abilityDef)).ToList() ?? new List<SavedAbility>();
             unit.statModifiers = statModifiers?.Select(m => m.Clone()).ToList() ?? new List<PermanentStatModifier>();
 
             unit.LoadFromSaved(this);
@@ -356,6 +362,8 @@ namespace FactionColonies
             Scribe_Collections.Look(ref apparel, "apparel", LookMode.Deep);
             Scribe_Collections.Look(ref inventory, "inventory", LookMode.Deep);
             Scribe_Collections.Look(ref implants, "implants", LookMode.Deep);
+            Scribe_Values.Look(ref psylinkLevel, "psylinkLevel", 0);
+            Scribe_Collections.Look(ref abilities, "abilities", LookMode.Deep);
             Scribe_Collections.Look(ref statModifiers, "statModifiers", LookMode.Deep);
 
             // forcedGender nullable — save only if set
@@ -678,6 +686,30 @@ namespace FactionColonies
             Scribe_Defs.Look(ref recipe, "recipe");
             Scribe_Defs.Look(ref bodyPart, "bodyPart");
             Scribe_Values.Look(ref bodyPartIndex, "bodyPartIndex", 0);
+        }
+    }
+
+    /* An ability (psycast) chosen for a unit design. Stored by (systemKey, defName) strings rather
+     * than a Def reference so the core assembly never has to reference a foreign ability-def type
+     * (e.g. VFECore.Abilities.AbilityDef): a template designed with VPE loads cleanly even when VPE
+     * is absent — the entry simply resolves to no provider via AbilitySystemRegistry.ByKey and is
+     * skipped. systemKey is the owning IAbilitySystemProvider.Key ("Vanilla" / "VPE"). Paths (VPE)
+     * are re-derived from the ability at apply time, so only the ability defName needs saving. */
+    public struct SavedAbility : IExposable
+    {
+        public string systemKey;
+        public string abilityDef;
+
+        public SavedAbility(string systemKey, string abilityDef)
+        {
+            this.systemKey = systemKey;
+            this.abilityDef = abilityDef;
+        }
+
+        public void ExposeData()
+        {
+            Scribe_Values.Look(ref systemKey, "systemKey");
+            Scribe_Values.Look(ref abilityDef, "abilityDef");
         }
     }
 }

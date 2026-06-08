@@ -140,6 +140,8 @@ namespace FactionColonies
         public static int productionResearchBase = 100;
         public static double militaryAnimalCostMultiplier = 1.5;
         public static double militaryRaceCostMultiplier = 0.075;
+        public static double militaryPsylinkCostMultiplier = 1.0;
+        public static double militaryPsycastCostMultiplier = 1.0;
         public static float mercenaryHealRatePerHour = 1f;
 
         public static float maxThreatMultiplier = DEFAULT_MAX_THREAT_MULTIPLIER;
@@ -350,6 +352,8 @@ namespace FactionColonies
             }
             Scribe_Values.Look(ref battleArchiveUnlimited, "battleArchiveUnlimited", DEFAULT_BATTLE_ARCHIVE_UNLIMITED);
             Scribe_Values.Look(ref mercenaryHealRatePerHour, "mercenaryHealRatePerHour", 1f);
+            Scribe_Values.Look(ref militaryPsylinkCostMultiplier, "militaryPsylinkCostMultiplier", 1.0);
+            Scribe_Values.Look(ref militaryPsycastCostMultiplier, "militaryPsycastCostMultiplier", 1.0);
             Scribe_Values.Look(ref squadHireCostMultiplier, "squadHireCostMultiplier", DEFAULT_SQUAD_HIRE_COST_MULTIPLIER);
             Scribe_Values.Look(ref squadUpgradeCostMultiplier, "squadUpgradeCostMultiplier", DEFAULT_SQUAD_UPGRADE_COST_MULTIPLIER);
             Scribe_Values.Look(ref maxSquadSize, "maxSquadSize", DEFAULT_MAX_SQUAD_SIZE);
@@ -914,6 +918,12 @@ namespace FactionColonies
             ls.Label("FCSettingMercHealRate".Translate() + ": " + mercenaryHealRatePerHour.ToString("0.00") + "x", -1f, "FCSettingMercHealRateTip".Translate());
             mercenaryHealRatePerHour = ls.Slider(mercenaryHealRatePerHour, 0.1f, 100f);
 
+            ls.Label("FCSettingPsylinkCostMult".Translate() + ": " + militaryPsylinkCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingPsylinkCostMultTip".Translate());
+            militaryPsylinkCostMultiplier = ls.Slider((float)militaryPsylinkCostMultiplier, 0f, 5f);
+
+            ls.Label("FCSettingPsycastCostMult".Translate() + ": " + militaryPsycastCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingPsycastCostMultTip".Translate());
+            militaryPsycastCostMultiplier = ls.Slider((float)militaryPsycastCostMultiplier, 0f, 5f);
+
             DrawSectionResetButton(ls, delegate
             {
                 disableHostileMilitaryActions = DEFAULT_DISABLE_HOSTILE_MILITARY_ACTIONS;
@@ -927,6 +937,8 @@ namespace FactionColonies
                 maxConcurrentBattleMaps = 0;
                 efficiencyDamping = DEFAULT_EFFICIENCY_DAMPING;
                 mercenaryHealRatePerHour = 1f;
+                militaryPsylinkCostMultiplier = 1.0;
+                militaryPsycastCostMultiplier = 1.0;
             });
 
             ls.Gap(12f);

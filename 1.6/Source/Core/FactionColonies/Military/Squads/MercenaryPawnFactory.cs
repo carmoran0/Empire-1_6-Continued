@@ -222,7 +222,10 @@ namespace FactionColonies
             // Install the designed implants (bionics/prosthetics/etc.) before the pawn is used.
             // Skipped on the degraded fallbacks only if the loadout is absent.
             if (loadout != null)
+            {
                 MilUnitFC.ApplyImplantsToPawn(newPawn, loadout);
+                MilUnitFC.ApplyAbilitiesToPawn(newPawn, loadout);
+            }
 
             merc.squad = squad;
             merc.settlement = squad?.settlement;

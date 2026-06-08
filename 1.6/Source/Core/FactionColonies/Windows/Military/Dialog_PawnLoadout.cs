@@ -268,7 +268,9 @@ namespace FactionColonies
         private void DrawLoadoutPanel(Rect rect)
         {
             Rect content;
-            activeTab = LoadoutTabStrip.Draw(rect, activeTab, out content);
+            // Psycast/ability editing is a per-template feature (psylink + designer-chosen abilities);
+            // omit the Abilities tab when editing an already-spawned pawn's loadout.
+            activeTab = LoadoutTabStrip.Draw(rect, activeTab, out content, includeAbilities: false);
             content = content.ContractedBy(4f);
 
             if (activeTab == LoadoutTab.Apparel)

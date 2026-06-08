@@ -13,5 +13,6 @@
         <li IfModActive="OskarPotocki.VanillaFactionsExpanded.Core">Compat/1.6/KCSG</li>
         <li IfModActive="Mlie.PawnkindRaceDiversification">Compat/1.6/PawnkindRaceDiversification</li>
         <li IfModActive="SmashPhil.VehicleFramework">Compat/1.6/VehicleFramework</li>
+        <li IfModActive="VanillaExpanded.VPsycastsE">Compat/1.6/VPE</li>
     </v1.6>
 </loadFolders>
