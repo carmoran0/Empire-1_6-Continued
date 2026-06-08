@@ -29,6 +29,11 @@ namespace FactionColonies
                 foreach (SavedThing inv in unit.inventory) total += inv.MarketValue;
             if (unit.implants != null)
                 foreach (SavedImplant im in unit.implants) total += MilUnitFC.ImplantCost(im.recipe);
+            // Psycasts: psylink levels + any explicitly-chosen abilities (base-game random psycasts
+            // store nothing, so those units contribute only the psylink-level cost).
+            total += MilUnitFC.PsylinkCost(unit.psylinkLevel);
+            if (unit.abilities != null)
+                foreach (SavedAbility a in unit.abilities) total += MilUnitFC.AbilityCost(a);
             return total;
         }
 
@@ -63,7 +68,42 @@ namespace FactionColonies
             if (!WeaponsEquivalent(target.weapons, current.weapons)) return true;
             if (!InventoryEquivalent(target.inventory, current.inventory)) return true;
             if (!ImplantsEquivalent(target.implants, current.implants)) return true;
+            if (!PsycastsEquivalent(target, current)) return true;
             return false;
+        }
+
+        /// <summary>True when the psylink level or chosen-psycast set differs between
+        /// <paramref name="target"/> and <paramref name="current"/>. Like <see cref="ImplantsChanged"/>,
+        /// the upgrade paths run an in-place psycast reconcile (<see cref="MilUnitFC.ReconcileAbilitiesOnPawn"/>)
+        /// when this is true — no pawn regeneration, identity preserved.</summary>
+        public static bool PsycastsChanged(MilUnitFC target, MilUnitFC current)
+        {
+            if (target is null) return false;
+            if (current is null) return true;
+            return !PsycastsEquivalent(target, current);
+        }
+
+        /* Equal when both the psylink level and the (order-independent) chosen-ability set match.
+         * Base-game units store no abilities, so for them this reduces to a psylink-level comparison. */
+        public static bool PsycastsEquivalent(MilUnitFC a, MilUnitFC b)
+        {
+            int al = a?.psylinkLevel ?? 0;
+            int bl = b?.psylinkLevel ?? 0;
+            if (al != bl) return false;
+            return AbilitiesEquivalent(a?.abilities, b?.abilities);
+        }
+
+        private static bool AbilitiesEquivalent(List<SavedAbility> a, List<SavedAbility> b)
+        {
+            int an = a?.Count ?? 0;
+            int bn = b?.Count ?? 0;
+            if (an != bn) return false;
+            if (an == 0) return true;
+            List<string> sa = a.Select(x => x.systemKey + "|" + x.abilityDef).OrderBy(s => s).ToList();
+            List<string> sb = b.Select(x => x.systemKey + "|" + x.abilityDef).OrderBy(s => s).ToList();
+            for (int i = 0; i < an; i++)
+                if (sa[i] != sb[i]) return false;
+            return true;
         }
 
         /// <summary>True when the implant set differs between <paramref name="target"/> and

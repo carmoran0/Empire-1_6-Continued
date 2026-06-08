@@ -70,5 +70,15 @@ namespace FactionColonies
 
         /// <summary>Forces the end-state of one chosen ability onto a freshly generated pawn.</summary>
         void GrantAbility(Pawn pawn, string defName);
+
+        /// <summary>
+        /// Brings a LIVE (already-spawned) pawn's psycasts in line with <paramref name="desired"/> for the
+        /// in-place upgrade flow, preserving as much of the pawn's existing state as is appropriate. Base
+        /// game adjusts the psylink level granularly — keeping current random psycasts, granting one for
+        /// each newly-gained level, and stripping any now above the cap — because re-rolling would be a
+        /// surprise. VPE wipes and re-applies (its grants are deterministic, so nothing is lost). Must
+        /// tolerate a pawn with no existing psylink.
+        /// </summary>
+        void ReconcilePsycasts(Pawn pawn, MilUnitFC desired);
     }
 }

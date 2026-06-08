@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using RimWorld;
 using VanillaPsycastsExpanded;
 using VEF.Abilities;
@@ -104,6 +105,50 @@ namespace FactionColonies.VPE
             {
                 comp.GiveAbility(def);
             }
+        }
+
+        /// <summary>
+        /// VPE reconcile = full wipe + deterministic re-apply. VPE's grants are exact (no randomness),
+        /// so nothing is lost by wiping and rebuilding to the desired psylink level + chosen psycasts.
+        /// </summary>
+        public void ReconcilePsycasts(Pawn pawn, MilUnitFC desired)
+        {
+            if (pawn?.health is null) return;
+
+            Wipe(pawn);
+
+            if (desired is null || desired.psylinkLevel <= 0) return;
+            ApplyPsylink(pawn, desired.psylinkLevel);
+            if (desired.abilities is null) return;
+            foreach (SavedAbility a in desired.abilities)
+            {
+                if (a.systemKey == ProviderKey)
+                    GrantAbility(pawn, a.abilityDef);
+            }
+        }
+
+        /// <summary>
+        /// Wipes the pawn's VPE psycast state: VPE's own <see cref="Hediff_PsycastAbilities.Reset"/>
+        /// clears learned psycasts/paths/foci from the <c>CompAbilities</c>, then the VPE implant and
+        /// base psylink hediffs are removed. Also strips any stray base-game psycast abilities.
+        /// </summary>
+        private static void Wipe(Pawn pawn)
+        {
+            Hediff_PsycastAbilities tracker = pawn.Psycasts();
+            if (tracker != null)
+            {
+                tracker.Reset();
+                pawn.health.RemoveHediff(tracker);
+            }
+
+            if (pawn.abilities != null)
+            {
+                foreach (RimWorld.Ability a in pawn.abilities.abilities.Where(a => a.def.IsPsycast).ToList())
+                    pawn.abilities.RemoveAbility(a.def);
+            }
+
+            Hediff_Psylink ps = pawn.GetMainPsylinkSource();
+            if (ps != null) pawn.health.RemoveHediff(ps);
         }
     }
 }

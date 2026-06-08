@@ -539,6 +539,17 @@ namespace FactionColonies
             if (desired != null) ApplyImplantsToPawn(target, desired);
         }
 
+        /* Brings a live pawn's psylink + psycasts in line with the desired loadout WITHOUT regenerating
+         * the pawn (identity preserved). Delegated to the active ability system, which reconciles in the
+         * way that suits it: base game adjusts the psylink level granularly (keeping existing random
+         * psycasts, adding/stripping only the delta), while VPE wipes and re-applies its deterministic
+         * set. Used by the squad-upgrade paths when psycasts change (see LoadoutUpgradeUtil.PsycastsChanged). */
+        public static void ReconcileAbilitiesOnPawn(Pawn target, MilUnitFC desired)
+        {
+            if (target?.health is null || target.Dead || target.Destroyed) return;
+            AbilitySystemRegistry.Active?.ReconcilePsycasts(target, desired);
+        }
+
         // --- Equipment Mutation Methods ---
 
         public void ChangeTick()

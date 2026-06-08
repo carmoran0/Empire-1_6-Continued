@@ -660,14 +660,17 @@ namespace FactionColonies
             // only the pawn's equipped state is being synced to it.
             MilUnitFC prior = merc.currentLoadout;
             bool implantsChanged = LoadoutUpgradeUtil.ImplantsChanged(target, prior);
+            bool psycastsChanged = LoadoutUpgradeUtil.PsycastsChanged(target, prior);
             merc.currentLoadout = target.Clone();
             squad.Equipment.StripPawn(merc);
             squad.Equipment.EquipPawn(merc, merc.currentLoadout);
-            // EquipPawn handles apparel + weapons + inventory only. Implants are surgically
-            // applied, so reconcile them in place (preserving the pawn) when they changed, and
-            // sync the companion animal too.
+            // EquipPawn handles apparel + weapons + inventory only. Implants are surgically applied
+            // and psycasts are provider-managed, so reconcile each in place (preserving the pawn)
+            // when changed, and sync the companion animal too.
             if (implantsChanged)
                 MilUnitFC.ReconcileImplantsOnPawn(merc.pawn, target, prior);
+            if (psycastsChanged)
+                MilUnitFC.ReconcileAbilitiesOnPawn(merc.pawn, target);
             squad.Equipment.ReconcileAnimal(merc, target);
         }
 

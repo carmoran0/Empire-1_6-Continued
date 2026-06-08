@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using RimWorld;
 using Verse;
 
@@ -56,5 +57,47 @@ namespace FactionColonies
 
         // Base game stores no chosen abilities; psycasts are the random grants from ApplyPsylink.
         public void GrantAbility(Pawn pawn, string defName) { }
+
+        /// <summary>
+        /// Granular psylink reconcile: keeps the pawn's existing random psycasts and only adjusts for the
+        /// level delta. Raising calls <see cref="PawnUtility.ChangePsylinkLevel"/>, which grants one random
+        /// psycast per newly-gained level (and skips levels the pawn already has a psycast for). Lowering
+        /// drops the level and strips only the psycasts now above the cap. Going to 0 removes everything.
+        /// </summary>
+        public void ReconcilePsycasts(Pawn pawn, MilUnitFC desired)
+        {
+            if (pawn?.health is null) return;
+            int target = desired != null ? Math.Min(desired.psylinkLevel, MaxPsylinkLevel) : 0;
+
+            Hediff_Psylink ps = pawn.GetMainPsylinkSource();
+            int current = ps != null ? ps.level : 0;
+            if (target == current) return;
+
+            if (target <= 0)
+            {
+                StripPsycastsAboveLevel(pawn, 0);
+                if (ps != null) pawn.health.RemoveHediff(ps);
+                return;
+            }
+
+            if (ps is null)
+            {
+                ApplyPsylink(pawn, target); // no existing psylink — grant fresh
+                return;
+            }
+
+            // ChangePsylinkLevel grants randoms only for newly-gained levels (positive offset) and
+            // never double-grants a level the pawn already has, so raising preserves the existing set.
+            pawn.ChangePsylinkLevel(target - current, false);
+            if (target < current)
+                StripPsycastsAboveLevel(pawn, target);
+        }
+
+        private static void StripPsycastsAboveLevel(Pawn pawn, int cap)
+        {
+            if (pawn.abilities is null) return;
+            foreach (Ability a in pawn.abilities.abilities.Where(a => a.def.IsPsycast && a.def.level > cap).ToList())
+                pawn.abilities.RemoveAbility(a.def);
+        }
     }
 }
