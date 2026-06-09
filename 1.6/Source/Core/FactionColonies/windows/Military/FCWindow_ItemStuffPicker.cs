@@ -15,8 +15,8 @@ namespace FactionColonies
     public class FCWindow_ItemStuffPicker : Window
     {
         private readonly List<ThingDef> items;
-        private readonly Action<ThingDef, ThingDef> onConfirm;
-        private readonly Action<ThingDef, ThingDef, int> onConfirmWithCount;
+        private readonly Action<ThingDef, ThingDef, QualityCategory?> onConfirm;
+        private readonly Action<ThingDef, ThingDef, int, QualityCategory?> onConfirmWithCount;
         private readonly Action onUnequip;
         private readonly string titleKey;
         private readonly Func<ThingDef, string> conflictTooltipFunc;
@@ -51,7 +51,7 @@ namespace FactionColonies
 
         public FCWindow_ItemStuffPicker(
             List<ThingDef> items,
-            Action<ThingDef, ThingDef> onConfirm,
+            Action<ThingDef, ThingDef, QualityCategory?> onConfirm,
             Action onUnequip = null,
             string titleKey = "fcPickItem",
             ThingDef initialItem = null,
@@ -59,7 +59,8 @@ namespace FactionColonies
             Func<ThingDef, string> conflictTooltipFunc = null,
             bool showCount = false,
             int initialCount = 1,
-            Action<ThingDef, ThingDef, int> onConfirmWithCount = null)
+            Action<ThingDef, ThingDef, int, QualityCategory?> onConfirmWithCount = null,
+            QualityCategory? initialQuality = null)
         {
             this.items = items;
             this.onConfirm = onConfirm;
@@ -70,6 +71,7 @@ namespace FactionColonies
             this.showCount = showCount;
             this.selectedCount = Mathf.Max(1, initialCount);
             this.countBuffer = this.selectedCount.ToString();
+            this.selectedQuality = initialQuality;
 
             if (initialItem != null)
             {
@@ -394,6 +396,27 @@ namespace FactionColonies
                 }
             }
 
+            // Quality picker (left) for items that support quality. Items without CompQuality
+            // keep quality == null (Normal), so the control is hidden for them.
+            if (CraftUtil.ThingHasQuality(selectedItem))
+            {
+                const float qualityBlockW = 130f;
+                Rect qualityRect = new Rect(labelRect.x, labelRect.y + 1f, qualityBlockW, labelRect.height - 2f);
+                if (Widgets.ButtonText(qualityRect, TextUtil.GetQualityLabelCap(SelectedQuality)))
+                {
+                    List<FloatMenuOption> options = new List<FloatMenuOption>();
+                    foreach (QualityCategory cat in Enum.GetValues(typeof(QualityCategory)))
+                    {
+                        QualityCategory captured = cat;
+                        options.Add(new FloatMenuOption(TextUtil.GetQualityLabelCap(captured),
+                            () => selectedQuality = captured));
+                    }
+                    Find.WindowStack.Add(new FloatMenu(options));
+                }
+                labelRect = new Rect(qualityRect.xMax + 8f, labelRect.y,
+                    labelRect.width - qualityBlockW - 8f, labelRect.height);
+            }
+
             float cost = perUnit * (showCount ? Mathf.Max(1, selectedCount) : 1);
             Text.Anchor = TextAnchor.MiddleLeft;
             Widgets.Label(labelRect, "fcPickerSummary".Translate(itemName, cost.ToString("F0")));
@@ -435,10 +458,13 @@ namespace FactionColonies
                 }
                 else
                 {
+                    // Items without CompQuality store null (Normal) — unchanged behavior.
+                    QualityCategory? qualityToEmit =
+                        CraftUtil.ThingHasQuality(selectedItem) ? (QualityCategory?)SelectedQuality : null;
                     if (onConfirmWithCount != null)
-                        onConfirmWithCount(selectedItem, selectedStuff, Mathf.Max(1, selectedCount));
+                        onConfirmWithCount(selectedItem, selectedStuff, Mathf.Max(1, selectedCount), qualityToEmit);
                     else
-                        onConfirm(selectedItem, selectedStuff);
+                        onConfirm(selectedItem, selectedStuff, qualityToEmit);
                     Close();
                 }
             }

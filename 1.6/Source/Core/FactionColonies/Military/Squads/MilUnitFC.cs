@@ -559,10 +559,10 @@ namespace FactionColonies
             costDirty = true;
         }
 
-        public void SetWeapon(ThingDef def, ThingDef stuff)
+        public void SetWeapon(ThingDef def, ThingDef stuff, QualityCategory? quality = null)
         {
             weapons.Clear();
-            weapons.Add(new SavedThing(def, stuff));
+            weapons.Add(new SavedThing(def, stuff, quality));
             pawnEquipmentDirty = true;
             ChangeTick();
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
@@ -576,13 +576,13 @@ namespace FactionColonies
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
         }
 
-        public void SetApparel(ThingDef def, ThingDef stuff)
+        public void SetApparel(ThingDef def, ThingDef stuff, QualityCategory? quality = null)
         {
             // Remove conflicting apparel using RimWorld's static check
             BodyDef body = pawnKind?.race?.race?.body ?? BodyDefOf.Human;
             apparel.RemoveAll(existing =>
                 !ApparelUtility.CanWearTogether(existing.thing, def, body));
-            apparel.Add(new SavedThing(def, stuff));
+            apparel.Add(new SavedThing(def, stuff, quality));
             pawnEquipmentDirty = true;
             ChangeTick();
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
@@ -615,7 +615,7 @@ namespace FactionColonies
         /* Adds (or tops up) a carried inventory entry. Hard-blocks the add when it would push
          * total carried mass over the unit's 70% carry cap (see CarryCapacity) — the player can
          * never overload a designed unit. Returns false (with a message) when rejected. */
-        public bool AddInventory(ThingDef def, ThingDef stuff, int count)
+        public bool AddInventory(ThingDef def, ThingDef stuff, int count, QualityCategory? quality = null)
         {
             if (def is null || count <= 0) return false;
 
@@ -626,11 +626,11 @@ namespace FactionColonies
                 return false;
             }
 
-            // Merge with an existing matching row (same thing + stuff, no specified quality).
+            // Merge with an existing matching row (same thing + stuff + quality).
             for (int i = 0; i < inventory.Count; i++)
             {
                 SavedThing existing = inventory[i];
-                if (existing.thing == def && existing.stuff == stuff && !existing.quality.HasValue)
+                if (existing.thing == def && existing.stuff == stuff && existing.quality == quality)
                 {
                     existing.count = Mathf.Max(1, existing.count) + count;
                     inventory[i] = existing;
@@ -641,7 +641,7 @@ namespace FactionColonies
                 }
             }
 
-            inventory.Add(new SavedThing(def, stuff, count));
+            inventory.Add(new SavedThing(def, stuff, count, quality));
             pawnEquipmentDirty = true;
             ChangeTick();
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);

@@ -177,7 +177,7 @@ namespace FactionColonies
                     while (remaining > 0)
                     {
                         int take = Mathf.Min(remaining, stackLimit);
-                        Thing invThing = new SavedThing(invDef.thing, invDef.stuff, take).CreateThing();
+                        Thing invThing = new SavedThing(invDef.thing, invDef.stuff, take, invDef.quality).CreateThing();
                         if (invThing == null) break;
                         merc.pawn.inventory.innerContainer.TryAdd(invThing, true);
                         remaining -= take;

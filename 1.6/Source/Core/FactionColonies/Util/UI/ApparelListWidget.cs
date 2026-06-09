@@ -153,6 +153,8 @@ namespace FactionColonies
                 string label = item.stuff != null
                     ? (string)(item.thing.LabelCap + " (" + item.stuff.LabelCap + ")")
                     : item.thing.LabelCap.ToString();
+                if (item.quality.HasValue)
+                    label = item.quality.Value.GetLabel().CapitalizeFirst() + " " + label;
                 Widgets.Label(labelRect, label);
 
                 // Click row to open replace picker
@@ -191,10 +193,10 @@ namespace FactionColonies
 
             Find.WindowStack.Add(new FCWindow_ItemStuffPicker(
                 apparelDefs,
-                onConfirm: (item, stuff) =>
+                onConfirm: (item, stuff, quality) =>
                 {
                     MilUnitFC target = opts.getEditTarget?.Invoke();
-                    if (target != null) target.SetApparel(item, stuff);
+                    if (target != null) target.SetApparel(item, stuff, quality);
                 },
                 titleKey: "fcPickApparel",
                 conflictTooltipFunc: t => GetConflictTooltip(currentApparel, t, body)
@@ -218,10 +220,10 @@ namespace FactionColonies
             List<SavedThing> otherApparel = currentApparel.Where(a => a.thing != current.thing).ToList();
             Find.WindowStack.Add(new FCWindow_ItemStuffPicker(
                 apparelDefs,
-                onConfirm: (item, stuff) =>
+                onConfirm: (item, stuff, quality) =>
                 {
                     MilUnitFC target = opts.getEditTarget?.Invoke();
-                    if (target != null) target.SetApparel(item, stuff);
+                    if (target != null) target.SetApparel(item, stuff, quality);
                 },
                 onUnequip: () =>
                 {
@@ -231,7 +233,8 @@ namespace FactionColonies
                 titleKey: "fcPickApparel",
                 initialItem: current.thing,
                 initialStuff: current.stuff,
-                conflictTooltipFunc: t => GetConflictTooltip(otherApparel, t, body)
+                conflictTooltipFunc: t => GetConflictTooltip(otherApparel, t, body),
+                initialQuality: current.quality
             ));
         }
 

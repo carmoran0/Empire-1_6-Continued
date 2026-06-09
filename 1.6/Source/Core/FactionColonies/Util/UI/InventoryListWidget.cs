@@ -168,6 +168,8 @@ namespace FactionColonies
             string label = item.stuff != null
                 ? (string)(item.thing.LabelCap + " (" + item.stuff.LabelCap + ")")
                 : item.thing.LabelCap.ToString();
+            if (item.quality.HasValue)
+                label = item.quality.Value.GetLabel().CapitalizeFirst() + " " + label;
             if (!string.IsNullOrEmpty(suffix)) label = label + "  " + suffix;
             string shown = Text.ClampTextWithEllipsis(labelRect, label);
             Widgets.Label(labelRect, shown);
@@ -185,10 +187,10 @@ namespace FactionColonies
                 titleKey: "fcPickInventoryItem",
                 showCount: true,
                 initialCount: 1,
-                onConfirmWithCount: (item, stuff, count) =>
+                onConfirmWithCount: (item, stuff, count, quality) =>
                 {
                     MilUnitFC target = opts.getEditTarget?.Invoke();
-                    if (target != null) target.AddInventory(item, stuff, count);
+                    if (target != null) target.AddInventory(item, stuff, count, quality);
                 }
             ));
         }

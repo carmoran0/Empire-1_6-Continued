@@ -598,21 +598,21 @@ namespace FactionColonies
             count = Mathf.Max(1, t.stackCount);
         }
 
-        public SavedThing(ThingDef thing, ThingDef stuff)
+        public SavedThing(ThingDef thing, ThingDef stuff, QualityCategory? quality = null)
         {
             this.thing = thing;
             this.stuff = stuff;
-            this.quality = null;
+            this.quality = quality;
             this.color = Color.white;
             this.hasColor = false;
             this.count = 1;
         }
 
-        public SavedThing(ThingDef thing, ThingDef stuff, int count)
+        public SavedThing(ThingDef thing, ThingDef stuff, int count, QualityCategory? quality = null)
         {
             this.thing = thing;
             this.stuff = stuff;
-            this.quality = null;
+            this.quality = quality;
             this.color = Color.white;
             this.hasColor = false;
             this.count = Mathf.Max(1, count);

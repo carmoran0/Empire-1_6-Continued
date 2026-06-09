@@ -338,10 +338,10 @@ namespace FactionColonies
             SavedThing? currentWeapon = source?.HasWeapon == true ? source.weapons[0] : (SavedThing?)null;
             Find.WindowStack.Add(new FCWindow_ItemStuffPicker(
                 weaponDefs,
-                onConfirm: (item, stuff) =>
+                onConfirm: (item, stuff, quality) =>
                 {
                     MilUnitFC target = EnsureWorkingLoadout();
-                    if (target != null) target.SetWeapon(item, stuff);
+                    if (target != null) target.SetWeapon(item, stuff, quality);
                 },
                 onUnequip: () =>
                 {
@@ -350,7 +350,8 @@ namespace FactionColonies
                 },
                 titleKey: "fcPickWeapon",
                 initialItem: currentWeapon?.thing,
-                initialStuff: currentWeapon?.stuff
+                initialStuff: currentWeapon?.stuff,
+                initialQuality: currentWeapon?.quality
             ));
         }
 
