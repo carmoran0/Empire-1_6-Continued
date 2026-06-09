@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+	<!-- Bills -->
+	<!-- EN: You did not have enough silver to pay an outstanding bill from -->
+  <FCNotEnoughSilverForBill>未払いの請求書を支払うのに十分なシルバーがありませんでした：</FCNotEnoughSilverForBill>
+	<!-- EN: They have confiscated your tithes in return -->
+  <FCConfiscatedTithes>代わりに十分の一税が没収されました。</FCConfiscatedTithes>
+	<!-- EN: Outstanding Bills -->
+  <FCOutstandingBills>未払い請求書</FCOutstandingBills>
+	<!-- EN: Due Date -->
+  <FCDueDate>期日</FCDueDate>
+	<!-- EN: Amount -->
+  <FCAmount>金額</FCAmount>
+	<!-- EN: Has Tithe -->
+  <FCHasTithe>十分の一税あり</FCHasTithe>
+	<!-- EN: Pay/Receive Silver -->
+  <FCPayReceiveSilver>シルバーの支払い／受取</FCPayReceiveSilver>
+	<!-- EN: Resolve Bill -->
+  <FCResolveBill>請求書を解決する</FCResolveBill>
+	<!-- EN: You do not have enough silver on the current map to pay the bill -->
+  <FCNotEnoughSilverOnMapToPayBill>現在のマップに請求書を支払うのに十分なシルバーがありません。</FCNotEnoughSilverOnMapToPayBill>
+	<!-- EN: {0} bills have been auto-resolved! -->
+  <FCNumberTaxesHasBeenSolved>{0}件の請求書が自動解決されました！</FCNumberTaxesHasBeenSolved>
+	<!-- EN: Bill resolved. -->
+  <FCBillResolved>請求書が解決されました。</FCBillResolved>
+	<!-- EN: Due -->
+  <FCDueFC>期限</FCDueFC>
+	<!-- EN: No pending bills. -->
+  <FCNoPendingBills>未払い請求書はありません。</FCNoPendingBills>
+	<!-- EN: {0} pending bills -->
+  <FCPendingBillsCount>{0}件の未払い請求書</FCPendingBillsCount>
+	<!-- EN: {0} tithe items -->
+  <FCTitheItemCount>{0}個の十分の一税品目</FCTitheItemCount>
+	<!-- EN: No tithes -->
+  <FCNoTithes>十分の一税なし</FCNoTithes>
+	<!-- EN: Overdue -->
+  <FCOverdue>期限超過</FCOverdue>
+	<!-- EN: Unrest has increased by 10 and happiness has decreased in the settlement!  -->
+  <FCUnpaidTitheEffect>未払いにより、入植地の不満が10増加し、幸福度が低下しました！</FCUnpaidTitheEffect>
+	<!-- EN: Overdue Bills Auto-Paid -->
+  <FCLateBillAutoPaidLabel>期限超過の請求書を自動支払い</FCLateBillAutoPaidLabel>
+	<!-- EN: {0} overdue bill(s) have been auto-paid from your silver reserves.\n\nAffected settlements:\n{1}\n\nYour dereliction in payment has caused a small amount of unhappiness and unrest in the affected settlements. -->
+  <FCLateBillAutoPaidDesc>{0}件の期限超過請求書がシルバー備蓄から自動支払いされました。\n\n影響を受けた入植地：\n{1}\n\n支払いの怠慢により、対象の入植地でわずかな不満と不幸が生じました。</FCLateBillAutoPaidDesc>
+
+	<!-- Taxes -->
+	<!-- EN: Settlement Tax -->
+  <FCSettlementTax>入植地税</FCSettlementTax>
+	<!-- EN: week of -->
+  <FCWeekOf>週：</FCWeekOf>
+	<!-- EN: Taxes have been billed -->
+  <FCTaxesBilled>税金が請求されました。</FCTaxesBilled>
+	<!-- EN: Taxes Billed -->
+  <FCTaxesBilledShort>税金請求済み</FCTaxesBilledShort>
+	<!-- EN: Taxes from your settlements have been billed. -->
+  <FCTaxesBilledDesc>入植地からの税金が請求されました。</FCTaxesBilledDesc>
+	<!-- EN: No settlements to tax -->
+  <FCNoSettlementsToTax>課税対象の入植地がありません。</FCNoSettlementsToTax>
+	<!-- EN: Taxes from -->
+  <FCTaxesFrom>税金（出所：</FCTaxesFrom>
+	<!-- EN: have been delivered -->
+  <FCHaveBeenDelivered>）が配達されました。</FCHaveBeenDelivered>
+	<!-- EN: Taxes have arrived! -->
+  <FCTaxesHaveArrived>税金が到着しました！</FCTaxesHaveArrived>
+	<!-- EN: Taxes from {0} are en-route to your tax collection point! -->
+  <FCTaxesFromSettlementAreBeingDelivered>{0}からの税金が徴税ポイントへ向かっています！</FCTaxesFromSettlementAreBeingDelivered>
+	<!-- EN: Tithe % -->
+  <FCTaxPercentage>十分の一税率（%）</FCTaxPercentage>
+	<!-- EN: Tax Delivery Map -->
+  <FCTaxDeliveryMap>税金配達マップ</FCTaxDeliveryMap>
+
+	<!-- EN: {0}'s innovation has provided you with {1} research points. -->
+  <FCInnovativeMessage>{0}の革新により、{1}の研究ポイントを獲得しました。</FCInnovativeMessage>
+
+	<!-- Tax Reports -->
+	<!-- EN: Tax Reports -->
+  <FCTaxReports>税務レポート</FCTaxReports>
+	<!-- EN: Faction Tax Reports -->
+  <FCFactionTaxReports>派閥税務レポート</FCFactionTaxReports>
+	<!-- EN: Settlements Tax Collection -->
+  <FCSettlementTaxCollection>入植地税収</FCSettlementTaxCollection>
+	<!-- EN: Est. Profit -->
+  <FCEstimatedProfit>推定利益</FCEstimatedProfit>
+	<!-- EN: Est Value -->
+  <FCEstimatedValue>推定価値</FCEstimatedValue>
+	<!-- EN: Time till tax -->
+  <FCTimeTillTax>次の課税まで</FCTimeTillTax>
+	<!-- EN: The total faction-wide production of the resource -->
+  <FCTotalFactionProduction>派閥全体の資源総生産量</FCTotalFactionProduction>
+
+	<!-- Tax Break -->
+	<!-- EN: Issue Tax Break -->
+  <FCGiveTaxBreak>減税を実施する</FCGiveTaxBreak>
+	<!-- EN: Reduce base tax by 30% for 10 days but receive an additional +2 to happiness and prosperity daily? -->
+  <FCConfirmTaxBreak>10日間、基本税率を30%削減し、毎日幸福度と繁栄度に+2を付与しますか？</FCConfirmTaxBreak>
+	<!-- EN: You are already giving that settlement a tax break for the next {0} days. -->
+  <FCAlreadyGivingTaxBreak>その入植地にはすでに{0}日間の減税が適用されています。</FCAlreadyGivingTaxBreak>
+	<!-- EN: {0} will have a tax break for the next 10 days. The people are pleased!
+ -->
+  <FCGivingTaxBreak>{0}は今後10日間、減税が適用されます。住民は喜んでいます！
+</FCGivingTaxBreak>
+	<!-- EN: Your settlement {0} taxes have generated an extra {1} percent in taxes! -->
+  <FCIndustriousPop>入植地{0}の勤勉な住民が、税収に追加で{1}%の利益をもたらしました！</FCIndustriousPop>
+	<!-- EN: Industrious Taxes -->
+  <FCIdustriousTaxBoost>勤勉税収ボーナス</FCIdustriousTaxBoost>
+
+	<!-- Tax Notification Mode -->
+	<!-- EN: Tax Arrival Notifications:  -->
+  <FCTaxNotificationModeButton>税金到着通知：</FCTaxNotificationModeButton>
+	<!-- EN: All (Letter + Message) -->
+  <FCTaxNotifyAll>すべて（レター＋メッセージ）</FCTaxNotifyAll>
+	<!-- EN: Letter Only (blue notification) -->
+  <FCTaxNotifyLetterOnly>レターのみ（青色通知）</FCTaxNotifyLetterOnly>
+	<!-- EN: Message Only (top-screen text) -->
+  <FCTaxNotifyMessageOnly>メッセージのみ（画面上部テキスト）</FCTaxNotifyMessageOnly>
+	<!-- EN: None (hide all) -->
+  <FCTaxNotifyNone>なし（すべて非表示）</FCTaxNotifyNone>
+
+	<!-- Delivery Modes -->
+	<!-- EN: Forced Tax Delivery Mode:  -->
+  <FCSelectTaxDeliveryModeButton>税金配達モード強制指定：</FCSelectTaxDeliveryModeButton>
+	<!-- EN: None. Delivery depends on technology and settlement buildings -->
+  <FCTaxDeliveryModeDefaultDesc>なし。配達方法は技術と入植地の建物に依存します。</FCTaxDeliveryModeDefaultDesc>
+	<!-- EN: TaxSpot. Delivery spawns on the tax spot -->
+  <FCTaxDeliveryModeTaxSpotDesc>徴税スポット。配達物は徴税スポットに直接出現します。</FCTaxDeliveryModeTaxSpotDesc>
+	<!-- EN: Caravan. Delivery is always brought by a caravan -->
+  <FCTaxDeliveryModeCaravanDesc>キャラバン。配達は常にキャラバンによって行われます。</FCTaxDeliveryModeCaravanDesc>
+	<!-- EN: DropPod. Delivery always arrives in drop pods -->
+  <FCTaxDeliveryModeDropPodDesc>ドロップポッド。配達は常にドロップポッドで届きます。</FCTaxDeliveryModeDropPodDesc>
+	<!-- EN: Shuttle. Delivery always arrives by shuttle -->
+  <FCTaxDeliveryModeShuttleDesc>シャトル。配達は常にシャトルで届きます。</FCTaxDeliveryModeShuttleDesc>
+	<!-- EN: Shuttle. Unavailable due to royality not being present -->
+  <FCTaxDeliveryModeShuttleUnavailableDesc>シャトル。ロイヤリティが導入されていないため利用不可です。</FCTaxDeliveryModeShuttleUnavailableDesc>
+
+	<!-- Delivery Events -->
+	<!-- EN: The delivering pawns are dropping their items and hiding on your tax delivery spot! They will only engage if the enemy is close! -->
+  <FCDeliveryPawnsHiding>配達員が荷物を降ろし、徴税スポットに身を潜めています！敵が近づいた時のみ応戦します！</FCDeliveryPawnsHiding>
+	<!-- EN: The delivering pawns are leaving the map. -->
+  <FCDeliveryPawnsLeavingMap>配達員がマップを離れています。</FCDeliveryPawnsLeavingMap>
+	<!-- EN: The delivering pawns are leaving the map, because they couldn't access the tax delivery spot. -->
+  <FCDeliveryPawnsLeavingMapNoPath>徴税スポットへのアクセスができなかったため、配達員がマップを離れています。</FCDeliveryPawnsLeavingMapNoPath>
+	<!-- EN: The delivering pawns are collecting downed members and leaving the map. -->
+  <FCDeliveryPawnsLeavingMapWithDowned>配達員が倒れた仲間を収容し、マップを離れています。</FCDeliveryPawnsLeavingMapWithDowned>
+	<!-- EN: Your settlement is delivering the following loot to you:  -->
+  <FCSettlementDeliveringLoot>入植地から以下の物資が配達されます：</FCSettlementDeliveringLoot>
+	<!-- EN: A delivery that was forced to wait has arrived! -->
+  <FCDeliveryHeldUpArriving>待機を余儀なくされていた配達が到着しました！</FCDeliveryHeldUpArriving>
+
+	<!-- Tithes -->
+	<!-- EN: Pause Tithes -->
+  <FCPauseTithes>十分の一税を一時停止</FCPauseTithes>
+	<!-- EN: Unpause Tithes -->
+  <FCUnPauseTithes>十分の一税を再開</FCUnPauseTithes>
+	<!-- EN: Tithes Paused -->
+  <FCTithesPaused>十分の一税：一時停止中</FCTithesPaused>
+	<!-- EN: When enabled, no tithe items will be collected for this resource at tax time. Its production value will be converted to silver income instead. Your tithe settings are preserved and will resume when unpaused. -->
+  <FCPauseTithesDesc>有効にすると、課税時にこの資源の十分の一税品目は徴収されません。代わりに生産価値がシルバー収入に変換されます。設定は保存され、再開時に復元されます。</FCPauseTithesDesc>
+	<!-- EN: Tithe List -->
+  <FCTitheList>十分の一税リスト</FCTitheList>
+	<!-- EN: Stack Count -->
+  <FCStackCount>スタック数</FCStackCount>
+	<!-- EN: Total Value -->
+  <FCTotalValue>合計価値</FCTotalValue>
+	<!-- EN: Is Tithe -->
+  <FCIsTithe>十分の一税対象</FCIsTithe>
+	<!-- EN: Tithe -->
+  <FCTithe>十分の一税</FCTithe>
+	<!-- EN: Tithing -->
+  <FCTithing>十分の一税徴収</FCTithing>
+	<!-- EN: Tithe Modifier -->
+  <FCTitheModifier>十分の一税修正値</FCTitheModifier>
+	<!-- EN: Item Selection -->
+  <FCTitheSelection>品目選択</FCTitheSelection>
+	<!-- EN: Enable All -->
+  <FCTitheEnableAll>すべて有効</FCTitheEnableAll>
+	<!-- EN: Disable All -->
+  <FCTitheDisableAll>すべて無効</FCTitheDisableAll>
+	<!-- EN: {0} - Cost - {1} | Allowed: {2} -->
+  <FCTitheSingleOption>{0} - コスト - {1} | 許可数：{2}</FCTitheSingleOption>
+
+	<!-- Random Tithe Item Selection Window -->
+	<!-- EN: {0} / {1} enabled -->
+  <FCTitheEnabledCount>{0} / {1} 有効</FCTitheEnabledCount>
+	<!-- EN: All -->
+  <FCTitheShowAll>すべて</FCTitheShowAll>
+	<!-- EN: Enabled -->
+  <FCTitheShowEnabled>有効</FCTitheShowEnabled>
+	<!-- EN: Disabled -->
+  <FCTitheShowDisabled>無効</FCTitheShowDisabled>
+	<!-- EN: Show: {0} -->
+  <FCTitheShowFilter>表示：{0}</FCTitheShowFilter>
+
+	<!-- Random Tithes -->
+	<!-- EN: Random Tithing -->
+  <FCRandomTithesEnabled>ランダム十分の一税</FCRandomTithesEnabled>
+	<!-- EN: Random Tithe Item Selection -->
+  <FCRandomTitheSelectionHeader>ランダム十分の一税品目選択</FCRandomTitheSelectionHeader>
+	<!-- EN: Random Tithe Budget -->
+  <FCRandomTitheBudget>ランダム十分の一税予算</FCRandomTitheBudget>
+	<!-- EN: Max -->
+  <FCAutoMaxRandomTithe>最大</FCAutoMaxRandomTithe>
+	<!-- EN: When enabled, the random tithe budget automatically fills the remaining income after manual tithes. Adding manual tithes will reduce the random budget accordingly. -->
+  <FCAutoMaxRandomTitheDesc>有効にすると、手動十分の一税の後に残った収入がランダム十分の一税予算に自動的に充当されます。手動十分の一税を追加するとランダム予算はその分減少します。</FCAutoMaxRandomTitheDesc>
+	<!-- EN: If the used tithe budget is greater than the available tithe budget, then at tax time, all selected tithe options will be pruned until the used budget meets the available budget. -->
+  <FCTitheOverBudget>使用済み十分の一税予算が利用可能予算を超えた場合、課税時に予算内に収まるまで選択された品目が削除されます。</FCTitheOverBudget>
+	<!-- EN: At tax time, you will receive a random selection of items, with a total value equal to or less than the Random Tithe Budget. You can add or remove items to the list to control what is or isn't selected.
+
+If the lowest value item in the list has a higher value than your Random Tithe Budget, or if there are no items to select from, then the budget is carried over to the next tax period. -->
+  <FCRandomTithesDesc>課税時に、ランダム十分の一税予算以下の合計価値となるアイテムがランダムに選ばれます。リストに品目を追加・削除して選択内容を管理できます。
+
+リスト内の最低価値品目がランダム十分の一税予算を超えている場合、または選択可能な品目がない場合、予算は次の課税期間に繰り越されます。</FCRandomTithesDesc>
+	<!-- EN: Accrued Budget: ${0} -->
+  <FCRandomTitheAccrued>累積予算：${0}</FCRandomTitheAccrued>
+	<!-- EN: The amount of leftover Random Tithe Budget that has accrued. This will be added to your Random Tithe Budget to determine the total budget for Random Tithes at tax time. -->
+  <FCRandomTitheAccruedDesc>積み立てられたランダム十分の一税予算の残高です。課税時のランダム十分の一税総予算を算出するために、現在の予算に加算されます。</FCRandomTitheAccruedDesc>
+	<!-- EN: Disburse Accrued Budget -->
+  <FCDisburseAccruedRandomTithe>累積予算を支払う</FCDisburseAccruedRandomTithe>
+	<!-- EN: If checked, then the Accrued Budget will be disbursed as raw silver come tax time. It will not count towards the Random Tithe Budget. -->
+  <FCDisburseAccruedRandomTitheDesc>チェックを入れると、課税時に累積予算が生シルバーとして支払われます。ランダム十分の一税予算にはカウントされません。</FCDisburseAccruedRandomTitheDesc>
+	<!-- EN: No Tithe: {0} -->
+  <FCNoTitheLetterLabel>十分の一税なし：{0}</FCNoTitheLetterLabel>
+	<!-- EN: {0} has a Random Tithe Budget for resource {1}, but no items were enabled. The Random Tithe Budget will be stored for future use.
+
+Total accrued budget: {2} -->
+  <FCNoTitheLetterDesc>{0}は資源{1}のランダム十分の一税予算を持っていますが、有効な品目がありませんでした。ランダム十分の一税予算は将来のために保存されます。
+
+総累積予算：{2}</FCNoTitheLetterDesc>
+	<!-- EN: {0} has a Random Tithe Budget for resource {1}, but did not have enough budget to select any of the enabled items. The Random Tithe Budget will be stored for future use.
+
+Total accrued budget: {2} -->
+  <FCNoTitheLetterDesc2>{0}は資源{1}のランダム十分の一税予算を持っていますが、有効な品目を選択するのに十分な予算がありませんでした。ランダム十分の一税予算は将来のために保存されます。
+
+総累積予算：{2}</FCNoTitheLetterDesc2>
+	<!-- EN: Tithe Injection -->
+  <FCExternalTitheBudget>十分の一税注入</FCExternalTitheBudget>
+	<!-- EN: Total Tithe Budget -->
+  <FCTotalTitheBudget>十分の一税総予算</FCTotalTitheBudget>
+	<!-- EN: Available Budget -->
+  <FCAvailableTitheBudget>利用可能予算</FCAvailableTitheBudget>
+	<!-- EN: Used Budget -->
+  <FCUsedTitheBudget>使用済み予算</FCUsedTitheBudget>
+	<!-- EN: Remove this item from the tithes list. -->
+  <FCTitheXDesc>この品目を十分の一税リストから削除します。</FCTitheXDesc>
+	<!-- EN: {0} already exists in the item selection list. -->
+  <FCTitheListRejection>{0}はすでに品目選択リストに存在します。</FCTitheListRejection>
+	<!-- EN: {0} with quality {1} already exists in the item selection list. -->
+  <FCTitheListRejectionQuality>品質{1}の{0}はすでに品目選択リストに存在します。</FCTitheListRejectionQuality>
+	<!-- EN: {0} with stuff {1} already exists in the item selection list. -->
+  <FCTitheListRejectionStuff>素材{1}の{0}はすでに品目選択リストに存在します。</FCTitheListRejectionStuff>
+	<!-- EN: {0} with quality {1} and stuff {2} already exists in the item selection list -->
+  <FCTitheListRejectionStuffQuality>品質{1}、素材{2}の{0}はすでに品目選択リストに存在します。</FCTitheListRejectionStuffQuality>
+	<!-- EN: Add workers to this resource to generate tithe budget. -->
+  <FCTitheBudgetNoWorkers>十分の一税予算を生成するには、この資源に労働者を割り当ててください。</FCTitheBudgetNoWorkers>
+	<!-- EN: The max tithe budget isn't high enough. -->
+  <FCTitheBudgetInsufficient>最大十分の一税予算が不足しています。</FCTitheBudgetInsufficient>
+
+	<!-- Add Tithe Item Window -->
+	<!-- EN: Add Tithe Item -->
+  <FCAddTitheItemHeader>十分の一税品目を追加</FCAddTitheItemHeader>
+	<!-- EN: Item Selection -->
+  <FCItemSelection>品目選択</FCItemSelection>
+	<!-- EN: Add Item -->
+  <FCAddItem>品目を追加</FCAddItem>
+	<!-- EN: Stuff -->
+  <FCStuff>素材</FCStuff>
+	<!-- EN: Select stuff... -->
+  <FCSelectStuff>素材を選択...</FCSelectStuff>
+	<!-- EN: Must select a stuff type -->
+  <FCMustSelectStuff>素材の種類を選択してください。</FCMustSelectStuff>
+	<!-- EN: This item is already in the tithe list -->
+  <FCItemAlreadyInTitheList>この品目はすでに十分の一税リストにあります。</FCItemAlreadyInTitheList>
+	<!-- EN: Clear Selection -->
+  <FCClearSelection>選択をクリア</FCClearSelection>
+	<!-- EN: Remaining Budget: {0} / {1} total -->
+  <FCTitheBudgetRemaining>残り予算：{0} / 合計{1}</FCTitheBudgetRemaining>
+	<!-- EN: Items -->
+  <FCTitheItems>品目</FCTitheItems>
+	<!-- EN: Materials -->
+  <FCTitheStuff>素材</FCTitheStuff>
+	<!-- EN: Base $ -->
+  <FCTitheBasePrice>基本価格</FCTitheBasePrice>
+	<!-- EN: Est. Cost -->
+  <FCTitheMaterialPrice>推定コスト</FCTitheMaterialPrice>
+	<!-- EN: Search items... -->
+  <FCSearchItems>品目を検索...</FCSearchItems>
+	<!-- EN: Search materials... -->
+  <FCSearchMaterials>素材を検索...</FCSearchMaterials>
+	<!-- EN: Name A-Z -->
+  <FCTitheSortNameAZ>名前順（A-Z）</FCTitheSortNameAZ>
+	<!-- EN: Name Z-A -->
+  <FCTitheSortNameZA>名前順（Z-A）</FCTitheSortNameZA>
+	<!-- EN: Price: Low -->
+  <FCTitheSortPriceLow>価格：安い順</FCTitheSortPriceLow>
+	<!-- EN: Price: High -->
+  <FCTitheSortPriceHigh>価格：高い順</FCTitheSortPriceHigh>
+
+	<!-- Production -->
+	<!-- EN: Base Production Stats -->
+  <FCBaseProductionStats>基本生産統計</FCBaseProductionStats>
+	<!-- EN: Production -->
+  <FCProduction>生産</FCProduction>
+	<!-- EN: Production Efficiency -->
+  <FCProductionEfficiency>生産効率</FCProductionEfficiency>
+	<!-- EN: The total settlement production of the resource -->
+  <FCSettlementProductionOf>入植地の資源総生産量</FCSettlementProductionOf>
+	<!-- EN: Total Production -->
+  <FCTotalProduction>総生産量</FCTotalProduction>
+	<!-- EN: Per-Worker Production -->
+  <FCPerWorkerProduction>労働者1人あたりの生産量</FCPerWorkerProduction>
+	<!-- EN: Total Production -->
+  <FCTotalProd>総生産量</FCTotalProd>
+	<!-- EN: Current rate: {0}\nPeriod average: {1} ({2} of {3} days sampled) -->
+  <FCTotalProdTooltip>現在のレート：{0}\n期間平均：{1}（{3}日中{2}日サンプル済み）</FCTotalProdTooltip>
+	<!-- EN: Resource Pools -->
+  <FCResourcePools>資源プール</FCResourcePools>
+
+	<!-- Resource Types -->
+	<!-- EN: Food -->
+  <FCFood>食料</FCFood>
+	<!-- EN: Weapons -->
+  <FCWeapons>武器</FCWeapons>
+	<!-- EN: Animals -->
+  <FCAnimals>動物</FCAnimals>
+	<!-- EN: Logging -->
+  <FCLogging>木材伐採</FCLogging>
+	<!-- EN: Mining -->
+  <FCMining>採掘</FCMining>
+
+	<!-- Workers -->
+	<!-- EN: Workers -->
+  <FCWorkers>労働者</FCWorkers>
+	<!-- EN: Free Workers -->
+  <FCFreeWorkers>空き労働者</FCFreeWorkers>
+	<!-- EN: Assigned Workers -->
+  <FCAssignedWorkers>割り当て済み労働者</FCAssignedWorkers>
+	<!-- EN: {0}/{1} -->
+  <FCAssignedWorkersValue>{0}/{1}</FCAssignedWorkersValue>
+	<!-- EN: Assigned Overmax Workers -->
+  <FCAssignedOvermaxWorkers>上限超過割り当て労働者</FCAssignedOvermaxWorkers>
+	<!-- EN: {0}/{1} -->
+  <FCAssignedOvermaxWorkersValue>{0}/{1}</FCAssignedOvermaxWorkersValue>
+	<!-- EN: Each addtional overmax worker increases the cost of all workers by 5. -->
+  <FCAssignedOvermaxWorkersTooltip>上限を超えた労働者を追加するごとに、全労働者のコストが5増加します。</FCAssignedOvermaxWorkersTooltip>
+	<!-- EN: Cost Per Worker -->
+  <FCCostPerWorker>労働者1人あたりのコスト</FCCostPerWorker>
+
+	<!-- Income -->
+	<!-- EN: Cost -->
+  <FCCost>コスト</FCCost>
+	<!-- EN: Silver -->
+  <FCSilver>シルバー</FCSilver>
+	<!-- EN: $ -->
+  <FCCashSymbol>$</FCCashSymbol>
+	<!-- EN: Initial Cost -->
+  <FCInitialCost>初期コスト</FCInitialCost>
+	<!-- EN: You do not have enough silver on the current map to found a new settlement -->
+  <FCNotEnoughSilverToSettle>現在のマップに新しい入植地を設立するのに十分なシルバーがありません。</FCNotEnoughSilverToSettle>
+	<!-- EN: You do not have enough silver on the current map to construct that building
+	 -->
+  <FCNotEnoughSilverConstructBuilding>現在のマップにその建物を建設するのに十分なシルバーがありません。
+	</FCNotEnoughSilverConstructBuilding>
+	<!-- EN: You do not have enough silver on the current map to pay for the demolition -->
+  <FCNotEnoughSilverDemolish>現在のマップに解体費用を支払うのに十分なシルバーがありません。</FCNotEnoughSilverDemolish>
+	<!-- EN: You do not have enough silver on the current map to enact that policy -->
+  <FCNotEnoughMoneyToEnact>現在のマップにその政策を制定するのに十分なシルバーがありません。</FCNotEnoughMoneyToEnact>
+	<!-- EN: Profit -->
+  <FCProfit>利益</FCProfit>
+	<!-- EN: Tax Base -->
+  <FCTaxBase>課税基準</FCTaxBase>
+	<!-- EN: Income -->
+  <FCIncome>収入</FCIncome>
+	<!-- EN: Upkeep -->
+  <FCUpkeep>維持費</FCUpkeep>
+	<!-- EN: Raw -->
+  <FCRaw>粗収入</FCRaw>
+	<!-- EN: The total income a resource produces, before any deductions. -->
+  <FCRawIncomeDesc>控除前の資源が生み出す総収入。</FCRawIncomeDesc>
+	<!-- EN: Net -->
+  <FCNet>純収入</FCNet>
+	<!-- EN: The total income a resource produces, after accounting for stockpile diversions and tithes. -->
+  <FCNetIncomeDesc>備蓄転用および十分の一税を差し引いた後の資源が生み出す総収入。</FCNetIncomeDesc>
+	<!-- EN: Gross income: {0} -->
+  <FCNetIncomeBreakdownGross>総収入：{0}</FCNetIncomeBreakdownGross>
+	<!-- EN: Stockpile diversions: -{0} -->
+  <FCNetIncomeBreakdownStockpile>備蓄転用：-{0}</FCNetIncomeBreakdownStockpile>
+	<!-- EN: Tithes: -{0} -->
+  <FCNetIncomeBreakdownTithes>十分の一税：-{0}</FCNetIncomeBreakdownTithes>
+	<!-- EN: Tithe injection offset: +{0} -->
+  <FCNetIncomeBreakdownTitheInjection>十分の一税注入オフセット：+{0}</FCNetIncomeBreakdownTitheInjection>
+	<!-- EN: Net income: {0} -->
+  <FCNetIncomeBreakdownNet>純収入：{0}</FCNetIncomeBreakdownNet>
+	<!-- EN: Period average net: {0} ({1} of {2} days sampled) -->
+  <FCNetIncomeBreakdownAvg>期間平均純収入：{0}（{2}日中{1}日サンプル済み）</FCNetIncomeBreakdownAvg>
+	<!-- EN: {0}{1} -->
+  <FCItemcost>{0}{1}</FCItemcost>
+
+	<!-- Period-average display (headline = expected payout, subtitle = current rate) -->
+	<!-- EN: Current Rate -->
+  <FCDailyRate>現在のレート</FCDailyRate>
+	<!-- EN: Estimated Profit -->
+  <FCSettlementEstimatedProfit>推定利益</FCSettlementEstimatedProfit>
+	<!-- EN: Estimated Income -->
+  <FCSettlementEstimatedIncome>推定収入</FCSettlementEstimatedIncome>
+	<!-- EN: Income and upkeep are snapshot each day. At tax time, the silver paid out is the average of those daily snapshots. -->
+  <FCPeriodAverageTooltipHas>収入と維持費は毎日記録されます。課税時に支払われるシルバーは、それらの日次記録の平均値です。</FCPeriodAverageTooltipHas>
+	<!-- EN: No snapshots have been taken yet this tax cycle. The headline value shows the current daily rate.\n\nOnce a day has passed, the headline will switch to the period-averaged value, which is what actually gets paid at tax time. -->
+  <FCPeriodAverageTooltipNone>今課税サイクルはまだ記録がありません。表示値は現在の日次レートを示しています。\n\n1日が経過すると、表示値は課税時に実際に支払われる期間平均値に切り替わります。</FCPeriodAverageTooltipNone>
+	<!-- EN: This is the sum of every settlement's expected payout, minus edict upkeep. Each settlement snapshots its income and upkeep daily, with the silver paid at tax time being the average of those snapshots. -->
+  <FCPeriodAverageTooltipFaction>これは各入植地の期待支払額の合計から勅令維持費を差し引いたものです。各入植地は収入と維持費を毎日記録し、課税時に支払われるシルバーはそれらの平均値です。</FCPeriodAverageTooltipFaction>
+
+	<!-- Power Output -->
+	<!-- EN: Set as Empire Power Output -->
+  <FCSetAsEmpirePowerOutput>帝国電力出力として設定</FCSetAsEmpirePowerOutput>
+	<!-- EN: Set Power Output -->
+  <FCSetAsOutput>電力出力を設定</FCSetAsOutput>
+	<!-- EN: The transformer has been set as the power output for your settlements! -->
+  <FCSetAsOutputSuccess>変圧器が入植地の電力出力として設定されました！</FCSetAsOutputSuccess>
+
+	<!-- Settlement Fee Reduction -->
+	<!-- EN: The cost of your next settlement will be reduced by half because of your faction's expansionist trait -->
+  <FCActionSettlementFeeReduction>派閥の拡張主義特性により、次の入植地のコストが半額になります。</FCActionSettlementFeeReduction>
+
+	<!-- Goods Received -->
+	<!-- EN: Goods Received -->
+  <FCGoodsReceived>物資受領</FCGoodsReceived>
+	<!-- EN: You have received the following goods from the {0} event: -->
+  <FCGoodsReceivedFollowing>{0}イベントから以下の物資を受け取りました：</FCGoodsReceivedFollowing>
+
+</LanguageData>

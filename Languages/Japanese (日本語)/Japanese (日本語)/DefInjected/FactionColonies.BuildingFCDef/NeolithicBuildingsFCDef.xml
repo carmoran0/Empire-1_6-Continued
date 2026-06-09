@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Alchemist -->
+  <alchemist.label>錬金術師</alchemist.label>
+  <!-- EN: Turn steel into gold? We'll find a way! -->
+  <alchemist.desc>鉄を金に変える？方法は必ず見つかる！</alchemist.desc>
+
+  <!-- EN: Ancient Academy -->
+  <ancientAcademy.label>古代学院</ancientAcademy.label>
+  <!-- EN: Unlocks secrets of the universe which may or may not be true but not both! -->
+  <ancientAcademy.desc>宇宙の秘密を解き明かすが、その真偽はどちらか一方だ！</ancientAcademy.desc>
+
+  <!-- EN: Apothecary -->
+  <apothecary.label>薬剤師</apothecary.label>
+  <!-- EN: Makes elixirs to cure all ailments! (Results may vary.) -->
+  <apothecary.desc>あらゆる病を癒す霊薬を調合！（効果には個人差があります。）</apothecary.desc>
+
+  <!-- EN: bailiff -->
+  <bailiff.label>執行吏</bailiff.label>
+  <!-- EN: Does not accept excuses for late rent payments. -->
+  <bailiff.desc>家賃の滞納に言い訳は通用しない。</bailiff.desc>
+
+  <!-- EN: Brewer -->
+  <brewer.label>醸造所</brewer.label>
+  <!-- EN: Brews the finest ethanols and ethanol biproducts. Please drink responsibly. -->
+  <brewer.desc>最高級のアルコールとその副産物を醸造する。お酒は適量で。</brewer.desc>
+
+  <!-- EN: Carpenter -->
+  <carpenter.label>大工</carpenter.label>
+  <!-- EN: Makes wonderful furniture to prevent the most heinous of war crimes. -->
+  <carpenter.desc>極めて重大な戦争犯罪を防ぐための素晴らしい家具を制作する。</carpenter.desc>
+
+  <!-- EN: Cereal Farmland -->
+  <cerealFarmland.label>穀物農地</cerealFarmland.label>
+  <!-- EN: Land for growing cereal crops to feed more than a single village. -->
+  <cerealFarmland.desc>一つの村以上を養えるほどの穀物作物を育てるための農地。</cerealFarmland.desc>
+
+  <!-- EN: Fletcher -->
+  <fletcher.label>矢職人</fletcher.label>
+  <!-- EN: A creator of arrows - the best ammuniotion in the neolithic! -->
+  <fletcher.desc>矢を作る職人 — 新石器時代最高の弾薬だ！</fletcher.desc>
+
+  <!-- EN: Furrier -->
+  <furrier.label>毛皮職人</furrier.label>
+  <!-- EN: Makes goods from furs and pelts. Ignore the funky smell. -->
+  <furrier.desc>毛皮や皮革から製品を作る。独特の臭いは気にしないで。</furrier.desc>
+
+  <!-- EN: Grain Mill -->
+  <grainMill.label>製粉所</grainMill.label>
+  <!-- EN: A mill to process cereal crops with big, grindy rocks. -->
+  <grainMill.desc>大きな石臼で穀物を加工する製粉所。</grainMill.desc>
+
+  <!-- EN: Granary -->
+  <granary.label>穀物倉庫</granary.label>
+  <!-- EN: A safe place to store cereal crops from those pesky rats. -->
+  <granary.desc>厄介なネズミから穀物を守る安全な保管場所。</granary.desc>
+
+  <!-- EN: Hunter's Hut -->
+  <huntersHut.label>狩人の小屋</huntersHut.label>
+  <!-- EN: Hunts the surrounding woods for food. Endangered species are delicious! -->
+  <huntersHut.desc>周辺の森で食料を狩る。絶滅危惧種も美味しい！</huntersHut.desc>
+
+  <!-- EN: Militia -->
+  <militia.label>民兵</militia.label>
+  <!-- EN: Ready to fight for their families, though not very effectively. -->
+  <militia.desc>家族のために戦う覚悟はあるが、あまり頼りにはなれない。</militia.desc>
+
+  <!-- EN: Fungal Farms -->
+  <mushfarmer.label>菌類農場</mushfarmer.label>
+  <!-- EN: Farmlands adapted to the local ecosystem by growing fungi for food and medicine. -->
+  <mushfarmer.desc>地域の生態系に適応した、食料と薬用の菌類を育てる農地。</mushfarmer.desc>
+
+  <!-- EN: Salvage Guild -->
+  <salvageGuild.label>サルベージ組合</salvageGuild.label>
+  <!-- EN: A guild of trained salvage crews that searches the ruins of destroyed and abandoned settlements, recovering weapons and apparel while also potentially recovering research notes. -->
+  <salvageGuild.desc>訓練されたサルベージ隊員の組合。破壊・放棄された入植地の廃墟を捜索し、武器や装備を回収するほか、研究ノートを発見することもある。</salvageGuild.desc>
+
+  <!-- EN: Slave Market -->
+  <slaveMarket.label>奴隷市場</slaveMarket.label>
+  <!-- EN: Need some free labour? -->
+  <slaveMarket.desc>無償の労働力が必要か？</slaveMarket.desc>
+
+  <!-- EN: Stone Mason -->
+  <stoneMason.label>石工</stoneMason.label>
+  <!-- EN: An artisan of stone by day - rules the world by night. -->
+  <stoneMason.desc>昼間は石の職人、夜は世界を支配する。</stoneMason.desc>
+
+  <!-- EN: Woodcutter -->
+  <woodcutter.label>木こり</woodcutter.label>
+  <!-- EN: A local woodcutter making use of stone tools to fell trees and process lumber. -->
+  <woodcutter.desc>石製の道具を使って木を伐採し、材木に加工する地元の木こり。</woodcutter.desc>
+
+  <!-- EN: Wood Gatherer -->
+  <woodgatherer.label>薪拾い</woodgatherer.label>
+  <!-- EN: A gatherer and forager specialising in gathering loose wood in the form of fallen branches and driftwood. -->
+  <woodgatherer.desc>倒れた枝や流木などの散在する木材を集めることに特化した採集者。</woodgatherer.desc>
+
+</LanguageData>

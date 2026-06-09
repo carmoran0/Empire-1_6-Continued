@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: We'll mourn in private. Time will heal this wound. -->
+  <deathInTheFamily_0_1.label>私的に悼む。時間がこの傷を癒やすだろう。</deathInTheFamily_0_1.label>
+
+  <!-- EN: Hold a public memorial to honor their legacy. -->
+  <deathInTheFamily_0_2.label>その遺志を称えるため、公の追悼式を開く。</deathInTheFamily_0_2.label>
+
+  <!-- EN: Investigate the assassination — someone will answer for this. -->
+  <deathInTheFamily_0_3.label>暗殺を調査する——誰かがこの責任を取ることになる。</deathInTheFamily_0_3.label>
+
+</LanguageData>

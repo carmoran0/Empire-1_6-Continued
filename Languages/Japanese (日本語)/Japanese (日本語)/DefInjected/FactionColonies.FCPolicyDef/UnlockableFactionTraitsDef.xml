@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Defense In Depth -->
+  <defenseInDepth.label>縦深防衛</defenseInDepth.label>
+  <!-- EN: - Military forces receive a +2 level bonus to combat when defending -->
+  <defenseInDepth.positiveEffects.0>- 防衛時、軍事部隊の戦闘レベルに+2のボーナスを得る</defenseInDepth.positiveEffects.0>
+
+  <!-- EN: No trait -->
+  <empty.label>特性なし</empty.label>
+
+  <!-- EN: Industrious -->
+  <industrious.label>勤勉</industrious.label>
+  <!-- EN: - All settlements receive a steady +5 to base tax -->
+  <industrious.positiveEffects.0>- 全入植地の基本税収に+5の恒常ボーナスを得る</industrious.positiveEffects.0>
+
+  <!-- EN: Innovative -->
+  <innovative.label>革新的</innovative.label>
+  <!-- EN: - Settlements passively generate research points equal to 5% of their total profit -->
+  <innovative.positiveEffects.0>- 入植地が総利益の5%に相当する研究ポイントを受動的に生成する</innovative.positiveEffects.0>
+
+  <!-- EN: Lucky -->
+  <lucky.label>幸運</lucky.label>
+  <!-- EN: - Negative random Empire events have a 20% chance to be re-rolled in exchange for a new event -->
+  <lucky.positiveEffects.0>- 帝国のランダムな負のイベントが、新たなイベントと引き換えに20%の確率で振り直される</lucky.positiveEffects.0>
+
+  <!-- EN: Mercantile -->
+  <mercantile.label>商業的</mercantile.label>
+  <!-- EN: - A random trade caravan will arrive to your capital every 3-5 days -->
+  <mercantile.positiveEffects.0>- ランダムな交易キャラバンが3〜5日ごとに首都に到着する</mercantile.positiveEffects.0>
+
+  <!-- EN: Raiders -->
+  <raiders.label>略奪者</raiders.label>
+  <!-- EN: - Increases the value of loot by 20% when raiding -->
+  <raiders.positiveEffects.0>- 略奪時の戦利品の価値が20%増加する</raiders.positiveEffects.0>
+  <!-- EN: - Military forces are available 1 day sooner after using them to raid -->
+  <raiders.positiveEffects.1>- 略奪に使用した後、軍事部隊が1日早く再び利用可能になる</raiders.positiveEffects.1>
+
+  <!-- EN: Resilient -->
+  <resilient.label>不屈</resilient.label>
+  <!-- EN: - Reduce prosperity loss by 50% when attacked -->
+  <resilient.positiveEffects.0>- 攻撃を受けた際の繁栄度の損失を50%軽減する</resilient.positiveEffects.0>
+  <!-- EN: - Cannot lose buildings or settlement levels upon a failed defense -->
+  <resilient.positiveEffects.1>- 防衛に失敗しても建物や入植地レベルを失わない</resilient.positiveEffects.1>
+
+  <!-- EN: Road Builders -->
+  <roadBuilders.label>道路建設者</roadBuilders.label>
+  <!-- EN: - Automatically unlocks the first road technology -->
+  <roadBuilders.positiveEffects.0>- 最初の道路技術を自動的に解放する</roadBuilders.positiveEffects.0>
+  <!-- EN: - Roads are constructed in 33% of the required time -->
+  <roadBuilders.positiveEffects.1>- 道路が必要な時間の33%で建設される</roadBuilders.positiveEffects.1>
+  <!-- EN: - Roads will also be constructed to connect to allied faction's settlements -->
+  <roadBuilders.positiveEffects.2>- 同盟派閥の入植地に接続する道路も建設される</roadBuilders.positiveEffects.2>
+
+</LanguageData>

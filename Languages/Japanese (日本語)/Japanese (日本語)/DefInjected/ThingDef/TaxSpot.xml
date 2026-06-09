@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: tax spot -->
+  <TaxSpot.label>税収スポット</TaxSpot.label>
+  <!-- EN: Designates a spot to receive taxes and tithes. Can be set as the active tax delivery location for your entire empire. -->
+  <TaxSpot.description>税および十分の一税を受け取る場所を指定する。帝国全体の税収配達場所として設定することができる。</TaxSpot.description>
+  
+</LanguageData>

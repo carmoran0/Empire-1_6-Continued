@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Let them play soldier. They'll tire of it. -->
+  <localMilitiasForm_0_1.label>好きにやらせておく。すぐに飽きるだろう。</localMilitiasForm_0_1.label>
+
+  <!-- EN: Fold the militias into our settlement garrisons. -->
+  <localMilitiasForm_0_2.label>民兵を入植地の守備隊に組み込む。</localMilitiasForm_0_2.label>
+
+  <!-- EN: Disband them by force. -->
+  <localMilitiasForm_0_3.label>強制的に解散させる。</localMilitiasForm_0_3.label>
+
+</LanguageData>

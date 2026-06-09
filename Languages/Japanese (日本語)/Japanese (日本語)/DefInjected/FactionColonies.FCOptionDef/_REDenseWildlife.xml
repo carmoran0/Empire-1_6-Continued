@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Let the herds flourish and boost our animal production. -->
+  <denseWildlife_0_1.label>群れを繁栄させ、動物の生産を向上させる。</denseWildlife_0_1.label>
+
+  <!-- EN: Organize a grand hunt and bring back the spoils. -->
+  <denseWildlife_0_2.label>大規模な狩りを組織し、獲物を持ち帰る。</denseWildlife_0_2.label>
+
+  <!-- EN: Capture and domesticate what we can for long-term gains. -->
+  <denseWildlife_0_3.label>長期的な利益のため、できる限り捕獲して家畜化する。</denseWildlife_0_3.label>
+
+</LanguageData>

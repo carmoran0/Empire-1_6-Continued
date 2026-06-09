@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Let them petition. We are a just empire. -->
+  <independencePetitions_0_1.label>請願を受け入れる。我々は公正な帝国だ。</independencePetitions_0_1.label>
+
+  <!-- EN: Address their grievances — distribute aid to the discontented. -->
+  <independencePetitions_0_2.label>不満に対処する――不満を持つ者たちに支援を配布する。</independencePetitions_0_2.label>
+
+  <!-- EN: Suppress the movement with force. -->
+  <independencePetitions_0_3.label>武力で運動を弾圧する。</independencePetitions_0_3.label>
+
+</LanguageData>

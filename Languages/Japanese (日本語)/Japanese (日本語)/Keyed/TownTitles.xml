@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+<!-- Generic titles (used by surface settlements and as fallback for any type) -->
+
+<!-- EN: Farming Commune -->
+  <FCTitle_RTD_Food_1>農耕共同体</FCTitle_RTD_Food_1>
+<!-- EN: Agrarian Town -->
+  <FCTitle_RTD_Food_2>農業の町</FCTitle_RTD_Food_2>
+<!-- EN: Regional Breadbasket -->
+  <FCTitle_RTD_Food_3>地域の穀倉地帯</FCTitle_RTD_Food_3>
+
+<!-- EN: Smithing Village -->
+  <FCTitle_RTD_Weapons_1>鍛冶村</FCTitle_RTD_Weapons_1>
+<!-- EN: Blacksmith Guild -->
+  <FCTitle_RTD_Weapons_2>鍛冶師ギルド</FCTitle_RTD_Weapons_2>
+<!-- EN: War Forge -->
+  <FCTitle_RTD_Weapons_3>戦争鍛冶場</FCTitle_RTD_Weapons_3>
+
+<!-- EN: Sweatshop -->
+  <FCTitle_RTD_Apparel_1>搾取工場</FCTitle_RTD_Apparel_1>
+<!-- EN: Apparel Mill -->
+  <FCTitle_RTD_Apparel_2>衣料工場</FCTitle_RTD_Apparel_2>
+<!-- EN: Apparel Foundry -->
+  <FCTitle_RTD_Apparel_3>衣料製造所</FCTitle_RTD_Apparel_3>
+
+<!-- EN: Animal Farm -->
+  <FCTitle_RTD_Animals_1>畜産農場</FCTitle_RTD_Animals_1>
+<!-- EN: Livestock Plantation -->
+  <FCTitle_RTD_Animals_2>家畜農園</FCTitle_RTD_Animals_2>
+<!-- EN: Regional Livestock Plantation -->
+  <FCTitle_RTD_Animals_3>地域家畜農園</FCTitle_RTD_Animals_3>
+
+<!-- EN: Lumberyard -->
+  <FCTitle_RTD_Logging_1>材木置き場</FCTitle_RTD_Logging_1>
+<!-- EN: Logging Town -->
+  <FCTitle_RTD_Logging_2>伐採の町</FCTitle_RTD_Logging_2>
+<!-- EN: Deforesting Centers -->
+  <FCTitle_RTD_Logging_3>森林開発センター</FCTitle_RTD_Logging_3>
+
+<!-- EN: Mining Outpost -->
+  <FCTitle_RTD_Mining_1>採掘前哨地</FCTitle_RTD_Mining_1>
+<!-- EN: Mining Colony -->
+  <FCTitle_RTD_Mining_2>採掘入植地</FCTitle_RTD_Mining_2>
+<!-- EN: Strip Mine -->
+  <FCTitle_RTD_Mining_3>露天掘り鉱山</FCTitle_RTD_Mining_3>
+
+<!-- EN: Research Outpost -->
+  <FCTitle_RTD_Research_1>研究前哨地</FCTitle_RTD_Research_1>
+<!-- EN: Research Center -->
+  <FCTitle_RTD_Research_2>研究センター</FCTitle_RTD_Research_2>
+<!-- EN: University -->
+  <FCTitle_RTD_Research_3>大学</FCTitle_RTD_Research_3>
+
+<!-- EN: Small Power Plant -->
+  <FCTitle_RTD_Power_1>小型発電所</FCTitle_RTD_Power_1>
+<!-- EN: Power Center -->
+  <FCTitle_RTD_Power_2>電力センター</FCTitle_RTD_Power_2>
+<!-- EN: Heavy Powerplant -->
+  <FCTitle_RTD_Power_3>大型発電所</FCTitle_RTD_Power_3>
+
+<!-- EN: Local Clinic -->
+  <FCTitle_RTD_Medicine_1>地域診療所</FCTitle_RTD_Medicine_1>
+<!-- EN: Medical Center -->
+  <FCTitle_RTD_Medicine_2>医療センター</FCTitle_RTD_Medicine_2>
+<!-- EN: Regional Medical Supplier -->
+  <FCTitle_RTD_Medicine_3>地域医療供給拠点</FCTitle_RTD_Medicine_3>
+
+<!-- EN: Fuel Depot -->
+  <FCTitle_RTD_Chemfuel_1>燃料貯蔵庫</FCTitle_RTD_Chemfuel_1>
+<!-- EN: Fuel Refinery -->
+  <FCTitle_RTD_Chemfuel_2>燃料精製所</FCTitle_RTD_Chemfuel_2>
+<!-- EN: Industrial Fuel Complex -->
+  <FCTitle_RTD_Chemfuel_3>工業燃料複合施設</FCTitle_RTD_Chemfuel_3>
+
+<!-- EN: Gravtech Lab -->
+  <FCTitle_RTD_Gravtech_1>重力技術研究室</FCTitle_RTD_Gravtech_1>
+<!-- EN: Gravtech Facility -->
+  <FCTitle_RTD_Gravtech_2>重力技術施設</FCTitle_RTD_Gravtech_2>
+<!-- EN: Gravtech Institute -->
+  <FCTitle_RTD_Gravtech_3>重力技術研究所</FCTitle_RTD_Gravtech_3>
+
+<!-- Orbital-specific titles (override generic when settlement has titleKey="Orbital") -->
+
+<!-- EN: Orbital Hydroponics Bay -->
+  <FCTitle_Orbital_RTD_Food_1>軌道水耕栽培ベイ</FCTitle_Orbital_RTD_Food_1>
+<!-- EN: Space Agriculture Module -->
+  <FCTitle_Orbital_RTD_Food_2>宇宙農業モジュール</FCTitle_Orbital_RTD_Food_2>
+<!-- EN: Orbital Agri-Complex -->
+  <FCTitle_Orbital_RTD_Food_3>軌道農業複合施設</FCTitle_Orbital_RTD_Food_3>
+
+<!-- EN: Orbital Armory -->
+  <FCTitle_Orbital_RTD_Weapons_1>軌道兵器庫</FCTitle_Orbital_RTD_Weapons_1>
+<!-- EN: Zero-G Weapons Foundry -->
+  <FCTitle_Orbital_RTD_Weapons_2>無重力兵器工場</FCTitle_Orbital_RTD_Weapons_2>
+<!-- EN: Orbital Arsenal -->
+  <FCTitle_Orbital_RTD_Weapons_3>軌道武器庫</FCTitle_Orbital_RTD_Weapons_3>
+
+<!-- EN: Orbital Textile Module -->
+  <FCTitle_Orbital_RTD_Apparel_1>軌道繊維モジュール</FCTitle_Orbital_RTD_Apparel_1>
+<!-- EN: Zero-G Fabrication Bay -->
+  <FCTitle_Orbital_RTD_Apparel_2>無重力製造ベイ</FCTitle_Orbital_RTD_Apparel_2>
+<!-- EN: Orbital Garment Works -->
+  <FCTitle_Orbital_RTD_Apparel_3>軌道衣料製造所</FCTitle_Orbital_RTD_Apparel_3>
+
+<!-- EN: Orbital Vivarium -->
+  <FCTitle_Orbital_RTD_Animals_1>軌道飼育場</FCTitle_Orbital_RTD_Animals_1>
+<!-- EN: Space Husbandry Module -->
+  <FCTitle_Orbital_RTD_Animals_2>宇宙畜産モジュール</FCTitle_Orbital_RTD_Animals_2>
+<!-- EN: Orbital Biodome -->
+  <FCTitle_Orbital_RTD_Animals_3>軌道バイオドーム</FCTitle_Orbital_RTD_Animals_3>
+
+<!-- EN: Orbital Arboretum -->
+  <FCTitle_Orbital_RTD_Logging_1>軌道樹木園</FCTitle_Orbital_RTD_Logging_1>
+<!-- EN: Timber Synthesis Bay -->
+  <FCTitle_Orbital_RTD_Logging_2>木材合成ベイ</FCTitle_Orbital_RTD_Logging_2>
+<!-- EN: Orbital Biogrowth Complex -->
+  <FCTitle_Orbital_RTD_Logging_3>軌道生物育成複合施設</FCTitle_Orbital_RTD_Logging_3>
+
+<!-- EN: Asteroid Drill Site -->
+  <FCTitle_Orbital_RTD_Mining_1>小惑星掘削地点</FCTitle_Orbital_RTD_Mining_1>
+<!-- EN: Orbital Mining Rig -->
+  <FCTitle_Orbital_RTD_Mining_2>軌道採掘リグ</FCTitle_Orbital_RTD_Mining_2>
+<!-- EN: Deep-Space Extraction Hub -->
+  <FCTitle_Orbital_RTD_Mining_3>深宇宙資源採掘ハブ</FCTitle_Orbital_RTD_Mining_3>
+
+<!-- EN: Orbital Research Pod -->
+  <FCTitle_Orbital_RTD_Research_1>軌道研究ポッド</FCTitle_Orbital_RTD_Research_1>
+<!-- EN: Space Sciences Module -->
+  <FCTitle_Orbital_RTD_Research_2>宇宙科学モジュール</FCTitle_Orbital_RTD_Research_2>
+<!-- EN: Orbital Research Institute -->
+  <FCTitle_Orbital_RTD_Research_3>軌道研究所</FCTitle_Orbital_RTD_Research_3>
+
+<!-- EN: Solar Collection Array -->
+  <FCTitle_Orbital_RTD_Power_1>太陽光収集アレイ</FCTitle_Orbital_RTD_Power_1>
+<!-- EN: Orbital Power Grid -->
+  <FCTitle_Orbital_RTD_Power_2>軌道電力グリッド</FCTitle_Orbital_RTD_Power_2>
+<!-- EN: Deep-Space Power Nexus -->
+  <FCTitle_Orbital_RTD_Power_3>深宇宙電力ネクサス</FCTitle_Orbital_RTD_Power_3>
+
+<!-- EN: Orbital Med Bay -->
+  <FCTitle_Orbital_RTD_Medicine_1>軌道医療ベイ</FCTitle_Orbital_RTD_Medicine_1>
+<!-- EN: Zero-G Medical Station -->
+  <FCTitle_Orbital_RTD_Medicine_2>無重力医療ステーション</FCTitle_Orbital_RTD_Medicine_2>
+<!-- EN: Orbital Hospital Complex -->
+  <FCTitle_Orbital_RTD_Medicine_3>軌道病院複合施設</FCTitle_Orbital_RTD_Medicine_3>
+
+<!-- EN: Orbital Fuel Siphon -->
+  <FCTitle_Orbital_RTD_Chemfuel_1>軌道燃料サイフォン</FCTitle_Orbital_RTD_Chemfuel_1>
+<!-- EN: Orbital Refinery -->
+  <FCTitle_Orbital_RTD_Chemfuel_2>軌道精製所</FCTitle_Orbital_RTD_Chemfuel_2>
+<!-- EN: Deep-Space Fuel Complex -->
+  <FCTitle_Orbital_RTD_Chemfuel_3>深宇宙燃料複合施設</FCTitle_Orbital_RTD_Chemfuel_3>
+
+<!-- EN: Zero-G Research Pod -->
+  <FCTitle_Orbital_RTD_Gravtech_1>無重力研究ポッド</FCTitle_Orbital_RTD_Gravtech_1>
+<!-- EN: Orbital Gravtech Station -->
+  <FCTitle_Orbital_RTD_Gravtech_2>軌道重力技術ステーション</FCTitle_Orbital_RTD_Gravtech_2>
+<!-- EN: Gravtech Nexus -->
+  <FCTitle_Orbital_RTD_Gravtech_3>重力技術ネクサス</FCTitle_Orbital_RTD_Gravtech_3>
+
+</LanguageData>

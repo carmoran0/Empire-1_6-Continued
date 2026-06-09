@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Mine the vein at a steady, sustainable pace. -->
+  <struckRichOreVein_0_1.label>安定した持続可能なペースで鉱脈を採掘する。</struckRichOreVein_0_1.label>
+
+  <!-- EN: Rush the extraction — push the miners hard. -->
+  <struckRichOreVein_0_2.label>採掘を急がせろ――採掘者を限界まで働かせるんだ。</struckRichOreVein_0_2.label>
+
+  <!-- EN: Sell the mining rights to outside interests. -->
+  <struckRichOreVein_0_3.label>採掘権を外部の業者に売却する。</struckRichOreVein_0_3.label>
+
+</LanguageData>

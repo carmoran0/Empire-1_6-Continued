@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: arid shrubland -->
+  <AridShrubland.label>乾燥低木地帯</AridShrubland.label>
+
+  <!-- EN: boreal forest -->
+  <BorealForest.label>寒帯林</BorealForest.label>
+
+  <!-- EN: cold bog -->
+  <ColdBog.label>寒冷湿地</ColdBog.label>
+
+  <!-- EN: Default Biome -->
+  <defaultBiome.label>デフォルトバイオーム</defaultBiome.label>
+
+  <!-- EN: desert -->
+  <Desert.label>砂漠</Desert.label>
+
+  <!-- EN: extreme desert -->
+  <ExtremeDesert.label>極限砂漠</ExtremeDesert.label>
+
+  <!-- EN: ice sheet -->
+  <IceSheet.label>氷床</IceSheet.label>
+
+  <!-- EN: sea ice -->
+  <SeaIce.label>海氷</SeaIce.label>
+
+  <!-- EN: temperate forest -->
+  <TemperateForest.label>温帯林</TemperateForest.label>
+
+  <!-- EN: temperate swamp -->
+  <TemperateSwamp.label>温帯湿地</TemperateSwamp.label>
+
+  <!-- EN: tropical rainforest -->
+  <TropicalRainforest.label>熱帯雨林</TropicalRainforest.label>
+
+  <!-- EN: tropical swamp -->
+  <TropicalSwamp.label>熱帯湿地</TropicalSwamp.label>
+
+  <!-- EN: tundra -->
+  <Tundra.label>ツンドラ</Tundra.label>
+
+</LanguageData>

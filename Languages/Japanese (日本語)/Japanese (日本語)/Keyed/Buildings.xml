@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+	<!-- Building Construction -->
+	<!-- EN: Construct Building -->
+  <FCConstructBuilding>建物を建設</FCConstructBuilding>
+	<!-- EN: Construct -->
+  <FCConstruct>建設</FCConstruct>
+	<!-- EN: Build -->
+  <FCBuild>建造</FCBuild>
+	<!-- EN: Built -->
+  <FCBuilt>建造済み</FCBuilt>
+	<!-- EN: will be constructed in -->
+  <FCWillBeConstructedIn>建設予定地：</FCWillBeConstructedIn>
+	<!-- EN: has been constructed at -->
+  <FCHasBeenConstructedAt>建設完了地：</FCHasBeenConstructedAt>
+	<!-- EN: Currently under construction: {0} -->
+  <Empire_BuildingWindow_ConstructionDesc>建設中：{0}</Empire_BuildingWindow_ConstructionDesc>
+	<!-- EN: Build Time: {0} -->
+  <FCBuildTime>建設時間：{0}</FCBuildTime>
+
+	<!-- Building Restrictions -->
+	<!-- EN: This building can only be constructed on surface settlements -->
+  <FCBuildingSurfaceOnly>この建物は地表の入植地にのみ建設できます。</FCBuildingSurfaceOnly>
+	<!-- EN: This building can only be constructed on orbital platforms -->
+  <FCBuildingOrbitalOnly>この建物は軌道プラットフォームにのみ建設できます。</FCBuildingOrbitalOnly>
+	<!-- EN: {0} cannot be built in a {1} -->
+  <FCBuildingInvalidSettlement>{0} は {1} には建設できません。</FCBuildingInvalidSettlement>
+	<!-- EN: {0} cannot be built on this tile's terrain -->
+  <FCBuildingInvalidTileMutator>{0} はこのタイルの地形には建設できません。</FCBuildingInvalidTileMutator>
+	<!-- EN: There is already a building of that type -->
+  <FCBuildingAlreadyType>同じ種類の建物がすでに存在します。</FCBuildingAlreadyType>
+	<!-- EN: There is already a building of that type being built -->
+  <FCBuildingBeingBuiltAlreadyType>同じ種類の建物がすでに建設中です。</FCBuildingBeingBuiltAlreadyType>
+	<!-- EN: There is already a building being constructed there -->
+  <FCBuildingAlreadyConstructed>その場所にはすでに建物が建設中です。</FCBuildingAlreadyConstructed>
+
+	<!-- Building Demolition -->
+	<!-- EN: Destroy -->
+  <FCDestroy>破壊</FCDestroy>
+	<!-- EN: Demolish -->
+  <FCDemolish>解体</FCDemolish>
+	<!-- EN: Are you sure you want to demolish {0}? This will cost {1} silver. -->
+  <FCDemolishConfirmation>{0} を解体してよいですか？{1} シルバーかかります。</FCDemolishConfirmation>
+	<!-- EN: {0} has been demolished -->
+  <FCBuildingDemolished>{0} が解体されました。</FCBuildingDemolished>
+	<!-- EN: Change Building -->
+  <FCChangeBuildingButton>建物を変更</FCChangeBuildingButton>
+
+	<!-- Building Filters -->
+	<!-- EN: All -->
+  <FCBuildingFilterAll>すべて</FCBuildingFilterAll>
+	<!-- EN: Happiness -->
+  <FCBuildingFilterHappiness>幸福度</FCBuildingFilterHappiness>
+	<!-- EN: Base Tax -->
+  <FCBuildingFilterBasetax>基本税</FCBuildingFilterBasetax>
+	<!-- EN: Workers -->
+  <FCBuildingFilterWorkers>労働者</FCBuildingFilterWorkers>
+	<!-- EN: Military -->
+  <FCBuildingFilterMilitary>軍事</FCBuildingFilterMilitary>
+
+	<!-- Capital Seat -->
+	<!-- EN: Empire capital established at {0}! This location will be used as the center of your empire. -->
+  <FCCapitalEstablished>{0} に帝国の首都が設立されました！ここが帝国の中心地となります。</FCCapitalEstablished>
+	<!-- EN: Capital seat disabled. Empire will use fallback capital location if available. -->
+  <FCCapitalSeatDisabled>首都機能が無効化されました。利用可能な場合、帝国は代替首都を使用します。</FCCapitalSeatDisabled>
+	<!-- EN: Empire capital has been lost! You should establish a new capital seat. -->
+  <FCCapitalLost>帝国の首都が失われました！新たな首都を設立してください。</FCCapitalLost>
+
+	<!-- Building Window -->
+	<!-- EN: Buildings — {0} -->
+  <Empire_BuildingWindow_Header>建物 — {0}</Empire_BuildingWindow_Header>
+	<!-- EN: Empty Building Slot -->
+  <Empire_BuildingWindow_EmptySlot>空きスロット</Empire_BuildingWindow_EmptySlot>
+	<!-- EN: Current Building -->
+  <Empire_BuildingWindow_CurrentBuilding>現在の建物</Empire_BuildingWindow_CurrentBuilding>
+	<!-- EN: Select a building to view its details -->
+  <Empire_BuildingWindow_SelectBuilding>建物を選択して詳細を確認してください。</Empire_BuildingWindow_SelectBuilding>
+	<!-- EN: Modifiers -->
+  <Empire_BuildingWindow_Modifiers>修正値</Empire_BuildingWindow_Modifiers>
+	<!-- EN: Settlement Impact -->
+  <Empire_BuildingWindow_SettlementImpact>入植地への影響</Empire_BuildingWindow_SettlementImpact>
+	<!-- EN: Possible Upgrades -->
+  <Empire_BuildingWindow_Upgrades>可能なアップグレード</Empire_BuildingWindow_Upgrades>
+	<!-- EN: Required By -->
+  <Empire_BuildingWindow_RequiredBy>必要とされている建物</Empire_BuildingWindow_RequiredBy>
+	<!-- EN: Requires: {0} -->
+  <Empire_BuildingWindow_Requires>必要条件：{0}</Empire_BuildingWindow_Requires>
+	<!-- EN: Cannot demolish: required by {0} -->
+  <Empire_BuildingWindow_CannotDemolishRequired>解体不可：{0} に必要です。</Empire_BuildingWindow_CannotDemolishRequired>
+	<!-- EN: Upgrades -->
+  <Empire_BuildingWindow_SlotUpgrades>アップグレード</Empire_BuildingWindow_SlotUpgrades>
+	<!-- EN: Building Upgrades -->
+  <FCBuildingUpgrades>建物のアップグレード</FCBuildingUpgrades>
+	<!-- EN: Buildings -->
+  <FCBuildings>建物</FCBuildings>
+	<!-- EN: Facilities -->
+  <FCFacilities>施設</FCFacilities>
+	<!-- EN: Search buildings... -->
+  <FCSearchBuildings>建物を検索...</FCSearchBuildings>
+
+	<!-- Locked Buildings -->
+	<!-- EN: Show locked buildings -->
+  <Empire_BuildingWindow_ShowLocked>ロックされた建物を表示</Empire_BuildingWindow_ShowLocked>
+	<!-- EN: Locked — Requires {0} tech (research: {1}) -->
+  <Empire_BuildingWindow_TechLocked>ロック中 — {0} 技術が必要（研究：{1}）</Empire_BuildingWindow_TechLocked>
+	<!-- EN: Locked -->
+  <Empire_BuildingWindow_LockedButton>ロック中</Empire_BuildingWindow_LockedButton>
+	<!-- EN: This building requires researching {0} to unlock. -->
+  <Empire_BuildingWindow_TechLockedTooltip>この建物のロックを解除するには {0} の研究が必要です。</Empire_BuildingWindow_TechLockedTooltip>
+
+</LanguageData>

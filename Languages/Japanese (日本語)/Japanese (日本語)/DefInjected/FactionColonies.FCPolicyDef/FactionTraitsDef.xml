@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Authoritarian -->
+  <authoritarian.label>権威主義</authoritarian.label>
+  <!-- EN: A authoritarian society that seeks to hold control over its members by whatever means necessary. -->
+  <authoritarian.desc>手段を選ばずメンバーへの支配を維持しようとする権威主義的な社会。</authoritarian.desc>
+  <!-- EN: - Loyalty starts at 70% -->
+  <authoritarian.negativeEffects.0>- 忠誠心の初期値が70%</authoritarian.negativeEffects.0>
+  <!-- EN: - Can send your military to raid another faction's settlement to enslave members of their faction instead of ordinary raiding -->
+  <authoritarian.positiveEffects.0>- 通常の略奪の代わりに、軍を派遣して他派閥の入植地を襲撃し、そのメンバーを奴隷にできる</authoritarian.positiveEffects.0>
+  <!-- EN: - You can spend silver to increase the loyalty of a settlement -->
+  <authoritarian.positiveEffects.1>- シルバーを消費して入植地の忠誠心を高めることができる</authoritarian.positiveEffects.1>
+
+  <!-- EN: Egalitarian -->
+  <egalitarian.label>平等主義</egalitarian.label>
+  <!-- EN: A egalatarian society is one that seeks equality amongst all. -->
+  <egalitarian.desc>すべての人々の平等を追求する平等主義的な社会。</egalitarian.desc>
+  <!-- EN: - Happiness starts at 60% -->
+  <egalitarian.negativeEffects.0>- 幸福度の初期値が60%</egalitarian.negativeEffects.0>
+  <!-- EN: - Can reduce base tax by 20% for two tax periods to drastically boost happiness and prosperity -->
+  <egalitarian.positiveEffects.0>- 2課税期間にわたって基本税を20%減額し、幸福度と繁栄度を大幅に向上できる</egalitarian.positiveEffects.0>
+  <!-- EN: - Receives a base tax bonus of (1% per 10% happiness) -->
+  <egalitarian.positiveEffects.1>- 基本税にボーナスを受け取る（幸福度10%ごとに1%）</egalitarian.positiveEffects.1>
+
+  <!-- EN: Expansionist -->
+  <expansionist.label>拡張主義</expansionist.label>
+  <!-- EN: An expansionist society is one that seeks to spread their glory across the entirety of the realm. -->
+  <expansionist.desc>領域全体に栄光を広めようとする拡張主義的な社会。</expansionist.desc>
+  <!-- EN: - Your first settlement is free -->
+  <expansionist.positiveEffects.0>- 最初の入植地は無料</expansionist.positiveEffects.0>
+  <!-- EN: - Once per year, starting after your first year, the cost to create a new settlement is reduced by 50% -->
+  <expansionist.positiveEffects.1>- 最初の年以降、年に一度だけ新しい入植地の設立コストが50%減少する</expansionist.positiveEffects.1>
+  <!-- EN: - Settlements that you construct start at level 2 -->
+  <expansionist.positiveEffects.2>- 建設した入植地はレベル2からスタートする</expansionist.positiveEffects.2>
+
+  <!-- EN: Feudal -->
+  <feudal.label>封建主義</feudal.label>
+  <!-- EN: A feudal society is one that supports a feudal contract, binding the society to a liege in return for protection. -->
+  <feudal.desc>保護と引き換えに主君との封建契約を支持し、社会を縛る封建的な社会。</feudal.desc>
+  <!-- EN: - Failing to protect your settlements against a raid causes loyalty to drop significantly -->
+  <feudal.negativeEffects.0>- 略奪から入植地を守れなかった場合、忠誠心が大幅に低下する</feudal.negativeEffects.0>
+  <!-- EN: - Once per season, can request for a mercenary from your faction to join your colony -->
+  <feudal.positiveEffects.0>- シーズンに一度、派閥から傭兵をコロニーに招集できる</feudal.positiveEffects.0>
+  <!-- EN: - All tithes received have their value increased by 20% -->
+  <feudal.positiveEffects.1>- 受け取るすべての十分の一税の価値が20%増加する</feudal.positiveEffects.1>
+
+  <!-- EN: Isolationist -->
+  <isolationist.label>孤立主義</isolationist.label>
+  <!-- EN: An isolationist society is one that seeks to stay reclusive amongst the world's politics and interactions. -->
+  <isolationist.desc>世界の政治や交流から離れ、孤立した状態を保とうとする孤立主義的な社会。</isolationist.desc>
+  <!-- EN: - The cost to create new settlements is increased by 100% -->
+  <isolationist.negativeEffects.0>- 新しい入植地の設立コストが100%増加する</isolationist.negativeEffects.0>
+  <!-- EN: - Cannot use your military forces to capture other faction's settlements -->
+  <isolationist.negativeEffects.1>- 軍事力を使って他派閥の入植地を占領できない</isolationist.negativeEffects.1>
+  <!-- EN: - The time to upgrade settlements and construct buildings is reduced by 50% -->
+  <isolationist.positiveEffects.0>- 入植地のアップグレードおよび建物の建設時間が50%短縮される</isolationist.positiveEffects.0>
+  <!-- EN: - Every settlement receives an extra +3 to worker softcap per level of the settlement -->
+  <isolationist.positiveEffects.1>- 各入植地はレベルごとに労働者ソフトキャップが+3される</isolationist.positiveEffects.1>
+  <!-- EN: - All settlements receive +10% to base tax -->
+  <isolationist.positiveEffects.2>- すべての入植地の基本税が+10%される</isolationist.positiveEffects.2>
+
+  <!-- EN: Militaristic -->
+  <militaristic.label>軍国主義</militaristic.label>
+  <!-- EN: A militaristic society, one who seeks glory in blood and death for their cause. -->
+  <militaristic.desc>大義のために血と死の中に栄光を求める軍国主義的な社会。</militaristic.desc>
+  <!-- EN: - +20% combat modifier when using your faction's military forces -->
+  <militaristic.positiveEffects.0>- 派閥の軍事力使用時に戦闘修正値+20%</militaristic.positiveEffects.0>
+  <!-- EN: - Once per five days, you can deploy a second squad from a single settlement by paying 20% of the squad's cost in Silver -->
+  <militaristic.positiveEffects.1>- 5日に一度、分隊コストの20%をシルバーで支払うことで、一つの入植地から第二分隊を展開できる</militaristic.positiveEffects.1>
+  <!-- EN: - When creating a new settlement, it will start with a Barracks -->
+  <militaristic.positiveEffects.2>- 新しい入植地を設立すると、兵舎からスタートする</militaristic.positiveEffects.2>
+  <!-- EN: - All military buildings cost 100 less upkeep -->
+  <militaristic.positiveEffects.3>- すべての軍事建物の維持費が100減少する</militaristic.positiveEffects.3>
+
+  <!-- EN: Pacifist -->
+  <pacifist.label>平和主義</pacifist.label>
+  <!-- EN: A pacifist society that seeks to avoid conflict when and where possible. -->
+  <pacifist.desc>可能な限り争いを避けようとする平和主義的な社会。</pacifist.desc>
+  <!-- EN: - Cannot use military forces to raid or to capture other faction's settlements -->
+  <pacifist.negativeEffects.0>- 軍事力を使って他派閥の入植地を略奪または占領できない</pacifist.negativeEffects.0>
+  <!-- EN: - Once per five days, can send a diplomatic envoy to another faction to attempt to improve relations -->
+  <pacifist.positiveEffects.0>- 5日に一度、他派閥に外交使節を派遣して関係改善を試みることができる</pacifist.positiveEffects.0>
+  <!-- EN: - Deaths of members of your faction will not cause unrest to rise or happiness to reduce -->
+  <pacifist.positiveEffects.1>- 派閥メンバーの死亡によって不満が増加したり幸福度が低下したりしない</pacifist.positiveEffects.1>
+
+  <!-- EN: Slaver -->
+  <slaver.label>奴隷制</slaver.label>
+  <!-- EN: A Society that focuses on Slavery -->
+  <slaver.desc>奴隷制に重点を置く社会。</slaver.desc>
+  <!-- EN: - -2 Over Max Workers -->
+  <slaver.negativeEffects.0>- 最大労働者数-2</slaver.negativeEffects.0>
+  <!-- EN: - Your Faction has been using slaves for its projects since the start, gaining more workers at the cost of not being able to hire as many normal citizens. -->
+  <slaver.positiveEffects.0>- 派閥は当初から事業に奴隷を使用しており、通常の市民をあまり雇えない代わりに多くの労働者を確保している</slaver.positiveEffects.0>
+  <!-- EN: - +2 Workers Per Settlement Level -->
+  <slaver.positiveEffects.1>- 入植地レベルごとに労働者+2</slaver.positiveEffects.1>
+
+  <!-- EN: Technocratic -->
+  <technocratic.label>技術主義</technocratic.label>
+  <!-- EN: A technocratic society is one that seeks the furthering of knowledge and continuous improvement. -->
+  <technocratic.desc>知識の向上と継続的な発展を追求する技術主義的な社会。</technocratic.desc>
+  <!-- EN: - All research produced by your settlements is doubled -->
+  <technocratic.positiveEffects.0>- 入植地が生産するすべての研究量が2倍になる</technocratic.positiveEffects.0>
+  <!-- EN: - Can send items that you have not completed the research for or are above your tech level to your settlements to be reverse-engineered, giving you their value in research points -->
+  <technocratic.positiveEffects.1>- 研究を完了していないアイテムや技術レベルを超えたアイテムを入植地に送ってリバースエンジニアリングさせ、その価値分の研究ポイントを得ることができる</technocratic.positiveEffects.1>
+
+</LanguageData>

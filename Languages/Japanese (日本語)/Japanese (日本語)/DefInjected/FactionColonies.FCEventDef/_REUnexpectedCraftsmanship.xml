@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Unexpected Craftsmanship -->
+  <unexpectedCraftsmanship_0.label>思わぬ職人技</unexpectedCraftsmanship_0.label>
+  <!-- EN: The craftsmen in your settlements have been working unusually well! How should their talents be directed? -->
+  <unexpectedCraftsmanship_0.desc>入植地の職人たちがいつになく素晴らしい仕事をしている！その才能をどの方向に活かすべきか？</unexpectedCraftsmanship_0.desc>
+
+  <!-- EN: Unexpected Craftsmanship -->
+  <unexpectedCraftsmanship_1-1.label>思わぬ職人技</unexpectedCraftsmanship_1-1.label>
+  <!-- EN: The craftsmen continue their excellent work across all disciplines. Their broad excellence boosts morale. -->
+  <unexpectedCraftsmanship_1-1.desc>職人たちはあらゆる分野で優れた仕事を続ける。その幅広い卓越さが士気を高める。</unexpectedCraftsmanship_1-1.desc>
+
+  <!-- EN: Unexpected Craftsmanship (Weapons Focus) -->
+  <unexpectedCraftsmanship_1-2.label>思わぬ職人技（武器製造集中）</unexpectedCraftsmanship_1-2.label>
+  <!-- EN: The craftsmen focus their talents on weaponsmithing, and their focused efforts produce a fine weapon. -->
+  <unexpectedCraftsmanship_1-2.desc>職人たちは武器製造に才能を集中させ、その集中した努力が優れた武器を生み出す。</unexpectedCraftsmanship_1-2.desc>
+
+  <!-- EN: Unexpected Craftsmanship (Apparel Focus) -->
+  <unexpectedCraftsmanship_1-3.label>思わぬ職人技（衣装製造集中）</unexpectedCraftsmanship_1-3.label>
+  <!-- EN: The craftsmen focus their talents on tailoring, and their focused efforts produce a fine piece of armor. -->
+  <unexpectedCraftsmanship_1-3.desc>職人たちは仕立てに才能を集中させ、その集中した努力が優れた防具を生み出す。</unexpectedCraftsmanship_1-3.desc>
+
+</LanguageData>

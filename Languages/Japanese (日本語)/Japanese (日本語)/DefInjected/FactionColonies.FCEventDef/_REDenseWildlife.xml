@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Dense Wildlife -->
+  <denseWildlife_0.label>豊富な野生動物</denseWildlife_0.label>
+  <!-- EN: There is a great amount of animals roaming the region. How should your settlements take advantage? -->
+  <denseWildlife_0.desc>この地域には大量の動物が生息しています。入植地はどのように活用すべきでしょうか？</denseWildlife_0.desc>
+
+  <!-- EN: Dense Wildlife -->
+  <denseWildlife_1-1.label>豊富な野生動物</denseWildlife_1-1.label>
+  <!-- EN: The herds flourish and boost animal production. -->
+  <denseWildlife_1-1.desc>群れが繁栄し、動物由来の生産物が増加しています。</denseWildlife_1-1.desc>
+
+  <!-- EN: Dense Wildlife (Grand Hunt) -->
+  <denseWildlife_1-2.label>豊富な野生動物（大規模狩猟）</denseWildlife_1-2.label>
+  <!-- EN: A grand hunt is organized, bringing back valuable animal products. -->
+  <denseWildlife_1-2.desc>大規模な狩猟が組織され、貴重な動物製品を持ち帰ることができました。</denseWildlife_1-2.desc>
+
+  <!-- EN: Dense Wildlife (Domestication) -->
+  <denseWildlife_1-3.label>豊富な野生動物（家畜化）</denseWildlife_1-3.label>
+  <!-- EN: Some of the animals are captured and domesticated for long-term gains. -->
+  <denseWildlife_1-3.desc>一部の動物が捕獲・家畜化され、長期的な利益をもたらすようになりました。</denseWildlife_1-3.desc>
+
+</LanguageData>

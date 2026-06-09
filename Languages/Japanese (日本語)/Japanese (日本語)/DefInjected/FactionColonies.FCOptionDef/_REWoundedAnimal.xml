@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Get that THING out of my court! -->
+  <woundedAnimal_0_1.label>あんなものを宮廷から追い出せ！</woundedAnimal_0_1.label>
+
+  <!-- EN: We shall take care of it. Surely it cannot be of harm to us. -->
+  <woundedAnimal_0_2.label>我々が世話をしよう。まさか害をなすことはあるまい。</woundedAnimal_0_2.label>
+
+  <!-- EN: Send for a trained handler to approach it carefully. -->
+  <woundedAnimal_0_3.label>訓練された調教師を呼び、慎重に近づかせよ。</woundedAnimal_0_3.label>
+
+</LanguageData>

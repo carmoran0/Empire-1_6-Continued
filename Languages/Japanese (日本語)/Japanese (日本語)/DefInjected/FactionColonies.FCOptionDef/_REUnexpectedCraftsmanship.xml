@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Encourage them to keep up the good work across the board. -->
+  <unexpectedCraftsmanship_0_1.label>全般的に今の調子を維持するよう奨励する。</unexpectedCraftsmanship_0_1.label>
+
+  <!-- EN: Direct the craftsmen to focus on weaponsmithing. -->
+  <unexpectedCraftsmanship_0_2.label>職人たちに武器製造へ注力するよう指示する。</unexpectedCraftsmanship_0_2.label>
+
+  <!-- EN: Direct the craftsmen to focus on tailoring. -->
+  <unexpectedCraftsmanship_0_3.label>職人たちに仕立て作業へ注力するよう指示する。</unexpectedCraftsmanship_0_3.label>
+
+</LanguageData>

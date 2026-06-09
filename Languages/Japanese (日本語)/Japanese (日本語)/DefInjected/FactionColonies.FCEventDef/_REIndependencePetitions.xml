@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Independence Petitions -->
+  <independencePetitions_0.label>独立請願</independencePetitions_0.label>
+  <!-- EN: Due to unrest in your faction, a growing number of your towns have the idea of independence growing. How will you address the dissent? -->
+  <independencePetitions_0.desc>派閥内の不満により、独立を望む町が増えつつあります。この反発にどう対処しますか？</independencePetitions_0.desc>
+
+  <!-- EN: Independence Petitions -->
+  <independencePetitions_1-1.label>独立請願</independencePetitions_1-1.label>
+  <!-- EN: The petitions continue unopposed. The movement grows as more settlements consider independence. -->
+  <independencePetitions_1-1.desc>請願は妨害されることなく続いています。より多くの入植地が独立を検討し、運動が拡大しています。</independencePetitions_1-1.desc>
+
+  <!-- EN: Independence Petitions (Grievances Addressed) -->
+  <independencePetitions_1-2.label>独立請願（不満への対応）</independencePetitions_1-2.label>
+  <!-- EN: Aid is distributed to the discontented settlements. The gesture helps, but the underlying tensions remain. -->
+  <independencePetitions_1-2.desc>不満を抱える入植地に援助が配られました。この措置は助けになりますが、根本的な緊張は残ったままです。</independencePetitions_1-2.desc>
+
+  <!-- EN: Independence Petitions (Suppressed) -->
+  <independencePetitions_1-3.label>独立請願（鎮圧）</independencePetitions_1-3.label>
+  <!-- EN: The independence movement is crushed by force. The dissidents are silenced, but the heavy-handed response breeds further resentment. -->
+  <independencePetitions_1-3.desc>独立運動は武力によって鎮圧されました。反対派は沈黙させられましたが、強硬な対応がさらなる反感を生んでいます。</independencePetitions_1-3.desc>
+
+</LanguageData>

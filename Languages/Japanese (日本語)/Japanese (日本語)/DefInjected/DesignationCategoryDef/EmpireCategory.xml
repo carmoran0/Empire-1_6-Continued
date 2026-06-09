@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: Empire -->
+  <Empire.label>帝国</Empire.label>
+  <!-- EN: Buildings for managing your Empire. -->
+  <Empire.description>帝国を管理するための建物。</Empire.description>
+  
+</LanguageData>

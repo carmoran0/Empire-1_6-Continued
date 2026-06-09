@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: capital seat -->
+  <CapitalSpot.label>首都座席</CapitalSpot.label>
+  <!-- EN: Designates the seat of your Empire's capital. This location serves as the central reference point for travel calculations, event targeting, and administrative functions. Can be moved with your gravship empire. -->
+  <CapitalSpot.description>帝国の首都の所在地を指定する。この場所は移動計算、イベントの対象指定、行政機能の中心的な基準点として機能する。グラブシップ帝国と共に移動させることができる。</CapitalSpot.description>
+  
+</LanguageData>

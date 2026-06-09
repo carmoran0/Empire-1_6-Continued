@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Do this thing in response to the event. -->
+  <randomExampleEvent_exampleOption.label>このイベントに対応してこれを行う。</randomExampleEvent_exampleOption.label>
+
+  <!-- EN: text -->
+  <randomExampleEvent_exampleOption2.label>テキスト</randomExampleEvent_exampleOption2.label>
+
+</LanguageData>

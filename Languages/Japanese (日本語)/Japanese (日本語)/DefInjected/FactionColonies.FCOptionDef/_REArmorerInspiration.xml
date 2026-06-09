@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: I cannot spare the funds for such an endeavor. -->
+  <armorerInspiration_0_1.label>そのような試みに資金を割く余裕はない。</armorerInspiration_0_1.label>
+
+  <!-- EN: A modest commission — 500 silver should suffice. -->
+  <armorerInspiration_0_2.label>控えめな依頼料として——シルバー500で十分だろう。</armorerInspiration_0_2.label>
+
+  <!-- EN: Fund the masterwork! Spare no expense. -->
+  <armorerInspiration_0_3.label>傑作に資金を提供せよ！費用は惜しまない。</armorerInspiration_0_3.label>
+
+  <!-- EN: I'll provide workshop materials from our settlement stores. -->
+  <armorerInspiration_0_4.label>入植地の備蓄から作業台の材料を提供しよう。</armorerInspiration_0_4.label>
+
+</LanguageData>

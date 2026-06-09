@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Goods Economy -->
+  <goodsEconomy.label>物品経済</goodsEconomy.label>
+  <!-- EN: Settlements prioritize sending physical goods over silver. Tithe budgets increase significantly, but silver income decreases. -->
+  <goodsEconomy.desc>入植地はシルバーよりも物品の送付を優先します。十分の一税の予算が大幅に増加しますが、シルバーの収入は減少します。</goodsEconomy.desc>
+
+  <!-- EN: Heavy Taxation -->
+  <heavyTaxation.label>重税</heavyTaxation.label>
+  <!-- EN: Increase the amount of taxes on your settlements at the cost of happiness and unrest. -->
+  <heavyTaxation.desc>幸福度と不満を代償に、入植地への課税額を増やします。</heavyTaxation.desc>
+
+  <!-- EN: Minimize Taxation -->
+  <minimizeTaxation.label>軽税</minimizeTaxation.label>
+  <!-- EN: Collect less taxes from your settlements. This will make them happier and reduce unrest. -->
+  <minimizeTaxation.desc>入植地から徴収する税を減らします。これにより入植者の幸福度が上がり、不満が軽減されます。</minimizeTaxation.desc>
+
+  <!-- EN: Silver Standard -->
+  <silverStandard.label>銀本位制</silverStandard.label>
+  <!-- EN: Settlements sell goods locally and remit coin instead. Silver income increases, but tithe budgets are reduced. -->
+  <silverStandard.desc>入植地は物品を現地で売却し、代わりに硬貨を送金します。シルバーの収入が増加しますが、十分の一税の予算は削減されます。</silverStandard.desc>
+
+</LanguageData>

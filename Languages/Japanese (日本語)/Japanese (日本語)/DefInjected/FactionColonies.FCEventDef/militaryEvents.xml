@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Capture Enemy Settlement -->
+  <captureEnemySettlement.label>敵入植地の占領</captureEnemySettlement.label>
+  <!-- EN: -Replace Description- -->
+  <captureEnemySettlement.desc>-説明を差し替えてください-</captureEnemySettlement.desc>
+
+  <!-- EN: Military Cooldown -->
+  <cooldownMilitary.label>軍事クールダウン</cooldownMilitary.label>
+  <!-- EN: -Replace Description- -->
+  <cooldownMilitary.desc>-説明を差し替えてください-</cooldownMilitary.desc>
+
+  <!-- EN: Enslave Enemy Settlement -->
+  <enslaveEnemySettlement.label>敵入植地の隷属化</enslaveEnemySettlement.label>
+  <!-- EN: -Replace Description- -->
+  <enslaveEnemySettlement.desc>-説明を差し替えてください-</enslaveEnemySettlement.desc>
+
+  <!-- EN: Raid Enemy Settlement -->
+  <raidEnemySettlement.label>敵入植地への略奪</raidEnemySettlement.label>
+  <!-- EN: -Replace Description- -->
+  <raidEnemySettlement.desc>-説明を差し替えてください-</raidEnemySettlement.desc>
+
+  <!-- EN: Settlement is under attack -->
+  <settlementBeingAttacked.label>入植地が攻撃を受けています</settlementBeingAttacked.label>
+  <!-- EN: -Replace Description- -->
+  <settlementBeingAttacked.desc>-説明を差し替えてください-</settlementBeingAttacked.desc>
+
+</LanguageData>

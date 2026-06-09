@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: battle happiness loss multiplier -->
+  <battleHappinessLossMultiplier.label>戦闘幸福度損失倍率</battleHappinessLossMultiplier.label>
+
+  <!-- EN: battle loyalty loss multiplier -->
+  <battleLoyaltyLossMultiplier.label>戦闘忠誠心損失倍率</battleLoyaltyLossMultiplier.label>
+
+  <!-- EN: battle prosperity loss multiplier -->
+  <battleProsperityLossMultiplier.label>戦闘繁栄度損失倍率</battleProsperityLossMultiplier.label>
+
+  <!-- EN: building destruction chance -->
+  <buildingDestructionChance.label>建物破壊確率</buildingDestructionChance.label>
+
+  <!-- EN: build time multiplier -->
+  <buildTimeMultiplier.label>建設時間倍率</buildTimeMultiplier.label>
+
+  <!-- EN: settlement creation base cost -->
+  <createSettlementBaseCost.label>入植地設立基本コスト</createSettlementBaseCost.label>
+
+  <!-- EN: settlement creation cost multiplier -->
+  <createSettlementMultiplier.label>入植地設立コスト倍率</createSettlementMultiplier.label>
+
+  <!-- EN: dead pawn cooldown offset -->
+  <deadPawnCooldownOffset.label>ポーン死亡クールダウン補正</deadPawnCooldownOffset.label>
+
+  <!-- EN: extra workers softcap -->
+  <extraWorkersSoftcap.label>追加労働者上限</extraWorkersSoftcap.label>
+
+  <!-- EN: happiness gained base -->
+  <happinessGainedBase.label>幸福度獲得基本値</happinessGainedBase.label>
+
+  <!-- EN: happiness gained multiplier -->
+  <happinessGainedMultiplier.label>幸福度獲得倍率</happinessGainedMultiplier.label>
+
+  <!-- EN: happiness lost base -->
+  <happinessLostBase.label>幸福度損失基本値</happinessLostBase.label>
+
+  <!-- EN: happiness lost multiplier -->
+  <happinessLostMultiplier.label>幸福度損失倍率</happinessLostMultiplier.label>
+
+  <!-- EN: loot multiplier -->
+  <lootMultiplier.label>略奪品倍率</lootMultiplier.label>
+
+  <!-- EN: loyalty gained base -->
+  <loyaltyGainedBase.label>忠誠心獲得基本値</loyaltyGainedBase.label>
+
+  <!-- EN: loyalty gained multiplier -->
+  <loyaltyGainedMultiplier.label>忠誠心獲得倍率</loyaltyGainedMultiplier.label>
+
+  <!-- EN: loyalty lost base -->
+  <loyaltyLostBase.label>忠誠心損失基本値</loyaltyLostBase.label>
+
+  <!-- EN: loyalty lost multiplier -->
+  <loyaltyLostMultiplier.label>忠誠心損失倍率</loyaltyLostMultiplier.label>
+
+  <!-- EN: mercenary heal rate -->
+  <mercHealRateMultiplier.label>傭兵回復速度倍率</mercHealRateMultiplier.label>
+
+  <!-- EN: military base level -->
+  <militaryBaseLevel.label>軍事基本レベル</militaryBaseLevel.label>
+
+  <!-- EN: military combat efficiency -->
+  <militaryCombatEfficiency.label>軍事戦闘効率</militaryCombatEfficiency.label>
+
+  <!-- EN: military cooldown offset -->
+  <militaryCooldownOffset.label>軍事クールダウン補正</militaryCooldownOffset.label>
+
+  <!-- EN: military efficiency bonus (attacking) -->
+  <militaryEfficiencyBonusAttacking.label>軍事効率ボーナス（攻撃）</militaryEfficiencyBonusAttacking.label>
+
+  <!-- EN: military efficiency bonus (defending) -->
+  <militaryEfficiencyBonusDefending.label>軍事効率ボーナス（防衛）</militaryEfficiencyBonusDefending.label>
+
+  <!-- EN: military level bonus (attacking) -->
+  <militaryLevelBonusAttacking.label>軍事レベルボーナス（攻撃）</militaryLevelBonusAttacking.label>
+
+  <!-- EN: military level bonus (defending) -->
+  <militaryLevelBonusDefending.label>軍事レベルボーナス（防衛）</militaryLevelBonusDefending.label>
+
+  <!-- EN: over-max workers adjustment -->
+  <overMaxWorkersAdjustment.label>上限超過労働者調整値</overMaxWorkersAdjustment.label>
+
+  <!-- EN: prosperity gained base -->
+  <prosperityGainedBase.label>繁栄度獲得基本値</prosperityGainedBase.label>
+
+  <!-- EN: prosperity lost base -->
+  <prosperityLostBase.label>繁栄度損失基本値</prosperityLostBase.label>
+
+  <!-- EN: raid cooldown offset -->
+  <raidCooldownOffset.label>襲撃クールダウン補正</raidCooldownOffset.label>
+
+  <!-- EN: research contribution multiplier -->
+  <researchContributionMultiplier.label>研究貢献倍率</researchContributionMultiplier.label>
+
+  <!-- EN: settlement cost multiplier -->
+  <settlementCostMultiplier.label>入植地コスト倍率</settlementCostMultiplier.label>
+
+  <!-- EN: tax base percentage -->
+  <taxBasePercentage.label>税率基本値</taxBasePercentage.label>
+
+  <!-- EN: tax base random modifier -->
+  <taxBaseRandomModifier.label>税率ランダム修正値</taxBaseRandomModifier.label>
+
+  <!-- EN: flat tax bonus -->
+  <taxBonusFlat.label>固定税ボーナス</taxBonusFlat.label>
+
+  <!-- EN: threat scaling base -->
+  <threatScalingBase.label>脅威スケーリング基本値</threatScalingBase.label>
+
+  <!-- EN: threat scaling multiplier -->
+  <threatScalingMultiplier.label>脅威スケーリング倍率</threatScalingMultiplier.label>
+
+  <!-- EN: tithe value multiplier -->
+  <titheValueMultiplier.label>十分の一税価値倍率</titheValueMultiplier.label>
+
+  <!-- EN: unrest gained base -->
+  <unrestGainedBase.label>不満獲得基本値</unrestGainedBase.label>
+
+  <!-- EN: unrest gained multiplier -->
+  <unrestGainedMultiplier.label>不満獲得倍率</unrestGainedMultiplier.label>
+
+  <!-- EN: unrest lost base -->
+  <unrestLostBase.label>不満損失基本値</unrestLostBase.label>
+
+  <!-- EN: unrest lost multiplier -->
+  <unrestLostMultiplier.label>不満損失倍率</unrestLostMultiplier.label>
+
+  <!-- EN: worker base cost -->
+  <workerBaseCost.label>労働者基本コスト</workerBaseCost.label>
+
+  <!-- EN: worker base max -->
+  <workerBaseMax.label>労働者基本上限</workerBaseMax.label>
+
+  <!-- EN: worker base over max -->
+  <workerBaseOverMax.label>労働者上限超過基本値</workerBaseOverMax.label>
+
+  <!-- EN: worker production base -->
+  <workerProductionBase.label>労働者生産基本値</workerProductionBase.label>
+
+  <!-- EN: worker production multiplier -->
+  <workerProductionMultiplier.label>労働者生産倍率</workerProductionMultiplier.label>
+
+</LanguageData>

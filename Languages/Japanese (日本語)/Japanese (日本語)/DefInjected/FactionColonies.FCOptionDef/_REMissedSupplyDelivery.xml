@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: We'll wait for the next delivery. -->
+  <missedSupplyDelivery_0_1.label>次の配達を待つ。</missedSupplyDelivery_0_1.label>
+
+  <!-- EN: Source replacement supplies from local traders. -->
+  <missedSupplyDelivery_0_2.label>地元の商人から代替物資を調達する。</missedSupplyDelivery_0_2.label>
+
+  <!-- EN: Have the craftsmen improvise with local materials. -->
+  <missedSupplyDelivery_0_3.label>職人に地元の素材で工夫させる。</missedSupplyDelivery_0_3.label>
+
+</LanguageData>

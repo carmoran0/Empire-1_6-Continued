@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Empty Mines -->
+  <emptyMines_0.label>枯渇した鉱山</emptyMines_0.label>
+  <!-- EN: The affected region(s) have been stricken with barren mines. What should be done? -->
+  <emptyMines_0.desc>影響を受けた地域の鉱山が枯渇してしまった。どうすべきか？</emptyMines_0.desc>
+
+  <!-- EN: Empty Mines -->
+  <emptyMines_1-1.label>枯渇した鉱山</emptyMines_1-1.label>
+  <!-- EN: The miners wait for new veins to surface. -->
+  <emptyMines_1-1.desc>採掘者たちは新たな鉱脈が現れるのを待っている。</emptyMines_1-1.desc>
+
+  <!-- EN: Empty Mines (Prospectors Failed) -->
+  <emptyMines_1-2f.label>枯渇した鉱山（探鉱失敗）</emptyMines_1-2f.label>
+  <!-- EN: The prospectors found nothing. The mines remain empty. -->
+  <emptyMines_1-2f.desc>探鉱者たちは何も発見できなかった。鉱山は依然として空のままだ。</emptyMines_1-2f.desc>
+
+  <!-- EN: Empty Mines (Construction Redirect) -->
+  <emptyMines_1-3.label>枯渇した鉱山（建設への転換）</emptyMines_1-3.label>
+  <!-- EN: Idle miners are put to work on settlement construction projects. -->
+  <emptyMines_1-3.desc>手が空いた採掘者たちは入植地の建設作業に従事させられた。</emptyMines_1-3.desc>
+
+</LanguageData>

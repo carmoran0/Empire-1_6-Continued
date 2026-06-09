@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Armorer Inspiration -->
+  <armorerInspiration_0.label>防具職人の霊感</armorerInspiration_0.label>
+  <!-- EN: An armorer in a nearby settlement has received a great inspiration and is seeking patrons for what he claims will be a work of unparalleled quality! He plans to give it to his patron as a token of his loyalty. -->
+  <armorerInspiration_0.desc>近隣の入植地の防具職人が大いなる霊感を受け、比類なき出来栄えになると豪語する作品のパトロンを探しています！忠誠の証として、作品をパトロンに贈る予定とのこと。</armorerInspiration_0.desc>
+
+  <!-- EN: Armorer Inspiration -->
+  <armorerInspiration_1-1.label>防具職人の霊感</armorerInspiration_1-1.label>
+  <!-- EN: The armorer is working on your commission... -->
+  <armorerInspiration_1-1.desc>防具職人があなたへの依頼品を製作中です……</armorerInspiration_1-1.desc>
+
+  <!-- EN: Armorer Inspiration (Disappointing) -->
+  <armorerInspiration_1-2f.label>防具職人の霊感（期待外れ）</armorerInspiration_1-2f.label>
+  <!-- EN: The armorer's ambition outpaced his skill. The result is serviceable, but far from the masterwork promised. -->
+  <armorerInspiration_1-2f.desc>職人の野心は技術を上回っていました。仕上がりは実用に足るものの、約束されたマスターワークには程遠い出来です。</armorerInspiration_1-2f.desc>
+
+  <!-- EN: Armorer Inspiration (Masterwork) -->
+  <armorerInspiration_1-2s.label>防具職人の霊感（傑作）</armorerInspiration_1-2s.label>
+  <!-- EN: The armorer's inspiration has produced a true masterwork! The result exceeds all expectations. -->
+  <armorerInspiration_1-2s.desc>職人の霊感が真の傑作を生み出しました！仕上がりはあらゆる期待を超えるものです。</armorerInspiration_1-2s.desc>
+
+  <!-- EN: Armorer Inspiration (Workshop Materials) -->
+  <armorerInspiration_1-3.label>防具職人の霊感（作業場の素材）</armorerInspiration_1-3.label>
+  <!-- EN: The armorer works with materials diverted from your settlement's production lines. The diversion slows apparel output, but the armorer's work proceeds well. -->
+  <armorerInspiration_1-3.desc>職人はあなたの入植地の生産ラインから転用した素材を使って作業しています。転用により衣料品の生産は遅れますが、職人の仕事は順調に進んでいます。</armorerInspiration_1-3.desc>
+
+</LanguageData>

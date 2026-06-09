@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Empty Policy Slot -->
+  <Empty.label>空の政策スロット</Empty.label>
+  <!-- EN: Click here to enact this policy. -->
+  <Empty.desc>ここをクリックして政策を制定します。</Empty.desc>
+
+  <!-- EN: Policy being drafted... -->
+  <Enacting.label>政策立案中...</Enacting.label>
+  <!-- EN: A policy is being drafted. -->
+  <Enacting.desc>政策が立案されています。</Enacting.desc>
+
+</LanguageData>

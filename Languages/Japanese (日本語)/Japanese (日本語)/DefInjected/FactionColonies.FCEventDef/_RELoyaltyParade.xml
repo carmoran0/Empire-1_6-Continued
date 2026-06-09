@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Loyalty Parade -->
+  <loyaltyParade_0.label>忠誠パレード</loyaltyParade_0.label>
+  <!-- EN: Some of the settlements in your faction are having a parade in your honor! How will you respond to their display of loyalty? -->
+  <loyaltyParade_0.desc>派閥内のいくつかの入植地があなたの名誉をたたえるパレードを開催しています！この忠誠の示しにどう応えますか？</loyaltyParade_0.desc>
+
+  <!-- EN: Loyalty Parade -->
+  <loyaltyParade_1-1.label>忠誠パレード</loyaltyParade_1-1.label>
+  <!-- EN: The parade continues unhindered. Citizens feel proud and loyal. -->
+  <loyaltyParade_1-1.desc>パレードは妨げなく続いています。市民は誇りと忠誠心を感じています。</loyaltyParade_1-1.desc>
+
+  <!-- EN: Loyalty Parade (Rally) -->
+  <loyaltyParade_1-2.label>忠誠パレード（集会）</loyaltyParade_1-2.label>
+  <!-- EN: Your personal appearance at the parade electrifies the crowd! The people are inspired by their leader's presence. -->
+  <loyaltyParade_1-2.desc>パレードへのあなたの直接参加が群衆を沸かせました！民衆は指導者の存在に奮い立っています。</loyaltyParade_1-2.desc>
+
+  <!-- EN: Loyalty Parade (Recruitment) -->
+  <loyaltyParade_1-3.label>忠誠パレード（徴募）</loyaltyParade_1-3.label>
+  <!-- EN: The enthusiastic gathering is used to recruit new workers for the empire's settlements. -->
+  <loyaltyParade_1-3.desc>熱気あふれる集まりを利用して、帝国の入植地のための新たな労働者が募集されました。</loyaltyParade_1-3.desc>
+
+</LanguageData>

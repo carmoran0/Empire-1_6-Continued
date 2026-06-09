@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Asteroid Magnet -->
+  <AsteroidMagnet.label>小惑星磁石</AsteroidMagnet.label>
+  <!-- EN: People may not like it, but it's hard to deny the amount of resources gathered when you just pull the metals you want out of the sky. -->
+  <AsteroidMagnet.desc>好意的に受け取られないかもしれないが、空から欲しい金属を引き寄せて集める資源量は否定しがたい。</AsteroidMagnet.desc>
+
+  <!-- EN: Automated Defense Systems -->
+  <automatedDefenseSystems.label>自動防衛システム</automatedDefenseSystems.label>
+  <!-- EN: Androids roam the streets, keeping the colonists safe from external and internal harm. -->
+  <automatedDefenseSystems.desc>アンドロイドが街を巡回し、入植者を外部・内部の脅威から守る。</automatedDefenseSystems.desc>
+
+  <!-- EN: Bionics Manufacturing Plant -->
+  <bionicsManufacturingPlant.label>バイオニクス製造工場</bionicsManufacturingPlant.label>
+  <!-- EN: A factory dedicated to the development of new bionics. -->
+  <bionicsManufacturingPlant.desc>新型バイオニクスの開発に特化した工場。</bionicsManufacturingPlant.desc>
+
+  <!-- EN: Cloning Lab -->
+  <CloningLab.label>クローン研究所</CloningLab.label>
+  <!-- EN: Why breed or capture animals when you can just grow them in vats? -->
+  <CloningLab.desc>培養槽で育てられるのに、なぜ動物を繁殖させたり捕獲したりする必要がある？</CloningLab.desc>
+
+  <!-- EN: Clothing Printers -->
+  <ClothingPrinters.label>衣類プリンター</ClothingPrinters.label>
+  <!-- EN: Remove the human element altogether! Dump raw materials in and watch as each article of clothing is printed as a single, seamless piece! -->
+  <ClothingPrinters.desc>人の手を完全に排除！原材料を投入すれば、各衣類が継ぎ目のない一体成型で印刷されていく！</ClothingPrinters.desc>
+
+  <!-- EN: Food Reconstruction -->
+  <FoodReconstruction.label>食料再構成装置</FoodReconstruction.label>
+  <!-- EN: Nobody likes nutrient paste, but with a little flavoring and cosmetic tweaks, it can look and taste like whatever you want it to! -->
+  <FoodReconstruction.desc>栄養ペーストが好きな人はいないが、少し味付けと見た目を整えれば、見た目も味も好みのものにできる！</FoodReconstruction.desc>
+
+  <!-- EN: Glitterworld Research Facility -->
+  <glitterworldResearchFacility.label>グリッターワールド研究施設</glitterworldResearchFacility.label>
+  <!-- EN: From this building, researchers equipped with the highest-grade tools search for the answers of the universe. -->
+  <glitterworldResearchFacility.desc>最高品質の機器を備えた研究者たちが、この施設から宇宙の謎を解き明かそうとしている。</glitterworldResearchFacility.desc>
+
+  <!-- EN: Intergalactic Market -->
+  <intergalacticMarket.label>銀河間市場</intergalacticMarket.label>
+  <!-- EN: From here, ships fly in and deposit their goods and replace their cargo before returning home. -->
+  <intergalacticMarket.desc>ここに船が飛来し、積荷を降ろして新たな貨物を積み込んでから帰還する。</intergalacticMarket.desc>
+
+  <!-- EN: Mechanoid Salvage Shop -->
+  <MechSalvage.label>メカノイドサルベージ工房</MechSalvage.label>
+  <!-- EN: With the right tools, you can do more than shred dead mechanoids, you can salvage their tech to use against them. -->
+  <MechSalvage.desc>適切な道具があれば、死んだメカノイドを解体するだけでなく、その技術をサルベージして対抗手段に使える。</MechSalvage.desc>
+
+  <!-- EN: Perpetual Motion Generator -->
+  <perpetualMotionGenerator.label>永久機関発電機</perpetualMotionGenerator.label>
+  <!-- EN: An impossibility against the laws of physics, a generator that produces extra energy using the concept of perpetual motion. -->
+  <perpetualMotionGenerator.desc>物理法則では不可能なはずの、永久運動の概念を利用して余剰エネルギーを生み出す発電機。</perpetualMotionGenerator.desc>
+
+  <!-- EN: Subliminal Message Center -->
+  <SubliminalMessageCenter.label>サブリミナルメッセージセンター</SubliminalMessageCenter.label>
+  <!-- EN: Weave subliminal messaging into the settlement's local broadcasts. -->
+  <SubliminalMessageCenter.desc>入植地のローカル放送にサブリミナルメッセージを織り込む。</SubliminalMessageCenter.desc>
+
+  <!-- EN: Synthetic Wood Factory -->
+  <SyntheticWoodFactory.label>合成木材工場</SyntheticWoodFactory.label>
+  <!-- EN: It's new! It's space-age! It's just as good as the real thing and it's definitely not vinyl, we swear! -->
+  <SyntheticWoodFactory.desc>新しい！宇宙時代の産物！本物と同じくらい優れていて、絶対にビニールじゃない、誓う！</SyntheticWoodFactory.desc>
+
+  <!-- EN: Worker Bots -->
+  <WorkerBots.label>ワーカーボット</WorkerBots.label>
+  <!-- EN: Put robots to work doing the more mundane tasks around the settlement so the people can be put to work elsewhere. -->
+  <WorkerBots.desc>入植地内の単調な作業をロボットに任せ、人員を他の仕事に回せるようにする。</WorkerBots.desc>
+
+</LanguageData>

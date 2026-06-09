@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Keep the expanded logging operations running. -->
+  <expandedForestry_0_1.label>拡張した伐採作業を継続する。</expandedForestry_0_1.label>
+
+  <!-- EN: Sell the extra timber to passing traders. -->
+  <expandedForestry_0_2.label>余分な木材を通りかかった商人に売る。</expandedForestry_0_2.label>
+
+  <!-- EN: Stockpile the lumber for settlement construction. -->
+  <expandedForestry_0_3.label>木材を入植地の建設用に備蓄する。</expandedForestry_0_3.label>
+
+</LanguageData>

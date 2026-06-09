@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Food Surplus -->
+  <foodSurplus_0.label>食料余剰</foodSurplus_0.label>
+  <!-- EN: Lucky harvests have led to a surplus of food in some settlements. What should be done with the excess? -->
+  <foodSurplus_0.desc>幸運な豊作により、いくつかの入植地で食料が余剰となった。この余剰分をどうすべきか？</foodSurplus_0.desc>
+
+  <!-- EN: Food Surplus -->
+  <foodSurplus_1-1.label>食料余剰</foodSurplus_1-1.label>
+  <!-- EN: The surplus is stored for continued production. -->
+  <foodSurplus_1-1.desc>余剰分は継続的な生産のために備蓄された。</foodSurplus_1-1.desc>
+
+  <!-- EN: Food Surplus (Sold) -->
+  <foodSurplus_1-2.label>食料余剰（売却）</foodSurplus_1-2.label>
+  <!-- EN: The excess harvest is sold to passing traders. -->
+  <foodSurplus_1-2.desc>余剰の収穫物は通りかかった商人に売却された。</foodSurplus_1-2.desc>
+
+  <!-- EN: Food Surplus (Feast) -->
+  <foodSurplus_1-3.label>食料余剰（宴会）</foodSurplus_1-3.label>
+  <!-- EN: A grand feast is held to celebrate the bounty! Citizens are happy and loyal. -->
+  <foodSurplus_1-3.desc>豊作を祝う盛大な宴が催された！市民たちは喜びに満ち、忠誠心が高まっている。</foodSurplus_1-3.desc>
+
+</LanguageData>

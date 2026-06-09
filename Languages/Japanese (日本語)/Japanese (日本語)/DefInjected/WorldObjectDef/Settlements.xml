@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: empire settlement -->
+  <WorldSettlementDef_Surface.label>帝国入植地</WorldSettlementDef_Surface.label>
+  <!-- EN: A base of the Empire player faction -->
+  <WorldSettlementDef_Surface.description>帝国プレイヤー派閥の拠点。</WorldSettlementDef_Surface.description>
+  
+</LanguageData>

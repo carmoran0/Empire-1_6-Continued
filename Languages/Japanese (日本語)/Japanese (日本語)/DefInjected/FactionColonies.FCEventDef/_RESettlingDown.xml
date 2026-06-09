@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Settling Down -->
+  <settlingDown.label>落ち着き</settlingDown.label>
+  <!-- EN: The citizens of your faction are currently reluctant to expand. -->
+  <settlingDown.desc>あなたの派閥の市民たちは、現在のところ拡張に乗り気でない。</settlingDown.desc>
+
+</LanguageData>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Massive Forest Fire -->
+  <forestFire_0.label>大規模な山火事</forestFire_0.label>
+  <!-- EN: The affected region(s) have forest fires blazing out of control. How should your settlements respond? -->
+  <forestFire_0.desc>影響を受けた地域で山火事が制御不能な状態で燃え広がっている。入植地はどう対応すべきか？</forestFire_0.desc>
+
+  <!-- EN: Forest Fire -->
+  <forestFire_1-1.label>山火事</forestFire_1-1.label>
+  <!-- EN: The fire burns unchecked through the forests. -->
+  <forestFire_1-1.desc>火は何も妨げるものなく森の中を燃え広がっている。</forestFire_1-1.desc>
+
+  <!-- EN: Forest Fire (Containment Failed) -->
+  <forestFire_1-2f.label>山火事（鎮圧失敗）</forestFire_1-2f.label>
+  <!-- EN: Despite their best efforts, the firefighting crews couldn't contain the blaze. The fire rages on. -->
+  <forestFire_1-2f.desc>消火隊が懸命に努力したにもかかわらず、火災を食い止めることができなかった。炎は依然として猛威を振るっている。</forestFire_1-2f.desc>
+
+  <!-- EN: Forest Fire (Contained) -->
+  <forestFire_1-2s.label>山火事（鎮圧成功）</forestFire_1-2s.label>
+  <!-- EN: The firefighting crews managed to contain the blaze! The damage is limited. -->
+  <forestFire_1-2s.desc>消火隊がなんとか火災を封じ込めることに成功した！被害は最小限に抑えられた。</forestFire_1-2s.desc>
+
+  <!-- EN: Forest Fire (Controlled Burn) -->
+  <forestFire_1-3.label>山火事（計画的焼却）</forestFire_1-3.label>
+  <!-- EN: The controlled burn clears damaged forest, opening land for farming. -->
+  <forestFire_1-3.desc>計画的な焼却により損傷した森林が整地され、農地として利用できる土地が開かれた。</forestFire_1-3.desc>
+
+</LanguageData>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: capture enemy settlement -->
+  <CaptureEnemySettlement.label>敵入植地を占領する</CaptureEnemySettlement.label>
+
+  <!-- EN: cooldown -->
+  <Cooldown.label>クールダウン</Cooldown.label>
+
+  <!-- EN: defend friendly settlement -->
+  <DefendFriendlySettlement.label>友好的入植地を防衛する</DefendFriendlySettlement.label>
+
+  <!-- EN: deploy -->
+  <Deploy.label>展開</Deploy.label>
+
+  <!-- EN: enslave enemy settlement -->
+  <EnslaveEnemySettlement.label>敵入植地を奴隷化する</EnslaveEnemySettlement.label>
+
+  <!-- EN: raid enemy settlement -->
+  <RaidEnemySettlement.label>敵入植地を略奪する</RaidEnemySettlement.label>
+
+  <!-- EN: undefined -->
+  <Undefined.label>未定義</Undefined.label>
+
+</LanguageData>
