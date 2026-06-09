@@ -94,6 +94,11 @@
 	<fcVPEEditorHint>Spend points on paths and abilities, meditation foci, or psycaster stats. Your selections are saved to the unit design and applied to every mercenary built from it.</fcVPEEditorHint>
 	<fcVPEEditorUnavailable>Could not prepare a preview psycaster for this unit.</fcVPEEditorUnavailable>
 	<fcVPEStatPointsSpent>Stat points spent: {0}</fcVPEStatPointsSpent>
+	<fcVPEPointsAvailable>Available points: {0} / {1}</fcVPEPointsAvailable>
+	<fcAbilityPointsSummary>Points: {0} / {1}</fcAbilityPointsSummary>
+	<fcClearAbilities>Clear</fcClearAbilities>
+	<fcApplyAbilities>Apply</fcApplyAbilities>
+	<fcCancelAbilities>Cancel</fcCancelAbilities>
 
 	<!-- Unit Race/PawnKind Errors -->
 	<FCChangeUnitRaceNoRaces>No available races</FCChangeUnitRaceNoRaces>

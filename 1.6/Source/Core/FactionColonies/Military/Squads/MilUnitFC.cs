@@ -738,19 +738,18 @@ namespace FactionColonies
             int clamped = Mathf.Clamp(level, 0, max);
             if (clamped == psylinkLevel) return;
             psylinkLevel = clamped;
-            // Drop any chosen abilities that now exceed the (possibly lowered) psylink level.
+            // Trim chosen selections that no longer fit the (possibly lowered) psylink level. The active
+            // system owns the budget rule (VPE trims its ordered selections from the end to the point
+            // budget for this level); the base game stores no selections, so this is a no-op there.
             if (psylinkLevel <= 0)
             {
                 abilities.Clear();
             }
             else
             {
-                abilities.RemoveAll(a =>
-                {
-                    IAbilitySystemProvider p = AbilitySystemRegistry.ByKey(a.systemKey);
-                    AbilityPickEntry e;
-                    return p is object && p.TryGetDisplay(a, out e) && e.level > psylinkLevel;
-                });
+                IAbilitySystemProvider active = AbilitySystemRegistry.Active;
+                if (active != null)
+                    abilities = active.ClampSelectionsToBudget(abilities, psylinkLevel);
             }
             MarkIdentityDirty(); // psylink hediff changes pawn identity
             ChangeTick();

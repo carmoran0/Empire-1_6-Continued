@@ -45,6 +45,32 @@ namespace FactionColonies.VPE
         private readonly List<MeditationFocusDef> foci;
         private int sessionStatPoints;
 
+        // The authoritative, ORDERED list of the player's picks for this editing session. Each pick
+        // (psycast, focus, or a single stat purchase) is appended in order, so trimming on a psylink
+        // decrease removes the most recent picks regardless of kind. Initialized from the unit's saved
+        // selections and only written back to the unit on Apply (Cancel/X discards it).
+        private readonly List<SavedAbility> selections = new List<SavedAbility>();
+
+        // Budget/spent are OUR authoritative numbers, derived from the psylink level and the live session
+        // pawn state — never from VPE's mutable hediff.points (which desyncs across generate/replay).
+        // Spent counts the same things VPE charges a point for: unlocked paths, learned psycasts,
+        // unlocked meditation foci, and stat points.
+        private int Budget => VPEPointMath.Budget(unit?.psylinkLevel ?? 0);
+
+        private int Spent
+        {
+            get
+            {
+                int s = sessionStatPoints;
+                if (hediff != null) s += hediff.unlockedPaths.Count + hediff.unlockedMeditationFoci.Count;
+                if (compAbilities != null)
+                    s += compAbilities.LearnedAbilities.Count(a => a.def != null && a.def.Psycast() != null);
+                return s;
+            }
+        }
+
+        private int Available => Budget - Spent;
+
         public override Vector2 InitialSize => new Vector2(1000f, 720f);
 
         public FCWindow_VPEPsycastEditor(MilUnitFC unit, Action onClosed)
@@ -68,11 +94,16 @@ namespace FactionColonies.VPE
                 .ThenByDescending(d => d.label)
                 .ToList();
 
+            // Working copy of the unit's saved picks, in stored order. Edited locally; persisted only on Apply.
+            selections.AddRange(unit.abilities.Where(a => a.systemKey == VPEAbilityProvider.ProviderKey));
+
             SetupSessionPawn();
         }
 
         private void SetupSessionPawn()
         {
+            setupFailed = false;
+            sessionStatPoints = 0;
             try
             {
                 sessionPawn = FCPawnGenerator.GenerateWithForcedXenotype(FCPawnGenerator.WorkerOrMilitaryRequestForUnit(unit));
@@ -88,15 +119,13 @@ namespace FactionColonies.VPE
                 compAbilities = sessionPawn.GetComp<CompAbilities>();
                 if (hediff is null || compAbilities is null) { setupFailed = true; return; }
 
-                // Replay already-chosen VPE entries (psycasts, foci, stat points) onto the session
-                // pawn, mirroring the UI's spend-then-grant so the remaining point budget reflects
-                // prior choices.
-                foreach (SavedAbility saved in unit.abilities.Where(a => a.systemKey == VPEAbilityProvider.ProviderKey))
+                // Replay the working selection list onto the session pawn so the tree shows them as
+                // owned. We do NOT touch VPE's point counter — our own Budget/Spent are authoritative.
+                foreach (SavedAbility saved in selections.Where(a => a.systemKey == VPEAbilityProvider.ProviderKey))
                 {
                     if (saved.kind == VPEAbilityProvider.KindStatUpgrade)
                     {
                         int n = saved.count > 0 ? saved.count : 1;
-                        if (hediff.points >= n) hediff.SpentPoints(n);
                         hediff.ImproveStats(n);
                         sessionStatPoints += n;
                         continue;
@@ -106,7 +135,6 @@ namespace FactionColonies.VPE
                     {
                         MeditationFocusDef focus = DefDatabase<MeditationFocusDef>.GetNamedSilentFail(saved.abilityDef);
                         if (focus is null || hediff.unlockedMeditationFoci.Contains(focus)) continue;
-                        if (hediff.points >= 1) hediff.SpentPoints();
                         hediff.UnlockMeditationFocus(focus);
                         continue;
                     }
@@ -114,20 +142,9 @@ namespace FactionColonies.VPE
                     AbilityDef def = DefDatabase<AbilityDef>.GetNamedSilentFail(saved.abilityDef);
                     if (def is null || compAbilities.HasAbility(def)) continue;
                     AbilityExtension_Psycast psycast = def.Psycast();
-                    if (psycast != null)
-                    {
-                        if (psycast.path != null && !hediff.unlockedPaths.Contains(psycast.path))
-                        {
-                            if (hediff.points >= 1) hediff.SpentPoints();
-                            hediff.UnlockPath(psycast.path);
-                        }
-                        if (hediff.points >= 1) hediff.SpentPoints();
-                        psycast.UnlockWithPrereqs(compAbilities);
-                    }
-                    else
-                    {
-                        compAbilities.GiveAbility(def);
-                    }
+                    if (psycast != null && psycast.path != null && !hediff.unlockedPaths.Contains(psycast.path))
+                        hediff.UnlockPath(psycast.path);
+                    compAbilities.GiveAbility(def);
                 }
             }
             catch (Exception ex)
@@ -154,8 +171,13 @@ namespace FactionColonies.VPE
             PsycastsUIUtility.Hediff = hediff;
             PsycastsUIUtility.CompAbilities = compAbilities;
 
+            // Reserve a bottom strip for the Clear button; the panels fill the rest.
+            Rect bottomBar = new Rect(inRect.x, inRect.yMax - 34f, inRect.width, 34f);
+            Rect body = inRect;
+            body.height -= 40f;
+
             // --- Left info + stats/foci column (mirrors VPE's own psycast tab) ---
-            Rect left = inRect.LeftPartPixels(300f);
+            Rect left = body.LeftPartPixels(300f);
             var listing = new Listing_Standard();
             listing.Begin(left);
             Text.Font = GameFont.Medium;
@@ -163,7 +185,7 @@ namespace FactionColonies.VPE
             Text.Font = GameFont.Small;
             listing.Gap(6f);
             listing.Label("fcPsylinkLevel".Translate() + ": " + hediff.level);
-            listing.Label("VPE.Points".Translate(hediff.points));
+            listing.Label("fcVPEPointsAvailable".Translate(Available, Budget));
             listing.Gap(8f);
             Text.Font = GameFont.Tiny;
             listing.Label("fcVPEEditorHint".Translate());
@@ -175,11 +197,11 @@ namespace FactionColonies.VPE
             if (listing.ButtonTextLabeled("VPE.PsycasterStats".Translate(), "VPE.Upgrade".Translate()))
             {
                 int num = GenUI.CurrentAdjustmentMultiplier();
-                if (hediff.points >= num)
+                if (Available >= num)
                 {
-                    hediff.SpentPoints(num);
                     hediff.ImproveStats(num);
                     sessionStatPoints += num;
+                    selections.Add(new SavedAbility(VPEAbilityProvider.ProviderKey, "", VPEAbilityProvider.KindStatUpgrade, num));
                 }
                 else
                 {
@@ -213,7 +235,7 @@ namespace FactionColonies.VPE
             listing.End();
 
             // --- Right path panel (tabs + scrolling tree) ---
-            Rect right = inRect;
+            Rect right = body;
             right.xMin = left.xMax + 10f;
 
             if (pathsByTab.NullOrEmpty())
@@ -235,8 +257,37 @@ namespace FactionColonies.VPE
                 Widgets.EndScrollView();
             }
 
+            // --- Bottom bar: Clear (left), Cancel + Apply (right). Nothing persists until Apply. ---
+            Text.Font = GameFont.Small;
+            Text.Anchor = TextAnchor.MiddleCenter;
+            const float btnW = 120f, btnH = 30f, btnGap = 8f;
+            if (Widgets.ButtonText(new Rect(bottomBar.x, bottomBar.y, btnW, btnH), "fcClearAbilities".Translate()))
+                ClearSelections();
+            Rect applyRect = new Rect(bottomBar.xMax - btnW, bottomBar.y, btnW, btnH);
+            if (Widgets.ButtonText(applyRect, "fcApplyAbilities".Translate()))
+                ApplyAndClose();
+            Rect cancelRect = new Rect(applyRect.x - btnGap - btnW, bottomBar.y, btnW, btnH);
+            if (Widgets.ButtonText(cancelRect, "fcCancelAbilities".Translate()))
+                Close();
+
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;
+        }
+
+        /* Empties the working selection list and rebuilds a clean session pawn. Leaves the unit's psylink
+         * level untouched and does NOT persist — the player must still click Apply. */
+        private void ClearSelections()
+        {
+            selections.Clear();
+            DestroySessionPawn();
+            SetupSessionPawn();
+        }
+
+        /* Writes the working selections back to the unit, then closes. The only path that persists edits. */
+        private void ApplyAndClose()
+        {
+            unit.SetAbilitiesForSystem(VPEAbilityProvider.ProviderKey, selections);
+            Close();
         }
 
         /* Mirrors VanillaPsycastsExpanded.UI.ITab_Pawn_Psycasts.DoPaths, operating on the session pawn:
@@ -267,14 +318,13 @@ namespace FactionColonies.VPE
                 else
                 {
                     Widgets.DrawRectFast(rect, new Color(0f, 0f, 0f, useAltBackgrounds ? 0.7f : 0.55f));
-                    if (hediff.points >= 1)
+                    if (Available >= 1)
                     {
                         Rect centerRect = new Rect(rect.center.x - 70f, rect.center.y - 15f, 140f, 30f);
                         if (def.CanPawnUnlock(sessionPawn))
                         {
                             if (Widgets.ButtonText(centerRect, "VPE.Unlock".Translate()))
                             {
-                                hediff.SpentPoints();
                                 hediff.UnlockPath(def);
                             }
                         }
@@ -317,7 +367,7 @@ namespace FactionColonies.VPE
             bool locked = false;
             if (!compAbilities.HasAbility(ability))
             {
-                if (ability.Psycast().PrereqsCompleted(compAbilities) && hediff.points >= 1)
+                if (ability.Psycast().PrereqsCompleted(compAbilities) && Available >= 1)
                     unlockable = true;
                 else
                     locked = true;
@@ -334,8 +384,8 @@ namespace FactionColonies.VPE
 
             if (unlockable && Widgets.ButtonInvisible(inRect))
             {
-                hediff.SpentPoints();
                 compAbilities.GiveAbility(ability);
+                selections.Add(new SavedAbility(VPEAbilityProvider.ProviderKey, ability.defName));
             }
         }
 
@@ -356,65 +406,25 @@ namespace FactionColonies.VPE
                                              def.description + (canUnlock ? "" : "\n\n" + lockedReason));
             Widgets.DrawHighlightIfMouseover(inRect);
 
-            if (hediff.points >= 1 && !unlocked && canUnlock)
+            if (Available >= 1 && !unlocked && canUnlock)
             {
                 if (Widgets.ButtonText(new Rect(inRect.xMax - 13f, inRect.yMax - 13f, 12f, 12f), "▲"))
                 {
-                    hediff.SpentPoints();
                     hediff.UnlockMeditationFocus(def);
+                    selections.Add(new SavedAbility(VPEAbilityProvider.ProviderKey, def.defName, VPEAbilityProvider.KindMeditationFocus, 1));
                 }
             }
         }
 
+        // Close just tears down the session pawn — it never persists. Edits are written only by
+        // ApplyAndClose(), so closing via Cancel, the X, or Esc discards the working selections.
         public override void PreClose()
         {
             base.PreClose();
-
-            try
-            {
-                if (compAbilities != null && unit != null)
-                {
-                    var entries = new List<SavedAbility>();
-
-                    // Chosen psycasts.
-                    foreach (var ability in compAbilities.LearnedAbilities
-                        .Where(a => a.def != null && a.def.Psycast() != null))
-                    {
-                        entries.Add(new SavedAbility(VPEAbilityProvider.ProviderKey, ability.def.defName));
-                    }
-
-                    // Point-purchased meditation foci.
-                    if (hediff != null && hediff.unlockedMeditationFoci != null)
-                    {
-                        foreach (MeditationFocusDef focus in hediff.unlockedMeditationFoci)
-                        {
-                            if (focus is null) continue;
-                            entries.Add(new SavedAbility(VPEAbilityProvider.ProviderKey, focus.defName,
-                                VPEAbilityProvider.KindMeditationFocus, 1));
-                        }
-                    }
-
-                    // Psycaster stat points (single aggregate entry).
-                    if (sessionStatPoints > 0)
-                    {
-                        entries.Add(new SavedAbility(VPEAbilityProvider.ProviderKey, "",
-                            VPEAbilityProvider.KindStatUpgrade, sessionStatPoints));
-                    }
-
-                    unit.SetAbilitiesForSystem(VPEAbilityProvider.ProviderKey, entries);
-                }
-            }
-            catch (Exception ex)
-            {
-                LogUtil.Error($"VPE psycast editor: failed to snapshot abilities for '{unit?.name}': {ex.Message}");
-            }
-            finally
-            {
-                PsycastsUIUtility.Hediff = null;
-                PsycastsUIUtility.CompAbilities = null;
-                DestroySessionPawn();
-                onClosed?.Invoke();
-            }
+            PsycastsUIUtility.Hediff = null;
+            PsycastsUIUtility.CompAbilities = null;
+            DestroySessionPawn();
+            onClosed?.Invoke();
         }
 
         private void DestroySessionPawn()

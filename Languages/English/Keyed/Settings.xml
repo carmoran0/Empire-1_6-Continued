@@ -58,7 +58,7 @@ Values in between dampen the effect of military efficiency on the auto combat.</
 	<FCSettingPsylinkCostMult>Unit Psylink Cost Multiplier</FCSettingPsylinkCostMult>
 	<FCSettingPsylinkCostMultTip>Multiplier on the silver cost added to a unit design per psylink level. At 1.0 (default), each level costs roughly the value of one psylink neuroformer.</FCSettingPsylinkCostMultTip>
 	<FCSettingPsycastCostMult>Overall Cost Multiplier</FCSettingPsycastCostMult>
-	<FCSettingPsycastCostMultTip>Multiplier applied to all of the per-point costs below (psycasts, foci, and stat upgrades). Set to 0 to make everything free.</FCSettingPsycastCostMultTip>
+	<FCSettingPsycastCostMultTip>Multiplier applied to all per-point costs related to psycasting. Set to 0 to make everything free.</FCSettingPsycastCostMultTip>
 
 	<!-- Compatibility tab -->
 	<FCSettingsCompatNone>No supported compatibility patches are active.</FCSettingsCompatNone>

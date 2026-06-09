@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
 using VanillaPsycastsExpanded;
@@ -158,20 +159,28 @@ namespace FactionColonies.VPE
             if (comp is null) return;
             if (comp.HasAbility(def)) return;
 
+            // Unlock the owning path (so the merc's psycaster UI reflects it), then grant the ability
+            // directly — the same primitive the editor uses (CompAbilities.GiveAbility). NOT
+            // AbilityExtension_Psycast.UnlockWithPrereqs: that pulls in prerequisite abilities we didn't
+            // choose, and the chosen set already includes every prereq in order.
             AbilityExtension_Psycast psycast = def.Psycast();
-            if (psycast != null)
-            {
-                // Unlock the owning path (so the merc's psycaster UI reflects it) then grant the
-                // ability plus any prerequisites — forcing the designed end-state, no point cost.
-                Hediff_PsycastAbilities tracker = pawn.Psycasts();
-                if (tracker != null && psycast.path != null && !tracker.unlockedPaths.Contains(psycast.path))
-                    tracker.UnlockPath(psycast.path);
-                psycast.UnlockWithPrereqs(comp);
-            }
-            else
-            {
-                comp.GiveAbility(def);
-            }
+            Hediff_PsycastAbilities tracker = pawn.Psycasts();
+            if (psycast != null && tracker != null && psycast.path != null && !tracker.unlockedPaths.Contains(psycast.path))
+                tracker.UnlockPath(psycast.path);
+            comp.GiveAbility(def);
+        }
+
+        public List<SavedAbility> ClampSelectionsToBudget(List<SavedAbility> selections, int psylinkLevel)
+            => VPEPointMath.Trim(selections, psylinkLevel);
+
+        public bool TryGetPointBudget(MilUnitFC unit, out int spent, out int budget)
+        {
+            spent = 0;
+            budget = 0;
+            if (unit is null) return false;
+            budget = VPEPointMath.Budget(unit.psylinkLevel);
+            spent = VPEPointMath.SpentPoints(unit.abilities);
+            return true;
         }
 
         /// <summary>

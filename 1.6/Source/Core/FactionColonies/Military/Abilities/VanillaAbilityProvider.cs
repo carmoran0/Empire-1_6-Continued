@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
 using Verse;
@@ -57,6 +58,16 @@ namespace FactionColonies
 
         // Base game stores no chosen abilities; psycasts are the random grants from ApplyPsylink.
         public void GrantAbility(Pawn pawn, SavedAbility entry) { }
+
+        // No point economy and no stored selections — nothing to trim or summarize.
+        public List<SavedAbility> ClampSelectionsToBudget(List<SavedAbility> selections, int psylinkLevel) => selections;
+
+        public bool TryGetPointBudget(MilUnitFC unit, out int spent, out int budget)
+        {
+            spent = 0;
+            budget = 0;
+            return false;
+        }
 
         /* Cost of the unit's psylink levels, mirroring the psylink neuroformer item's value
          * (def "PsychicAmplifier", ~2600 silver) scaled per level and by the settings multiplier.

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
@@ -84,6 +85,20 @@ namespace FactionColonies
         /// interpretation of the entry's <c>kind</c> (ability, meditation focus, stat upgrade, ...).
         /// </summary>
         void GrantAbility(Pawn pawn, SavedAbility entry);
+
+        /// <summary>
+        /// Returns the subset of <paramref name="selections"/> (in order) that fits this system's point
+        /// budget for <paramref name="psylinkLevel"/> — used when a unit's psylink level drops. The base
+        /// game stores no selections and returns the list unchanged; VPE trims from the end to its point
+        /// budget. May mutate/return a new list; callers should assign the result back.
+        /// </summary>
+        List<SavedAbility> ClampSelectionsToBudget(List<SavedAbility> selections, int psylinkLevel);
+
+        /// <summary>
+        /// Point-economy summary for the unit's current selections, for display ("spent / budget").
+        /// Returns false for systems without a point economy (base game), leaving the outs at 0.
+        /// </summary>
+        bool TryGetPointBudget(MilUnitFC unit, out int spent, out int budget);
 
         /// <summary>
         /// Brings a LIVE (already-spawned) pawn's psycasts in line with <paramref name="desired"/> for the

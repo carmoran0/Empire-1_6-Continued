@@ -1,5 +1,6 @@
 using FactionColonies.util;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 
@@ -102,7 +103,31 @@ namespace FactionColonies
                 return;
             }
 
-            // --- VPE: read-only list of chosen psycasts ---
+            // --- VPE: point summary + read-only list of chosen psycasts + Clear ---
+            int spent, budget;
+            if (active.TryGetPointBudget(displayUnit, out spent, out budget))
+            {
+                Rect summaryRect = new Rect(bodyRect.x, bodyRect.y, bodyRect.width, 18f);
+                Text.Font = GameFont.Tiny;
+                Text.Anchor = TextAnchor.MiddleLeft;
+                Widgets.Label(summaryRect, "fcAbilityPointsSummary".Translate(spent, budget));
+                bodyRect.yMin += 20f;
+            }
+
+            // Reserve a bottom strip for the Clear button (only when this unit is editable).
+            bool canClear = opts.canEdit && opts.showHeaderButtons && target != null;
+            if (canClear)
+            {
+                Rect clearRect = new Rect(bodyRect.x, bodyRect.yMax - 26f, 120f, 24f);
+                bodyRect.height -= 30f;
+                Text.Font = GameFont.Tiny;
+                Text.Anchor = TextAnchor.MiddleCenter;
+                if (Widgets.ButtonText(clearRect, "fcClearAbilities".Translate()))
+                    target.SetAbilitiesForSystem(active.Key, new List<SavedAbility>());
+            }
+
+            // Display picks in their stored order — i.e. the order they were chosen — so the list reads
+            // the same way trimming removes them (most recent last).
             var items = displayUnit?.abilities;
             int count = items?.Count ?? 0;
             float viewHeight = count * rowHeight;
@@ -111,12 +136,11 @@ namespace FactionColonies
             for (int i = 0; i < count; i++)
             {
                 SavedAbility item = items[i];
-                Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + i * rowHeight, scrollViewRect.width, rowHeight);
-                if (i % 2 == 0) Widgets.DrawHighlight(row);
-
                 IAbilitySystemProvider provider = AbilitySystemRegistry.ByKey(item.systemKey);
                 AbilityPickEntry entry = null;
                 bool resolved = provider is object && provider.TryGetDisplay(item, out entry);
+                Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + i * rowHeight, scrollViewRect.width, rowHeight);
+                if (i % 2 == 0) Widgets.DrawHighlight(row);
 
                 Rect iconRect = new Rect(row.x + 2f, row.y + 2f, IconSize, IconSize);
                 if (resolved && entry.icon != null)
