@@ -46,8 +46,6 @@ namespace FactionColonies
                 return;
             }
 
-            MilUnitFC target = opts.getEditTarget?.Invoke();
-
             // --- Psylink stepper row ---
             Rect headerRect = new Rect(rect.x, rect.y, rect.width, headerHeight);
             int maxLevel = active.MaxPsylinkLevel;
@@ -58,16 +56,24 @@ namespace FactionColonies
             Rect psyLabelRect = new Rect(headerRect.x, headerRect.y, 120f, headerHeight);
             Widgets.Label(psyLabelRect, "fcPsylinkLevel".Translate() + ": " + curLevel);
 
-            bool editable = opts.canEdit && opts.showHeaderButtons && target != null;
+            // getEditTarget is resolved lazily inside each click handler (it may allocate a buffered
+            // working copy and mark the host dialog dirty), so merely viewing this tab mutates nothing.
+            bool editable = opts.canEdit && opts.showHeaderButtons;
             if (editable)
             {
                 Rect minusRect = new Rect(psyLabelRect.xMax, headerRect.y + (headerHeight - stepperButtonW) / 2f, stepperButtonW, stepperButtonW);
                 Rect plusRect = new Rect(minusRect.xMax + 2f, minusRect.y, stepperButtonW, stepperButtonW);
                 Text.Anchor = TextAnchor.MiddleCenter;
                 if (Widgets.ButtonText(minusRect, "-") && curLevel > 0)
-                    target.SetPsylinkLevel(curLevel - 1);
+                {
+                    MilUnitFC t = opts.getEditTarget?.Invoke();
+                    if (t != null) t.SetPsylinkLevel(curLevel - 1);
+                }
                 if (Widgets.ButtonText(plusRect, "+") && curLevel < maxLevel)
-                    target.SetPsylinkLevel(curLevel + 1);
+                {
+                    MilUnitFC t = opts.getEditTarget?.Invoke();
+                    if (t != null) t.SetPsylinkLevel(curLevel + 1);
+                }
 
                 // VPE: "Edit Psycasts" button (right-aligned). Base game: none.
                 if (active.SupportsExplicitSelection)
@@ -78,7 +84,10 @@ namespace FactionColonies
                     if (canEditAbilities)
                     {
                         if (Widgets.ButtonText(editBtnRect, "fcEditAbilities".Translate()))
-                            active.OpenEditor(target, delegate { target.ChangeTick(); });
+                        {
+                            MilUnitFC t = opts.getEditTarget?.Invoke();
+                            if (t != null) active.OpenEditor(t, delegate { t.ChangeTick(); });
+                        }
                     }
                     else
                     {
@@ -115,7 +124,7 @@ namespace FactionColonies
             }
 
             // Reserve a bottom strip for the Clear button (only when this unit is editable).
-            bool canClear = opts.canEdit && opts.showHeaderButtons && target != null;
+            bool canClear = opts.canEdit && opts.showHeaderButtons;
             if (canClear)
             {
                 Rect clearRect = new Rect(bodyRect.x, bodyRect.yMax - 26f, 120f, 24f);
@@ -123,7 +132,10 @@ namespace FactionColonies
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleCenter;
                 if (Widgets.ButtonText(clearRect, "fcClearAbilities".Translate()))
-                    target.SetAbilitiesForSystem(active.Key, new List<SavedAbility>());
+                {
+                    MilUnitFC t = opts.getEditTarget?.Invoke();
+                    if (t != null) t.SetAbilitiesForSystem(active.Key, new List<SavedAbility>());
+                }
             }
 
             // Display picks in their stored order — i.e. the order they were chosen — so the list reads

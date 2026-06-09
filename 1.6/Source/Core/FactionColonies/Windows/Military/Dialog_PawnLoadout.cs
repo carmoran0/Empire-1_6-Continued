@@ -33,6 +33,7 @@ namespace FactionColonies
         private Vector2 apparelScroll;
         private Vector2 inventoryScroll;
         private Vector2 implantScroll;
+        private Vector2 abilityScroll;
         private LoadoutTab activeTab = LoadoutTab.Apparel;
 
         /* Buffered edits. null = "inherits from squad template" (same semantics as
@@ -268,9 +269,11 @@ namespace FactionColonies
         private void DrawLoadoutPanel(Rect rect)
         {
             Rect content;
-            // Psycast/ability editing is a per-template feature (psylink + designer-chosen abilities);
-            // omit the Abilities tab when editing an already-spawned pawn's loadout.
-            activeTab = LoadoutTabStrip.Draw(rect, activeTab, out content, includeAbilities: false);
+            // Show the Abilities tab only when an ability system is available (Royalty / VPE / other),
+            // matching the unit designer. Edits buffer into workingLoadout like every other tab; the
+            // live pawn is reconciled later by the squad inspection's per-pawn Upgrade.
+            bool showAbilities = AbilitySystemRegistry.Active != null;
+            activeTab = LoadoutTabStrip.Draw(rect, activeTab, out content, includeAbilities: showAbilities);
             content = content.ContractedBy(4f);
 
             if (activeTab == LoadoutTab.Apparel)
@@ -291,9 +294,19 @@ namespace FactionColonies
                     getEditTarget = EnsureWorkingLoadout,
                 });
             }
-            else
+            else if (activeTab == LoadoutTab.Implants)
             {
                 ImplantListWidget.Draw(content, DisplayLoadout, ref implantScroll, new ImplantListWidget.Options
+                {
+                    canEdit = true,
+                    showHeaderButtons = true,
+                    getEditTarget = EnsureWorkingLoadout,
+                    getDisplayUnit = () => DisplayLoadout,
+                });
+            }
+            else
+            {
+                AbilityListWidget.Draw(content, DisplayLoadout, ref abilityScroll, new AbilityListWidget.Options
                 {
                     canEdit = true,
                     showHeaderButtons = true,
