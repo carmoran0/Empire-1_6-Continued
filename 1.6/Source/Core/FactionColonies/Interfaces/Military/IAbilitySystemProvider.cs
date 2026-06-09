@@ -73,6 +73,13 @@ namespace FactionColonies
         void ApplyPsylink(Pawn pawn, int level);
 
         /// <summary>
+        /// Silver cost of raising a unit to the given psylink level, folded into the unit's
+        /// <c>equipmentTotalCost</c>. Base game charges per psylink level (its psycasts are free random
+        /// grants); VPE returns 0 — its balance lever is the per-psycast / focus / stat cost instead.
+        /// </summary>
+        double PsylinkCost(int level);
+
+        /// <summary>
         /// Forces the end-state of one saved entry onto a freshly generated pawn. The provider owns
         /// interpretation of the entry's <c>kind</c> (ability, meditation focus, stat upgrade, ...).
         /// </summary>

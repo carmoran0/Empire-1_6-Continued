@@ -83,6 +83,11 @@ namespace FactionColonies
         public const float DEFAULT_DEFENDER_ADVANTAGE = 1.15f;
         public const float DEFAULT_EFFICIENCY_DAMPING = 0.5f;
         public const bool DEFAULT_ANTI_EXPLOIT = true;
+        // Vanilla Psycasts Expanded per-point silver costs (compat tab; scaled by militaryPsycastCostMultiplier).
+        public const int DEFAULT_VPE_PSYCAST_BASE_COST = 300;
+        public const int DEFAULT_VPE_PSYCAST_PER_LEVEL_COST = 300;
+        public const int DEFAULT_VPE_FOCUS_COST = 300;
+        public const int DEFAULT_VPE_STAT_POINT_COST = 250;
         /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* 
          *           ~  DEFAULTS END ~
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
@@ -142,6 +147,11 @@ namespace FactionColonies
         public static double militaryRaceCostMultiplier = 0.075;
         public static double militaryPsylinkCostMultiplier = 1.0;
         public static double militaryPsycastCostMultiplier = 1.0;
+        // Vanilla Psycasts Expanded point-purchase costs (configured in the Compatibility settings tab).
+        public static int vpePsycastBaseCost = DEFAULT_VPE_PSYCAST_BASE_COST;
+        public static int vpePsycastPerLevelCost = DEFAULT_VPE_PSYCAST_PER_LEVEL_COST;
+        public static int vpeFocusCost = DEFAULT_VPE_FOCUS_COST;
+        public static int vpeStatPointCost = DEFAULT_VPE_STAT_POINT_COST;
         public static float mercenaryHealRatePerHour = 1f;
 
         public static float maxThreatMultiplier = DEFAULT_MAX_THREAT_MULTIPLIER;
@@ -354,6 +364,10 @@ namespace FactionColonies
             Scribe_Values.Look(ref mercenaryHealRatePerHour, "mercenaryHealRatePerHour", 1f);
             Scribe_Values.Look(ref militaryPsylinkCostMultiplier, "militaryPsylinkCostMultiplier", 1.0);
             Scribe_Values.Look(ref militaryPsycastCostMultiplier, "militaryPsycastCostMultiplier", 1.0);
+            Scribe_Values.Look(ref vpePsycastBaseCost, "vpePsycastBaseCost", DEFAULT_VPE_PSYCAST_BASE_COST);
+            Scribe_Values.Look(ref vpePsycastPerLevelCost, "vpePsycastPerLevelCost", DEFAULT_VPE_PSYCAST_PER_LEVEL_COST);
+            Scribe_Values.Look(ref vpeFocusCost, "vpeFocusCost", DEFAULT_VPE_FOCUS_COST);
+            Scribe_Values.Look(ref vpeStatPointCost, "vpeStatPointCost", DEFAULT_VPE_STAT_POINT_COST);
             Scribe_Values.Look(ref squadHireCostMultiplier, "squadHireCostMultiplier", DEFAULT_SQUAD_HIRE_COST_MULTIPLIER);
             Scribe_Values.Look(ref squadUpgradeCostMultiplier, "squadUpgradeCostMultiplier", DEFAULT_SQUAD_UPGRADE_COST_MULTIPLIER);
             Scribe_Values.Look(ref maxSquadSize, "maxSquadSize", DEFAULT_MAX_SQUAD_SIZE);
@@ -521,6 +535,7 @@ namespace FactionColonies
         private Vector2 scrollVectorEvents = new Vector2();
         private Vector2 scrollVectorMilitary = new Vector2();
         private Vector2 scrollVectorRoadBuilder = new Vector2();
+        private Vector2 scrollVectorCompat = new Vector2();
 
         /* Per-tab content heights, measured from the previous frame's Listing_Standard and
          * fed back into the scroll view so the scrollbar matches the real content length. */
@@ -528,6 +543,7 @@ namespace FactionColonies
         private float contentHeightEvents;
         private float contentHeightMilitary;
         private float contentHeightRoadBuilder;
+        private float contentHeightCompat;
 
         /// <summary>
         /// Creates an option for the list of ForcedTaxDeliveryOptions. Shuttles may not be used if royality is inactive
@@ -591,6 +607,7 @@ namespace FactionColonies
             settingsTabs.Add(new TabRecord("FCSettingsTabEvents".Translate(), delegate { settingsTab = 1; }, settingsTab == 1));
             settingsTabs.Add(new TabRecord("FCSettingsTabMilitary".Translate(), delegate { settingsTab = 2; }, settingsTab == 2));
             settingsTabs.Add(new TabRecord("FCSettingsTabRoadBuilder".Translate(), delegate { settingsTab = 3; }, settingsTab == 3));
+            settingsTabs.Add(new TabRecord("FCSettingsTabCompat".Translate(), delegate { settingsTab = 4; }, settingsTab == 4));
 
             Rect contentRect = new Rect(inRect.x, inRect.y + 40f, inRect.width, inRect.height - 40f);
             Widgets.DrawMenuSection(contentRect);
@@ -605,6 +622,7 @@ namespace FactionColonies
                 case 1: DoEventsTab(innerRect); break;
                 case 2: DoMilitaryTab(innerRect); break;
                 case 3: DoRoadBuilderTab(innerRect); break;
+                case 4: DoCompatTab(innerRect); break;
             }
         }
 
@@ -918,11 +936,13 @@ namespace FactionColonies
             ls.Label("FCSettingMercHealRate".Translate() + ": " + mercenaryHealRatePerHour.ToString("0.00") + "x", -1f, "FCSettingMercHealRateTip".Translate());
             mercenaryHealRatePerHour = ls.Slider(mercenaryHealRatePerHour, 0.1f, 100f);
 
-            ls.Label("FCSettingPsylinkCostMult".Translate() + ": " + militaryPsylinkCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingPsylinkCostMultTip".Translate());
-            militaryPsylinkCostMultiplier = ls.Slider((float)militaryPsylinkCostMultiplier, 0f, 5f);
-
-            ls.Label("FCSettingPsycastCostMult".Translate() + ": " + militaryPsycastCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingPsycastCostMultTip".Translate());
-            militaryPsycastCostMultiplier = ls.Slider((float)militaryPsycastCostMultiplier, 0f, 5f);
+            // Vanilla psylink cost (base-game psycasts). Hidden when VPE is active — VPE makes psylink
+            // levels free and charges per chosen psycast instead (see the Compatibility tab).
+            if (!ModsConfig.IsActive("VanillaExpanded.VPsycastsE"))
+            {
+                ls.Label("FCSettingPsylinkCostMult".Translate() + ": " + militaryPsylinkCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingPsylinkCostMultTip".Translate());
+                militaryPsylinkCostMultiplier = ls.Slider((float)militaryPsylinkCostMultiplier, 0f, 5f);
+            }
 
             DrawSectionResetButton(ls, delegate
             {
@@ -938,7 +958,6 @@ namespace FactionColonies
                 efficiencyDamping = DEFAULT_EFFICIENCY_DAMPING;
                 mercenaryHealRatePerHour = 1f;
                 militaryPsylinkCostMultiplier = 1.0;
-                militaryPsycastCostMultiplier = 1.0;
             });
 
             ls.Gap(12f);
@@ -1097,6 +1116,63 @@ namespace FactionColonies
             }
 
             contentHeightRoadBuilder = ls.CurHeight + 12f;
+            ls.End();
+
+            ScrollUtil.EndScrollView();
+        }
+
+        /* Settings for compatibility patches. Each supported mod gets its own section, shown only
+         * when that mod is loaded. The fields live in core (FCSettings) so they persist regardless,
+         * but a section is hidden unless its mod is active. */
+        private void DoCompatTab(Rect rect)
+        {
+            Rect viewRect = ScrollUtil.BeginScrollView(rect, ref scrollVectorCompat, contentHeightCompat);
+            Rect listRect = new Rect(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
+            Listing_Standard ls = new Listing_Standard();
+            ls.Begin(listRect);
+
+            bool any = false;
+
+            /* -- Vanilla Psycasts Expanded -- */
+            if (ModsConfig.IsActive("VanillaExpanded.VPsycastsE"))
+            {
+                any = true;
+                Text.Font = GameFont.Medium;
+                ls.Label("FCSettingsCompatVPE".Translate());
+                Text.Font = GameFont.Small;
+                ls.GapLine();
+                ls.Label("FCSettingsCompatVPEDesc".Translate());
+                ls.Gap(6f);
+
+                ls.Label("FCSettingVPEBaseAbilityCost".Translate() + ": " + vpePsycastBaseCost.ToString(), -1f, "FCSettingVPEBaseAbilityCostTip".Translate());
+                vpePsycastBaseCost = (int)ls.Slider(vpePsycastBaseCost, 0f, 2000f);
+
+                ls.Label("FCSettingVPEPerLevelCost".Translate() + ": " + vpePsycastPerLevelCost.ToString(), -1f, "FCSettingVPEPerLevelCostTip".Translate());
+                vpePsycastPerLevelCost = (int)ls.Slider(vpePsycastPerLevelCost, 0f, 2000f);
+
+                ls.Label("FCSettingVPEFocusCost".Translate() + ": " + vpeFocusCost.ToString(), -1f, "FCSettingVPEFocusCostTip".Translate());
+                vpeFocusCost = (int)ls.Slider(vpeFocusCost, 0f, 2000f);
+
+                ls.Label("FCSettingVPEStatPointCost".Translate() + ": " + vpeStatPointCost.ToString(), -1f, "FCSettingVPEStatPointCostTip".Translate());
+                vpeStatPointCost = (int)ls.Slider(vpeStatPointCost, 0f, 2000f);
+
+                ls.Label("FCSettingPsycastCostMult".Translate() + ": " + militaryPsycastCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingPsycastCostMultTip".Translate());
+                militaryPsycastCostMultiplier = ls.Slider((float)militaryPsycastCostMultiplier, 0f, 5f);
+
+                DrawSectionResetButton(ls, delegate
+                {
+                    vpePsycastBaseCost = DEFAULT_VPE_PSYCAST_BASE_COST;
+                    vpePsycastPerLevelCost = DEFAULT_VPE_PSYCAST_PER_LEVEL_COST;
+                    vpeFocusCost = DEFAULT_VPE_FOCUS_COST;
+                    vpeStatPointCost = DEFAULT_VPE_STAT_POINT_COST;
+                    militaryPsycastCostMultiplier = 1.0;
+                });
+            }
+
+            if (!any)
+                ls.Label("FCSettingsCompatNone".Translate());
+
+            contentHeightCompat = ls.CurHeight + 12f;
             ls.End();
 
             ScrollUtil.EndScrollView();

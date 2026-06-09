@@ -25,11 +25,6 @@ namespace FactionColonies.VPE
         public const string KindMeditationFocus = "MeditationFocus";
         public const string KindStatUpgrade = "StatUpgrade";
 
-        private const double BaseAbilityCost = 300.0;
-        private const double PerLevelAbilityCost = 300.0;
-        private const double FocusCost = 300.0;      // one point: comparable to a level-0 ability
-        private const double StatPointCost = 250.0;  // per psycaster-stat point
-
         public string Key => ProviderKey;
         public string Label => "Vanilla Psycasts Expanded";
         public bool IsActive => ModsConfig.IsActive("VanillaExpanded.VPsycastsE");
@@ -58,7 +53,7 @@ namespace FactionColonies.VPE
                     description = focus.description,
                     icon = focus.Icon(),
                     level = 0, // foci are point-gated, not psylink-level-gated — never stripped on level drop
-                    cost = FocusCost * FCSettings.militaryPsycastCostMultiplier
+                    cost = FCSettings.vpeFocusCost * FCSettings.militaryPsycastCostMultiplier
                 };
                 return true;
             }
@@ -73,7 +68,7 @@ namespace FactionColonies.VPE
                     description = null,
                     icon = null,
                     level = 0,
-                    cost = StatPointCost * n * FCSettings.militaryPsycastCostMultiplier
+                    cost = FCSettings.vpeStatPointCost * n * FCSettings.militaryPsycastCostMultiplier
                 };
                 return true;
             }
@@ -96,7 +91,7 @@ namespace FactionColonies.VPE
                 description = def.description,
                 icon = def.icon,
                 level = level,
-                cost = (BaseAbilityCost + PerLevelAbilityCost * level) * FCSettings.militaryPsycastCostMultiplier
+                cost = (FCSettings.vpePsycastBaseCost + FCSettings.vpePsycastPerLevelCost * level) * FCSettings.militaryPsycastCostMultiplier
             };
         }
 
@@ -122,6 +117,13 @@ namespace FactionColonies.VPE
             if (target > current)
                 pawn.ChangePsylinkLevel(target - current, false);
         }
+
+        /// <summary>
+        /// VPE charges nothing for psylink levels themselves — the balance lever is the per-psycast,
+        /// per-focus, and per-stat-point cost (see <see cref="TryGetDisplay"/>), configured in the
+        /// Compatibility settings tab. So this is always 0.
+        /// </summary>
+        public double PsylinkCost(int level) => 0;
 
         public void GrantAbility(Pawn pawn, SavedAbility entry)
         {

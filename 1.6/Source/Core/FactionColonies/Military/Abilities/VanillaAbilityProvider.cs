@@ -58,6 +58,18 @@ namespace FactionColonies
         // Base game stores no chosen abilities; psycasts are the random grants from ApplyPsylink.
         public void GrantAbility(Pawn pawn, SavedAbility entry) { }
 
+        /* Cost of the unit's psylink levels, mirroring the psylink neuroformer item's value
+         * (def "PsychicAmplifier", ~2600 silver) scaled per level and by the settings multiplier.
+         * This is the base-game balance lever: vanilla psycasts are free random grants, so the
+         * psylink levels themselves carry the cost. */
+        public double PsylinkCost(int level)
+        {
+            if (level <= 0) return 0;
+            ThingDef neuroformer = DefDatabase<ThingDef>.GetNamedSilentFail("PsychicAmplifier");
+            double perLevel = neuroformer is object ? neuroformer.BaseMarketValue : 2600.0;
+            return Math.Floor(perLevel * FCSettings.militaryPsylinkCostMultiplier * level);
+        }
+
         /// <summary>
         /// Granular psylink reconcile: keeps the pawn's existing random psycasts and only adjusts for the
         /// level delta. Raising calls <see cref="PawnUtility.ChangePsylinkLevel"/>, which grants one random

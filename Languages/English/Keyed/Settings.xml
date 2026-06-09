@@ -18,6 +18,7 @@
 	<FCSettingsTabEvents>Events</FCSettingsTabEvents>
 	<FCSettingsTabMilitary>Military</FCSettingsTabMilitary>
 	<FCSettingsTabRoadBuilder>Road Builder</FCSettingsTabRoadBuilder>
+	<FCSettingsTabCompat>Compatibility</FCSettingsTabCompat>
 	<FCSettingRoadBuilderDesc>The Road Builder automatically connects your Empire settlements with roads using a Minimum Spanning Tree algorithm, which is recalculated on the following events:
  - each time a settlement is founded or lost
  - when you research a new level of roads
@@ -55,9 +56,22 @@ Values in between dampen the effect of military efficiency on the auto combat.</
 	<FCSettingMercHealRate>Mercenary Heal Rate Multiplier</FCSettingMercHealRate>
 	<FCSettingMercHealRateTip>Multiplier on the healing rate for off-map mercenaries. At 1.0 (default), an Empire merc heals at roughly the same per-day rate as a vanilla pawn in a basic bed being tended with industrial medicine by an unskilled doctor. Higher values heal faster; lower values heal slower.</FCSettingMercHealRateTip>
 	<FCSettingPsylinkCostMult>Unit Psylink Cost Multiplier</FCSettingPsylinkCostMult>
-	<FCSettingPsylinkCostMultTip>Multiplier on the silver cost added to a unit design per psylink level. At 1.0 (default), each level costs roughly the value of one psylink neuroformer. Set to 0 to make psylink levels free.</FCSettingPsylinkCostMultTip>
-	<FCSettingPsycastCostMult>Unit Psycast Cost Multiplier</FCSettingPsycastCostMult>
-	<FCSettingPsycastCostMultTip>Multiplier on the silver cost added to a unit design per chosen psycast/ability. Higher-level psycasts cost more. Set to 0 to make psycasts free.</FCSettingPsycastCostMultTip>
+	<FCSettingPsylinkCostMultTip>Multiplier on the silver cost added to a unit design per psylink level. At 1.0 (default), each level costs roughly the value of one psylink neuroformer.</FCSettingPsylinkCostMultTip>
+	<FCSettingPsycastCostMult>Overall Cost Multiplier</FCSettingPsycastCostMult>
+	<FCSettingPsycastCostMultTip>Multiplier applied to all of the per-point costs below (psycasts, foci, and stat upgrades). Set to 0 to make everything free.</FCSettingPsycastCostMultTip>
+
+	<!-- Compatibility tab -->
+	<FCSettingsCompatNone>No supported compatibility patches are active.</FCSettingsCompatNone>
+	<FCSettingsCompatVPE>Vanilla Psycasts Expanded</FCSettingsCompatVPE>
+	<FCSettingsCompatVPEDesc>With VPE active, psylink levels themselves are free. Instead, each point spent in the psycast editor (abilities, meditation foci, stat upgrades) adds to a unit's cost. Tune those per-point costs here.</FCSettingsCompatVPEDesc>
+	<FCSettingVPEBaseAbilityCost>Psycast Base Cost</FCSettingVPEBaseAbilityCost>
+	<FCSettingVPEBaseAbilityCostTip>Flat silver cost of each chosen psycast, before adding the per-level amount below.</FCSettingVPEBaseAbilityCostTip>
+	<FCSettingVPEPerLevelCost>Psycast Per-Level Cost</FCSettingVPEPerLevelCost>
+	<FCSettingVPEPerLevelCostTip>Additional silver cost per psycast tier (level). A tier-3 psycast costs the base plus three times this amount.</FCSettingVPEPerLevelCostTip>
+	<FCSettingVPEFocusCost>Meditation Focus Cost</FCSettingVPEFocusCost>
+	<FCSettingVPEFocusCostTip>Silver cost of each unlocked meditation focus type.</FCSettingVPEFocusCostTip>
+	<FCSettingVPEStatPointCost>Stat Point Cost</FCSettingVPEStatPointCost>
+	<FCSettingVPEStatPointCostTip>Silver cost of each psycaster stat point spent.</FCSettingVPEStatPointCostTip>
 	<FCEmpireMercHealRateStatExplanation>Empire mercenary at base recovering</FCEmpireMercHealRateStatExplanation>
 
 	<!-- Auto-resolve casualties + Crushing Defeat -->

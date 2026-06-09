@@ -948,7 +948,9 @@ namespace FactionColonies
             foreach (SavedImplant im in implants)
                 totalCost += ImplantCost(im.recipe);
 
-            totalCost += PsylinkCost(psylinkLevel);
+            // Psylink-level cost is owned by the active ability system (base game charges per level;
+            // VPE returns 0 and balances via per-psycast cost instead).
+            totalCost += AbilitySystemRegistry.Active?.PsylinkCost(psylinkLevel) ?? 0;
             foreach (SavedAbility a in abilities)
                 totalCost += AbilityCost(a);
 
@@ -956,16 +958,6 @@ namespace FactionColonies
                 totalCost += Math.Floor(animal.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier);
 
             equipmentTotalCost = Math.Ceiling(totalCost);
-        }
-
-        /* Cost of the unit's psylink levels, mirroring the psylink neuroformer item's value
-         * (def "PsychicAmplifier", ~2600 silver) scaled per level and by the settings multiplier. */
-        public static double PsylinkCost(int level)
-        {
-            if (level <= 0) return 0;
-            ThingDef neuroformer = DefDatabase<ThingDef>.GetNamedSilentFail("PsychicAmplifier");
-            double perLevel = neuroformer is object ? neuroformer.BaseMarketValue : 2600.0;
-            return Math.Floor(perLevel * FCSettings.militaryPsylinkCostMultiplier * level);
         }
 
         /* Cost of a chosen ability, resolved from its owning provider's display entry (which already

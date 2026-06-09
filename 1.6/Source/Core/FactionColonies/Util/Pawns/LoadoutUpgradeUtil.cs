@@ -29,9 +29,9 @@ namespace FactionColonies
                 foreach (SavedThing inv in unit.inventory) total += inv.MarketValue;
             if (unit.implants != null)
                 foreach (SavedImplant im in unit.implants) total += MilUnitFC.ImplantCost(im.recipe);
-            // Psycasts: psylink levels + any explicitly-chosen abilities (base-game random psycasts
-            // store nothing, so those units contribute only the psylink-level cost).
-            total += MilUnitFC.PsylinkCost(unit.psylinkLevel);
+            // Psycasts: psylink-level cost (owned by the active ability system) + any explicitly-chosen
+            // abilities. Base game charges per psylink level; VPE charges per chosen psycast instead.
+            total += AbilitySystemRegistry.Active?.PsylinkCost(unit.psylinkLevel) ?? 0;
             if (unit.abilities != null)
                 foreach (SavedAbility a in unit.abilities) total += MilUnitFC.AbilityCost(a);
             return total;
