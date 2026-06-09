@@ -39,6 +39,12 @@ namespace FactionColonies.VPE
         private readonly Dictionary<AbilityDef, Vector2> abilityPos = new Dictionary<AbilityDef, Vector2>();
         private bool useAltBackgrounds;
 
+        // Meditation foci the player can buy with points, plus a local tally of psycaster-stat points
+        // spent (Hediff_PsycastAbilities.statPoints is private, so we track our own spends here and
+        // replay/snapshot from it). Foci and stat points consume points exactly like path abilities.
+        private readonly List<MeditationFocusDef> foci;
+        private int sessionStatPoints;
+
         public override Vector2 InitialSize => new Vector2(1000f, 720f);
 
         public FCWindow_VPEPsycastEditor(MilUnitFC unit, Action onClosed)
@@ -56,6 +62,11 @@ namespace FactionColonies.VPE
                 .ToDictionary(g => g.Key, g => g.ToList());
             tabs = pathsByTab.Select(kv => new TabRecord(kv.Key, () => curTab = kv.Key, () => curTab == kv.Key)).ToList();
             curTab = pathsByTab.Keys.FirstOrDefault();
+
+            foci = DefDatabase<MeditationFocusDef>.AllDefs
+                .OrderByDescending(d => d.modContentPack.IsOfficialMod)
+                .ThenByDescending(d => d.label)
+                .ToList();
 
             SetupSessionPawn();
         }
@@ -77,10 +88,29 @@ namespace FactionColonies.VPE
                 compAbilities = sessionPawn.GetComp<CompAbilities>();
                 if (hediff is null || compAbilities is null) { setupFailed = true; return; }
 
-                // Replay already-chosen VPE abilities onto the session pawn, mirroring the UI's
-                // spend-then-grant so the remaining point budget reflects prior choices.
+                // Replay already-chosen VPE entries (psycasts, foci, stat points) onto the session
+                // pawn, mirroring the UI's spend-then-grant so the remaining point budget reflects
+                // prior choices.
                 foreach (SavedAbility saved in unit.abilities.Where(a => a.systemKey == VPEAbilityProvider.ProviderKey))
                 {
+                    if (saved.kind == VPEAbilityProvider.KindStatUpgrade)
+                    {
+                        int n = saved.count > 0 ? saved.count : 1;
+                        if (hediff.points >= n) hediff.SpentPoints(n);
+                        hediff.ImproveStats(n);
+                        sessionStatPoints += n;
+                        continue;
+                    }
+
+                    if (saved.kind == VPEAbilityProvider.KindMeditationFocus)
+                    {
+                        MeditationFocusDef focus = DefDatabase<MeditationFocusDef>.GetNamedSilentFail(saved.abilityDef);
+                        if (focus is null || hediff.unlockedMeditationFoci.Contains(focus)) continue;
+                        if (hediff.points >= 1) hediff.SpentPoints();
+                        hediff.UnlockMeditationFocus(focus);
+                        continue;
+                    }
+
                     AbilityDef def = DefDatabase<AbilityDef>.GetNamedSilentFail(saved.abilityDef);
                     if (def is null || compAbilities.HasAbility(def)) continue;
                     AbilityExtension_Psycast psycast = def.Psycast();
@@ -124,8 +154,8 @@ namespace FactionColonies.VPE
             PsycastsUIUtility.Hediff = hediff;
             PsycastsUIUtility.CompAbilities = compAbilities;
 
-            // --- Left info column ---
-            Rect left = inRect.LeftPartPixels(260f);
+            // --- Left info + stats/foci column (mirrors VPE's own psycast tab) ---
+            Rect left = inRect.LeftPartPixels(300f);
             var listing = new Listing_Standard();
             listing.Begin(left);
             Text.Font = GameFont.Medium;
@@ -138,6 +168,47 @@ namespace FactionColonies.VPE
             Text.Font = GameFont.Tiny;
             listing.Label("fcVPEEditorHint".Translate());
             listing.Gap(8f);
+
+            // Psycaster stat upgrade — spend points to raise neural heat limit, recovery, sensitivity, etc.
+            Text.Font = GameFont.Small;
+            Text.Anchor = TextAnchor.MiddleLeft;
+            if (listing.ButtonTextLabeled("VPE.PsycasterStats".Translate(), "VPE.Upgrade".Translate()))
+            {
+                int num = GenUI.CurrentAdjustmentMultiplier();
+                if (hediff.points >= num)
+                {
+                    hediff.SpentPoints(num);
+                    hediff.ImproveStats(num);
+                    sessionStatPoints += num;
+                }
+                else
+                {
+                    Messages.Message("VPE.NotEnoughPoints".Translate(), MessageTypeDefOf.RejectInput, false);
+                }
+            }
+            Text.Font = GameFont.Tiny;
+            Text.Anchor = TextAnchor.UpperLeft;
+            listing.Label("fcVPEStatPointsSpent".Translate(sessionStatPoints));
+            listing.Gap(8f);
+
+            // Meditation focus types — buy with points (mirrors ITab_Pawn_Psycasts focus grid).
+            Text.Font = GameFont.Small;
+            listing.Label("VPE.FocusTypes".Translate());
+            float fx = left.x;
+            Rect fociRow = listing.GetRect(48f);
+            foreach (MeditationFocusDef def in foci)
+            {
+                if (fx + 50f >= left.xMax)
+                {
+                    fx = left.x;
+                    listing.Gap(3f);
+                    fociRow = listing.GetRect(48f);
+                }
+                DoFocus(new Rect(fx, fociRow.y, 48f, 48f), def);
+                fx += 50f;
+            }
+            listing.Gap(8f);
+
             listing.CheckboxLabeled("VPE.UseAltBackground".Translate(), ref useAltBackgrounds);
             listing.End();
 
@@ -268,6 +339,33 @@ namespace FactionColonies.VPE
             }
         }
 
+        /* Mirrors ITab_Pawn_Psycasts.DoFocus: a meditation focus the player can buy with a point.
+         * VPE's own CanPawnUse (already usable) and CanUnlock (eligibility + reason) gate the button. */
+        private void DoFocus(Rect inRect, MeditationFocusDef def)
+        {
+            Widgets.DrawBox(inRect, 3, Texture2D.grayTexture);
+            bool unlocked = def.CanPawnUse(sessionPawn);
+            string lockedReason;
+            bool canUnlock = def.CanUnlock(sessionPawn, out lockedReason);
+
+            GUI.color = unlocked ? Color.white : Color.gray;
+            GUI.DrawTexture(inRect.ContractedBy(5f), def.Icon());
+            GUI.color = Color.white;
+
+            TooltipHandler.TipRegion(inRect, def.LabelCap + (def.description.NullOrEmpty() ? "" : "\n\n") +
+                                             def.description + (canUnlock ? "" : "\n\n" + lockedReason));
+            Widgets.DrawHighlightIfMouseover(inRect);
+
+            if (hediff.points >= 1 && !unlocked && canUnlock)
+            {
+                if (Widgets.ButtonText(new Rect(inRect.xMax - 13f, inRect.yMax - 13f, 12f, 12f), "▲"))
+                {
+                    hediff.SpentPoints();
+                    hediff.UnlockMeditationFocus(def);
+                }
+            }
+        }
+
         public override void PreClose()
         {
             base.PreClose();
@@ -276,11 +374,34 @@ namespace FactionColonies.VPE
             {
                 if (compAbilities != null && unit != null)
                 {
-                    List<string> chosen = compAbilities.LearnedAbilities
-                        .Where(a => a.def != null && a.def.Psycast() != null)
-                        .Select(a => a.def.defName)
-                        .ToList();
-                    unit.SetAbilitiesForSystem(VPEAbilityProvider.ProviderKey, chosen);
+                    var entries = new List<SavedAbility>();
+
+                    // Chosen psycasts.
+                    foreach (var ability in compAbilities.LearnedAbilities
+                        .Where(a => a.def != null && a.def.Psycast() != null))
+                    {
+                        entries.Add(new SavedAbility(VPEAbilityProvider.ProviderKey, ability.def.defName));
+                    }
+
+                    // Point-purchased meditation foci.
+                    if (hediff != null && hediff.unlockedMeditationFoci != null)
+                    {
+                        foreach (MeditationFocusDef focus in hediff.unlockedMeditationFoci)
+                        {
+                            if (focus is null) continue;
+                            entries.Add(new SavedAbility(VPEAbilityProvider.ProviderKey, focus.defName,
+                                VPEAbilityProvider.KindMeditationFocus, 1));
+                        }
+                    }
+
+                    // Psycaster stat points (single aggregate entry).
+                    if (sessionStatPoints > 0)
+                    {
+                        entries.Add(new SavedAbility(VPEAbilityProvider.ProviderKey, "",
+                            VPEAbilityProvider.KindStatUpgrade, sessionStatPoints));
+                    }
+
+                    unit.SetAbilitiesForSystem(VPEAbilityProvider.ProviderKey, entries);
                 }
             }
             catch (Exception ex)

@@ -62,14 +62,21 @@ namespace FactionColonies
         /// </summary>
         void OpenEditor(MilUnitFC unit, Action onClosed);
 
-        /// <summary>Resolves a saved ability's display data (label/icon/cost) for list rendering.</summary>
-        bool TryGetDisplay(string defName, out AbilityPickEntry entry);
+        /// <summary>
+        /// Resolves a saved entry's display data (label/icon/cost) for list rendering. The entry is
+        /// opaque to the core — the provider interprets its <c>kind</c>/<c>abilityDef</c>/<c>count</c>
+        /// (e.g. VPE distinguishes psycasts, meditation foci, and stat upgrades).
+        /// </summary>
+        bool TryGetDisplay(SavedAbility entry, out AbilityPickEntry display);
 
         /// <summary>Grants psylink of the given level to a freshly generated pawn (the neuroformer way).</summary>
         void ApplyPsylink(Pawn pawn, int level);
 
-        /// <summary>Forces the end-state of one chosen ability onto a freshly generated pawn.</summary>
-        void GrantAbility(Pawn pawn, string defName);
+        /// <summary>
+        /// Forces the end-state of one saved entry onto a freshly generated pawn. The provider owns
+        /// interpretation of the entry's <c>kind</c> (ability, meditation focus, stat upgrade, ...).
+        /// </summary>
+        void GrantAbility(Pawn pawn, SavedAbility entry);
 
         /// <summary>
         /// Brings a LIVE (already-spawned) pawn's psycasts in line with <paramref name="desired"/> for the

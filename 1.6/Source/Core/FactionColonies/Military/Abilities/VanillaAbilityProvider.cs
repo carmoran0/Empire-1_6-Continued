@@ -26,9 +26,9 @@ namespace FactionColonies
         // No custom editor / no stored abilities.
         public void OpenEditor(MilUnitFC unit, Action onClosed) { }
 
-        public bool TryGetDisplay(string defName, out AbilityPickEntry entry)
+        public bool TryGetDisplay(SavedAbility entry, out AbilityPickEntry display)
         {
-            entry = null;
+            display = null;
             return false;
         }
 
@@ -56,7 +56,7 @@ namespace FactionColonies
         }
 
         // Base game stores no chosen abilities; psycasts are the random grants from ApplyPsylink.
-        public void GrantAbility(Pawn pawn, string defName) { }
+        public void GrantAbility(Pawn pawn, SavedAbility entry) { }
 
         /// <summary>
         /// Granular psylink reconcile: keeps the pawn's existing random psycasts and only adjusts for the

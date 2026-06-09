@@ -116,7 +116,7 @@ namespace FactionColonies
 
                 IAbilitySystemProvider provider = AbilitySystemRegistry.ByKey(item.systemKey);
                 AbilityPickEntry entry = null;
-                bool resolved = provider is object && provider.TryGetDisplay(item.abilityDef, out entry);
+                bool resolved = provider is object && provider.TryGetDisplay(item, out entry);
 
                 Rect iconRect = new Rect(row.x + 2f, row.y + 2f, IconSize, IconSize);
                 if (resolved && entry.icon != null)
@@ -128,7 +128,8 @@ namespace FactionColonies
                 double cost = resolved ? entry.cost : 0;
                 Widgets.Label(costRect, "$" + cost.ToString("F0"));
 
-                string label = resolved ? entry.label : (item.abilityDef + " (?)");
+                string fallback = item.abilityDef.NullOrEmpty() ? (item.kind ?? "?") : item.abilityDef;
+                string label = resolved ? entry.label : (fallback + " (?)");
                 Rect labelRect = new Rect(iconRect.xMax + 6f, row.y, costRect.x - iconRect.xMax - 10f, rowHeight);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleLeft;

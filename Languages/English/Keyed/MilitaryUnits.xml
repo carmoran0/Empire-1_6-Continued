@@ -91,8 +91,9 @@
 	<fcAbilitiesNeedPsylink>Raise the unit's psylink level above 0 to choose psycasts.</fcAbilitiesNeedPsylink>
 	<fcAbilitiesRandomNote>Psycasts are granted randomly at this psylink level when the unit is recruited.</fcAbilitiesRandomNote>
 	<fcVPEEditorTitle>Psycasts</fcVPEEditorTitle>
-	<fcVPEEditorHint>Unlock paths and abilities below. Your selections are saved to the unit design and applied to every mercenary built from it.</fcVPEEditorHint>
+	<fcVPEEditorHint>Spend points on paths and abilities, meditation foci, or psycaster stats. Your selections are saved to the unit design and applied to every mercenary built from it.</fcVPEEditorHint>
 	<fcVPEEditorUnavailable>Could not prepare a preview psycaster for this unit.</fcVPEEditorUnavailable>
+	<fcVPEStatPointsSpent>Stat points spent: {0}</fcVPEStatPointsSpent>
 
 	<!-- Unit Race/PawnKind Errors -->
 	<FCChangeUnitRaceNoRaces>No available races</FCChangeUnitRaceNoRaces>

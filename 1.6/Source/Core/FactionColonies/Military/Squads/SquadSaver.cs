@@ -324,7 +324,9 @@ namespace FactionColonies
             unit.inventory = inventory?.Where(i => i.thing != null).ToList() ?? new List<SavedThing>();
             unit.implants = implants?.Where(im => im.recipe != null).ToList() ?? new List<SavedImplant>();
             unit.psylinkLevel = psylinkLevel;
-            unit.abilities = abilities?.Where(a => !string.IsNullOrEmpty(a.abilityDef)).ToList() ?? new List<SavedAbility>();
+            // Keep def-backed entries (ability/focus) and aggregate entries that carry a kind
+            // (e.g. stat upgrades, which have no defName).
+            unit.abilities = abilities?.Where(a => a.IsValid()).ToList() ?? new List<SavedAbility>();
             unit.statModifiers = statModifiers?.Select(m => m.Clone()).ToList() ?? new List<PermanentStatModifier>();
 
             unit.LoadFromSaved(this);
@@ -689,27 +691,52 @@ namespace FactionColonies
         }
     }
 
-    /* An ability (psycast) chosen for a unit design. Stored by (systemKey, defName) strings rather
-     * than a Def reference so the core assembly never has to reference a foreign ability-def type
-     * (e.g. VFECore.Abilities.AbilityDef): a template designed with VPE loads cleanly even when VPE
-     * is absent — the entry simply resolves to no provider via AbilitySystemRegistry.ByKey and is
-     * skipped. systemKey is the owning IAbilitySystemProvider.Key ("Vanilla" / "VPE"). Paths (VPE)
-     * are re-derived from the ability at apply time, so only the ability defName needs saving. */
+    /* A point-purchase chosen for a unit design within an ability system. Stored by strings rather
+     * than Def references so the core assembly never has to reference a foreign ability-def type
+     * (e.g. VEF.Abilities.AbilityDef): a template designed with VPE loads cleanly even when VPE is
+     * absent — the entry simply resolves to no provider via AbilitySystemRegistry.ByKey and is
+     * skipped. systemKey is the owning IAbilitySystemProvider.Key ("Vanilla" / "VPE").
+     *
+     * The core treats the remaining fields opaquely — only the owning provider interprets them:
+     *   - kind: provider-defined entry type (null/"" == an ability/psycast, for back-compat with
+     *     older saves). VPE also uses "MeditationFocus" and "StatUpgrade".
+     *   - abilityDef: the defName for def-backed entries (ability or meditation focus); empty for
+     *     aggregate entries like stat upgrades.
+     *   - count: multiplicity for aggregate entries (e.g. number of psycaster-stat points); 0 is
+     *     treated as 1. Paths (VPE) are re-derived from the ability at apply time. */
     public struct SavedAbility : IExposable
     {
         public string systemKey;
         public string abilityDef;
+        public string kind;
+        public int count;
 
         public SavedAbility(string systemKey, string abilityDef)
+            : this(systemKey, abilityDef, null, 1) { }
+
+        public SavedAbility(string systemKey, string abilityDef, string kind, int count)
         {
             this.systemKey = systemKey;
             this.abilityDef = abilityDef;
+            this.kind = kind;
+            this.count = count;
+        }
+
+        public bool IsInvalid()
+        {
+            return abilityDef.NullOrEmpty() && kind.NullOrEmpty();
+        }
+        public bool IsValid()
+        {
+            return !IsInvalid();
         }
 
         public void ExposeData()
         {
             Scribe_Values.Look(ref systemKey, "systemKey");
             Scribe_Values.Look(ref abilityDef, "abilityDef");
+            Scribe_Values.Look(ref kind, "kind");
+            Scribe_Values.Look(ref count, "count", 0);
         }
     }
 }

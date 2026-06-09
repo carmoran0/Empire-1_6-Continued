@@ -99,8 +99,10 @@ namespace FactionColonies
             int bn = b?.Count ?? 0;
             if (an != bn) return false;
             if (an == 0) return true;
-            List<string> sa = a.Select(x => x.systemKey + "|" + x.abilityDef).OrderBy(s => s).ToList();
-            List<string> sb = b.Select(x => x.systemKey + "|" + x.abilityDef).OrderBy(s => s).ToList();
+            // Key on every meaningful field so a changed focus or stat-point count (not just a
+            // changed psycast) registers as a difference and offers an upgrade.
+            List<string> sa = a.Select(x => x.systemKey + "|" + x.kind + "|" + x.abilityDef + "|" + x.count).OrderBy(s => s).ToList();
+            List<string> sb = b.Select(x => x.systemKey + "|" + x.kind + "|" + x.abilityDef + "|" + x.count).OrderBy(s => s).ToList();
             for (int i = 0; i < an; i++)
                 if (sa[i] != sb[i]) return false;
             return true;

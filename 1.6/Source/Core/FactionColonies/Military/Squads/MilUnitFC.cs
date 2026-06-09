@@ -419,7 +419,7 @@ namespace FactionColonies
             {
                 IAbilitySystemProvider provider = AbilitySystemRegistry.ByKey(a.systemKey);
                 if (provider is null) continue; // originating system not loaded — skip silently
-                try { provider.GrantAbility(target, a.abilityDef); }
+                try { provider.GrantAbility(target, a); }
                 catch (Exception ex)
                 {
                     LogUtil.Warning($"Failed to grant ability {a.abilityDef} ({a.systemKey}) to {target.LabelShortCap}: {ex.Message}");
@@ -749,7 +749,7 @@ namespace FactionColonies
                 {
                     IAbilitySystemProvider p = AbilitySystemRegistry.ByKey(a.systemKey);
                     AbilityPickEntry e;
-                    return p is object && p.TryGetDisplay(a.abilityDef, out e) && e.level > psylinkLevel;
+                    return p is object && p.TryGetDisplay(a, out e) && e.level > psylinkLevel;
                 });
             }
             MarkIdentityDirty(); // psylink hediff changes pawn identity
@@ -758,21 +758,22 @@ namespace FactionColonies
         }
 
         /// <summary>
-        /// Replaces all ability entries belonging to <paramref name="systemKey"/> with the given set,
+        /// Replaces all entries belonging to <paramref name="systemKey"/> with the given set,
         /// preserving entries from other systems. Used by a provider's custom editor (e.g. VPE) to
-        /// write back the full chosen set when its window closes.
+        /// write back the full chosen set — psycasts, meditation foci, stat upgrades — when its window
+        /// closes. Empty entries (no defName and no kind) are dropped.
         /// </summary>
-        public void SetAbilitiesForSystem(string systemKey, IEnumerable<string> abilityDefNames)
+        public void SetAbilitiesForSystem(string systemKey, IEnumerable<SavedAbility> entries)
         {
             if (string.IsNullOrEmpty(systemKey)) return;
             abilities.RemoveAll(a => a.systemKey == systemKey);
-            if (abilityDefNames is object)
+            if (entries is object)
             {
-                foreach (string defName in abilityDefNames)
+                foreach (SavedAbility e in entries)
                 {
-                    if (string.IsNullOrEmpty(defName)) continue;
-                    if (abilities.Any(a => a.systemKey == systemKey && a.abilityDef == defName)) continue;
-                    abilities.Add(new SavedAbility(systemKey, defName));
+                    if (e.systemKey != systemKey) continue;
+                    if (e.IsInvalid()) continue;
+                    abilities.Add(e);
                 }
             }
             MarkIdentityDirty();
@@ -973,7 +974,7 @@ namespace FactionColonies
         {
             IAbilitySystemProvider provider = AbilitySystemRegistry.ByKey(ability.systemKey);
             AbilityPickEntry entry;
-            if (provider is object && provider.TryGetDisplay(ability.abilityDef, out entry))
+            if (provider is object && provider.TryGetDisplay(ability, out entry))
                 return entry.cost;
             return 0;
         }
