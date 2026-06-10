@@ -828,6 +828,11 @@ namespace FactionColonies
 
             bool missing = sub != null && sub.IsMissingSubPawn;
             bool hasLivePawn = sub?.pawn != null && !missing;
+            // Offer replacement whenever a sub-pawn isn't at full readiness — missing, downed, or
+            // injured. Sub-pawns are expendable, so the player can pay full cost to skip the heal wait.
+            bool fullHealth = hasLivePawn && !sub.pawn.Downed && SquadHealthUtil.CountActiveInjuries(sub.pawn) == 0;
+            bool showReplace = sub != null && sub.subPawnType != Mercenary.SubPawnType.None && !fullHealth;
+            bool showInfo = hasLivePawn;
 
             float px = row.x + AccentBarWidth + CardOuterPad;
             float py = row.y + (row.height - SubPortraitSize) / 2f;
@@ -835,9 +840,26 @@ namespace FactionColonies
             if (hasLivePawn) UIUtil.DrawPawnPortrait(portraitRect, sub.pawn);
             else Widgets.DrawMenuSection(portraitRect);
 
+            /* Lay out the action controls from the right edge: Replace button outermost, info card
+               beside it (to its left) when there's a live pawn to inspect. */
+            float right = row.xMax - CardOuterPad;
+            Rect replaceRect = default(Rect);
+            if (showReplace)
+            {
+                replaceRect = new Rect(right - SubReplaceBtnW, row.y + (row.height - ActionButtonHeight) / 2f,
+                    SubReplaceBtnW, ActionButtonHeight);
+                right = replaceRect.x - SmallGap;
+            }
+            Rect infoRect = default(Rect);
+            if (showInfo)
+            {
+                infoRect = new Rect(right - InfoCardSize, row.y + (row.height - InfoCardSize) / 2f,
+                    InfoCardSize, InfoCardSize);
+                right = infoRect.x - SmallGap;
+            }
+
             float tx = portraitRect.xMax + CardOuterPad;
-            float btnAreaW = missing ? (SubReplaceBtnW + CardOuterPad) : (hasLivePawn ? InfoCardSize + CardOuterPad : 0f);
-            float tw = row.xMax - tx - btnAreaW;
+            float tw = Mathf.Max(20f, right - tx);
 
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
@@ -850,26 +872,21 @@ namespace FactionColonies
             UIUtil.DrawColoredLabel(new Rect(tx, row.y + 18f, tw, 18f),
                 "FCSquadInspectionStatusLabel".Translate(ComputePawnStatus(sub)), accent);
 
-            if (missing)
+            if (showInfo) Widgets.InfoCardButton(infoRect.x, infoRect.y, sub.pawn);
+
+            if (showReplace)
             {
                 int cost = SquadCostExtensions.SubPawnReplaceCost(sub);
-                Rect btn = new Rect(row.xMax - SubReplaceBtnW - CardOuterPad,
-                    row.y + (row.height - ActionButtonHeight) / 2f, SubReplaceBtnW, ActionButtonHeight);
                 bool ownerAlive = sub.handler is null || sub.handler.pawn != null;
                 bool canReplace = !squad.IsBusy && ownerAlive;
-                if (UIUtil.ButtonFlat(btn, "FCSubPawnReplace".Translate(cost), disabled: !canReplace))
+                if (UIUtil.ButtonFlat(replaceRect, "FCSubPawnReplace".Translate(cost), disabled: !canReplace))
                 {
                     ReplaceSubPawnPaid(sub, cost);
                 }
                 if (squad.IsBusy)
-                    TooltipHandler.TipRegion(btn, "FCSquadCannotModifyBusyTip".Translate());
+                    TooltipHandler.TipRegion(replaceRect, "FCSquadCannotModifyBusyTip".Translate());
                 else if (!ownerAlive)
-                    TooltipHandler.TipRegion(btn, "FCSubPawnReplaceOwnerMissingTip".Translate());
-            }
-            else if (hasLivePawn)
-            {
-                float iconY = row.y + (row.height - InfoCardSize) / 2f;
-                Widgets.InfoCardButton(row.xMax - InfoCardSize - CardOuterPad, iconY, sub.pawn);
+                    TooltipHandler.TipRegion(replaceRect, "FCSubPawnReplaceOwnerMissingTip".Translate());
             }
         }
 

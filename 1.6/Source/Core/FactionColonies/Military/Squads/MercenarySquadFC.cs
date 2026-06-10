@@ -405,19 +405,22 @@ namespace FactionColonies
             }
         }
 
-        /// <summary>Recreates the pawn for a "Missing" sub-pawn into its existing wrapper (preserving
-        /// handler + list membership). Caller handles payment. Returns true if a pawn was created.</summary>
+        /// <summary>Recreates the pawn for a sub-pawn into its existing wrapper (preserving handler +
+        /// list membership), tearing down the old pawn first — whether it's a Missing placeholder, a
+        /// corpse, or a live but injured/downed pawn the player chose to replace at full cost. Caller
+        /// handles payment. Returns true if a fresh, alive pawn was created.</summary>
         public bool ReplaceSubPawn(Mercenary sub)
         {
             if (sub is null || sub.subPawnType == Mercenary.SubPawnType.None) return false;
-            // Drop any lingering dead/destroyed pawn first so a failed (re)creation leaves a clean
-            // Missing placeholder rather than the old corpse. CreateNew* writes a fresh pawn on success.
-            if (sub.pawn is object && (sub.pawn.Dead || sub.pawn.Destroyed))
+            // Tear down the existing pawn before recreating. Sever a mech's Overseer bond first (else the
+            // mechanitor keeps a dangling relation), then destroy a still-live pawn we're discarding (a
+            // dead/destroyed one is left to vanilla cleanup). Leaves a clean null on failure.
+            if (sub.pawn is object)
             {
-                // Sever the old mech's Overseer bond before discarding it, else the mechanitor keeps a
-                // dangling relation to the dead mech even after replacement.
+                bool gone = sub.pawn.Dead || sub.pawn.Destroyed;
                 if (sub.subPawnType == Mercenary.SubPawnType.Mech && sub.handler?.pawn != null)
                     MercenaryPawnFactory.UnbondMech(sub.handler.pawn, sub.pawn);
+                if (!gone && !sub.pawn.Destroyed) sub.pawn.Destroy();
                 sub.pawn = null;
             }
             Mercenary slot = sub;
