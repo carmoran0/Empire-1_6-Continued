@@ -481,8 +481,29 @@ namespace FactionColonies
             Rect contentRect = new Rect(contentX, cardRect.y + 4f, contentW, cardRect.height - 8f);
             DrawCardContent(contentRect, slotIndex, merc);
 
+            /* Whole-card click toggles the sub-pawn list. Drawn LAST so the action buttons,
+               info-card, and rename pencil (all in DrawCardContent) consume their clicks first;
+               only clicks that land on inert card area reach this. */
+            if (merc != null && merc.SubPawns().Any())
+            {
+                if (Widgets.ButtonInvisible(cardRect, doMouseoverSound: false)) ToggleExpanded(merc);
+            }
+
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;
+        }
+
+        /// <summary>Compact "1 animal · 5 mechs" summary of a merc's sub-pawns, counting both live
+        /// and Missing wrappers (the assigned roster). Null when the merc has none.</summary>
+        private static string BuildSubPawnBadge(Mercenary merc)
+        {
+            int a = merc?.animals?.Count ?? 0;
+            int m = merc?.mechs?.Count ?? 0;
+            if (a == 0 && m == 0) return null;
+            List<string> parts = new List<string>(2);
+            if (a > 0) parts.Add((a == 1 ? "FCSubPawnBadgeAnimal" : "FCSubPawnBadgeAnimals").Translate(a));
+            if (m > 0) parts.Add((m == 1 ? "FCSubPawnBadgeMech" : "FCSubPawnBadgeMechs").Translate(m));
+            return string.Join(" · ", parts.ToArray());
         }
 
         private void DrawCardContent(Rect rect, int slotIndex, Mercenary merc)
@@ -502,7 +523,8 @@ namespace FactionColonies
             float iconAreaW = (merc?.pawn != null) ? (InfoCardSize + IconButtonSize + 8f) : 0f;
             float headerH = 22f;
 
-            /* Expand/collapse arrow — only when this merc has sub-pawns (animals/mechs). */
+            /* Expand/collapse arrow — only when this merc has sub-pawns (animals/mechs). Visual
+               only; the whole card is the click target (see DrawPawnCard). */
             float headerX = rect.x;
             bool hasSubPawns = merc != null && merc.SubPawns().Any();
             if (hasSubPawns)
@@ -512,12 +534,38 @@ namespace FactionColonies
                 Text.Anchor = TextAnchor.MiddleCenter;
                 UIUtil.DrawColoredLabel(arrowRect, IsExpanded(merc) ? "▼" : "▶", new Color(1f, 1f, 1f, 0.7f));
                 Text.Anchor = arrowAnchorBefore;
-                if (Widgets.ButtonInvisible(arrowRect)) ToggleExpanded(merc);
                 headerX += ExpandArrowSize + 2f;
             }
 
-            Rect headerRect = new Rect(headerX, y, rect.xMax - headerX - iconAreaW, headerH);
+            float nameW = Text.CalcSize(headerText).x;
+            float availW = rect.xMax - headerX - iconAreaW;
+            Rect headerRect = new Rect(headerX, y, Mathf.Min(nameW + 2f, availW), headerH);
             Widgets.Label(headerRect, headerText);
+
+            /* Sub-pawn count badge (e.g. "1 animal · 5 mechs") to the right of the name. */
+            if (hasSubPawns)
+            {
+                string badge = BuildSubPawnBadge(merc);
+                if (badge != null)
+                {
+                    Text.Font = GameFont.Tiny;
+                    float badgeTextW = Text.CalcSize(badge).x;
+                    float badgePad = 5f;
+                    float badgeW = badgeTextW + badgePad * 2f;
+                    float badgeX = headerRect.xMax + 6f;
+                    float badgeH = 16f;
+                    if (badgeX + badgeW <= rect.xMax - iconAreaW)
+                    {
+                        Rect badgeRect = new Rect(badgeX, y + (headerH - badgeH) / 2f, badgeW, badgeH);
+                        Widgets.DrawBoxSolid(badgeRect, new Color(1f, 1f, 1f, 0.08f));
+                        TextAnchor badgeAnchorBefore = Text.Anchor;
+                        Text.Anchor = TextAnchor.MiddleCenter;
+                        UIUtil.DrawColoredLabel(badgeRect, badge, new Color(0.75f, 0.85f, 1f, 0.9f));
+                        Text.Anchor = badgeAnchorBefore;
+                    }
+                    Text.Font = GameFont.Small;
+                }
+            }
 
             if (merc?.pawn != null)
             {

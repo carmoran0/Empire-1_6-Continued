@@ -390,6 +390,10 @@ Please report this if you don't get your colonists sent to defend back, or your 
 	<FCSubPawnStatusMissing>Missing</FCSubPawnStatusMissing>
 	<FCSubPawnReplace>Replace (${0})</FCSubPawnReplace>
 	<FCSubPawnReplaceOwnerMissingTip>The owning mercenary must be present before this companion can be replaced. Refill the merc slot first.</FCSubPawnReplaceOwnerMissingTip>
+	<FCSubPawnBadgeAnimal>{0} animal</FCSubPawnBadgeAnimal>
+	<FCSubPawnBadgeAnimals>{0} animals</FCSubPawnBadgeAnimals>
+	<FCSubPawnBadgeMech>{0} mech</FCSubPawnBadgeMech>
+	<FCSubPawnBadgeMechs>{0} mechs</FCSubPawnBadgeMechs>
 	<FCSquadInspectionEditLoadout>Edit Loadout</FCSquadInspectionEditLoadout>
 	<FCSquadInspectionPerSlotUpgrade>Upgrade ${0}</FCSquadInspectionPerSlotUpgrade>
 	<FCSquadInspectionPerSlotFill>Fill (${0})</FCSquadInspectionPerSlotFill>
