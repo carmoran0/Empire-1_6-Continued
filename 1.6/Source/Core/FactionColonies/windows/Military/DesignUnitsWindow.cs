@@ -88,8 +88,11 @@ namespace FactionColonies
 
                 DrawGearPanel(gearRect);
 
+                // The gear panel (left) has fixed-height content, but the loadout panel (the tabbed
+                // equipment list) should fill the rest of the window height — otherwise there's dead
+                // space below it.
                 Rect loadoutRect = new Rect(gearRect.xMax + 10f, gearRect.y,
-                    rightEdge - gearRect.xMax - 10f, gearRect.height);
+                    rightEdge - gearRect.xMax - 10f, contentBottom - gearRect.y);
                 DrawLoadoutPanel(loadoutRect, selectedUnit);
             }
 
