@@ -121,14 +121,16 @@ namespace FactionColonies
                 }
             }
 
+            ScrollUtil.EndScrollView();
+
+            // Empty-state label: drawn AFTER EndScrollView so it centers in the visible box
+            // (drawing it inside the scroll view's translated space pushes it awkwardly low).
             if (mechKinds.Count == 0)
             {
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleCenter;
                 Widgets.Label(scrollOutRect, "fcNoMechsAvailable".Translate());
             }
-
-            ScrollUtil.EndScrollView();
 
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;

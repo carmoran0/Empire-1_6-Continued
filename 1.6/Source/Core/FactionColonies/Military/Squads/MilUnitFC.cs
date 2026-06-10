@@ -464,7 +464,11 @@ namespace FactionColonies
             {
                 if (!target.health.hediffSet.HasHediff(HediffDefOf.MechlinkImplant))
                     target.health.AddHediff(HediffDefOf.MechlinkImplant);
-                PawnComponentsUtility.AddAndRemoveDynamicComponents(target);
+                // Empire is an allied NPC faction, not the player, so MechanitorUtility.ShouldBeMechanitor
+                // is false for these pawns — PawnComponentsUtility.AddAndRemoveDynamicComponents would
+                // refuse to create the tracker (and would even null an existing one). Create it directly.
+                if (target.mechanitor is null)
+                    target.mechanitor = new Pawn_MechanitorTracker(target);
             }
             catch (Exception ex)
             {

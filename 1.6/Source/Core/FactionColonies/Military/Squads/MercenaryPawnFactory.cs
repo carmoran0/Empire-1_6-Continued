@@ -55,8 +55,11 @@ namespace FactionColonies
             try
             {
                 overseer.relations.AddDirectRelation(PawnRelationDefOf.Overseer, mech);
-                MechanitorControlGroup group = overseer.mechanitor.GetControlGroup(mech);
-                if (group != null) group.SetWorkMode(workMode ?? MechWorkModeDefOf.Escort);
+                // Empire mechanitors aren't the player faction, so PawnRelationWorker_Overseer won't
+                // auto-assign a control group (IsMechanitor gates on player faction). Assign directly —
+                // this also creates the control groups from MechControlGroups, sets the work mode, and
+                // refreshes bandwidth.
+                overseer.mechanitor.AssignPawnControlGroup(mech, workMode ?? MechWorkModeDefOf.Escort);
             }
             catch (Exception ex)
             {

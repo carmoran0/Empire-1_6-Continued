@@ -83,18 +83,27 @@ namespace FactionColonies
             // --- Bandwidth summary + work-mode chooser + add button ---
             float used = displayUnit?.UsedMechBandwidth ?? 0f;
             float total = displayUnit?.TotalMechBandwidth ?? 0f;
-            Rect bwRect = new Rect(rect.x, toggleRect.yMax + 2f, rect.width * 0.5f, headerHeight);
+            Rect bwRect = new Rect(rect.x, toggleRect.yMax + 2f, rect.width, headerHeight);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
             if (used > total + 0.0001f) GUI.color = ColorLibrary.RedReadable;
             Widgets.Label(bwRect, "fcMechBandwidth".Translate(used.ToString("0.#"), total.ToString("0.#")));
             GUI.color = Color.white;
 
+            // Buttons row below the bandwidth label: work-mode chooser (left, wide) + Add Mech (right).
+            float buttonsY = bwRect.yMax + 2f;
             if (editable)
             {
-                // Work-mode chooser (opens a FloatMenu of MechWorkModeDefs).
-                float wmW = 150f;
-                Rect wmRect = new Rect(bwRect.xMax, bwRect.y, wmW, headerHeight);
+                float addW = 110f;
+                Rect addBtnRect = new Rect(rect.xMax - addW, buttonsY, addW, headerHeight);
+                if (Widgets.ButtonText(addBtnRect, "fcAddMech".Translate()))
+                {
+                    Func<MilUnitFC> getDisplay = opts.getDisplayUnit ?? (() => displayUnit);
+                    Find.WindowStack.Add(new FCWindow_MechPicker(getDisplay, opts.getEditTarget));
+                }
+
+                // Work-mode chooser (opens a FloatMenu of MechWorkModeDefs). Fills the row up to the Add button.
+                Rect wmRect = new Rect(rect.x, buttonsY, addBtnRect.x - rect.x - 6f, headerHeight);
                 MechWorkModeDef curMode = displayUnit?.ResolvedMechWorkMode;
                 Text.Anchor = TextAnchor.MiddleCenter;
                 if (Widgets.ButtonText(wmRect, "fcMechWorkMode".Translate() + ": " + (curMode?.LabelCap.ToString() ?? "")))
@@ -111,19 +120,11 @@ namespace FactionColonies
                     }
                     if (modeOpts.Count > 0) Find.WindowStack.Add(new FloatMenu(modeOpts));
                 }
-
-                // Add mech button (right-aligned).
-                float addW = 110f;
-                Rect addBtnRect = new Rect(rect.xMax - addW, bwRect.y, addW, headerHeight);
-                if (Widgets.ButtonText(addBtnRect, "fcAddMech".Translate()))
-                {
-                    Func<MilUnitFC> getDisplay = opts.getDisplayUnit ?? (() => displayUnit);
-                    Find.WindowStack.Add(new FCWindow_MechPicker(getDisplay, opts.getEditTarget));
-                }
             }
 
             // --- Assigned mech list ---
-            Rect listOutRect = new Rect(rect.x, bwRect.yMax + 4f, rect.width, rect.height - (bwRect.yMax + 4f - rect.y));
+            float listTop = (editable ? buttonsY + headerHeight : bwRect.yMax) + 4f;
+            Rect listOutRect = new Rect(rect.x, listTop, rect.width, rect.height - (listTop - rect.y));
             List<SavedMech> items = displayUnit?.mechs ?? new List<SavedMech>();
             float viewHeight = items.Count * rowHeight;
             Rect scrollViewRect = ScrollUtil.BeginScrollView(listOutRect, ref scrollPos, viewHeight);
