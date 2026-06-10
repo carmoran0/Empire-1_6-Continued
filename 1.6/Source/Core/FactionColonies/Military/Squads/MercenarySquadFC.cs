@@ -380,7 +380,7 @@ namespace FactionColonies
                     else
                     {
                         foreach (Mercenary sub in m.SubPawns())
-                            if (sub.subPawnType != Mercenary.SubPawnType.None && sub.pawn is null) n++;
+                            if (sub.IsMissingSubPawn) n++;
                     }
                 }
                 return n;
@@ -396,7 +396,7 @@ namespace FactionColonies
             {
                 if (m?.pawn is null) continue; // owner must be alive to restore its sub-pawns
                 foreach (Mercenary sub in m.SubPawns())
-                    if (sub.subPawnType != Mercenary.SubPawnType.None && sub.pawn is null) yield return sub;
+                    if (sub.IsMissingSubPawn) yield return sub;
             }
         }
 
@@ -405,6 +405,9 @@ namespace FactionColonies
         public bool ReplaceSubPawn(Mercenary sub)
         {
             if (sub is null || sub.subPawnType == Mercenary.SubPawnType.None) return false;
+            // Drop any lingering dead/destroyed pawn first so a failed (re)creation leaves a clean
+            // Missing placeholder rather than the old corpse. CreateNew* writes a fresh pawn on success.
+            if (sub.pawn is object && (sub.pawn.Dead || sub.pawn.Destroyed)) sub.pawn = null;
             Mercenary slot = sub;
             if (sub.subPawnType == Mercenary.SubPawnType.Animal)
             {
@@ -416,7 +419,7 @@ namespace FactionColonies
                 if (overseer is null) return false; // mech needs a live mechanitor overseer
                 MercenaryPawnFactory.CreateNewMech(this, ref slot, sub.subPawnKind, overseer, sub.subPawnMechGroup, sub.subPawnWorkMode);
             }
-            return slot.pawn is object;
+            return slot.pawn is object && !slot.pawn.Dead;
         }
 
         /// <summary>Pays <see cref="SquadCostExtensions.FillEmptySlotsCost"/> silver and generates fresh

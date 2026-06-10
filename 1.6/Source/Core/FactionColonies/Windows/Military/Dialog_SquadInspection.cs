@@ -493,17 +493,61 @@ namespace FactionColonies
             Text.Anchor = anchorBefore;
         }
 
-        /// <summary>Compact "1 animal · 5 mechs" summary of a merc's sub-pawns, counting both live
-        /// and Missing wrappers (the assigned roster). Null when the merc has none.</summary>
+        /// <summary>Compact roster + condition summary of a merc's sub-pawns, e.g.
+        /// "1 animal (downed) · 5 mechs (1 downed, 1 missing)". Counts both live and Missing
+        /// wrappers (the assigned roster). Null when the merc has none.</summary>
         private static string BuildSubPawnBadge(Mercenary merc)
         {
-            int a = merc?.animals?.Count ?? 0;
-            int m = merc?.mechs?.Count ?? 0;
-            if (a == 0 && m == 0) return null;
-            List<string> parts = new List<string>(2);
-            if (a > 0) parts.Add((a == 1 ? "FCSubPawnBadgeAnimal" : "FCSubPawnBadgeAnimals").Translate(a));
-            if (m > 0) parts.Add((m == 1 ? "FCSubPawnBadgeMech" : "FCSubPawnBadgeMechs").Translate(m));
-            return string.Join(" · ", parts.ToArray());
+            if (merc is null) return null;
+            string a = SubTypeBadgeSegment(merc.animals, "FCSubPawnBadgeAnimal", "FCSubPawnBadgeAnimals");
+            string m = SubTypeBadgeSegment(merc.mechs, "FCSubPawnBadgeMech", "FCSubPawnBadgeMechs");
+            if (a is null) return m;
+            if (m is null) return a;
+            return a + " · " + m;
+        }
+
+        /// <summary>One badge segment for a sub-pawn type: count head plus a parenthesized condition
+        /// note when any are downed / missing / injured. For a single sub-pawn the note uses bare
+        /// words ("(downed)"); for several it uses counts ("(1 downed, 1 missing)").</summary>
+        private static string SubTypeBadgeSegment(List<Mercenary> subs, string singularKey, string pluralKey)
+        {
+            if (subs is null || subs.Count == 0) return null;
+            int total = subs.Count;
+            string head = (total == 1 ? singularKey : pluralKey).Translate(total);
+
+            int missing = 0, downed = 0, injured = 0;
+            foreach (Mercenary s in subs)
+            {
+                if (s is null) continue;
+                if (s.IsMissingSubPawn) { missing++; continue; }
+                if (s.pawn is null) continue;
+                if (s.pawn.Downed) { downed++; continue; }
+                if (SquadHealthUtil.CountActiveInjuries(s.pawn) > 0) injured++;
+            }
+            if (missing == 0 && downed == 0 && injured == 0) return head;
+
+            bool bare = total == 1; // "1 animal (downed)" rather than "1 animal (1 downed)"
+            List<string> parts = new List<string>(3);
+            if (downed > 0) parts.Add(bare ? (string)"FCSubPawnWordDowned".Translate() : (string)"FCSubPawnSummaryDowned".Translate(downed));
+            if (missing > 0) parts.Add(bare ? (string)"FCSubPawnWordMissing".Translate() : (string)"FCSubPawnSummaryMissing".Translate(missing));
+            if (injured > 0) parts.Add(bare ? (string)"FCSubPawnWordInjured".Translate() : (string)"FCSubPawnSummaryInjured".Translate(injured));
+            return head + " (" + string.Join(", ", parts.ToArray()) + ")";
+        }
+
+        /// <summary>Badge text color: the worst sub-pawn severity (missing/downed → red, etc.), or a
+        /// neutral blue when all sub-pawns are healthy.</summary>
+        private static Color SubPawnBadgeColor(Mercenary merc)
+        {
+            Color worst = AccentUtil.MilReady;
+            if (merc != null)
+            {
+                foreach (Mercenary sub in merc.SubPawns())
+                {
+                    Color c = sub != null && sub.IsMissingSubPawn ? AccentUtil.MilUnderAttack : GetPawnAccent(sub);
+                    if (AccentRank(c) > AccentRank(worst)) worst = c;
+                }
+            }
+            return AccentRank(worst) == 0 ? new Color(0.75f, 0.85f, 1f, 0.9f) : worst;
         }
 
         private void DrawCardContent(Rect rect, int slotIndex, Mercenary merc)
@@ -542,25 +586,26 @@ namespace FactionColonies
             Rect headerRect = new Rect(headerX, y, Mathf.Min(nameW + 2f, availW), headerH);
             Widgets.Label(headerRect, headerText);
 
-            /* Sub-pawn count badge (e.g. "1 animal · 5 mechs") to the right of the name. */
+            /* Sub-pawn roster/condition badge (e.g. "1 animal (downed) · 5 mechs (1 downed, 1 missing)")
+               to the right of the name. Colored by the worst sub-pawn severity. */
             if (hasSubPawns)
             {
                 string badge = BuildSubPawnBadge(merc);
                 if (badge != null)
                 {
                     Text.Font = GameFont.Tiny;
-                    float badgeTextW = Text.CalcSize(badge).x;
                     float badgePad = 5f;
-                    float badgeW = badgeTextW + badgePad * 2f;
                     float badgeX = headerRect.xMax + 6f;
                     float badgeH = 16f;
-                    if (badgeX + badgeW <= rect.xMax - iconAreaW)
+                    float maxW = rect.xMax - iconAreaW - badgeX;
+                    if (maxW > 24f)
                     {
+                        float badgeW = Mathf.Min(Text.CalcSize(badge).x + badgePad * 2f, maxW);
                         Rect badgeRect = new Rect(badgeX, y + (headerH - badgeH) / 2f, badgeW, badgeH);
                         Widgets.DrawBoxSolid(badgeRect, new Color(1f, 1f, 1f, 0.08f));
                         TextAnchor badgeAnchorBefore = Text.Anchor;
                         Text.Anchor = TextAnchor.MiddleCenter;
-                        UIUtil.DrawColoredLabel(badgeRect, badge, new Color(0.75f, 0.85f, 1f, 0.9f));
+                        UIUtil.DrawColoredLabel(badgeRect, badge, SubPawnBadgeColor(merc));
                         Text.Anchor = badgeAnchorBefore;
                     }
                     Text.Font = GameFont.Small;
@@ -602,10 +647,12 @@ namespace FactionColonies
             }
             y += lineH;
 
-            /* Status line — colored to reinforce the accent */
-            string statusText = "FCSquadInspectionStatusLabel".Translate(ComputeMercStatus(merc));
+            /* Status line — the merc's own state (sub-pawn problems live in the badge above).
+               Colored by the merc's own accent so "OK" stays green; the left card bar still
+               rolls up sub-pawn trouble via GetSlotAccent. */
+            string statusText = "FCSquadInspectionStatusLabel".Translate(ComputePawnStatus(merc));
             Rect statusRect = new Rect(rect.x, y, rect.width, lineH);
-            UIUtil.DrawColoredLabel(statusRect, statusText, GetSlotAccent(merc));
+            UIUtil.DrawColoredLabel(statusRect, statusText, GetPawnAccent(merc));
 
 
             /* Action buttons (right-aligned, vertically centered) */
@@ -699,18 +746,14 @@ namespace FactionColonies
 
         /*-*-*-*-* Status / accent helpers *-*-*-*-*/
 
-        private string ComputeMercStatus(Mercenary merc) => ComputePawnStatus(merc);
-
-        /// <summary>Status text for any wrapper — top-level merc or sub-pawn. A sub-pawn with no
-        /// pawn reads "Missing" (assigned but absent, awaiting paid replacement); a merc empty
-        /// slot reads "Empty".</summary>
+        /// <summary>Status text for any wrapper — top-level merc or sub-pawn. A sub-pawn whose pawn
+        /// is gone (null / dead / destroyed) reads "Missing" (awaiting paid replacement); a merc
+        /// empty slot reads "Empty".</summary>
         private static string ComputePawnStatus(Mercenary m)
         {
             if (m is null) return "FCSquadInspectionStatusEmpty".Translate();
-            if (m.pawn is null)
-                return m.subPawnType != Mercenary.SubPawnType.None
-                    ? (string)"FCSubPawnStatusMissing".Translate()
-                    : (string)"FCSquadInspectionStatusEmpty".Translate();
+            if (m.IsMissingSubPawn) return "FCSubPawnStatusMissing".Translate();
+            if (m.pawn is null) return "FCSquadInspectionStatusEmpty".Translate();
             if (m.pawn.Dead) return "FCSquadInspectionStatusDead".Translate();
             if (m.pawn.Downed) return "FCSquadInspectionStatusDowned".Translate();
             int injuries = SquadHealthUtil.CountActiveInjuries(m.pawn);
@@ -718,20 +761,47 @@ namespace FactionColonies
             return "FCSquadInspectionStatusOk".Translate();
         }
 
-        private static Color GetSlotAccent(Mercenary merc) => GetPawnAccent(merc);
+        /// <summary>Merc card accent: the most severe accent among the merc and its sub-pawns, so a
+        /// healthy merc with a downed/missing companion still shows an alarmed bar.</summary>
+        private static Color GetSlotAccent(Mercenary merc)
+        {
+            Color worst = GetPawnAccent(merc);
+            if (merc != null)
+            {
+                foreach (Mercenary sub in merc.SubPawns())
+                {
+                    // Surface a missing/dead sub-pawn as red (its own row stays gray), so the merc
+                    // card flags it even though "gone" is otherwise a low-key gray.
+                    Color c = sub != null && sub.IsMissingSubPawn ? AccentUtil.MilUnderAttack : GetPawnAccent(sub);
+                    if (AccentRank(c) > AccentRank(worst)) worst = c;
+                }
+            }
+            return worst;
+        }
 
-        /// <summary>Health-driven accent for the left edge of a card or sub-pawn row.
-        /// Empty / dead / Missing → gray, downed → red, heavy injuries → orange,
+        /// <summary>Health-driven accent for a single pawn wrapper (sub-pawn row or a merc's own
+        /// state). Empty / dead / Missing → gray, downed → red, heavy injuries → orange,
         /// light injuries → yellow, healthy → green.</summary>
         private static Color GetPawnAccent(Mercenary m)
         {
-            if (m is null || m.pawn is null) return AccentUtil.MilInactive;
+            if (m is null || m.IsMissingSubPawn) return AccentUtil.MilInactive;
+            if (m.pawn is null) return AccentUtil.MilInactive;
             if (m.pawn.Dead) return AccentUtil.MilInactive;
             if (m.pawn.Downed) return AccentUtil.MilUnderAttack;
             int injuries = SquadHealthUtil.CountActiveInjuries(m.pawn);
             if (injuries >= 3) return AccentUtil.MilActiveMission;
             if (injuries >= 1) return AccentUtil.MilCooldown;
             return AccentUtil.MilReady;
+        }
+
+        /// <summary>Severity ordering for accent roll-up: green &lt; gray &lt; yellow &lt; orange &lt; red.</summary>
+        private static int AccentRank(Color c)
+        {
+            if (c == AccentUtil.MilUnderAttack) return 4;
+            if (c == AccentUtil.MilActiveMission) return 3;
+            if (c == AccentUtil.MilCooldown) return 2;
+            if (c == AccentUtil.MilInactive) return 1;
+            return 0; // MilReady
         }
 
         /*-*-*-*-* Sub-pawn list (animals + mechs) *-*-*-*-*/
@@ -756,20 +826,22 @@ namespace FactionColonies
             Color accent = GetPawnAccent(sub);
             Widgets.DrawBoxSolid(new Rect(row.x, row.y, AccentBarWidth, row.height), accent);
 
+            bool missing = sub != null && sub.IsMissingSubPawn;
+            bool hasLivePawn = sub?.pawn != null && !missing;
+
             float px = row.x + AccentBarWidth + CardOuterPad;
             float py = row.y + (row.height - SubPortraitSize) / 2f;
             Rect portraitRect = new Rect(px, py, SubPortraitSize, SubPortraitSize);
-            if (sub?.pawn != null) UIUtil.DrawPawnPortrait(portraitRect, sub.pawn);
+            if (hasLivePawn) UIUtil.DrawPawnPortrait(portraitRect, sub.pawn);
             else Widgets.DrawMenuSection(portraitRect);
 
             float tx = portraitRect.xMax + CardOuterPad;
-            bool missing = sub != null && sub.pawn is null;
-            float btnAreaW = missing ? (SubReplaceBtnW + CardOuterPad) : (sub?.pawn != null ? InfoCardSize + CardOuterPad : 0f);
+            float btnAreaW = missing ? (SubReplaceBtnW + CardOuterPad) : (hasLivePawn ? InfoCardSize + CardOuterPad : 0f);
             float tw = row.xMax - tx - btnAreaW;
 
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            string name = sub?.pawn != null
+            string name = hasLivePawn
                 ? sub.pawn.LabelShortCap
                 : (string)(sub?.subPawnKind?.LabelCap ?? "FCSquadInspectionEmptyPawn".Translate());
             Widgets.Label(new Rect(tx, row.y, tw, 20f), name);
@@ -794,7 +866,7 @@ namespace FactionColonies
                 else if (!ownerAlive)
                     TooltipHandler.TipRegion(btn, "FCSubPawnReplaceOwnerMissingTip".Translate());
             }
-            else if (sub?.pawn != null)
+            else if (hasLivePawn)
             {
                 float iconY = row.y + (row.height - InfoCardSize) / 2f;
                 Widgets.InfoCardButton(row.xMax - InfoCardSize - CardOuterPad, iconY, sub.pawn);

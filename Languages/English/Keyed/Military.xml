@@ -394,6 +394,12 @@ Please report this if you don't get your colonists sent to defend back, or your 
 	<FCSubPawnBadgeAnimals>{0} animals</FCSubPawnBadgeAnimals>
 	<FCSubPawnBadgeMech>{0} mech</FCSubPawnBadgeMech>
 	<FCSubPawnBadgeMechs>{0} mechs</FCSubPawnBadgeMechs>
+	<FCSubPawnSummaryDowned>{0} downed</FCSubPawnSummaryDowned>
+	<FCSubPawnSummaryMissing>{0} missing</FCSubPawnSummaryMissing>
+	<FCSubPawnSummaryInjured>{0} injured</FCSubPawnSummaryInjured>
+	<FCSubPawnWordDowned>downed</FCSubPawnWordDowned>
+	<FCSubPawnWordMissing>missing</FCSubPawnWordMissing>
+	<FCSubPawnWordInjured>injured</FCSubPawnWordInjured>
 	<FCSquadInspectionEditLoadout>Edit Loadout</FCSquadInspectionEditLoadout>
 	<FCSquadInspectionPerSlotUpgrade>Upgrade ${0}</FCSquadInspectionPerSlotUpgrade>
 	<FCSquadInspectionPerSlotFill>Fill (${0})</FCSquadInspectionPerSlotFill>

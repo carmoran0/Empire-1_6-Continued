@@ -48,6 +48,12 @@ namespace FactionColonies
         public int subPawnMechGroup;             // mech control group (animals: 0)
         public MechWorkModeDef subPawnWorkMode;  // mech work mode (animals: null)
 
+        /// <summary>A sub-pawn that needs paid replacement: it's assigned but its pawn is gone —
+        /// never created, dead, or destroyed. Distinct from a downed/injured sub-pawn, which heals.
+        /// Always false for a top-level merc (handled by the empty-slot path instead).</summary>
+        public bool IsMissingSubPawn =>
+            subPawnType != SubPawnType.None && (pawn is null || pawn.Dead || pawn.Destroyed);
+
         /// <summary>Live and placeholder sub-pawn wrappers owned by this merc (animals first, then mechs).</summary>
         public IEnumerable<Mercenary> SubPawns()
         {
