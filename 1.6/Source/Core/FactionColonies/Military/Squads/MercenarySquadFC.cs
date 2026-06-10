@@ -113,6 +113,9 @@ namespace FactionColonies
 
         public virtual void ExposeData()
         {
+            // Pre-save: sever bonds to dead mechs so no mechanitor saves a relation to an unsaved pawn.
+            if (Scribe.mode == LoadSaveMode.Saving) CleanupMechBonds();
+
             Scribe_Values.Look(ref loadID, "loadID", -1);
             Scribe_Values.Look(ref name, "name");
             Scribe_Collections.Look(ref mercenaries, "mercenaries", LookMode.Deep);
@@ -147,6 +150,8 @@ namespace FactionColonies
                 if (statModifiers is null) statModifiers = new List<PermanentStatModifier>();
                 RedistributeLegacyAnimals(_legacyAnimals);
                 _legacyAnimals = null;
+                // Repair any dangling Overseer relations a broken save left in memory (and reap dead mechs).
+                CleanupMechBonds();
                 if (Equipment is null) Equipment = CreateEquipment();
                 Equipment.AdoptLegacyLists(_legacyUsedWeaponList, _legacyUsedApparelList);
                 _legacyUsedWeaponList = null;
@@ -407,7 +412,14 @@ namespace FactionColonies
             if (sub is null || sub.subPawnType == Mercenary.SubPawnType.None) return false;
             // Drop any lingering dead/destroyed pawn first so a failed (re)creation leaves a clean
             // Missing placeholder rather than the old corpse. CreateNew* writes a fresh pawn on success.
-            if (sub.pawn is object && (sub.pawn.Dead || sub.pawn.Destroyed)) sub.pawn = null;
+            if (sub.pawn is object && (sub.pawn.Dead || sub.pawn.Destroyed))
+            {
+                // Sever the old mech's Overseer bond before discarding it, else the mechanitor keeps a
+                // dangling relation to the dead mech even after replacement.
+                if (sub.subPawnType == Mercenary.SubPawnType.Mech && sub.handler?.pawn != null)
+                    MercenaryPawnFactory.UnbondMech(sub.handler.pawn, sub.pawn);
+                sub.pawn = null;
+            }
             Mercenary slot = sub;
             if (sub.subPawnType == Mercenary.SubPawnType.Animal)
             {
@@ -554,8 +566,57 @@ namespace FactionColonies
             {
                 Mercenary m = owner.mechs[i];
                 if (m is null) continue;
+                // Sever the Overseer bond before discarding the mech so the mechanitor never keeps a
+                // dangling relation to a destroyed pawn.
+                if (owner.pawn != null && m.pawn != null) MercenaryPawnFactory.UnbondMech(owner.pawn, m.pawn);
                 if (m.pawn != null && !m.pawn.Destroyed) m.pawn.Destroy();
                 owner.mechs.RemoveAt(i);
+            }
+        }
+
+        /// <summary>Severs Overseer bonds to dead/destroyed mechs (reaping the wrappers to clean Missing
+        /// placeholders) and scrubs any leftover dangling Overseer relations from mechanitor mercs. Keeps
+        /// a mechanitor from saving a relation to a no-longer-saved mech, which NREs in
+        /// <c>Pawn_RelationsTracker.ExposeData</c> on load. Run before save and after load.</summary>
+        public void CleanupMechBonds()
+        {
+            if (!ModsConfig.BiotechActive || mercenaries is null) return;
+            foreach (Mercenary merc in mercenaries)
+            {
+                Pawn overseer = merc?.pawn;
+                if (overseer is null) continue;
+
+                // Reap dead/destroyed mechs into clean Missing placeholders: unassign from control
+                // groups (best-effort) and null the wrapper. The Overseer relation is stripped below.
+                if (merc.mechs != null)
+                {
+                    foreach (Mercenary mech in merc.mechs)
+                    {
+                        if (mech?.pawn is null) continue;
+                        if (mech.pawn.Dead || mech.pawn.Destroyed)
+                        {
+                            try { overseer.mechanitor?.UnassignPawnFromAnyControlGroup(mech.pawn); }
+                            catch (Exception e) { LogUtil.Warning($"Failed to unassign dead mech control group: {e.Message}"); }
+                            mech.pawn = null;
+                        }
+                    }
+                }
+
+                // Strip broken / dangling Overseer relations DIRECTLY from the list. We can't use
+                // TryRemoveDirectRelation here: it dereferences otherPawn.relations, which is null for a
+                // destroyed mech → NRE (the whole reason this cleanup exists). Live mechs keep their
+                // relation (otherPawn alive, tracker present).
+                List<DirectPawnRelation> rels = overseer.relations?.DirectRelations;
+                if (rels is null) continue;
+                for (int i = rels.Count - 1; i >= 0; i--)
+                {
+                    DirectPawnRelation r = rels[i];
+                    if (r is null || r.def is null) { rels.RemoveAt(i); continue; }
+                    if (r.def != PawnRelationDefOf.Overseer) continue;
+                    Pawn other = r.otherPawn;
+                    if (other is null || other.Dead || other.Destroyed || other.relations is null)
+                        rels.RemoveAt(i);
+                }
             }
         }
 

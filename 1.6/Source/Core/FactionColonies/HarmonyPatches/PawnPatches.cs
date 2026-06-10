@@ -47,12 +47,7 @@ namespace FactionColonies
                         // Not a top-level merc — it's a sub-pawn (animal or mech). Leave the wrapper
                         // in place as a "Missing" placeholder (identity preserved) so the player pays
                         // to replace it; just null the pawn. Neither animals nor mechs are free-replaced.
-                        Mercenary sub = mfc.FindSubPawnWrapper(__instance);
-                        if (sub != null)
-                        {
-                            sub.pawn = null;
-                            FindFC.Military?.RebuildMercenaryPawnSet();
-                        }
+                        NullDeadSubPawn(mfc.FindSubPawnWrapper(__instance));
                     }
 
                     // Anti-exploit: sweep gear this squad dropped/left behind so it can't be looted.
@@ -63,15 +58,8 @@ namespace FactionColonies
                     // ReturnSquadFromUnit only matches on-map pawns; a sub-pawn can die off-map.
                     // Fall back to a global, map-independent sub-pawn lookup before warning.
                     Mercenary sub = mfc.FindSubPawnWrapper(__instance);
-                    if (sub != null)
-                    {
-                        sub.pawn = null;
-                        FindFC.Military?.RebuildMercenaryPawnSet();
-                    }
-                    else
-                    {
-                        LogUtil.Warning("Mercenary Errored out. Did not find squad.");
-                    }
+                    if (sub != null) NullDeadSubPawn(sub);
+                    else LogUtil.Warning("Mercenary Errored out. Did not find squad.");
                 }
 
                 // Anti-exploit: destroy the dying merc's own gear. When disabled, the gear (and the
@@ -85,6 +73,17 @@ namespace FactionColonies
             }
 
             return true;
+        }
+
+        /// <summary>Turns a dead sub-pawn wrapper into a "Missing" placeholder: severs a mech's Overseer
+        /// bond (so the mechanitor doesn't keep a relation to the unsaved mech) and nulls the pawn.</summary>
+        static void NullDeadSubPawn(Mercenary sub)
+        {
+            if (sub is null) return;
+            if (sub.subPawnType == Mercenary.SubPawnType.Mech && sub.handler?.pawn != null && sub.pawn != null)
+                MercenaryPawnFactory.UnbondMech(sub.handler.pawn, sub.pawn);
+            sub.pawn = null;
+            FindFC.Military?.RebuildMercenaryPawnSet();
         }
     }
 

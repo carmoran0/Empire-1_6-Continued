@@ -88,6 +88,44 @@ namespace FactionColonies
             merc.subPawnWorkMode = workMode;
         }
 
+        /// <summary>Reverses <see cref="CreateNewMech"/>'s bond: unassigns <paramref name="mech"/> from the
+        /// overseer's control groups and removes the Overseer direct relation. Must run whenever a bonded
+        /// mech dies, is destroyed, or is replaced — otherwise the (still-saved) mechanitor keeps a relation
+        /// to a no-longer-saved mech, which NREs in Pawn_RelationsTracker.ExposeData on the next load.</summary>
+        public static void UnbondMech(Pawn overseer, Pawn mech)
+        {
+            if (overseer is null || mech is null) return;
+            try { overseer.mechanitor?.UnassignPawnFromAnyControlGroup(mech); }
+            catch (Exception ex) { LogUtil.Warning($"Failed to unassign mech control group: {ex.Message}"); }
+
+            Pawn_RelationsTracker rel = overseer.relations;
+            if (rel is null) return;
+            try
+            {
+                // A destroyed mech has a null relations tracker; TryRemoveDirectRelation dereferences
+                // otherPawn.relations and would NRE, so strip the relation directly from the overseer's
+                // list. For a live mech, use the proper API (handles the reverse link + caches).
+                if (mech.relations != null)
+                {
+                    rel.TryRemoveDirectRelation(PawnRelationDefOf.Overseer, mech);
+                }
+                else
+                {
+                    List<DirectPawnRelation> rels = rel.DirectRelations;
+                    for (int i = rels.Count - 1; i >= 0; i--)
+                    {
+                        DirectPawnRelation r = rels[i];
+                        if (r != null && r.def == PawnRelationDefOf.Overseer && r.otherPawn == mech)
+                            rels.RemoveAt(i);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogUtil.Warning($"Failed to unbond mech from {overseer.LabelShortCap}: {ex.Message}");
+            }
+        }
+
         /// <summary>
         /// If the mercenary's xenotype is non-violent and has security guards configured,
         /// auto-assigns a random guard animal from the xenotype's SecurityGuardList.
