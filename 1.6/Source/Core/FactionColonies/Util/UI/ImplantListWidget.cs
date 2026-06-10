@@ -58,15 +58,16 @@ namespace FactionColonies
             for (int i = 0; i < items.Count; i++)
             {
                 SavedImplant item = items[i];
-                if (item.recipe == null) continue;
+                if (!item.IsValid) continue;
                 int index = i;
                 Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + i * rowHeight, scrollViewRect.width, rowHeight);
                 if (i % 2 == 0) Widgets.DrawHighlight(row);
 
-                // Icon (the implant item)
+                // Icon (the implant item / self-install item)
+                ThingDef iconThing = item.selfInstallThing ?? item.recipe?.UIIconThing;
                 Rect iconRect = new Rect(row.x + 2f, row.y + 2f, IconSize, IconSize);
-                if (item.recipe.UIIconThing != null)
-                    Widgets.ThingIcon(iconRect, item.recipe.UIIconThing);
+                if (iconThing != null)
+                    Widgets.ThingIcon(iconRect, iconThing);
 
                 // Remove button
                 Rect removeRect = Rect.zero;
@@ -87,12 +88,14 @@ namespace FactionColonies
                 Rect costRect = new Rect(costRight - 60f, row.y, 60f, rowHeight);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleRight;
-                Widgets.Label(costRect, "$" + MilUnitFC.ImplantCost(item.recipe).ToString("F0"));
+                Widgets.Label(costRect, "$" + MilUnitFC.ImplantCost(item).ToString("F0"));
 
                 // Label: implant + body part
-                string hediffLabel = item.recipe.addsHediff != null
-                    ? item.recipe.addsHediff.LabelCap.ToString()
-                    : item.recipe.LabelCap.ToString();
+                string hediffLabel;
+                if (item.recipe is object)
+                    hediffLabel = (item.recipe.addsHediff?.LabelCap ?? item.recipe.LabelCap).ToString();
+                else
+                    hediffLabel = item.selfInstallThing.LabelCap.ToString();
                 string label = item.bodyPart != null
                     ? hediffLabel + " (" + item.bodyPart.label + ")"
                     : hediffLabel;

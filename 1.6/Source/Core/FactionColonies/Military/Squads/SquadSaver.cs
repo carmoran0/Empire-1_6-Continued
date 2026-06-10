@@ -328,7 +328,7 @@ namespace FactionColonies
             unit.weapons = weapons?.Where(w => w.thing != null).ToList() ?? new List<SavedThing>();
             unit.apparel = apparel?.Where(a => a.thing != null).ToList() ?? new List<SavedThing>();
             unit.inventory = inventory?.Where(i => i.thing != null).ToList() ?? new List<SavedThing>();
-            unit.implants = implants?.Where(im => im.recipe != null).ToList() ?? new List<SavedImplant>();
+            unit.implants = implants?.Where(im => im.IsValid).ToList() ?? new List<SavedImplant>();
             unit.psylinkLevel = psylinkLevel;
             // Keep def-backed entries (ability/focus) and aggregate entries that carry a kind
             // (e.g. stat upgrades, which have no defName).
@@ -408,7 +408,7 @@ namespace FactionColonies
             int nullWeapons = weapons?.Count(w => w.thing == null) ?? 0;
             int nullApparel = apparel?.Count(a => a.thing == null) ?? 0;
             int nullInventory = inventory?.Count(i => i.thing == null) ?? 0;
-            int nullImplants = implants?.Count(im => im.recipe == null) ?? 0;
+            int nullImplants = implants?.Count(im => !im.IsValid) ?? 0;
             if (nullWeapons > 0) missing.Add($"{nullWeapons} weapon(s)");
             if (nullApparel > 0) missing.Add($"{nullApparel} apparel item(s)");
             if (nullInventory > 0) missing.Add($"{nullInventory} inventory item(s)");
@@ -686,20 +686,35 @@ namespace FactionColonies
      * == false). Future ability/psycast picking would live in a parallel list, not on this struct. */
     public struct SavedImplant : IExposable
     {
-        public RecipeDef recipe;
+        public RecipeDef recipe;             // surgery install path (null for self-install items)
+        public ThingDef selfInstallThing;    // self-install item with CompUseEffect_InstallImplant (null for surgery)
         public BodyPartDef bodyPart;
         public int bodyPartIndex;
 
         public SavedImplant(RecipeDef recipe, BodyPartDef bodyPart, int bodyPartIndex)
         {
             this.recipe = recipe;
+            this.selfInstallThing = null;
             this.bodyPart = bodyPart;
             this.bodyPartIndex = bodyPartIndex;
         }
 
+        public SavedImplant(ThingDef selfInstallThing, BodyPartDef bodyPart, int bodyPartIndex)
+        {
+            this.recipe = null;
+            this.selfInstallThing = selfInstallThing;
+            this.bodyPart = bodyPart;
+            this.bodyPartIndex = bodyPartIndex;
+        }
+
+        /// <summary>True when this entry resolved to a real install source (surgery recipe or
+        /// self-install item). Used to filter out entries whose def failed to load.</summary>
+        public bool IsValid => recipe != null || selfInstallThing != null;
+
         public void ExposeData()
         {
             Scribe_Defs.Look(ref recipe, "recipe");
+            Scribe_Defs.Look(ref selfInstallThing, "selfInstallThing");
             Scribe_Defs.Look(ref bodyPart, "bodyPart");
             Scribe_Values.Look(ref bodyPartIndex, "bodyPartIndex", 0);
         }

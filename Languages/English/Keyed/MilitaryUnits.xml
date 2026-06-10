@@ -84,6 +84,7 @@
 	<!-- Implants -->
 	<fcAddImplant>+ Add Implant</fcAddImplant>
 	<fcPickImplant>Select Implant</fcPickImplant>
+	<fcInstallSelfImplant>Install {0}</fcInstallSelfImplant>
 
 	<!-- Abilities / Psycasts -->
 	<fcEditAbilities>Edit Psycasts</fcEditAbilities>

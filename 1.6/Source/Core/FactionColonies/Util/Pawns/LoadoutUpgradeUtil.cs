@@ -30,7 +30,7 @@ namespace FactionColonies
             if (unit.inventory != null)
                 foreach (SavedThing inv in unit.inventory) total += inv.MarketValue;
             if (unit.implants != null)
-                foreach (SavedImplant im in unit.implants) total += MilUnitFC.ImplantCost(im.recipe);
+                foreach (SavedImplant im in unit.implants) total += MilUnitFC.ImplantCost(im);
             // Psycasts: psylink-level cost (owned by the active ability system) + any explicitly-chosen
             // abilities. Base game charges per psylink level; VPE charges per chosen psycast instead.
             total += AbilitySystemRegistry.Active?.PsylinkCost(unit.psylinkLevel) ?? 0;
@@ -191,24 +191,26 @@ namespace FactionColonies
             return true;
         }
 
-        /* Order-independent equality over implants (recipe + body part + occurrence index). */
+        /* Order-independent equality over implants (install source + body part + occurrence index).
+         * Covers both surgery (recipe) and self-install (selfInstallThing) entries — a leveled
+         * self-install implant appears once per level, so count matters and is captured by the key. */
         public static bool ImplantsEquivalent(List<SavedImplant> a, List<SavedImplant> b)
         {
-            int an = a == null ? 0 : a.Count(x => x.recipe != null);
-            int bn = b == null ? 0 : b.Count(x => x.recipe != null);
+            int an = a == null ? 0 : a.Count(x => x.IsValid);
+            int bn = b == null ? 0 : b.Count(x => x.IsValid);
             if (an != bn) return false;
             if (an == 0) return true;
-            List<SavedImplant> sa = a.Where(x => x.recipe != null)
-                .OrderBy(x => x.recipe.defName).ThenBy(x => x.bodyPart?.defName ?? "").ThenBy(x => x.bodyPartIndex).ToList();
-            List<SavedImplant> sb = b.Where(x => x.recipe != null)
-                .OrderBy(x => x.recipe.defName).ThenBy(x => x.bodyPart?.defName ?? "").ThenBy(x => x.bodyPartIndex).ToList();
+            List<string> sa = a.Where(x => x.IsValid).Select(ImplantKey).OrderBy(s => s).ToList();
+            List<string> sb = b.Where(x => x.IsValid).Select(ImplantKey).OrderBy(s => s).ToList();
             for (int i = 0; i < an; i++)
-            {
-                if (sa[i].recipe != sb[i].recipe) return false;
-                if (sa[i].bodyPart != sb[i].bodyPart) return false;
-                if (sa[i].bodyPartIndex != sb[i].bodyPartIndex) return false;
-            }
+                if (sa[i] != sb[i]) return false;
             return true;
+        }
+
+        private static string ImplantKey(SavedImplant im)
+        {
+            string src = im.recipe?.defName ?? im.selfInstallThing?.defName ?? "";
+            return src + "|" + (im.bodyPart?.defName ?? "") + "|" + im.bodyPartIndex;
         }
 
         public static bool ApparelEquivalent(List<SavedThing> a, List<SavedThing> b)

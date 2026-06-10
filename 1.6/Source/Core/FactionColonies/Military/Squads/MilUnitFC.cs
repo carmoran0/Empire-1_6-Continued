@@ -384,12 +384,14 @@ namespace FactionColonies
             }
         }
 
-        /* Installs this unit's chosen implants on the target pawn, reusing the base game's own
-         * surgery validation/application (Recipe_InstallImplant.ApplyOnPawn with a null billDoer
-         * skips the fail/tale path and adds the hediff). The concrete BodyPartRecord is resolved
-         * from the stored (recipe, index) against the target's body via GetPartsToApplyOn, whose
-         * ordering is deterministic. Invalid entries (part missing / slot taken / incompatible on
-         * this body) are silently skipped. Used by the preview pawn and the real spawned pawn. */
+        /* Installs this unit's chosen implants on the target pawn. Surgery implants reuse the base
+         * game's own validation/application (Recipe_InstallImplant.ApplyOnPawn with a null billDoer
+         * skips the fail/tale path and adds the hediff); the concrete BodyPartRecord is resolved from
+         * the stored (recipe, index) against the target's body via GetPartsToApplyOn. Self-install
+         * implants (control sublinks etc., CompUseEffect_InstallImplant items) replicate that comp's
+         * leveled DoEffect — add the hediff, or upgrade an existing leveled one. Entries are applied in
+         * list order, so a leveled implant added N times reaches level N. Invalid entries are silently
+         * skipped. Used by the preview pawn and the real spawned pawn. */
         public static void ApplyImplantsToPawn(Pawn target, MilUnitFC source)
         {
             if (target is null || source?.implants is null) return;
@@ -397,18 +399,44 @@ namespace FactionColonies
 
             foreach (SavedImplant im in source.implants)
             {
-                if (im.recipe is null) continue;
                 try
                 {
-                    BodyPartRecord part;
-                    if (TryResolveImplant(target, im, out part))
-                        im.recipe.Worker.ApplyOnPawn(target, part, null, null, null);
+                    if (im.recipe is object)
+                    {
+                        BodyPartRecord part;
+                        if (TryResolveImplant(target, im, out part))
+                            im.recipe.Worker.ApplyOnPawn(target, part, null, null, null);
+                    }
+                    else if (im.selfInstallThing is object)
+                    {
+                        ApplySelfInstallImplant(target, im.selfInstallThing);
+                    }
                 }
                 catch (Exception ex)
                 {
-                    LogUtil.Warning($"Failed to apply implant {im.recipe?.defName} to {target.LabelShortCap}: {ex.Message}");
+                    string label = im.recipe?.defName ?? im.selfInstallThing?.defName;
+                    LogUtil.Warning($"Failed to apply implant {label} to {target.LabelShortCap}: {ex.Message}");
                 }
             }
+        }
+
+        /* Installs a self-install implant by invoking the item's own
+         * CompUseEffect_InstallImplant.DoEffect — the same add/leveled-upgrade path the base game uses
+         * when a pawn uses the item — so our behavior stays in lockstep with it. A throwaway (unspawned)
+         * item instance is enough: the comp only reads its Props and mutates the pawn. (DoEffect has no
+         * colonist/faction gate, unlike CanBeUsedBy, so it works on Empire's NPC pawns.) */
+        private static void ApplySelfInstallImplant(Pawn target, ThingDef thing)
+        {
+            ThingWithComps item = ThingMaker.MakeThing(thing) as ThingWithComps;
+            CompUseEffect_InstallImplant comp = item?.TryGetComp<CompUseEffect_InstallImplant>();
+            if (comp is null)
+            {
+                if (item is object && !item.Destroyed) item.Destroy();
+                return;
+            }
+            try { comp.DoEffect(target); }
+            catch (Exception ex) { LogUtil.Error("ApplySelfInstallImplant: error in CompUseEffect_InstallImplant: " + ex); }
+            finally { if (!item.Destroyed) item.Destroy(); }
         }
 
         /* Applies this unit's psylink level + chosen psycasts to the target pawn, dispatching to the
@@ -555,25 +583,31 @@ namespace FactionColonies
 
             foreach (SavedImplant im in implants)
             {
-                if (im.recipe?.addsHediff is null) continue;
+                // The hediff to remove: surgery implants add recipe.addsHediff; self-install items
+                // add their comp's hediffDef (a leveled hediff removed whole, so a re-apply rebuilds
+                // its level from scratch).
+                HediffDef addsHediff = im.recipe?.addsHediff
+                    ?? im.selfInstallThing?.GetCompProperties<CompProperties_UseEffectInstallImplant>()?.hediffDef;
+                if (addsHediff is null) continue;
                 try
                 {
                     Hediff found = null;
                     List<Hediff> hediffs = target.health.hediffSet.hediffs;
                     for (int i = 0; i < hediffs.Count; i++)
                     {
-                        if (hediffs[i].def == im.recipe.addsHediff) { found = hediffs[i]; break; }
+                        if (hediffs[i].def == addsHediff) { found = hediffs[i]; break; }
                     }
                     if (found is null) continue;
 
-                    if (found.Part != null)
+                    if (found.Part != null && im.recipe is object)
                         target.health.RestorePart(found.Part);
                     else
                         target.health.RemoveHediff(found);
                 }
                 catch (Exception ex)
                 {
-                    LogUtil.Warning($"Failed to remove implant {im.recipe?.defName} from {target.LabelShortCap}: {ex.Message}");
+                    string label = im.recipe?.defName ?? im.selfInstallThing?.defName;
+                    LogUtil.Warning($"Failed to remove implant {label} from {target.LabelShortCap}: {ex.Message}");
                 }
             }
         }
@@ -769,6 +803,18 @@ namespace FactionColonies
         {
             if (recipe is null) return;
             implants.Add(new SavedImplant(recipe, bodyPart, bodyPartIndex));
+            MarkIdentityDirty();
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
+        /// <summary>Adds a self-install implant (e.g. a control sublink) — a CompUseEffect_InstallImplant
+        /// item rather than a surgery recipe. Added once per "install"; a leveled implant added N times
+        /// reaches level N at apply time.</summary>
+        public void AddImplant(ThingDef selfInstallThing, BodyPartDef bodyPart, int bodyPartIndex)
+        {
+            if (selfInstallThing is null) return;
+            implants.Add(new SavedImplant(selfInstallThing, bodyPart, bodyPartIndex));
             MarkIdentityDirty();
             ChangeTick();
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
@@ -1028,19 +1074,33 @@ namespace FactionColonies
             List<SavedImplant> kept = new List<SavedImplant>();
             foreach (SavedImplant im in snapshot)
             {
-                if (im.recipe is null) continue;
                 try
                 {
-                    BodyPartRecord part;
-                    if (!TryResolveImplant(testPawn, im, out part)) continue;
+                    if (im.recipe is object)
+                    {
+                        BodyPartRecord part;
+                        if (!TryResolveImplant(testPawn, im, out part)) continue;
 
-                    // Install on the test pawn so later implants validate against a cumulative body.
-                    im.recipe.Worker.ApplyOnPawn(testPawn, part, null, null, null);
-                    kept.Add(im);
+                        // Install on the test pawn so later implants validate against a cumulative body.
+                        im.recipe.Worker.ApplyOnPawn(testPawn, part, null, null, null);
+                        kept.Add(im);
+                    }
+                    else if (im.selfInstallThing is object)
+                    {
+                        // Self-install implants only need their target body part to still exist (the
+                        // brain, for control sublinks). Apply cumulatively so leveled implants stack.
+                        CompProperties_UseEffectInstallImplant inst =
+                            im.selfInstallThing.GetCompProperties<CompProperties_UseEffectInstallImplant>();
+                        if (inst?.bodyPart is null) continue;
+                        if (!testPawn.RaceProps.body.GetPartsWithDef(inst.bodyPart).Any()) continue;
+                        ApplySelfInstallImplant(testPawn, im.selfInstallThing);
+                        kept.Add(im);
+                    }
                 }
                 catch (Exception ex)
                 {
-                    LogUtil.Warning($"RevalidateImplants: dropping implant {im.recipe?.defName}: {ex.Message}");
+                    string label = im.recipe?.defName ?? im.selfInstallThing?.defName;
+                    LogUtil.Warning($"RevalidateImplants: dropping implant {label}: {ex.Message}");
                 }
             }
 
@@ -1174,7 +1234,7 @@ namespace FactionColonies
                 totalCost += inv.MarketValue;
 
             foreach (SavedImplant im in implants)
-                totalCost += ImplantCost(im.recipe);
+                totalCost += ImplantCost(im);
 
             // Psylink-level cost is owned by the active ability system (base game charges per level;
             // VPE returns 0 and balances via per-psycast cost instead).
@@ -1228,6 +1288,15 @@ namespace FactionColonies
             if (cost <= 0f && recipe.ProducedThingDef != null)
                 cost += recipe.ProducedThingDef.BaseMarketValue;
             return cost;
+        }
+
+        /// <summary>Cost of a saved implant — the install recipe's ingredient value for surgery
+        /// implants, or the item's market value for self-install implants (control sublinks etc.).</summary>
+        public static float ImplantCost(SavedImplant im)
+        {
+            if (im.recipe is object) return ImplantCost(im.recipe);
+            if (im.selfInstallThing is object) return im.selfInstallThing.BaseMarketValue;
+            return 0f;
         }
 
         // --- Subclass-Aware Export/Import ---
