@@ -26,7 +26,7 @@ namespace FactionColonies
             public int bodyPartIndex;
             public string label;
 
-            public ThingDef IconThing => selfInstallThing ?? recipe?.UIIconThing;
+            public ThingDef IconThing => selfInstallThing ?? MilUnitFC.ImplantIconThing(recipe);
         }
 
         private readonly Func<MilUnitFC> getDisplayUnit;

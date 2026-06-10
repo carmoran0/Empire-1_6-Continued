@@ -63,11 +63,15 @@ namespace FactionColonies
                 Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + i * rowHeight, scrollViewRect.width, rowHeight);
                 if (i % 2 == 0) Widgets.DrawHighlight(row);
 
-                // Icon (the implant item / self-install item)
-                ThingDef iconThing = item.selfInstallThing ?? item.recipe?.UIIconThing;
+                // Icon + info card (the implant item / self-install item)
+                ThingDef iconThing = MilUnitFC.ImplantIconThing(item);
                 Rect iconRect = new Rect(row.x + 2f, row.y + 2f, IconSize, IconSize);
                 if (iconThing != null)
                     Widgets.ThingIcon(iconRect, iconThing);
+
+                Rect infoRect = new Rect(iconRect.xMax + 2f, row.y + 2f, IconSize - 2f, IconSize - 2f);
+                if (iconThing != null)
+                    Widgets.InfoCardButton(infoRect, iconThing);
 
                 // Remove button
                 Rect removeRect = Rect.zero;
@@ -99,7 +103,7 @@ namespace FactionColonies
                 string label = item.bodyPart != null
                     ? hediffLabel + " (" + item.bodyPart.label + ")"
                     : hediffLabel;
-                Rect labelRect = new Rect(iconRect.xMax + 6f, row.y, costRect.x - iconRect.xMax - 10f, rowHeight);
+                Rect labelRect = new Rect(infoRect.xMax + 6f, row.y, costRect.x - infoRect.xMax - 10f, rowHeight);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleLeft;
                 string shownLabel = Text.ClampTextWithEllipsis(labelRect, label);

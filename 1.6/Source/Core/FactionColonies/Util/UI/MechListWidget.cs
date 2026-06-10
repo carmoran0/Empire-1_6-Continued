@@ -188,6 +188,9 @@ namespace FactionColonies
                     Rect iconRect = new Rect(row.x + 6f, row.y + 2f, IconSize, IconSize);
                     Widgets.ThingIcon(iconRect, item.kind.race);
 
+                    Rect infoRect = new Rect(iconRect.xMax + 2f, row.y + 2f, IconSize - 2f, IconSize - 2f);
+                    Widgets.InfoCardButton(infoRect, item.kind.race);
+
                     float cursorRight = row.xMax - 4f;
 
                     // Remove button (far right)
@@ -267,7 +270,7 @@ namespace FactionColonies
 
                     // Label
                     string label = item.kind.LabelCap;
-                    Rect labelRect = new Rect(iconRect.xMax + 6f, row.y, bwCostRect.x - iconRect.xMax - 10f, rowHeight);
+                    Rect labelRect = new Rect(infoRect.xMax + 6f, row.y, bwCostRect.x - infoRect.xMax - 10f, rowHeight);
                     Text.Font = GameFont.Tiny;
                     Text.Anchor = TextAnchor.MiddleLeft;
                     string shownLabel = Text.ClampTextWithEllipsis(labelRect, label);

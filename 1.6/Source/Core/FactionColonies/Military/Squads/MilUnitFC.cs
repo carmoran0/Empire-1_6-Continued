@@ -1299,6 +1299,28 @@ namespace FactionColonies
             return 0f;
         }
 
+        /// <summary>The ThingDef to use for an implant's icon and info card. Surgery install recipes
+        /// usually have no UIIconThing (they install a hediff, they don't produce a thing), so fall back
+        /// to the recipe's fixed ingredient — the implant item itself (e.g. the bionic part).</summary>
+        public static ThingDef ImplantIconThing(RecipeDef recipe)
+        {
+            if (recipe is null) return null;
+            if (recipe.UIIconThing != null) return recipe.UIIconThing;
+            if (recipe.ingredients != null)
+            {
+                foreach (IngredientCount ing in recipe.ingredients)
+                    if (ing.IsFixedIngredient && ing.FixedIngredient != null)
+                        return ing.FixedIngredient;
+            }
+            return null;
+        }
+
+        public static ThingDef ImplantIconThing(SavedImplant im)
+        {
+            if (im.selfInstallThing is object) return im.selfInstallThing;
+            return ImplantIconThing(im.recipe);
+        }
+
         // --- Subclass-Aware Export/Import ---
 
         /* Creates the appropriate SavedUnitFC (or subclass) snapshot of this unit.
