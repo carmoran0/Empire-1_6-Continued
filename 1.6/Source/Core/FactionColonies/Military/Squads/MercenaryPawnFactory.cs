@@ -27,12 +27,12 @@ namespace FactionColonies
         }
 
         /// <summary>Generates a mechanoid pawn for a mechanitor merc and bonds it to <paramref name="overseer"/>:
-        /// an Overseer direct relation (which auto-assigns a control group via PawnRelationWorker_Overseer)
-        /// followed by setting the group's work mode. The mech is set to the Empire faction. Caller adds the
-        /// merc to the squad's <c>mechs</c> list and sets <c>merc.handler</c>. No-op (leaves merc.pawn null)
-        /// when Biotech is absent, the kind is invalid, or the overseer isn't a mechanitor — so a non-mechanitor
-        /// overseer never produces stray unbonded mechs.</summary>
-        public static void CreateNewMech(MercenarySquadFC squad, ref Mercenary merc, PawnKindDef mechKind, Pawn overseer, MechWorkModeDef workMode)
+        /// an Overseer direct relation (for bandwidth accounting) plus a direct assignment to control group
+        /// <paramref name="groupIndex"/> with <paramref name="workMode"/>. The mech is set to the Empire faction.
+        /// Caller adds the merc to the squad's <c>mechs</c> list and sets <c>merc.handler</c>. No-op (leaves
+        /// merc.pawn null) when Biotech is absent, the kind is invalid, or the overseer isn't a mechanitor —
+        /// so a non-mechanitor overseer never produces stray unbonded mechs.</summary>
+        public static void CreateNewMech(MercenarySquadFC squad, ref Mercenary merc, PawnKindDef mechKind, Pawn overseer, int groupIndex, MechWorkModeDef workMode)
         {
             if (!ModsConfig.BiotechActive || mechKind is null) return;
             if (overseer?.mechanitor is null) return;
@@ -56,10 +56,21 @@ namespace FactionColonies
             {
                 overseer.relations.AddDirectRelation(PawnRelationDefOf.Overseer, mech);
                 // Empire mechanitors aren't the player faction, so PawnRelationWorker_Overseer won't
-                // auto-assign a control group (IsMechanitor gates on player faction). Assign directly —
-                // this also creates the control groups from MechControlGroups, sets the work mode, and
-                // refreshes bandwidth.
-                overseer.mechanitor.AssignPawnControlGroup(mech, workMode ?? MechWorkModeDefOf.Escort);
+                // auto-assign a control group (IsMechanitor gates on player faction). The first
+                // AssignPawnControlGroup call also lazily creates the control groups from the
+                // MechControlGroups stat; we then move the mech into the exact group the design specifies
+                // and set that group's work mode (shared by all mechs in the group).
+                Pawn_MechanitorTracker tracker = overseer.mechanitor;
+                tracker.AssignPawnControlGroup(mech, workMode ?? MechWorkModeDefOf.Escort);
+                if (tracker.controlGroups.Count > 0)
+                {
+                    int idx = groupIndex;
+                    if (idx < 0) idx = 0;
+                    if (idx > tracker.controlGroups.Count - 1) idx = tracker.controlGroups.Count - 1;
+                    MechanitorControlGroup group = tracker.controlGroups[idx];
+                    group.SetWorkMode(workMode ?? MechWorkModeDefOf.Escort);
+                    group.Assign(mech);
+                }
             }
             catch (Exception ex)
             {

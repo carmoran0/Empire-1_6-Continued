@@ -41,11 +41,12 @@ namespace FactionColonies
         public List<SavedAbility> abilities = new List<SavedAbility>();
 
         // Mechanitor design (Mechs tab, Biotech only). isMechanitor auto-applies a mechlink at spawn
-        // (see ApplyMechanitorToPawn); mechs lists the mechanoids bonded to the unit at deploy time.
-        // mechWorkMode is the work mode applied to the unit's bonded mechs (null = Escort).
+        // (see ApplyMechanitorToPawn); mechs lists the mechanoids bonded to the unit at deploy time,
+        // each tagged with a control-group index. mechGroupWorkModes holds the work mode per control
+        // group (index = group); all mechs in a group share that mode.
         public bool isMechanitor;
         public List<SavedMech> mechs = new List<SavedMech>();
-        public MechWorkModeDef mechWorkMode;
+        public List<MechWorkModeDef> mechGroupWorkModes = new List<MechWorkModeDef>();
 
         /// <summary>True when this unit is a mechanitor design — flagged as one or carrying
         /// at least one assigned mech. Gates the mechlink apply, the mech spawn block, and cost.</summary>
@@ -228,7 +229,7 @@ namespace FactionColonies
             // Mechanitor design
             Scribe_Values.Look(ref isMechanitor, "isMechanitor", false);
             Scribe_Collections.Look(ref mechs, "mechs", LookMode.Deep);
-            Scribe_Defs.Look(ref mechWorkMode, "mechWorkMode");
+            Scribe_Collections.Look(ref mechGroupWorkModes, "mechGroupWorkModes", LookMode.Def);
 
             // forcedGender nullable — save only if set
             bool hasGender = forcedGender.HasValue;
@@ -247,6 +248,7 @@ namespace FactionColonies
                 if (implants == null) implants = new List<SavedImplant>();
                 if (abilities == null) abilities = new List<SavedAbility>();
                 if (mechs == null) mechs = new List<SavedMech>();
+                if (mechGroupWorkModes == null) mechGroupWorkModes = new List<MechWorkModeDef>();
                 if (statModifiers == null) statModifiers = new List<PermanentStatModifier>();
                 // Mutual exclusivity: prefer XenotypeDef if both are set
                 if (xenotype != null && customXenotypeName != null)
@@ -783,10 +785,66 @@ namespace FactionColonies
 
         // --- Mechanitor / mechs (Biotech) ---
 
-        /// <summary>The work mode applied to this unit's bonded mechs. Defaults to Escort
+        /// <summary>Number of control groups this design has available — the preview pawn's
+        /// MechControlGroups stat (mechlink grants 2; control-sublink implants add more). At least 1
+        /// while the unit is a mechanitor; 0 otherwise.</summary>
+        public int MechGroupCount
+        {
+            get
+            {
+                if (!ModsConfig.BiotechActive) return 0;
+                Pawn p = PreviewPawn;
+                if (p?.mechanitor is null) return 0;
+                return Mathf.Max(1, (int)p.GetStatValue(StatDefOf.MechControlGroups));
+            }
+        }
+
+        /// <summary>Work mode for a given control group, defaulting to Escort
         /// (follow + fight near the mechanitor) when none was chosen.</summary>
-        public MechWorkModeDef ResolvedMechWorkMode =>
-            mechWorkMode ?? MechWorkModeDefOf.Escort;
+        public MechWorkModeDef GetGroupWorkMode(int group)
+        {
+            if (mechGroupWorkModes != null && group >= 0 && group < mechGroupWorkModes.Count
+                && mechGroupWorkModes[group] != null)
+                return mechGroupWorkModes[group];
+            return MechWorkModeDefOf.Escort;
+        }
+
+        public void SetGroupWorkMode(int group, MechWorkModeDef mode)
+        {
+            if (group < 0) return;
+            if (mechGroupWorkModes is null) mechGroupWorkModes = new List<MechWorkModeDef>();
+            while (mechGroupWorkModes.Count <= group) mechGroupWorkModes.Add(MechWorkModeDefOf.Escort);
+            mechGroupWorkModes[group] = mode;
+            ChangeTick();
+        }
+
+        /// <summary>Moves a mech row to a different control group, merging with an existing same-kind
+        /// row already in that group.</summary>
+        public void SetMechGroup(int index, int group)
+        {
+            if (index < 0 || index >= mechs.Count || group < 0) return;
+            SavedMech row = mechs[index];
+            if (row.group == group) return;
+
+            // Merge into an existing same-kind row in the destination group.
+            for (int i = 0; i < mechs.Count; i++)
+            {
+                if (i == index) continue;
+                if (mechs[i].kind == row.kind && mechs[i].group == group)
+                {
+                    SavedMech dest = mechs[i];
+                    dest.count = Mathf.Max(1, dest.count) + Mathf.Max(1, row.count);
+                    mechs[i] = dest;
+                    mechs.RemoveAt(index);
+                    ChangeTick();
+                    return;
+                }
+            }
+
+            row.group = group;
+            mechs[index] = row;
+            ChangeTick();
+        }
 
         /// <summary>Total mech bandwidth this design has to spend. Read from the preview pawn's
         /// MechBandwidth stat (which only exists once the mechlink is applied), so control-sublink
@@ -827,18 +885,13 @@ namespace FactionColonies
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
         }
 
-        public void SetMechWorkMode(MechWorkModeDef mode)
-        {
-            mechWorkMode = mode;
-            ChangeTick();
-        }
-
-        /// <summary>Adds (or tops up) a mech assignment. Hard-blocks the add when it would push used
-        /// bandwidth over the unit's total.
-        /// Returns false (with a message) when rejected.</summary>
-        public bool AddMech(PawnKindDef kind, int count = 1)
+        /// <summary>Adds (or tops up) a mech assignment in the given control group. Hard-blocks the add
+        /// when it would push used bandwidth over the unit's total (bandwidth is counted across all
+        /// groups). Returns false (with a message) when rejected.</summary>
+        public bool AddMech(PawnKindDef kind, int group = 0, int count = 1)
         {
             if (!ModsConfig.BiotechActive || kind?.race is null || count <= 0) return false;
+            if (group < 0) group = 0;
 
             // Only mechs the player has researched can be assigned.
             if (!FactionCache.IsMechResearchUnlocked(kind))
@@ -862,10 +915,10 @@ namespace FactionColonies
                 return false;
             }
 
-            // Merge with an existing row of the same kind.
+            // Merge with an existing row of the same kind AND group.
             for (int i = 0; i < mechs.Count; i++)
             {
-                if (mechs[i].kind == kind)
+                if (mechs[i].kind == kind && mechs[i].group == group)
                 {
                     SavedMech existing = mechs[i];
                     existing.count = Mathf.Max(1, existing.count) + count;
@@ -877,7 +930,7 @@ namespace FactionColonies
                 }
             }
 
-            mechs.Add(new SavedMech(kind, count));
+            mechs.Add(new SavedMech(kind, count, group));
             MarkIdentityDirty();
             ChangeTick();
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
@@ -1217,7 +1270,7 @@ namespace FactionColonies
             copy.abilities = new List<SavedAbility>(abilities ?? new List<SavedAbility>());
             copy.isMechanitor = isMechanitor;
             copy.mechs = new List<SavedMech>(mechs ?? new List<SavedMech>());
-            copy.mechWorkMode = mechWorkMode;
+            copy.mechGroupWorkModes = new List<MechWorkModeDef>(mechGroupWorkModes ?? new List<MechWorkModeDef>());
             copy.statModifiers = statModifiers?.Select(m => m.Clone()).ToList() ?? new List<PermanentStatModifier>();
             CopyExtraFieldsTo(copy);
             copy.ChangeTick();

@@ -11,9 +11,11 @@ namespace FactionColonies
     /* Shared mechanitor panel for the unit designer's Mechs tab (Biotech only). A "make mechanitor"
      * toggle gates the rest: when on, the unit is given a mechlink at spawn and can be assigned mechs.
      * Bandwidth (read from the preview pawn's MechBandwidth stat — so control-sublink implants and
-     * bandwidth-pack apparel count) limits how many mechs fit; the "Add mech" picker hard-blocks an
-     * over-budget add. A per-design work-mode chooser sets the mode applied to the unit's bonded mechs.
-     * Mirrors ImplantListWidget/AbilityListWidget: reads displayUnit, routes mutations via getEditTarget. */
+     * bandwidth-pack apparel count) limits how many mechs fit, counted across all groups; the "Add mech"
+     * picker hard-blocks an over-budget add. Mechs are organized into control groups (count from the
+     * MechControlGroups stat): each group has its own work-mode chooser, and each mech row has a group
+     * selector to move it. Mirrors ImplantListWidget/AbilityListWidget: reads displayUnit, routes
+     * mutations via getEditTarget. */
     public static class MechListWidget
     {
         public struct Options
@@ -80,126 +82,191 @@ namespace FactionColonies
                 return;
             }
 
-            // --- Bandwidth summary + work-mode chooser + add button ---
+            // --- Bandwidth summary + Add Mech button ---
             float used = displayUnit?.UsedMechBandwidth ?? 0f;
             float total = displayUnit?.TotalMechBandwidth ?? 0f;
-            Rect bwRect = new Rect(rect.x, toggleRect.yMax + 2f, rect.width, headerHeight);
-            Text.Font = GameFont.Tiny;
+            float addW = 110f;
+            Rect bwRect = new Rect(rect.x, toggleRect.yMax + 2f, rect.width - (editable ? addW + 6f : 0f), headerHeight);
+            Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
             if (used > total + 0.0001f) GUI.color = ColorLibrary.RedReadable;
             Widgets.Label(bwRect, "fcMechBandwidth".Translate(used.ToString("0.#"), total.ToString("0.#")));
             GUI.color = Color.white;
 
-            // Buttons row below the bandwidth label: work-mode chooser (left, wide) + Add Mech (right).
-            float buttonsY = bwRect.yMax + 2f;
             if (editable)
             {
-                float addW = 110f;
-                Rect addBtnRect = new Rect(rect.xMax - addW, buttonsY, addW, headerHeight);
+                Rect addBtnRect = new Rect(rect.xMax - addW, bwRect.y, addW, headerHeight);
+                Text.Anchor = TextAnchor.MiddleCenter;
                 if (Widgets.ButtonText(addBtnRect, "fcAddMech".Translate()))
                 {
                     Func<MilUnitFC> getDisplay = opts.getDisplayUnit ?? (() => displayUnit);
                     Find.WindowStack.Add(new FCWindow_MechPicker(getDisplay, opts.getEditTarget));
                 }
-
-                // Work-mode chooser (opens a FloatMenu of MechWorkModeDefs). Fills the row up to the Add button.
-                Rect wmRect = new Rect(rect.x, buttonsY, addBtnRect.x - rect.x - 6f, headerHeight);
-                MechWorkModeDef curMode = displayUnit?.ResolvedMechWorkMode;
-                Text.Anchor = TextAnchor.MiddleCenter;
-                if (Widgets.ButtonText(wmRect, "fcMechWorkMode".Translate() + ": " + (curMode?.LabelCap.ToString() ?? "")))
-                {
-                    List<FloatMenuOption> modeOpts = new List<FloatMenuOption>();
-                    foreach (MechWorkModeDef mode in DefDatabase<MechWorkModeDef>.AllDefsListForReading)
-                    {
-                        MechWorkModeDef captured = mode;
-                        modeOpts.Add(new FloatMenuOption(mode.LabelCap, delegate
-                        {
-                            MilUnitFC t = opts.getEditTarget?.Invoke();
-                            if (t != null) t.SetMechWorkMode(captured);
-                        }));
-                    }
-                    if (modeOpts.Count > 0) Find.WindowStack.Add(new FloatMenu(modeOpts));
-                }
             }
 
-            // --- Assigned mech list ---
-            float listTop = (editable ? buttonsY + headerHeight : bwRect.yMax) + 4f;
-            Rect listOutRect = new Rect(rect.x, listTop, rect.width, rect.height - (listTop - rect.y));
+            // --- Grouped mech list ---
+            int groupCount = displayUnit != null ? Mathf.Max(1, displayUnit.MechGroupCount) : 1;
             List<SavedMech> items = displayUnit?.mechs ?? new List<SavedMech>();
-            float viewHeight = items.Count * rowHeight;
-            Rect scrollViewRect = ScrollUtil.BeginScrollView(listOutRect, ref scrollPos, viewHeight);
 
+            // Bucket mech indices by their (clamped) control group.
+            List<List<int>> buckets = new List<List<int>>();
+            for (int g = 0; g < groupCount; g++) buckets.Add(new List<int>());
             for (int i = 0; i < items.Count; i++)
             {
-                SavedMech item = items[i];
-                if (item.kind?.race is null) continue;
-                int index = i;
-                Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + i * rowHeight, scrollViewRect.width, rowHeight);
-                if (i % 2 == 0) Widgets.DrawHighlight(row);
+                if (items[i].kind?.race is null) continue;
+                int eg = items[i].group;
+                if (eg < 0) eg = 0;
+                if (eg > groupCount - 1) eg = groupCount - 1;
+                buckets[eg].Add(i);
+            }
 
-                Rect iconRect = new Rect(row.x + 2f, row.y + 2f, IconSize, IconSize);
-                Widgets.ThingIcon(iconRect, item.kind.race);
+            float listTop = bwRect.yMax + 4f;
+            Rect listOutRect = new Rect(rect.x, listTop, rect.width, rect.height - (listTop - rect.y));
+            float viewHeight = 0f;
+            for (int g = 0; g < groupCount; g++) viewHeight += headerHeight + buckets[g].Count * rowHeight;
+            Rect scrollViewRect = ScrollUtil.BeginScrollView(listOutRect, ref scrollPos, viewHeight);
 
-                // Remove button (far right)
-                Rect removeRect = Rect.zero;
+            float y = scrollViewRect.y;
+            for (int g = 0; g < groupCount; g++)
+            {
+                // Group header: "Group N" + work-mode button.
+                Rect gHeader = new Rect(scrollViewRect.x, y, scrollViewRect.width, headerHeight);
+                Widgets.DrawHighlight(gHeader);
+                MechWorkModeDef gMode = displayUnit?.GetGroupWorkMode(g) ?? MechWorkModeDefOf.Escort;
+
+                Text.Font = GameFont.Small;
+                Text.Anchor = TextAnchor.MiddleLeft;
+                Rect gLabelRect = new Rect(gHeader.x + 4f, gHeader.y, gHeader.width * 0.4f, headerHeight);
+                Widgets.Label(gLabelRect, "fcMechGroup".Translate(g + 1));
+
+                float wmW = 160f;
+                Rect wmRect = new Rect(gHeader.xMax - wmW - 2f, gHeader.y + 1f, wmW, headerHeight - 2f);
+                Text.Font = GameFont.Tiny;
+                Text.Anchor = TextAnchor.MiddleCenter;
                 if (editable)
                 {
-                    removeRect = new Rect(row.xMax - removeButtonSize - 2f, row.y + (rowHeight - removeButtonSize) / 2f, removeButtonSize, removeButtonSize);
-                    Text.Font = GameFont.Small;
-                    Text.Anchor = TextAnchor.MiddleCenter;
-                    if (Widgets.ButtonText(removeRect, "X"))
+                    int capturedGroup = g;
+                    if (Widgets.ButtonText(wmRect, "fcMechWorkMode".Translate() + ": " + gMode.LabelCap))
                     {
-                        MilUnitFC target = opts.getEditTarget?.Invoke();
-                        if (target != null) target.RemoveMech(index);
+                        List<FloatMenuOption> modeOpts = new List<FloatMenuOption>();
+                        foreach (MechWorkModeDef mode in DefDatabase<MechWorkModeDef>.AllDefsListForReading)
+                        {
+                            MechWorkModeDef captured = mode;
+                            modeOpts.Add(new FloatMenuOption(mode.LabelCap, delegate
+                            {
+                                MilUnitFC t = opts.getEditTarget?.Invoke();
+                                if (t != null) t.SetGroupWorkMode(capturedGroup, captured);
+                            }));
+                        }
+                        if (modeOpts.Count > 0) Find.WindowStack.Add(new FloatMenu(modeOpts));
                     }
-                }
-
-                // Count steppers ( - N + )
-                float stepRight = editable ? removeRect.x - 6f : row.xMax - 4f;
-                if (editable)
-                {
-                    Rect plusRect = new Rect(stepRight - stepperButtonW, row.y + (rowHeight - stepperButtonW) / 2f, stepperButtonW, stepperButtonW);
-                    Rect countRect = new Rect(plusRect.x - 26f, row.y, 26f, rowHeight);
-                    Rect minusRect = new Rect(countRect.x - stepperButtonW, plusRect.y, stepperButtonW, stepperButtonW);
-                    Text.Font = GameFont.Tiny;
-                    Text.Anchor = TextAnchor.MiddleCenter;
-                    if (Widgets.ButtonText(minusRect, "-"))
-                    {
-                        MilUnitFC target = opts.getEditTarget?.Invoke();
-                        if (target != null) target.DecrementMech(index);
-                    }
-                    Widgets.Label(countRect, "x" + Mathf.Max(1, item.count));
-                    if (Widgets.ButtonText(plusRect, "+"))
-                    {
-                        MilUnitFC target = opts.getEditTarget?.Invoke();
-                        if (target != null) target.AddMech(item.kind);   // hard-blocks on bandwidth
-                    }
-                    stepRight = minusRect.x - 6f;
                 }
                 else
                 {
-                    Rect countRect = new Rect(stepRight - 30f, row.y, 30f, rowHeight);
+                    Widgets.Label(wmRect, "fcMechWorkMode".Translate() + ": " + gMode.LabelCap);
+                }
+                y += headerHeight;
+
+                // Mech rows in this group.
+                int rowInGroup = 0;
+                foreach (int index in buckets[g])
+                {
+                    SavedMech item = items[index];
+                    Rect row = new Rect(scrollViewRect.x, y, scrollViewRect.width, rowHeight);
+                    if (rowInGroup % 2 == 0) Widgets.DrawHighlight(row);
+                    rowInGroup++;
+
+                    Rect iconRect = new Rect(row.x + 6f, row.y + 2f, IconSize, IconSize);
+                    Widgets.ThingIcon(iconRect, item.kind.race);
+
+                    float cursorRight = row.xMax - 4f;
+
+                    // Remove button (far right)
+                    if (editable)
+                    {
+                        Rect removeRect = new Rect(cursorRight - removeButtonSize, row.y + (rowHeight - removeButtonSize) / 2f, removeButtonSize, removeButtonSize);
+                        Text.Font = GameFont.Small;
+                        Text.Anchor = TextAnchor.MiddleCenter;
+                        if (Widgets.ButtonText(removeRect, "X"))
+                        {
+                            MilUnitFC target = opts.getEditTarget?.Invoke();
+                            if (target != null) target.RemoveMech(index);
+                        }
+                        cursorRight = removeRect.x - 6f;
+                    }
+
+                    // Count steppers ( - N + )
+                    if (editable)
+                    {
+                        Rect plusRect = new Rect(cursorRight - stepperButtonW, row.y + (rowHeight - stepperButtonW) / 2f, stepperButtonW, stepperButtonW);
+                        Rect countRect = new Rect(plusRect.x - 26f, row.y, 26f, rowHeight);
+                        Rect minusRect = new Rect(countRect.x - stepperButtonW, plusRect.y, stepperButtonW, stepperButtonW);
+                        Text.Font = GameFont.Tiny;
+                        Text.Anchor = TextAnchor.MiddleCenter;
+                        if (Widgets.ButtonText(minusRect, "-"))
+                        {
+                            MilUnitFC target = opts.getEditTarget?.Invoke();
+                            if (target != null) target.DecrementMech(index);
+                        }
+                        Widgets.Label(countRect, "x" + Mathf.Max(1, item.count));
+                        if (Widgets.ButtonText(plusRect, "+"))
+                        {
+                            MilUnitFC target = opts.getEditTarget?.Invoke();
+                            if (target != null) target.AddMech(item.kind, item.group);   // hard-blocks on bandwidth
+                        }
+                        cursorRight = minusRect.x - 6f;
+                    }
+                    else
+                    {
+                        Rect countRect = new Rect(cursorRight - 30f, row.y, 30f, rowHeight);
+                        Text.Font = GameFont.Tiny;
+                        Text.Anchor = TextAnchor.MiddleRight;
+                        Widgets.Label(countRect, "x" + Mathf.Max(1, item.count));
+                        cursorRight = countRect.x - 6f;
+                    }
+
+                    // Group selector ( G2 ) — only useful when there's more than one group.
+                    if (editable && groupCount > 1)
+                    {
+                        float grpW = 34f;
+                        Rect grpRect = new Rect(cursorRight - grpW, row.y + 2f, grpW, rowHeight - 4f);
+                        Text.Font = GameFont.Tiny;
+                        Text.Anchor = TextAnchor.MiddleCenter;
+                        if (Widgets.ButtonText(grpRect, "G" + (g + 1)))
+                        {
+                            List<FloatMenuOption> grpOpts = new List<FloatMenuOption>();
+                            for (int dest = 0; dest < groupCount; dest++)
+                            {
+                                int capturedDest = dest;
+                                grpOpts.Add(new FloatMenuOption("fcMechGroup".Translate(dest + 1), delegate
+                                {
+                                    MilUnitFC t = opts.getEditTarget?.Invoke();
+                                    if (t != null) t.SetMechGroup(index, capturedDest);
+                                }));
+                            }
+                            if (grpOpts.Count > 0) Find.WindowStack.Add(new FloatMenu(grpOpts));
+                        }
+                        cursorRight = grpRect.x - 6f;
+                    }
+
+                    // Bandwidth cost
+                    float bandwidth = item.kind.race.GetStatValueAbstract(StatDefOf.BandwidthCost) * Mathf.Max(1, item.count);
+                    Rect bwCostRect = new Rect(cursorRight - 45f, row.y, 45f, rowHeight);
                     Text.Font = GameFont.Tiny;
                     Text.Anchor = TextAnchor.MiddleRight;
-                    Widgets.Label(countRect, "x" + Mathf.Max(1, item.count));
-                    stepRight = countRect.x - 6f;
+                    Widgets.Label(bwCostRect, "BW " + bandwidth.ToString("0.#"));
+
+                    // Label
+                    string label = item.kind.LabelCap;
+                    Rect labelRect = new Rect(iconRect.xMax + 6f, row.y, bwCostRect.x - iconRect.xMax - 10f, rowHeight);
+                    Text.Font = GameFont.Tiny;
+                    Text.Anchor = TextAnchor.MiddleLeft;
+                    string shownLabel = Text.ClampTextWithEllipsis(labelRect, label);
+                    Widgets.Label(labelRect, shownLabel);
+                    if (shownLabel != label) TooltipHandler.TipRegion(labelRect, label);
+
+                    y += rowHeight;
                 }
-
-                // Bandwidth cost
-                float bandwidth = item.kind.race.GetStatValueAbstract(StatDefOf.BandwidthCost) * Mathf.Max(1, item.count);
-                Rect bwCostRect = new Rect(stepRight - 50f, row.y, 50f, rowHeight);
-                Text.Font = GameFont.Tiny;
-                Text.Anchor = TextAnchor.MiddleRight;
-                Widgets.Label(bwCostRect, "BW " + bandwidth.ToString("0.#"));
-
-                // Label
-                string label = item.kind.LabelCap;
-                Rect labelRect = new Rect(iconRect.xMax + 6f, row.y, bwCostRect.x - iconRect.xMax - 10f, rowHeight);
-                Text.Font = GameFont.Tiny;
-                Text.Anchor = TextAnchor.MiddleLeft;
-                string shownLabel = Text.ClampTextWithEllipsis(labelRect, label);
-                Widgets.Label(labelRect, shownLabel);
-                if (shownLabel != label) TooltipHandler.TipRegion(labelRect, label);
             }
 
             ScrollUtil.EndScrollView();

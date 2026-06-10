@@ -305,14 +305,15 @@ namespace FactionColonies
             if (squad.mechs is null) squad.mechs = new List<Mercenary>();
             if (loadout.mechs is null) return;
 
-            MechWorkModeDef workMode = loadout.ResolvedMechWorkMode;
             foreach (SavedMech sm in loadout.mechs)
             {
                 if (sm.kind is null) continue;
+                int group = Mathf.Max(0, sm.group);
+                MechWorkModeDef workMode = loadout.GetGroupWorkMode(group);
                 for (int n = 0; n < Mathf.Max(1, sm.count); n++)
                 {
                     Mercenary mech = new Mercenary(true);
-                    MercenaryPawnFactory.CreateNewMech(squad, ref mech, sm.kind, mechanitor.pawn, workMode);
+                    MercenaryPawnFactory.CreateNewMech(squad, ref mech, sm.kind, mechanitor.pawn, group, workMode);
                     if (mech.pawn != null)
                     {
                         mech.handler = mechanitor;

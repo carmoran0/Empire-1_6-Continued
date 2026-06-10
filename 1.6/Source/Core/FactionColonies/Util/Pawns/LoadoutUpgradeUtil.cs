@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RimWorld;
 using Verse;
 
 namespace FactionColonies
@@ -93,21 +94,35 @@ namespace FactionColonies
             if (target is null) return false;
             if (current is null) return target.IsMechanitorDesign;
             if (target.isMechanitor != current.isMechanitor) return true;
-            if (target.mechWorkMode != current.mechWorkMode) return true;
+            if (!GroupWorkModesEquivalent(target.mechGroupWorkModes, current.mechGroupWorkModes)) return true;
             return !MechsEquivalent(target.mechs, current.mechs);
         }
 
-        /* Order-independent equality over mech rows (kind + count). */
+        /* Order-independent equality over mech rows (kind + count + group). */
         public static bool MechsEquivalent(List<SavedMech> a, List<SavedMech> b)
         {
             int an = a == null ? 0 : a.Count(x => x.kind != null);
             int bn = b == null ? 0 : b.Count(x => x.kind != null);
             if (an != bn) return false;
             if (an == 0) return true;
-            List<string> sa = a.Where(x => x.kind != null).Select(x => x.kind.defName + "|" + Math.Max(1, x.count)).OrderBy(s => s).ToList();
-            List<string> sb = b.Where(x => x.kind != null).Select(x => x.kind.defName + "|" + Math.Max(1, x.count)).OrderBy(s => s).ToList();
+            List<string> sa = a.Where(x => x.kind != null).Select(x => x.kind.defName + "|" + Math.Max(1, x.count) + "|" + x.group).OrderBy(s => s).ToList();
+            List<string> sb = b.Where(x => x.kind != null).Select(x => x.kind.defName + "|" + Math.Max(1, x.count) + "|" + x.group).OrderBy(s => s).ToList();
             for (int i = 0; i < an; i++)
                 if (sa[i] != sb[i]) return false;
+            return true;
+        }
+
+        /* Per-group work mode equality. Trailing entries that resolve to the default (Escort/null)
+         * don't count as a difference, so a longer-but-equivalent list still matches. */
+        private static bool GroupWorkModesEquivalent(List<MechWorkModeDef> a, List<MechWorkModeDef> b)
+        {
+            int n = Math.Max(a?.Count ?? 0, b?.Count ?? 0);
+            for (int i = 0; i < n; i++)
+            {
+                MechWorkModeDef ma = (a != null && i < a.Count) ? a[i] : null;
+                MechWorkModeDef mb = (b != null && i < b.Count) ? b[i] : null;
+                if (ma != mb) return false;
+            }
             return true;
         }
 

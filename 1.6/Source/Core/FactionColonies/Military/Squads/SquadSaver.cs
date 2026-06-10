@@ -272,7 +272,7 @@ namespace FactionColonies
         public List<SavedAbility> abilities;
         public bool isMechanitor;
         public List<SavedMech> mechs;
-        public MechWorkModeDef mechWorkMode;
+        public List<MechWorkModeDef> mechGroupWorkModes;
         public XenotypeDef xenotype;
         public string customXenotypeName;
         public Gender? forcedGender;
@@ -295,7 +295,7 @@ namespace FactionColonies
             abilities = new List<SavedAbility>(unit.abilities ?? new List<SavedAbility>());
             isMechanitor = unit.isMechanitor;
             mechs = new List<SavedMech>(unit.mechs ?? new List<SavedMech>());
-            mechWorkMode = unit.mechWorkMode;
+            mechGroupWorkModes = new List<MechWorkModeDef>(unit.mechGroupWorkModes ?? new List<MechWorkModeDef>());
             animal = unit.animal;
             pawnKind = unit.pawnKind;
             xenotype = unit.xenotype;
@@ -335,7 +335,9 @@ namespace FactionColonies
             unit.abilities = abilities?.Where(a => a.IsValid()).ToList() ?? new List<SavedAbility>();
             unit.isMechanitor = isMechanitor;
             unit.mechs = mechs?.Where(m => m.kind != null).ToList() ?? new List<SavedMech>();
-            unit.mechWorkMode = mechWorkMode;
+            unit.mechGroupWorkModes = mechGroupWorkModes != null
+                ? new List<MechWorkModeDef>(mechGroupWorkModes)
+                : new List<MechWorkModeDef>();
             unit.statModifiers = statModifiers?.Select(m => m.Clone()).ToList() ?? new List<PermanentStatModifier>();
 
             unit.LoadFromSaved(this);
@@ -377,7 +379,7 @@ namespace FactionColonies
             Scribe_Collections.Look(ref abilities, "abilities", LookMode.Deep);
             Scribe_Values.Look(ref isMechanitor, "isMechanitor", false);
             Scribe_Collections.Look(ref mechs, "mechs", LookMode.Deep);
-            Scribe_Defs.Look(ref mechWorkMode, "mechWorkMode");
+            Scribe_Collections.Look(ref mechGroupWorkModes, "mechGroupWorkModes", LookMode.Def);
             Scribe_Collections.Look(ref statModifiers, "statModifiers", LookMode.Deep);
 
             // forcedGender nullable — save only if set
@@ -761,17 +763,22 @@ namespace FactionColonies
     {
         public PawnKindDef kind;
         public int count;
+        public int group;   // 0-based mechanitor control-group index
 
-        public SavedMech(PawnKindDef kind, int count)
+        public SavedMech(PawnKindDef kind, int count) : this(kind, count, 0) { }
+
+        public SavedMech(PawnKindDef kind, int count, int group)
         {
             this.kind = kind;
             this.count = Mathf.Max(1, count);
+            this.group = Mathf.Max(0, group);
         }
 
         public void ExposeData()
         {
             Scribe_Defs.Look(ref kind, "kind");
             Scribe_Values.Look(ref count, "count", 1);
+            Scribe_Values.Look(ref group, "group", 0);
         }
     }
 }

@@ -108,6 +108,7 @@
 	<fcMechBandwidth>Bandwidth: {0} / {1}</fcMechBandwidth>
 	<fcMechBandwidthExceeded>That would exceed the mechanitor's bandwidth.</fcMechBandwidthExceeded>
 	<fcMechWorkMode>Work mode</fcMechWorkMode>
+	<fcMechGroup>Group {0}</fcMechGroup>
 	<fcAddMech>+ Add Mech</fcAddMech>
 	<fcPickMech>Select Mech</fcPickMech>
 	<fcNoMechsAvailable>No researched mechs available</fcNoMechsAvailable>
