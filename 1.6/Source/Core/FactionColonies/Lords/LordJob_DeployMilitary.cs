@@ -309,7 +309,7 @@ namespace FactionColonies
                 // Despawn orphaned downed/stuck mercs still on the map
                 if (currentMap is object)
                 {
-                    foreach (Mercenary merc in squad.mercenaries.Concat(squad.animals).Concat(squad.mechs))
+                    foreach (Mercenary merc in squad.mercenaries.Concat(squad.AllSubPawns()))
                     {
                         if (merc?.pawn is object && merc.pawn.Spawned && merc.pawn.Map == currentMap)
                             merc.pawn.DeSpawn();

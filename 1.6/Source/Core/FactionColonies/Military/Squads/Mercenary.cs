@@ -29,9 +29,33 @@ namespace FactionColonies
         public MercenarySquadFC squad;
         public WorldSettlementFC settlement;
         public Mercenary handler;
-        public Mercenary animal;
+        /* Instance sub-pawns deep-owned by this merc. animals is future-proofed as a list
+         * (currently size 0 or 1 — the design field MilUnitFC.animal is still a single
+         * PawnKindDef); mechs holds the bonded mechanoids of a mechanitor merc. A wrapper
+         * with subPawnType != None and pawn == null is "assigned but absent" (dead, awaiting
+         * paid replacement). See handler for the owning-merc back-reference. */
+        public List<Mercenary> animals = new List<Mercenary>();
+        public List<Mercenary> mechs = new List<Mercenary>();
         public Pawn pawn;
         public int loadID;
+
+        /// <summary>Discriminates a sub-pawn wrapper. None for top-level mercs.</summary>
+        public enum SubPawnType { None, Animal, Mech }
+        /* Persisted sub-pawn identity. Lets a placeholder wrapper (pawn == null after death)
+         * be recreated without reading a live pawn. */
+        public SubPawnType subPawnType = SubPawnType.None;
+        public PawnKindDef subPawnKind;          // animal race OR mech kind
+        public int subPawnMechGroup;             // mech control group (animals: 0)
+        public MechWorkModeDef subPawnWorkMode;  // mech work mode (animals: null)
+
+        /// <summary>Live and placeholder sub-pawn wrappers owned by this merc (animals first, then mechs).</summary>
+        public IEnumerable<Mercenary> SubPawns()
+        {
+            if (animals != null)
+                foreach (Mercenary a in animals) if (a is object) yield return a;
+            if (mechs != null)
+                foreach (Mercenary m in mechs) if (m is object) yield return m;
+        }
 
         /// <summary>Source tag for design modifiers copied from the loadout template.</summary>
         public const string DesignModifierSource = "__design";
@@ -131,7 +155,14 @@ namespace FactionColonies
             Scribe_References.Look(ref squad, "squad");
             Scribe_References.Look(ref settlement, "settlement");
             Scribe_References.Look(ref handler, "handler");
-            Scribe_References.Look(ref animal, "animal");
+            // Sub-pawns are now deep-owned by the merc (was a Scribe_References "animal" pointer
+            // into the squad's animal list; that legacy data is migrated by MercenarySquadFC).
+            Scribe_Collections.Look(ref animals, "animals", LookMode.Deep);
+            Scribe_Collections.Look(ref mechs, "mechs", LookMode.Deep);
+            Scribe_Values.Look(ref subPawnType, "subPawnType", SubPawnType.None);
+            Scribe_Defs.Look(ref subPawnKind, "subPawnKind");
+            Scribe_Values.Look(ref subPawnMechGroup, "subPawnMechGroup", 0);
+            Scribe_Defs.Look(ref subPawnWorkMode, "subPawnWorkMode");
 
             if (isExternallyOwned)
             {
@@ -169,6 +200,18 @@ namespace FactionColonies
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
                 if (statModifiers is null) statModifiers = new List<PermanentStatModifier>();
+                if (animals is null) animals = new List<Mercenary>();
+                if (mechs is null) mechs = new List<Mercenary>();
+
+                /* Identity backfill for legacy sub-pawns (saved before subPawnType existed). The only
+                 * sub-pawn type that ever shipped is the companion animal, so any pre-existing wrapper
+                 * with a handler is an animal; capture its kind so it can survive a future death as a
+                 * placeholder. (Mechanitor handling never went live, so there are no legacy mechs.) */
+                if (subPawnType == SubPawnType.None && handler is object)
+                {
+                    subPawnType = SubPawnType.Animal;
+                    if (subPawnKind is null && pawn is object) subPawnKind = pawn.kindDef;
+                }
                 /* currentLoadout migration. Three save shapes:
                  *   1. Pre-refactor saves: only loadout (ref) populated.
                  *   2. Intermediate-refactor saves: loadout + ownedLoadout, no currentLoadout.

@@ -387,6 +387,9 @@ Please report this if you don't get your colonists sent to defend back, or your 
 	<FCSquadInspectionStatusDowned>Downed</FCSquadInspectionStatusDowned>
 	<FCSquadInspectionStatusEmpty>EMPTY</FCSquadInspectionStatusEmpty>
 	<FCSquadInspectionStatusDead>Dead</FCSquadInspectionStatusDead>
+	<FCSubPawnStatusMissing>Missing</FCSubPawnStatusMissing>
+	<FCSubPawnReplace>Replace (${0})</FCSubPawnReplace>
+	<FCSubPawnReplaceOwnerMissingTip>The owning mercenary must be present before this companion can be replaced. Refill the merc slot first.</FCSubPawnReplaceOwnerMissingTip>
 	<FCSquadInspectionEditLoadout>Edit Loadout</FCSquadInspectionEditLoadout>
 	<FCSquadInspectionPerSlotUpgrade>Upgrade ${0}</FCSquadInspectionPerSlotUpgrade>
 	<FCSquadInspectionPerSlotFill>Fill (${0})</FCSquadInspectionPerSlotFill>

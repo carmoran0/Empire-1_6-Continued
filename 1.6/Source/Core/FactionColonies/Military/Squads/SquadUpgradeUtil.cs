@@ -251,13 +251,7 @@ namespace FactionColonies
                 squad.Equipment.StripPawn(m);
                 if (m.pawn != null && !m.pawn.Destroyed) m.pawn.Destroy();
                 m.pawn = null;
-                if (m.animal != null)
-                {
-                    if (m.animal.pawn != null && !m.animal.pawn.Destroyed) m.animal.pawn.Destroy();
-                    squad.animals?.Remove(m.animal);   // drop the orphan instead of leaking it
-                    m.animal = null;
-                }
-                squad.RemoveMechsFor(m);               // destroy + drop this merc's bonded mechs
+                squad.Equipment.ClearSubPawns(m);      // destroy + drop this merc's animals + bonded mechs
             }
 
             // Slot pass: re-equip claims, fresh-hire fresh slots. The slot order in

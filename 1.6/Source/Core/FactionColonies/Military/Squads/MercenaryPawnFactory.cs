@@ -14,9 +14,9 @@ namespace FactionColonies
     /// </summary>
     public static class MercenaryPawnFactory
     {
-        /// <summary>Generates an animal pawn for the slot and writes squad/settlement back-refs
-        /// onto <paramref name="merc"/>. Caller is responsible for adding the merc to the
-        /// squad's <c>animals</c> list (or to a parent merc's <c>animal</c> field).</summary>
+        /// <summary>Generates an animal pawn for the slot and writes squad/settlement back-refs plus
+        /// sub-pawn identity onto <paramref name="merc"/>. Caller is responsible for adding the merc to
+        /// the owning merc's <c>animals</c> list and setting <c>merc.handler</c>.</summary>
         public static void CreateNewAnimal(MercenarySquadFC squad, ref Mercenary merc, PawnKindDef race)
         {
             Pawn newPawn = PawnGenerator.GeneratePawn(FCPawnGenerator.AnimalRequest(race));
@@ -24,6 +24,8 @@ namespace FactionColonies
             merc.squad = squad;
             merc.settlement = squad?.settlement;
             merc.pawn = newPawn;
+            merc.subPawnType = Mercenary.SubPawnType.Animal;
+            merc.subPawnKind = race;
         }
 
         /// <summary>Generates a mechanoid pawn for a mechanitor merc and bonds it to <paramref name="overseer"/>:
@@ -80,6 +82,10 @@ namespace FactionColonies
             merc.squad = squad;
             merc.settlement = squad?.settlement;
             merc.pawn = mech;
+            merc.subPawnType = Mercenary.SubPawnType.Mech;
+            merc.subPawnKind = mechKind;
+            merc.subPawnMechGroup = groupIndex;
+            merc.subPawnWorkMode = workMode;
         }
 
         /// <summary>
@@ -91,7 +97,7 @@ namespace FactionColonies
         {
             if (squad is null || merc?.pawn?.genes == null) return;
             // Don't overwrite a manually-assigned animal
-            if (merc.animal != null) return;
+            if (merc.animals != null && merc.animals.Any()) return;
 
             FactionFC factionFc = FindFC.FactionComp;
             if (factionFc?.xenotypeFilter == null) return;
@@ -119,8 +125,8 @@ namespace FactionColonies
                 Mercenary guardAnimal = new Mercenary(true);
                 CreateNewAnimal(squad, ref guardAnimal, guardKind);
                 guardAnimal.handler = merc;
-                merc.animal = guardAnimal;
-                squad.animals.Add(guardAnimal);
+                if (merc.animals is null) merc.animals = new List<Mercenary>();
+                merc.animals.Add(guardAnimal);
             }
         }
 

@@ -157,6 +157,9 @@ namespace FactionColonies
         public static int vpeFocusCost = DEFAULT_VPE_FOCUS_COST;
         public static int vpeStatPointCost = DEFAULT_VPE_STAT_POINT_COST;
         public static float mercenaryHealRatePerHour = 1f;
+        // HP repaired per hourly heal tick for off-map mechs (alternate to the merc heal path,
+        // which doesn't apply to mechanoids). Fed straight to MechRepairUtility.RepairTick.
+        public static float militaryMechRepairRate = 4f;
 
         public static float maxThreatMultiplier = DEFAULT_MAX_THREAT_MULTIPLIER;
         public static float defenderAdvantage = DEFAULT_DEFENDER_ADVANTAGE;
@@ -366,6 +369,7 @@ namespace FactionColonies
             }
             Scribe_Values.Look(ref battleArchiveUnlimited, "battleArchiveUnlimited", DEFAULT_BATTLE_ARCHIVE_UNLIMITED);
             Scribe_Values.Look(ref mercenaryHealRatePerHour, "mercenaryHealRatePerHour", 1f);
+            Scribe_Values.Look(ref militaryMechRepairRate, "militaryMechRepairRate", 4f);
             Scribe_Values.Look(ref militaryPsylinkCostMultiplier, "militaryPsylinkCostMultiplier", 1.0);
             Scribe_Values.Look(ref militaryPsycastCostMultiplier, "militaryPsycastCostMultiplier", 1.0);
             Scribe_Values.Look(ref militaryMechCostMultiplier, "militaryMechCostMultiplier", 1.0);
@@ -789,6 +793,7 @@ namespace FactionColonies
                 respectLethalDamageThreshold = DEFAULT_RESPECT_LETHAL_DAMAGE_THRESHOLD;
                 antiExploit = DEFAULT_ANTI_EXPLOIT;
                 mercenaryHealRatePerHour = 1f;
+                militaryMechRepairRate = 4f;
                 squadHireCostMultiplier = DEFAULT_SQUAD_HIRE_COST_MULTIPLIER;
                 squadUpgradeCostMultiplier = DEFAULT_SQUAD_UPGRADE_COST_MULTIPLIER;
                 maxSquadSize = DEFAULT_MAX_SQUAD_SIZE;
@@ -942,6 +947,9 @@ namespace FactionColonies
             ls.Label("FCSettingMercHealRate".Translate() + ": " + mercenaryHealRatePerHour.ToString("0.00") + "x", -1f, "FCSettingMercHealRateTip".Translate());
             mercenaryHealRatePerHour = ls.Slider(mercenaryHealRatePerHour, 0.1f, 100f);
 
+            ls.Label("FCSettingMechRepairRate".Translate() + ": " + militaryMechRepairRate.ToString("0") + " HP", -1f, "FCSettingMechRepairRateTip".Translate());
+            militaryMechRepairRate = ls.Slider(militaryMechRepairRate, 0f, 50f);
+
             // Vanilla psylink cost (base-game psycasts). Hidden when VPE is active — VPE makes psylink
             // levels free and charges per chosen psycast instead (see the Compatibility tab).
             if (!ModsConfig.IsActive("VanillaExpanded.VPsycastsE"))
@@ -973,6 +981,7 @@ namespace FactionColonies
                 maxConcurrentBattleMaps = 0;
                 efficiencyDamping = DEFAULT_EFFICIENCY_DAMPING;
                 mercenaryHealRatePerHour = 1f;
+                militaryMechRepairRate = 4f;
                 militaryPsylinkCostMultiplier = 1.0;
                 militaryMechCostMultiplier = 1.0;
                 militaryMechlinkCost = 1000.0;

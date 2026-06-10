@@ -49,8 +49,6 @@ namespace FactionColonies
             squad.outfit = outfit;
             UsedWeaponList = new List<ThingWithComps>();
             UsedApparelList = new List<Apparel>();
-            squad.animals = new List<Mercenary>();
-            squad.mechs = new List<Mercenary>();
             foreach (MilUnitFC loadout in outfit.Units)
             {
                 try
@@ -111,13 +109,14 @@ namespace FactionColonies
                     if (loadout != null)
                     {
                         EquipPawn(squad.mercenaries[count], loadout);
+                        // Fresh outfit pass: clear any sub-pawns a reused merc still carries.
+                        ClearSubPawns(squad.mercenaries[count]);
                         if (loadout.animal != null)
                         {
                             Mercenary animal = new Mercenary(true);
                             MercenaryPawnFactory.CreateNewAnimal(squad, ref animal, loadout.animal);
                             animal.handler = squad.mercenaries[count];
-                            squad.mercenaries[count].animal = animal;
-                            squad.animals.Add(animal);
+                            squad.mercenaries[count].animals.Add(animal);
                         }
 
                         // Mechanitor: spawn and bond the unit's assigned mechs to this merc (which already
@@ -249,7 +248,7 @@ namespace FactionColonies
 
         /// <summary>Syncs a merc's companion animal to <paramref name="target"/>'s animal:
         /// creates, replaces, or destroys the animal-merc as needed and keeps
-        /// <see cref="MercenarySquadFC.animals"/> consistent (no orphaned entries). Shared by the per-pawn
+        /// <see cref="Mercenary.animals"/> consistent (no orphaned entries). Shared by the per-pawn
         /// Upgrade path and the bulk <see cref="SquadUpgradeUtil.UpgradeToTemplate"/> — <see cref="EquipPawn"/> only
         /// touches apparel + weapons, so the animal has to be reconciled separately. A
         /// fresh-hire merc (<c>animal == null</c>) is handled too: it just creates the
@@ -257,41 +256,55 @@ namespace FactionColonies
         public void ReconcileAnimal(Mercenary merc, MilUnitFC target)
         {
             if (merc is null || squad is null) return;
+            if (merc.animals is null) merc.animals = new List<Mercenary>();
             PawnKindDef wanted = target?.animal;
+
+            // The design carries a single animal (MilUnitFC.animal); treat merc.animals as size 0/1.
+            Mercenary existing = merc.animals.FirstOrDefault();
 
             /* No animal wanted — drop any existing one. */
             if (wanted is null)
             {
-                if (merc.animal != null)
+                if (existing != null)
                 {
-                    if (merc.animal.pawn != null && !merc.animal.pawn.Destroyed) merc.animal.pawn.Destroy();
-                    squad.animals?.Remove(merc.animal);
-                    merc.animal = null;
+                    if (existing.pawn != null && !existing.pawn.Destroyed) existing.pawn.Destroy();
+                    merc.animals.Remove(existing);
                 }
                 return;
             }
 
-            /* Correct animal already present — leave it. */
-            if (merc.animal?.pawn?.kindDef == wanted) return;
+            /* Correct animal already present and alive — leave it. A Missing placeholder
+               (pawn == null) of the right kind falls through and is recreated. */
+            if (existing != null && existing.pawn != null && existing.subPawnKind == wanted) return;
 
             /* Wrong / missing animal — destroy the old one (if any), create the wanted one. */
-            if (merc.animal != null)
+            if (existing != null)
             {
-                if (merc.animal.pawn != null && !merc.animal.pawn.Destroyed) merc.animal.pawn.Destroy();
-                squad.animals?.Remove(merc.animal);
-                merc.animal = null;
+                if (existing.pawn != null && !existing.pawn.Destroyed) existing.pawn.Destroy();
+                merc.animals.Remove(existing);
             }
 
             Mercenary animal = new Mercenary(true);
             MercenaryPawnFactory.CreateNewAnimal(squad, ref animal, wanted);
             animal.handler = merc;
-            merc.animal = animal;
-            if (squad.animals is null) squad.animals = new List<Mercenary>();
-            squad.animals.Add(animal);
+            merc.animals.Add(animal);
+        }
+
+        /// <summary>Destroys and clears every sub-pawn (animals + mechs) of <paramref name="merc"/>.</summary>
+        public void ClearSubPawns(Mercenary merc)
+        {
+            if (merc is null) return;
+            if (merc.animals != null)
+            {
+                foreach (Mercenary a in merc.animals)
+                    if (a?.pawn != null && !a.pawn.Destroyed) a.pawn.Destroy();
+                merc.animals.Clear();
+            }
+            squad?.RemoveMechsFor(merc);
         }
 
         /// <summary>Creates and bonds every mech in <paramref name="loadout"/>'s mech list to
-        /// <paramref name="mechanitor"/>, adding them to <see cref="MercenarySquadFC.mechs"/>. Assumes
+        /// <paramref name="mechanitor"/>, adding them to <see cref="Mercenary.mechs"/>. Assumes
         /// the mechanitor pawn already has its mechlink (applied in CreateNewPawn). No-op when Biotech
         /// is absent, the loadout isn't a mechanitor design, or the pawn isn't a mechanitor.</summary>
         public void SpawnMechsFor(Mercenary mechanitor, MilUnitFC loadout)
@@ -302,7 +315,7 @@ namespace FactionColonies
             // pawn that predates this loadout becoming a mechanitor design.
             MilUnitFC.ApplyMechanitorToPawn(mechanitor.pawn, loadout);
             if (mechanitor.pawn.mechanitor is null) return;
-            if (squad.mechs is null) squad.mechs = new List<Mercenary>();
+            if (mechanitor.mechs is null) mechanitor.mechs = new List<Mercenary>();
             if (loadout.mechs is null) return;
 
             foreach (SavedMech sm in loadout.mechs)
@@ -317,7 +330,7 @@ namespace FactionColonies
                     if (mech.pawn != null)
                     {
                         mech.handler = mechanitor;
-                        squad.mechs.Add(mech);
+                        mechanitor.mechs.Add(mech);
                     }
                 }
             }

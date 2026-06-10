@@ -900,8 +900,9 @@ namespace FactionColonies
                         MilitaryEfficiencyUtil.ApplyCombatEfficiencyHediff(merc, efficiency);
                     }
 
-                    foreach (var animal in squad.animals)
+                    foreach (var animal in squad.AllSubPawns())
                     {
+                        if (animal.subPawnType != Mercenary.SubPawnType.Animal || animal.pawn is null) continue;
                         if (animal.handler?.pawn is object)
                             riders.Add(animal.handler.pawn, animal.pawn);
                     }

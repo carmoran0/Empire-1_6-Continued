@@ -55,6 +55,8 @@ At 1, military efficiency fully affects each round of auto combat. Military forc
 Values in between dampen the effect of military efficiency on the auto combat.</FCSettingEfficiencyDampingTooltip>
 	<FCSettingMercHealRate>Mercenary Heal Rate Multiplier</FCSettingMercHealRate>
 	<FCSettingMercHealRateTip>Multiplier on the healing rate for off-map mercenaries. At 1.0 (default), an Empire merc heals at roughly the same per-day rate as a vanilla pawn in a basic bed being tended with industrial medicine by an unskilled doctor. Higher values heal faster; lower values heal slower.</FCSettingMercHealRateTip>
+	<FCSettingMechRepairRate>Mech Repair Rate</FCSettingMechRepairRate>
+	<FCSettingMechRepairRateTip>Hit points repaired per hourly heal tick for off-map bonded mechs. Mechs use a separate repair path from mercenaries and animals. At 0, mechs do not auto-repair and must be paid-replaced once damaged enough.</FCSettingMechRepairRateTip>
 	<FCSettingPsylinkCostMult>Unit Psylink Cost Multiplier</FCSettingPsylinkCostMult>
 	<FCSettingPsylinkCostMultTip>Multiplier on the silver cost added to a unit design per psylink level. At 1.0 (default), each level costs roughly the value of one psylink neuroformer.</FCSettingPsylinkCostMultTip>
 	<FCSettingMechCostMult>Unit Mech Cost Multiplier</FCSettingMechCostMult>

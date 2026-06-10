@@ -42,13 +42,36 @@ namespace FactionColonies
                         merc.pawn = null;
                         FindFC.Military?.RebuildMercenaryPawnSet();
                     }
+                    else
+                    {
+                        // Not a top-level merc — it's a sub-pawn (animal or mech). Leave the wrapper
+                        // in place as a "Missing" placeholder (identity preserved) so the player pays
+                        // to replace it; just null the pawn. Neither animals nor mechs are free-replaced.
+                        Mercenary sub = mfc.FindSubPawnWrapper(__instance);
+                        if (sub != null)
+                        {
+                            sub.pawn = null;
+                            FindFC.Military?.RebuildMercenaryPawnSet();
+                        }
+                    }
 
                     // Anti-exploit: sweep gear this squad dropped/left behind so it can't be looted.
                     if (FCSettings.antiExploit) squad.Equipment.RemoveDroppedEquipment();
                 }
                 else
                 {
-                    LogUtil.Warning("Mercenary Errored out. Did not find squad.");
+                    // ReturnSquadFromUnit only matches on-map pawns; a sub-pawn can die off-map.
+                    // Fall back to a global, map-independent sub-pawn lookup before warning.
+                    Mercenary sub = mfc.FindSubPawnWrapper(__instance);
+                    if (sub != null)
+                    {
+                        sub.pawn = null;
+                        FindFC.Military?.RebuildMercenaryPawnSet();
+                    }
+                    else
+                    {
+                        LogUtil.Warning("Mercenary Errored out. Did not find squad.");
+                    }
                 }
 
                 // Anti-exploit: destroy the dying merc's own gear. When disabled, the gear (and the
