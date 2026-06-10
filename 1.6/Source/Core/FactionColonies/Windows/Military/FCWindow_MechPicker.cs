@@ -21,6 +21,7 @@ namespace FactionColonies
     {
         private readonly Func<MilUnitFC> getDisplayUnit;
         private readonly Func<MilUnitFC> getEditTarget;
+        private readonly int group;
 
         private string searchTerm = "";
         private Vector2 scrollPos;
@@ -32,10 +33,11 @@ namespace FactionColonies
 
         public override Vector2 InitialSize => new Vector2(480f, 600f);
 
-        public FCWindow_MechPicker(Func<MilUnitFC> getDisplayUnit, Func<MilUnitFC> getEditTarget)
+        public FCWindow_MechPicker(Func<MilUnitFC> getDisplayUnit, Func<MilUnitFC> getEditTarget, int group)
         {
             this.getDisplayUnit = getDisplayUnit;
             this.getEditTarget = getEditTarget;
+            this.group = group;
             forcePause = false;
             draggable = true;
             doCloseX = true;
@@ -49,10 +51,11 @@ namespace FactionColonies
 
             MilUnitFC displayUnit = getDisplayUnit?.Invoke();
 
-            // Title
+            // Title — names the group the picked mech will be added to.
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.UpperLeft;
-            Widgets.Label(new Rect(0, 0, inRect.width, 35f), "fcPickMech".Translate());
+            Widgets.Label(new Rect(0, 0, inRect.width, 35f),
+                "fcPickMech".Translate() + " — " + "fcMechGroup".Translate(group + 1));
 
             // Bandwidth header
             Text.Font = GameFont.Small;
@@ -117,7 +120,7 @@ namespace FactionColonies
                 if (Widgets.ButtonInvisible(row))
                 {
                     MilUnitFC target = getEditTarget?.Invoke();
-                    target?.AddMech(mech);   // hard-blocks + messages on bandwidth overflow
+                    target?.AddMech(mech, group);   // adds to this picker's group; hard-blocks on bandwidth
                 }
             }
 

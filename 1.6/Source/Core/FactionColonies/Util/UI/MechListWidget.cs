@@ -11,11 +11,12 @@ namespace FactionColonies
     /* Shared mechanitor panel for the unit designer's Mechs tab (Biotech only). A "make mechanitor"
      * toggle gates the rest: when on, the unit is given a mechlink at spawn and can be assigned mechs.
      * Bandwidth (read from the preview pawn's MechBandwidth stat — so control-sublink implants and
-     * bandwidth-pack apparel count) limits how many mechs fit, counted across all groups; the "Add mech"
-     * picker hard-blocks an over-budget add. Mechs are organized into control groups (count from the
-     * MechControlGroups stat): each group has its own work-mode chooser, and each mech row has a group
-     * selector to move it. Mirrors ImplantListWidget/AbilityListWidget: reads displayUnit, routes
-     * mutations via getEditTarget. */
+     * bandwidth-pack apparel count) limits how many mechs fit, counted across all groups; the add picker
+     * hard-blocks an over-budget add. Mechs are organized into control groups (count from the
+     * MechControlGroups stat): each group is a highlighted header strip with its own work-mode chooser
+     * and Add Mech button (adds straight into that group), with the group's mechs listed below it and a
+     * gradient separator between groups. Each mech row has a group selector to move it. Mirrors
+     * ImplantListWidget/AbilityListWidget: reads displayUnit, routes mutations via getEditTarget. */
     public static class MechListWidget
     {
         public struct Options
@@ -31,6 +32,8 @@ namespace FactionColonies
         private const float removeButtonSize = 20f;
         private const float stepperButtonW = 20f;
         private const float IconSize = 24f;
+        private const float groupGap = 12f;
+        private static readonly Color separatorColor = new Color(0.6f, 0.6f, 0.6f, 0.85f);
 
         public static void Draw(Rect rect, MilUnitFC displayUnit, ref Vector2 scrollPos, Options opts)
         {
@@ -82,27 +85,15 @@ namespace FactionColonies
                 return;
             }
 
-            // --- Bandwidth summary + Add Mech button ---
+            // --- Bandwidth summary (full width; Add Mech lives per-group below) ---
             float used = displayUnit?.UsedMechBandwidth ?? 0f;
             float total = displayUnit?.TotalMechBandwidth ?? 0f;
-            float addW = 110f;
-            Rect bwRect = new Rect(rect.x, toggleRect.yMax + 2f, rect.width - (editable ? addW + 6f : 0f), headerHeight);
+            Rect bwRect = new Rect(rect.x, toggleRect.yMax + 2f, rect.width, headerHeight);
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
             if (used > total + 0.0001f) GUI.color = ColorLibrary.RedReadable;
             Widgets.Label(bwRect, "fcMechBandwidth".Translate(used.ToString("0.#"), total.ToString("0.#")));
             GUI.color = Color.white;
-
-            if (editable)
-            {
-                Rect addBtnRect = new Rect(rect.xMax - addW, bwRect.y, addW, headerHeight);
-                Text.Anchor = TextAnchor.MiddleCenter;
-                if (Widgets.ButtonText(addBtnRect, "fcAddMech".Translate()))
-                {
-                    Func<MilUnitFC> getDisplay = opts.getDisplayUnit ?? (() => displayUnit);
-                    Find.WindowStack.Add(new FCWindow_MechPicker(getDisplay, opts.getEditTarget));
-                }
-            }
 
             // --- Grouped mech list ---
             int groupCount = displayUnit != null ? Mathf.Max(1, displayUnit.MechGroupCount) : 1;
@@ -124,23 +115,35 @@ namespace FactionColonies
             Rect listOutRect = new Rect(rect.x, listTop, rect.width, rect.height - (listTop - rect.y));
             float viewHeight = 0f;
             for (int g = 0; g < groupCount; g++) viewHeight += headerHeight + buckets[g].Count * rowHeight;
+            viewHeight += (groupCount - 1) * groupGap;
             Rect scrollViewRect = ScrollUtil.BeginScrollView(listOutRect, ref scrollPos, viewHeight);
 
             float y = scrollViewRect.y;
             for (int g = 0; g < groupCount; g++)
             {
-                // Group header: "Group N" + work-mode button.
+                // Gap + gradient separator line between groups.
+                if (g > 0)
+                {
+                    TexLoad.DrawHorizontalPeakGradientLine(scrollViewRect.x + 8f, y + groupGap * 0.5f,
+                        scrollViewRect.width - 16f, separatorColor);
+                    y += groupGap;
+                }
+
+                // Group header (the only highlighted strip): "Group N" + work-mode + Add Mech buttons.
                 Rect gHeader = new Rect(scrollViewRect.x, y, scrollViewRect.width, headerHeight);
                 Widgets.DrawHighlight(gHeader);
                 MechWorkModeDef gMode = displayUnit?.GetGroupWorkMode(g) ?? MechWorkModeDefOf.Escort;
 
+                float gAddW = 90f;
+                float gWmW = 150f;
+                Rect addBtnRect = new Rect(gHeader.xMax - gAddW - 2f, gHeader.y + 1f, gAddW, headerHeight - 2f);
+                Rect wmRect = new Rect(addBtnRect.x - gWmW - 4f, gHeader.y + 1f, gWmW, headerHeight - 2f);
+
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Rect gLabelRect = new Rect(gHeader.x + 4f, gHeader.y, gHeader.width * 0.4f, headerHeight);
+                Rect gLabelRect = new Rect(gHeader.x + 4f, gHeader.y, wmRect.x - gHeader.x - 8f, headerHeight);
                 Widgets.Label(gLabelRect, "fcMechGroup".Translate(g + 1));
 
-                float wmW = 160f;
-                Rect wmRect = new Rect(gHeader.xMax - wmW - 2f, gHeader.y + 1f, wmW, headerHeight - 2f);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleCenter;
                 if (editable)
@@ -160,21 +163,27 @@ namespace FactionColonies
                         }
                         if (modeOpts.Count > 0) Find.WindowStack.Add(new FloatMenu(modeOpts));
                     }
+
+                    if (Widgets.ButtonText(addBtnRect, "fcAddMech".Translate()))
+                    {
+                        Func<MilUnitFC> getDisplay = opts.getDisplayUnit ?? (() => displayUnit);
+                        Find.WindowStack.Add(new FCWindow_MechPicker(getDisplay, opts.getEditTarget, capturedGroup));
+                    }
                 }
                 else
                 {
-                    Widgets.Label(wmRect, "fcMechWorkMode".Translate() + ": " + gMode.LabelCap);
+                    Widgets.Label(new Rect(wmRect.x, wmRect.y, addBtnRect.xMax - wmRect.x, wmRect.height),
+                        "fcMechWorkMode".Translate() + ": " + gMode.LabelCap);
                 }
                 y += headerHeight;
 
-                // Mech rows in this group.
-                int rowInGroup = 0;
+                // Mech rows in this group (no row highlight — separation comes from the group header
+                // strip and the gradient line; mouseover gives feedback).
                 foreach (int index in buckets[g])
                 {
                     SavedMech item = items[index];
                     Rect row = new Rect(scrollViewRect.x, y, scrollViewRect.width, rowHeight);
-                    if (rowInGroup % 2 == 0) Widgets.DrawHighlight(row);
-                    rowInGroup++;
+                    Widgets.DrawHighlightIfMouseover(row);
 
                     Rect iconRect = new Rect(row.x + 6f, row.y + 2f, IconSize, IconSize);
                     Widgets.ThingIcon(iconRect, item.kind.race);
