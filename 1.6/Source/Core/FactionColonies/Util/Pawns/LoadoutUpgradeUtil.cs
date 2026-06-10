@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Verse;
 
 namespace FactionColonies
 {
@@ -34,6 +35,16 @@ namespace FactionColonies
             total += AbilitySystemRegistry.Active?.PsylinkCost(unit.psylinkLevel) ?? 0;
             if (unit.abilities != null)
                 foreach (SavedAbility a in unit.abilities) total += MilUnitFC.AbilityCost(a);
+            // Mechanitor: flat mechlink surcharge + each bonded mech's market value. Matches the
+            // design-side cost in MilUnitFC.UpdateEquipmentTotalCost so the upgrade diff stays in sync.
+            if (ModsConfig.BiotechActive && unit.IsMechanitorDesign)
+            {
+                total += FCSettings.militaryMechlinkCost;
+                if (unit.mechs != null)
+                    foreach (SavedMech m in unit.mechs)
+                        if (m.kind?.race != null)
+                            total += Math.Floor(m.kind.race.BaseMarketValue * FCSettings.militaryMechCostMultiplier) * Math.Max(1, m.count);
+            }
             return total;
         }
 
@@ -69,7 +80,35 @@ namespace FactionColonies
             if (!InventoryEquivalent(target.inventory, current.inventory)) return true;
             if (!ImplantsEquivalent(target.implants, current.implants)) return true;
             if (!PsycastsEquivalent(target, current)) return true;
+            if (MechanitorChanged(target, current)) return true;
             return false;
+        }
+
+        /// <summary>True when the mechanitor flag or the assigned-mech set differs between
+        /// <paramref name="target"/> and <paramref name="current"/>. The upgrade paths run an
+        /// in-place mech reconcile (<see cref="SquadEquipmentTracker.ReconcileMechs"/>) when this is
+        /// true — destroying and rebuilding the merc's bonded mechs.</summary>
+        public static bool MechanitorChanged(MilUnitFC target, MilUnitFC current)
+        {
+            if (target is null) return false;
+            if (current is null) return target.IsMechanitorDesign;
+            if (target.isMechanitor != current.isMechanitor) return true;
+            if (target.mechWorkMode != current.mechWorkMode) return true;
+            return !MechsEquivalent(target.mechs, current.mechs);
+        }
+
+        /* Order-independent equality over mech rows (kind + count). */
+        public static bool MechsEquivalent(List<SavedMech> a, List<SavedMech> b)
+        {
+            int an = a == null ? 0 : a.Count(x => x.kind != null);
+            int bn = b == null ? 0 : b.Count(x => x.kind != null);
+            if (an != bn) return false;
+            if (an == 0) return true;
+            List<string> sa = a.Where(x => x.kind != null).Select(x => x.kind.defName + "|" + Math.Max(1, x.count)).OrderBy(s => s).ToList();
+            List<string> sb = b.Where(x => x.kind != null).Select(x => x.kind.defName + "|" + Math.Max(1, x.count)).OrderBy(s => s).ToList();
+            for (int i = 0; i < an; i++)
+                if (sa[i] != sb[i]) return false;
+            return true;
         }
 
         /// <summary>True when the psylink level or chosen-psycast set differs between

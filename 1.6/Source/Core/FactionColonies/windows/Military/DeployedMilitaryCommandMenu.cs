@@ -132,7 +132,7 @@ namespace FactionColonies
 
         private static void DespawnSquad(MercenarySquadFC squad)
         {
-            foreach (Mercenary merc in squad.mercenaries.Concat(squad.animals))
+            foreach (Mercenary merc in squad.mercenaries.Concat(squad.animals).Concat(squad.mechs))
             {
                 if (merc?.pawn?.Map != null)
                 {

@@ -147,6 +147,10 @@ namespace FactionColonies
         public static double militaryRaceCostMultiplier = 0.075;
         public static double militaryPsylinkCostMultiplier = 1.0;
         public static double militaryPsycastCostMultiplier = 1.0;
+        // Mechanitor merc costs (Biotech). Per-mech market-value multiplier + a flat surcharge for the
+        // mechlink itself. Default mechlink cost ~ the in-game Mechlink item market value (1000).
+        public static double militaryMechCostMultiplier = 1.0;
+        public static double militaryMechlinkCost = 1000.0;
         // Vanilla Psycasts Expanded point-purchase costs (configured in the Compatibility settings tab).
         public static int vpePsycastBaseCost = DEFAULT_VPE_PSYCAST_BASE_COST;
         public static int vpePsycastPerLevelCost = DEFAULT_VPE_PSYCAST_PER_LEVEL_COST;
@@ -364,6 +368,8 @@ namespace FactionColonies
             Scribe_Values.Look(ref mercenaryHealRatePerHour, "mercenaryHealRatePerHour", 1f);
             Scribe_Values.Look(ref militaryPsylinkCostMultiplier, "militaryPsylinkCostMultiplier", 1.0);
             Scribe_Values.Look(ref militaryPsycastCostMultiplier, "militaryPsycastCostMultiplier", 1.0);
+            Scribe_Values.Look(ref militaryMechCostMultiplier, "militaryMechCostMultiplier", 1.0);
+            Scribe_Values.Look(ref militaryMechlinkCost, "militaryMechlinkCost", 1000.0);
             Scribe_Values.Look(ref vpePsycastBaseCost, "vpePsycastBaseCost", DEFAULT_VPE_PSYCAST_BASE_COST);
             Scribe_Values.Look(ref vpePsycastPerLevelCost, "vpePsycastPerLevelCost", DEFAULT_VPE_PSYCAST_PER_LEVEL_COST);
             Scribe_Values.Look(ref vpeFocusCost, "vpeFocusCost", DEFAULT_VPE_FOCUS_COST);
@@ -944,6 +950,16 @@ namespace FactionColonies
                 militaryPsylinkCostMultiplier = ls.Slider((float)militaryPsylinkCostMultiplier, 0f, 5f);
             }
 
+            // Mechanitor merc costs (Biotech only).
+            if (ModsConfig.BiotechActive)
+            {
+                ls.Label("FCSettingMechCostMult".Translate() + ": " + militaryMechCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingMechCostMultTip".Translate());
+                militaryMechCostMultiplier = ls.Slider((float)militaryMechCostMultiplier, 0f, 5f);
+
+                ls.Label("FCSettingMechlinkCost".Translate() + ": " + militaryMechlinkCost.ToString("0"), -1f, "FCSettingMechlinkCostTip".Translate());
+                militaryMechlinkCost = ls.Slider((float)militaryMechlinkCost, 0f, 5000f);
+            }
+
             DrawSectionResetButton(ls, delegate
             {
                 disableHostileMilitaryActions = DEFAULT_DISABLE_HOSTILE_MILITARY_ACTIONS;
@@ -958,6 +974,8 @@ namespace FactionColonies
                 efficiencyDamping = DEFAULT_EFFICIENCY_DAMPING;
                 mercenaryHealRatePerHour = 1f;
                 militaryPsylinkCostMultiplier = 1.0;
+                militaryMechCostMultiplier = 1.0;
+                militaryMechlinkCost = 1000.0;
             });
 
             ls.Gap(12f);

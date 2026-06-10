@@ -270,6 +270,9 @@ namespace FactionColonies
         public List<SavedImplant> implants;
         public int psylinkLevel;
         public List<SavedAbility> abilities;
+        public bool isMechanitor;
+        public List<SavedMech> mechs;
+        public MechWorkModeDef mechWorkMode;
         public XenotypeDef xenotype;
         public string customXenotypeName;
         public Gender? forcedGender;
@@ -290,6 +293,9 @@ namespace FactionColonies
             implants = new List<SavedImplant>(unit.implants ?? new List<SavedImplant>());
             psylinkLevel = unit.psylinkLevel;
             abilities = new List<SavedAbility>(unit.abilities ?? new List<SavedAbility>());
+            isMechanitor = unit.isMechanitor;
+            mechs = new List<SavedMech>(unit.mechs ?? new List<SavedMech>());
+            mechWorkMode = unit.mechWorkMode;
             animal = unit.animal;
             pawnKind = unit.pawnKind;
             xenotype = unit.xenotype;
@@ -327,6 +333,9 @@ namespace FactionColonies
             // Keep def-backed entries (ability/focus) and aggregate entries that carry a kind
             // (e.g. stat upgrades, which have no defName).
             unit.abilities = abilities?.Where(a => a.IsValid()).ToList() ?? new List<SavedAbility>();
+            unit.isMechanitor = isMechanitor;
+            unit.mechs = mechs?.Where(m => m.kind != null).ToList() ?? new List<SavedMech>();
+            unit.mechWorkMode = mechWorkMode;
             unit.statModifiers = statModifiers?.Select(m => m.Clone()).ToList() ?? new List<PermanentStatModifier>();
 
             unit.LoadFromSaved(this);
@@ -366,6 +375,9 @@ namespace FactionColonies
             Scribe_Collections.Look(ref implants, "implants", LookMode.Deep);
             Scribe_Values.Look(ref psylinkLevel, "psylinkLevel", 0);
             Scribe_Collections.Look(ref abilities, "abilities", LookMode.Deep);
+            Scribe_Values.Look(ref isMechanitor, "isMechanitor", false);
+            Scribe_Collections.Look(ref mechs, "mechs", LookMode.Deep);
+            Scribe_Defs.Look(ref mechWorkMode, "mechWorkMode");
             Scribe_Collections.Look(ref statModifiers, "statModifiers", LookMode.Deep);
 
             // forcedGender nullable — save only if set
@@ -737,6 +749,29 @@ namespace FactionColonies
             Scribe_Values.Look(ref abilityDef, "abilityDef");
             Scribe_Values.Look(ref kind, "kind");
             Scribe_Values.Look(ref count, "count", 0);
+        }
+    }
+
+    /* A mech assignment chosen for a mechanitor unit design: a controllable mechanoid PawnKindDef
+     * and how many of it to bond to the mechanitor at deploy time. Stored as (kind, count) so a
+     * single row can represent multiple identical mechs. A kind that fails to resolve (mod removed,
+     * Biotech absent) loads as null and is filtered out in SavedUnitFC.CreateMilUnit — the same
+     * graceful-degradation contract as SavedImplant/SavedAbility. */
+    public struct SavedMech : IExposable
+    {
+        public PawnKindDef kind;
+        public int count;
+
+        public SavedMech(PawnKindDef kind, int count)
+        {
+            this.kind = kind;
+            this.count = Mathf.Max(1, count);
+        }
+
+        public void ExposeData()
+        {
+            Scribe_Defs.Look(ref kind, "kind");
+            Scribe_Values.Look(ref count, "count", 1);
         }
     }
 }

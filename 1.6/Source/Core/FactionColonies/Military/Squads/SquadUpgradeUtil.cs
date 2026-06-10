@@ -257,6 +257,7 @@ namespace FactionColonies
                     squad.animals?.Remove(m.animal);   // drop the orphan instead of leaking it
                     m.animal = null;
                 }
+                squad.RemoveMechsFor(m);               // destroy + drop this merc's bonded mechs
             }
 
             // Slot pass: re-equip claims, fresh-hire fresh slots. The slot order in
@@ -275,6 +276,7 @@ namespace FactionColonies
                     MilUnitFC prior = merc.currentLoadout;
                     bool implantsChanged = LoadoutUpgradeUtil.ImplantsChanged(target, prior);
                     bool psycastsChanged = LoadoutUpgradeUtil.PsycastsChanged(target, prior);
+                    bool mechanitorChanged = LoadoutUpgradeUtil.MechanitorChanged(target, prior);
                     squad.Equipment.StripPawn(merc);
                     squad.Equipment.EquipPawn(merc, target);
                     // Implants are surgical and psycasts are provider-managed — reconcile each in place
@@ -283,6 +285,11 @@ namespace FactionColonies
                         MilUnitFC.ReconcileImplantsOnPawn(merc.pawn, target, prior);
                     if (psycastsChanged)
                         MilUnitFC.ReconcileAbilitiesOnPawn(merc.pawn, target);
+                    // A reused pawn was generated under its prior loadout, so it may lack the mechlink
+                    // when the target newly makes it a mechanitor — apply it (idempotent) before mechs
+                    // get reconciled below so pawn.mechanitor exists for bonding.
+                    if (mechanitorChanged)
+                        MilUnitFC.ApplyMechanitorToPawn(merc.pawn, target);
                     /* Re-sync the pool pointer to the live template slot (repairs a stale
                        'loadout' after a SwapTemplate). ownedLoadout is deliberately left
                        intact — a bulk upgrade APPLIES personalization, it doesn't discard it. */
@@ -307,6 +314,7 @@ namespace FactionColonies
                 }
 
                 squad.Equipment.ReconcileAnimal(merc, target);
+                squad.Equipment.ReconcileMechs(merc, target);
 
                 rebuilt.Add(merc);
             }

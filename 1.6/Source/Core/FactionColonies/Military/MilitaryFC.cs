@@ -67,6 +67,14 @@ namespace FactionColonies
                             mercenaryPawnSet.Add(animal.pawn);
                     }
                 }
+                if (squad.mechs != null)
+                {
+                    foreach (Mercenary mech in squad.mechs)
+                    {
+                        if (mech?.pawn != null)
+                            mercenaryPawnSet.Add(mech.pawn);
+                    }
+                }
             }
         }
 
@@ -396,6 +404,14 @@ namespace FactionColonies
                             return squad;
                     }
                 }
+                if (squad.mechs != null)
+                {
+                    foreach (var mech in squad.mechs)
+                    {
+                        if (mech?.pawn?.Map != null && mech.pawn == unit)
+                            return squad;
+                    }
+                }
             }
 
             LogUtil.Message("MercenarySquadFC - ReturnSquadFromUnit - Did not find squad.");
@@ -409,9 +425,12 @@ namespace FactionColonies
 
         public IEnumerable<Mercenary> AllMercenaries =>
             mercenarySquads.SelectMany(squad =>
-                squad.animals?.Count > 0
-                    ? squad.mercenaries.Concat(squad.animals)
-                    : squad.mercenaries);
+            {
+                IEnumerable<Mercenary> all = squad.mercenaries;
+                if (squad.animals?.Count > 0) all = all.Concat(squad.animals);
+                if (squad.mechs?.Count > 0) all = all.Concat(squad.mechs);
+                return all;
+            });
 
         public IEnumerable<MercenarySquadFC> DeployedSquads =>
             mercenarySquads.Where(squad => squad.Deployment.IsPhysicallyDeployed());

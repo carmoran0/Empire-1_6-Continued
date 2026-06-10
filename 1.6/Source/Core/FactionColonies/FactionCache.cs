@@ -27,6 +27,8 @@ namespace FactionColonies
         private static List<PawnKindDef> _cachedAnimalKinds = null;
         private static List<PawnKindDef> _cachedCombatAnimalKinds = null;
         private static List<PawnKindDef> _cachedPackAnimalKinds = null;
+        private static List<PawnKindDef> _cachedControllableMechKinds = null;
+        private static Dictionary<ThingDef, List<RecipeDef>> _cachedMechGestationRecipes = null;
         private static bool _checkedForNonViolentXenos = false;
         private static bool _cachedNonViolentXenosExist = false;
         private static Dictionary<XenotypeDef, bool> _cachedXenotypeViolenceDict = null;
@@ -235,6 +237,63 @@ namespace FactionColonies
                                                                    (_cachedCombatAnimalKinds = AllAnimalKindDefs.Where(kind => kind.IsCombatAnimal()).ToList());
         public static List<PawnKindDef> AllPackAnimalKinds => _cachedPackAnimalKinds ??
                                                               (_cachedPackAnimalKinds = AllAnimalKindDefs.Where(kind => kind.IsPackAnimal()).ToList());
+        /// <summary>All player-controllable mechanoid PawnKindDefs (mechs with an OverseerSubject comp
+        /// and a BandwidthCost stat) that a mechanitor merc can be assigned. Empty when Biotech is off.
+        /// Research-independent — use <see cref="UnlockedControllableMechKinds"/> for the picker.</summary>
+        public static List<PawnKindDef> AllControllableMechKinds => _cachedControllableMechKinds ??
+            (_cachedControllableMechKinds = (!ModsConfig.BiotechActive
+                ? new List<PawnKindDef>()
+                : AllPawnKindDefs.Where(kind => kind?.race?.race != null
+                        && kind.race.race.IsMechanoid
+                        && kind.race.GetCompProperties<CompProperties_OverseerSubject>() != null
+                        && kind.race.statBases != null
+                        && kind.race.statBases.Any(s => s.stat == StatDefOf.BandwidthCost))
+                    .ToList()));
+
+        /// <summary>Map of mech ThingDef -> its mechanitor gestation recipe(s). Research-independent
+        /// (which recipes exist never changes), so it's safely cached; the research check itself
+        /// (<see cref="IsMechResearchUnlocked"/>) reads live research state.</summary>
+        public static Dictionary<ThingDef, List<RecipeDef>> MechGestationRecipes => _cachedMechGestationRecipes ??
+            (_cachedMechGestationRecipes = BuildMechGestationRecipes());
+
+        private static Dictionary<ThingDef, List<RecipeDef>> BuildMechGestationRecipes()
+        {
+            Dictionary<ThingDef, List<RecipeDef>> map = new Dictionary<ThingDef, List<RecipeDef>>();
+            if (!ModsConfig.BiotechActive) return map;
+            foreach (RecipeDef r in DefDatabase<RecipeDef>.AllDefsListForReading)
+            {
+                if (!r.mechanitorOnlyRecipe) continue;
+                ThingDef product = r.ProducedThingDef;
+                if (product is null) continue;
+                List<RecipeDef> list;
+                if (!map.TryGetValue(product, out list)) { list = new List<RecipeDef>(); map[product] = list; }
+                list.Add(r);
+            }
+            return map;
+        }
+
+        /// <summary>True when the player has researched the means to build this mech — i.e. it has a
+        /// gestation recipe whose research prerequisites are all complete. A mech with no gestation
+        /// recipe at all (e.g. boss-only mechs the player can never build) is NOT assignable.</summary>
+        public static bool IsMechResearchUnlocked(PawnKindDef kind)
+        {
+            if (!ModsConfig.BiotechActive || kind?.race is null) return false;
+            List<RecipeDef> recipes;
+            if (!MechGestationRecipes.TryGetValue(kind.race, out recipes) || recipes.NullOrEmpty())
+                return false; // no gestation recipe — the player can't build this mech at all
+            foreach (RecipeDef r in recipes)
+            {
+                if (r.researchPrerequisite != null && !r.researchPrerequisite.IsFinished) continue;
+                if (r.researchPrerequisites != null && r.researchPrerequisites.Any(p => !p.IsFinished)) continue;
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>The subset of <see cref="AllControllableMechKinds"/> the player has actually
+        /// unlocked through research. Recomputed each call (research completes mid-game), not cached.</summary>
+        public static List<PawnKindDef> UnlockedControllableMechKinds =>
+            AllControllableMechKinds.Where(IsMechResearchUnlocked).ToList();
         public static bool NonViolentXenotypesExist
         {
             get
@@ -776,6 +835,8 @@ namespace FactionColonies
             _cachedAnimalKinds = null;
             _cachedCombatAnimalKinds = null;
             _cachedPackAnimalKinds = null;
+            _cachedControllableMechKinds = null;
+            _cachedMechGestationRecipes = null;
             _cachedXenotypeViolenceDict = null;
             _cachedFCPolicyDefs = null;
             _cachedFCPolicyDescs = null;

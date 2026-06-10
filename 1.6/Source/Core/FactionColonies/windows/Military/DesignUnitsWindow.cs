@@ -22,6 +22,7 @@ namespace FactionColonies
         private Vector2 inventoryListScrollPos;
         private Vector2 implantListScrollPos;
         private Vector2 abilityListScrollPos;
+        private Vector2 mechListScrollPos;
         private LoadoutTab activeTab = LoadoutTab.Apparel;
 
         // Layout sizing constants
@@ -428,7 +429,9 @@ namespace FactionColonies
             // Only show the Abilities tab when an ability system is actually available
             // (Royalty, VPE, or another provider) — otherwise it's an empty, useless tab.
             bool showAbilities = AbilitySystemRegistry.Active != null;
-            activeTab = LoadoutTabStrip.Draw(rect, activeTab, out content, includeAbilities: showAbilities);
+            // Mechs tab requires Biotech (mechanitors/mechlinks).
+            bool showMechs = ModsConfig.BiotechActive;
+            activeTab = LoadoutTabStrip.Draw(rect, activeTab, out content, includeAbilities: showAbilities, includeMechs: showMechs);
             content = content.ContractedBy(4f);
 
             if (activeTab == LoadoutTab.Apparel)
@@ -459,9 +462,19 @@ namespace FactionColonies
                     getDisplayUnit = () => unit,
                 });
             }
-            else
+            else if (activeTab == LoadoutTab.Abilities)
             {
                 AbilityListWidget.Draw(content, unit, ref abilityListScrollPos, new AbilityListWidget.Options
+                {
+                    canEdit = true,
+                    showHeaderButtons = true,
+                    getEditTarget = () => unit,
+                    getDisplayUnit = () => unit,
+                });
+            }
+            else
+            {
+                MechListWidget.Draw(content, unit, ref mechListScrollPos, new MechListWidget.Options
                 {
                     canEdit = true,
                     showHeaderButtons = true,

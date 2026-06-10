@@ -34,6 +34,7 @@ namespace FactionColonies
         private Vector2 inventoryScroll;
         private Vector2 implantScroll;
         private Vector2 abilityScroll;
+        private Vector2 mechScroll;
         private LoadoutTab activeTab = LoadoutTab.Apparel;
 
         /* Buffered edits. null = "inherits from squad template" (same semantics as
@@ -273,7 +274,8 @@ namespace FactionColonies
             // matching the unit designer. Edits buffer into workingLoadout like every other tab; the
             // live pawn is reconciled later by the squad inspection's per-pawn Upgrade.
             bool showAbilities = AbilitySystemRegistry.Active != null;
-            activeTab = LoadoutTabStrip.Draw(rect, activeTab, out content, includeAbilities: showAbilities);
+            bool showMechs = ModsConfig.BiotechActive;
+            activeTab = LoadoutTabStrip.Draw(rect, activeTab, out content, includeAbilities: showAbilities, includeMechs: showMechs);
             content = content.ContractedBy(4f);
 
             if (activeTab == LoadoutTab.Apparel)
@@ -304,9 +306,19 @@ namespace FactionColonies
                     getDisplayUnit = () => DisplayLoadout,
                 });
             }
-            else
+            else if (activeTab == LoadoutTab.Abilities)
             {
                 AbilityListWidget.Draw(content, DisplayLoadout, ref abilityScroll, new AbilityListWidget.Options
+                {
+                    canEdit = true,
+                    showHeaderButtons = true,
+                    getEditTarget = EnsureWorkingLoadout,
+                    getDisplayUnit = () => DisplayLoadout,
+                });
+            }
+            else
+            {
+                MechListWidget.Draw(content, DisplayLoadout, ref mechScroll, new MechListWidget.Options
                 {
                     canEdit = true,
                     showHeaderButtons = true,

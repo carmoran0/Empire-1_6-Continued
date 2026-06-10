@@ -16,6 +16,10 @@ namespace FactionColonies
         private string name;
         public List<Mercenary> mercenaries = new List<Mercenary>();
         public List<Mercenary> animals = new List<Mercenary>();
+        /// <summary>Mechanoids bonded to mechanitor mercs in this squad. Parallel to <see cref="animals"/>:
+        /// extra non-mercenary battle pawns that deploy with the squad. Each entry's <c>handler</c> points
+        /// to the mechanitor merc that overseers it. Cost is captured on the mechanitor's design, not here.</summary>
+        public List<Mercenary> mechs = new List<Mercenary>();
         public WorldSettlementFC settlement;
         public bool isExtraSquad;
         public int dead;
@@ -111,6 +115,7 @@ namespace FactionColonies
             Scribe_Values.Look(ref name, "name");
             Scribe_Collections.Look(ref mercenaries, "mercenaries", LookMode.Deep);
             Scribe_Collections.Look(ref animals, "animals", LookMode.Deep);
+            Scribe_Collections.Look(ref mechs, "mechs", LookMode.Deep);
             Scribe_Values.Look(ref isExtraSquad, "isExtraSquad");
             Scribe_References.Look(ref _outfit, "outfit");
             Scribe_Collections.Look(ref statModifiers, "statModifiers", LookMode.Deep);
@@ -137,6 +142,7 @@ namespace FactionColonies
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
                 if (statModifiers is null) statModifiers = new List<PermanentStatModifier>();
+                if (mechs is null) mechs = new List<Mercenary>();
                 if (Equipment is null) Equipment = CreateEquipment();
                 Equipment.AdoptLegacyLists(_legacyUsedWeaponList, _legacyUsedApparelList);
                 _legacyUsedWeaponList = null;
@@ -173,8 +179,13 @@ namespace FactionColonies
         public IEnumerable<Pawn> EquippedAnimalMercenaries =>
             animals.Where(animal => animal?.pawn != null).Select(animal => animal.pawn);
 
+        public IEnumerable<Pawn> EquippedMechMercenaries =>
+            mechs.Where(mech => mech?.pawn != null).Select(mech => mech.pawn);
+
         public IEnumerable<Pawn> AllEquippedMercenaryPawns =>
-            EquippedMercenaries.Select(merc => merc.pawn).Concat(EquippedAnimalMercenaries);
+            EquippedMercenaries.Select(merc => merc.pawn)
+                .Concat(EquippedAnimalMercenaries)
+                .Concat(EquippedMechMercenaries);
 
         /// <summary>Equipped mercs and animals that are eligible to be spawned into a battle map,
         /// excluding pawns that are currently downed, dead, destroyed, or already on a map (a
@@ -185,13 +196,17 @@ namespace FactionColonies
 
         public IEnumerable<Pawn> AllDeployedMercenaryPawns =>
             DeployedMercenaries.Select(merc => merc.pawn)
-                .Concat(DeployedMercenaryAnimals.Select(merc => merc.pawn));
+                .Concat(DeployedMercenaryAnimals.Select(merc => merc.pawn))
+                .Concat(DeployedMercenaryMechs.Select(merc => merc.pawn));
 
         public IEnumerable<Mercenary> DeployedMercenaries =>
             mercenaries.Where(merc => merc?.pawn?.Map != null);
 
         public IEnumerable<Mercenary> DeployedMercenaryAnimals =>
             animals.Where(merc => merc?.pawn?.Map != null);
+
+        public IEnumerable<Mercenary> DeployedMercenaryMechs =>
+            mechs.Where(merc => merc?.pawn?.Map != null);
 
         /// <summary>The <see cref="MilitaryOperation"/> this squad is currently part of, if any.
         /// Returned via the <see cref="MilitaryOperationManager"/>'s squad index, so this is O(1)
@@ -353,7 +368,11 @@ namespace FactionColonies
                     if (blueprint is null || blueprint.isBlank) continue;
                     Mercenary slot = m;
                     MercenaryPawnFactory.CreateNewPawn(this, ref slot, blueprint.pawnKind, blueprint.xenotype, blueprint.customXenotypeName, blueprint);
-                    if (slot.pawn != null) Equipment.EquipPawn(slot, blueprint);
+                    if (slot.pawn != null)
+                    {
+                        Equipment.EquipPawn(slot, blueprint);
+                        Equipment.ReconcileMechs(slot, blueprint);
+                    }
                     // Sync currentLoadout with what we just equipped — re-snap from the blueprint.
                     slot.currentLoadout = blueprint.Clone();
                 }
@@ -384,6 +403,7 @@ namespace FactionColonies
             merc.pawn = null;
             if (merc.animal?.pawn != null && !merc.animal.pawn.Destroyed) merc.animal.pawn.Destroy();
             merc.animal = null;
+            RemoveMechsFor(merc);
 
             /* Reset transient/personalization state so the empty slot is a clean refill target.
                Keep `loadout` (pool reference) so Fill can reuse it. */
@@ -429,6 +449,22 @@ namespace FactionColonies
                 if (merc?.pawn == pawn) return merc;
             }
             return null;
+        }
+
+        /// <summary>Destroys and drops every bonded mech whose handler is <paramref name="owner"/>.
+        /// A mechanitor can own several mechs (unlike the single <c>animal</c>), so this clears them
+        /// all. Used by Dismiss and the upgrade fire-pass so a removed/replaced mechanitor never leaves
+        /// orphaned mech pawns in <see cref="mechs"/>.</summary>
+        public void RemoveMechsFor(Mercenary owner)
+        {
+            if (owner is null || mechs is null) return;
+            for (int i = mechs.Count - 1; i >= 0; i--)
+            {
+                Mercenary m = mechs[i];
+                if (m is null || m.handler != owner) continue;
+                if (m.pawn != null && !m.pawn.Destroyed) m.pawn.Destroy();
+                mechs.RemoveAt(i);
+            }
         }
 
     }

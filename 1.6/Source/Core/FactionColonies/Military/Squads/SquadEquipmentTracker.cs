@@ -50,6 +50,7 @@ namespace FactionColonies
             UsedWeaponList = new List<ThingWithComps>();
             UsedApparelList = new List<Apparel>();
             squad.animals = new List<Mercenary>();
+            squad.mechs = new List<Mercenary>();
             foreach (MilUnitFC loadout in outfit.Units)
             {
                 try
@@ -118,6 +119,10 @@ namespace FactionColonies
                             squad.mercenaries[count].animal = animal;
                             squad.animals.Add(animal);
                         }
+
+                        // Mechanitor: spawn and bond the unit's assigned mechs to this merc (which already
+                        // had the mechlink applied in CreateNewPawn, so pawn.mechanitor exists).
+                        SpawnMechsFor(squad.mercenaries[count], loadout);
 
                         squad.mercenaries[count].loadout = loadout;
                         // Sync currentLoadout with what we just equipped — clear any prior
@@ -283,6 +288,51 @@ namespace FactionColonies
             merc.animal = animal;
             if (squad.animals is null) squad.animals = new List<Mercenary>();
             squad.animals.Add(animal);
+        }
+
+        /// <summary>Creates and bonds every mech in <paramref name="loadout"/>'s mech list to
+        /// <paramref name="mechanitor"/>, adding them to <see cref="MercenarySquadFC.mechs"/>. Assumes
+        /// the mechanitor pawn already has its mechlink (applied in CreateNewPawn). No-op when Biotech
+        /// is absent, the loadout isn't a mechanitor design, or the pawn isn't a mechanitor.</summary>
+        public void SpawnMechsFor(Mercenary mechanitor, MilUnitFC loadout)
+        {
+            if (squad is null || mechanitor?.pawn is null || loadout is null) return;
+            if (!ModsConfig.BiotechActive || !loadout.IsMechanitorDesign) return;
+            // Ensure the mechlink is present (idempotent) so pawn.mechanitor exists even for a reused
+            // pawn that predates this loadout becoming a mechanitor design.
+            MilUnitFC.ApplyMechanitorToPawn(mechanitor.pawn, loadout);
+            if (mechanitor.pawn.mechanitor is null) return;
+            if (squad.mechs is null) squad.mechs = new List<Mercenary>();
+            if (loadout.mechs is null) return;
+
+            MechWorkModeDef workMode = loadout.ResolvedMechWorkMode;
+            foreach (SavedMech sm in loadout.mechs)
+            {
+                if (sm.kind is null) continue;
+                for (int n = 0; n < Mathf.Max(1, sm.count); n++)
+                {
+                    Mercenary mech = new Mercenary(true);
+                    MercenaryPawnFactory.CreateNewMech(squad, ref mech, sm.kind, mechanitor.pawn, workMode);
+                    if (mech.pawn != null)
+                    {
+                        mech.handler = mechanitor;
+                        squad.mechs.Add(mech);
+                    }
+                }
+            }
+        }
+
+        /// <summary>Syncs a mechanitor merc's bonded mechs to <paramref name="target"/>'s mech design:
+        /// destroys this merc's existing mechs and rebuilds from the design. Unlike <see cref="ReconcileAnimal"/>
+        /// (a single companion), a mechanitor owns N mechs, so this clear-and-rebuilds — simple and correct
+        /// since mech pawns are disposable battle pawns. Shared by the per-pawn Upgrade path and the bulk
+        /// <see cref="SquadUpgradeUtil.UpgradeToTemplate"/>.</summary>
+        public void ReconcileMechs(Mercenary merc, MilUnitFC target)
+        {
+            if (merc is null || squad is null) return;
+            squad.RemoveMechsFor(merc);
+            if (target != null && ModsConfig.BiotechActive && target.IsMechanitorDesign)
+                SpawnMechsFor(merc, target);
         }
 
         public void RemoveDroppedEquipment()

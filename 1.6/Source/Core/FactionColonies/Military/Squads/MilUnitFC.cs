@@ -40,6 +40,18 @@ namespace FactionColonies
         public int psylinkLevel;
         public List<SavedAbility> abilities = new List<SavedAbility>();
 
+        // Mechanitor design (Mechs tab, Biotech only). isMechanitor auto-applies a mechlink at spawn
+        // (see ApplyMechanitorToPawn); mechs lists the mechanoids bonded to the unit at deploy time.
+        // mechWorkMode is the work mode applied to the unit's bonded mechs (null = Escort).
+        public bool isMechanitor;
+        public List<SavedMech> mechs = new List<SavedMech>();
+        public MechWorkModeDef mechWorkMode;
+
+        /// <summary>True when this unit is a mechanitor design — flagged as one or carrying
+        /// at least one assigned mech. Gates the mechlink apply, the mech spawn block, and cost.</summary>
+        public bool IsMechanitorDesign =>
+            ModsConfig.BiotechActive && (isMechanitor || (mechs != null && mechs.Count > 0));
+
         // Forced gender for spawned pawns (null = any).
         public Gender? forcedGender;
 
@@ -213,6 +225,11 @@ namespace FactionColonies
             Scribe_Values.Look(ref psylinkLevel, "psylinkLevel", 0);
             Scribe_Collections.Look(ref abilities, "abilities", LookMode.Deep);
 
+            // Mechanitor design
+            Scribe_Values.Look(ref isMechanitor, "isMechanitor", false);
+            Scribe_Collections.Look(ref mechs, "mechs", LookMode.Deep);
+            Scribe_Defs.Look(ref mechWorkMode, "mechWorkMode");
+
             // forcedGender nullable — save only if set
             bool hasGender = forcedGender.HasValue;
             Gender genderVal = forcedGender ?? Gender.None;
@@ -229,6 +246,7 @@ namespace FactionColonies
                 if (inventory == null) inventory = new List<SavedThing>();
                 if (implants == null) implants = new List<SavedImplant>();
                 if (abilities == null) abilities = new List<SavedAbility>();
+                if (mechs == null) mechs = new List<SavedMech>();
                 if (statModifiers == null) statModifiers = new List<PermanentStatModifier>();
                 // Mutual exclusivity: prefer XenotypeDef if both are set
                 if (xenotype != null && customXenotypeName != null)
@@ -300,6 +318,7 @@ namespace FactionColonies
                 {
                     ApplyImplantsToPawn(previewPawn, this);
                     ApplyAbilitiesToPawn(previewPawn, this);
+                    ApplyMechanitorToPawn(previewPawn, this);
                 }
             }
             catch (Exception ex)
@@ -424,6 +443,32 @@ namespace FactionColonies
                 {
                     LogUtil.Warning($"Failed to grant ability {a.abilityDef} ({a.systemKey}) to {target.LabelShortCap}: {ex.Message}");
                 }
+            }
+        }
+
+        /* Makes the target pawn a mechanitor for a mechanitor design: installs the mechlink
+         * (MechlinkImplant hediff) and refreshes the pawn's dynamic components so pawn.mechanitor
+         * exists. The bonded mechs themselves are NOT created here (no mechs exist at preview/generate
+         * time): SquadEquipmentTracker creates and bonds them at outfit time, once this pawn already
+         * has a mechanitor tracker. No-op when Biotech is absent, the unit isn't a mechanitor design,
+         * or the pawn can't be a mechanitor (non-humanlike). Used by the preview pawn and the real
+         * spawned pawn. */
+        public static void ApplyMechanitorToPawn(Pawn target, MilUnitFC source)
+        {
+            if (!ModsConfig.BiotechActive) return;
+            if (target?.health is null || target.Dead || target.Destroyed) return;
+            if (source is null || !source.IsMechanitorDesign) return;
+            if (target.RaceProps is null || !target.RaceProps.Humanlike) return;
+
+            try
+            {
+                if (!target.health.hediffSet.HasHediff(HediffDefOf.MechlinkImplant))
+                    target.health.AddHediff(HediffDefOf.MechlinkImplant);
+                PawnComponentsUtility.AddAndRemoveDynamicComponents(target);
+            }
+            catch (Exception ex)
+            {
+                LogUtil.Warning($"Failed to apply mechlink to {target.LabelShortCap}: {ex.Message}");
             }
         }
 
@@ -604,8 +649,10 @@ namespace FactionColonies
             implants.Clear();
             abilities.Clear();
             psylinkLevel = 0;
+            mechs.Clear();
+            isMechanitor = false;
             pawnEquipmentDirty = true;
-            pawnIdentityDirty = true; // implants/psylink cleared — preview pawn must regenerate
+            pawnIdentityDirty = true; // implants/psylink/mechlink cleared — preview pawn must regenerate
             ChangeTick();
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
         }
@@ -725,6 +772,131 @@ namespace FactionColonies
         {
             if (index < 0 || index >= implants.Count) return;
             implants.RemoveAt(index);
+            MarkIdentityDirty();
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
+        // --- Mechanitor / mechs (Biotech) ---
+
+        /// <summary>The work mode applied to this unit's bonded mechs. Defaults to Escort
+        /// (follow + fight near the mechanitor) when none was chosen.</summary>
+        public MechWorkModeDef ResolvedMechWorkMode =>
+            mechWorkMode ?? MechWorkModeDefOf.Escort;
+
+        /// <summary>Total mech bandwidth this design has to spend. Read from the preview pawn's
+        /// MechBandwidth stat (which only exists once the mechlink is applied), so control-sublink
+        /// implants and bandwidth-pack apparel already on the unit are folded in automatically.</summary>
+        public float TotalMechBandwidth
+        {
+            get
+            {
+                if (!ModsConfig.BiotechActive) return 0f;
+                Pawn p = PreviewPawn;
+                return p?.mechanitor != null ? p.GetStatValue(StatDefOf.MechBandwidth) : 0f;
+            }
+        }
+
+        /// <summary>Bandwidth consumed by the currently-assigned mechs (Σ BandwidthCost × count).</summary>
+        public float UsedMechBandwidth
+        {
+            get
+            {
+                float used = 0f;
+                if (mechs is null) return used;
+                foreach (SavedMech m in mechs)
+                    if (m.kind?.race != null)
+                        used += m.kind.race.GetStatValueAbstract(StatDefOf.BandwidthCost) * Mathf.Max(1, m.count);
+                return used;
+            }
+        }
+
+        /// <summary>Toggles the mechanitor flag. Turning it off clears the assigned mechs. Identity
+        /// changes (the mechlink hediff), so the preview pawn must regenerate.</summary>
+        public void SetMechanitor(bool on)
+        {
+            if (!ModsConfig.BiotechActive) return;
+            isMechanitor = on;
+            if (!on) mechs.Clear();
+            MarkIdentityDirty();
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
+        public void SetMechWorkMode(MechWorkModeDef mode)
+        {
+            mechWorkMode = mode;
+            ChangeTick();
+        }
+
+        /// <summary>Adds (or tops up) a mech assignment. Hard-blocks the add when it would push used
+        /// bandwidth over the unit's total.
+        /// Returns false (with a message) when rejected.</summary>
+        public bool AddMech(PawnKindDef kind, int count = 1)
+        {
+            if (!ModsConfig.BiotechActive || kind?.race is null || count <= 0) return false;
+
+            // Only mechs the player has researched can be assigned.
+            if (!FactionCache.IsMechResearchUnlocked(kind))
+            {
+                Messages.Message("fcMechNotResearched".Translate(kind.LabelCap), MessageTypeDefOf.RejectInput, false);
+                return false;
+            }
+
+            // Flag as a mechanitor first so TotalMechBandwidth's preview pawn carries the mechlink
+            // (and thus a real MechBandwidth stat) when we read it for the budget check below.
+            if (!isMechanitor)
+            {
+                isMechanitor = true;
+                MarkIdentityDirty();
+            }
+
+            float addedBandwidth = kind.race.GetStatValueAbstract(StatDefOf.BandwidthCost) * count;
+            if (UsedMechBandwidth + addedBandwidth > TotalMechBandwidth + 0.0001f)
+            {
+                Messages.Message("fcMechBandwidthExceeded".Translate(), MessageTypeDefOf.RejectInput, false);
+                return false;
+            }
+
+            // Merge with an existing row of the same kind.
+            for (int i = 0; i < mechs.Count; i++)
+            {
+                if (mechs[i].kind == kind)
+                {
+                    SavedMech existing = mechs[i];
+                    existing.count = Mathf.Max(1, existing.count) + count;
+                    mechs[i] = existing;
+                    MarkIdentityDirty();
+                    ChangeTick();
+                    MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+                    return true;
+                }
+            }
+
+            mechs.Add(new SavedMech(kind, count));
+            MarkIdentityDirty();
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+            return true;
+        }
+
+        public void RemoveMech(int index)
+        {
+            if (index < 0 || index >= mechs.Count) return;
+            mechs.RemoveAt(index);
+            MarkIdentityDirty();
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
+        /// <summary>Reduces a mech row's count by one, removing the row when it reaches zero.</summary>
+        public void DecrementMech(int index)
+        {
+            if (index < 0 || index >= mechs.Count) return;
+            SavedMech row = mechs[index];
+            if (row.count <= 1) { RemoveMech(index); return; }
+            row.count -= 1;
+            mechs[index] = row;
             MarkIdentityDirty();
             ChangeTick();
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
@@ -956,6 +1128,18 @@ namespace FactionColonies
             if (animal != null)
                 totalCost += Math.Floor(animal.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier);
 
+            // Mechanitor cost: a flat surcharge for the mechlink itself, plus each bonded mech's
+            // market value. Mirrors the animal cost path — the spawned mech pawns are never re-counted
+            // by squad cost/power math, so their entire cost lives here on the design.
+            if (ModsConfig.BiotechActive && IsMechanitorDesign)
+            {
+                totalCost += FCSettings.militaryMechlinkCost;
+                if (mechs != null)
+                    foreach (SavedMech m in mechs)
+                        if (m.kind?.race != null)
+                            totalCost += Math.Floor(m.kind.race.BaseMarketValue * FCSettings.militaryMechCostMultiplier) * Mathf.Max(1, m.count);
+            }
+
             equipmentTotalCost = Math.Ceiling(totalCost);
         }
 
@@ -1027,6 +1211,9 @@ namespace FactionColonies
             copy.implants = new List<SavedImplant>(implants ?? new List<SavedImplant>());
             copy.psylinkLevel = psylinkLevel;
             copy.abilities = new List<SavedAbility>(abilities ?? new List<SavedAbility>());
+            copy.isMechanitor = isMechanitor;
+            copy.mechs = new List<SavedMech>(mechs ?? new List<SavedMech>());
+            copy.mechWorkMode = mechWorkMode;
             copy.statModifiers = statModifiers?.Select(m => m.Clone()).ToList() ?? new List<PermanentStatModifier>();
             CopyExtraFieldsTo(copy);
             copy.ChangeTick();

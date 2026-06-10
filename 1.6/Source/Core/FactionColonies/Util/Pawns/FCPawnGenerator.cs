@@ -181,6 +181,42 @@ namespace FactionColonies.util
         }
 
         /// <summary>
+        /// Generate a controllable mechanoid for a mechanitor merc's bonded mech roster. Mirrors
+        /// <see cref="AnimalRequest"/> (Empire faction, no relations); mechs need no xenotype and no
+        /// mercenary-age handling. Biotech-only — callers gate on ModsConfig.BiotechActive.
+        /// </summary>
+        public static PawnGenerationRequest MechRequest(PawnKindDef mechKind)
+        {
+            return new PawnGenerationRequest(
+                kind: mechKind,
+                faction: FindFC.EmpireFaction,
+                context: PawnGenerationContext.NonPlayer,
+                tile: -1,
+                forceGenerateNewPawn: false,
+                allowDead: false,
+                allowDowned: false,
+                canGeneratePawnRelations: false,
+                mustBeCapableOfViolence: false,
+                colonistRelationChanceFactor: 0,
+                forceAddFreeWarmLayerIfNeeded: false,
+                allowGay: true,
+                allowFood: true,
+                allowAddictions: false,
+                inhabitant: false,
+                certainlyBeenInCryptosleep: false,
+                forceRedressWorldPawnIfFormerColonist: false,
+                worldPawnFactionDoesntMatter: false,
+                biocodeWeaponChance: 0,
+                extraPawnForExtraRelationChance: null,
+                relationWithExtraPawnChanceFactor: 0,
+                validatorPreGear: null,
+                validatorPostGear: null,
+                forcedTraits: null,
+                prohibitedTraits: null
+            );
+        }
+
+        /// <summary>
         /// Generate a simple delivery pawn using the Empire's fighter template (tech-scaled).
         /// </summary>
         public static PawnGenerationRequest SimpleDeliveryRequest()

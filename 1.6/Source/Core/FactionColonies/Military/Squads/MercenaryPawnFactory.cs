@@ -26,6 +26,48 @@ namespace FactionColonies
             merc.pawn = newPawn;
         }
 
+        /// <summary>Generates a mechanoid pawn for a mechanitor merc and bonds it to <paramref name="overseer"/>:
+        /// an Overseer direct relation (which auto-assigns a control group via PawnRelationWorker_Overseer)
+        /// followed by setting the group's work mode. The mech is set to the Empire faction. Caller adds the
+        /// merc to the squad's <c>mechs</c> list and sets <c>merc.handler</c>. No-op (leaves merc.pawn null)
+        /// when Biotech is absent, the kind is invalid, or the overseer isn't a mechanitor — so a non-mechanitor
+        /// overseer never produces stray unbonded mechs.</summary>
+        public static void CreateNewMech(MercenarySquadFC squad, ref Mercenary merc, PawnKindDef mechKind, Pawn overseer, MechWorkModeDef workMode)
+        {
+            if (!ModsConfig.BiotechActive || mechKind is null) return;
+            if (overseer?.mechanitor is null) return;
+
+            Pawn mech = null;
+            try
+            {
+                mech = PawnGenerator.GeneratePawn(FCPawnGenerator.MechRequest(mechKind));
+            }
+            catch (Exception ex)
+            {
+                LogUtil.Warning($"Failed to generate mech {mechKind.defName}: {ex.Message}");
+            }
+            if (mech is null) return;
+
+            Faction empireFaction = FindFC.EmpireFaction;
+            if (empireFaction != null && mech.Faction != empireFaction)
+                mech.SetFaction(empireFaction);
+
+            try
+            {
+                overseer.relations.AddDirectRelation(PawnRelationDefOf.Overseer, mech);
+                MechanitorControlGroup group = overseer.mechanitor.GetControlGroup(mech);
+                if (group != null) group.SetWorkMode(workMode ?? MechWorkModeDefOf.Escort);
+            }
+            catch (Exception ex)
+            {
+                LogUtil.Warning($"Failed to bond mech {mechKind.defName} to {overseer.LabelShortCap}: {ex.Message}");
+            }
+
+            merc.squad = squad;
+            merc.settlement = squad?.settlement;
+            merc.pawn = mech;
+        }
+
         /// <summary>
         /// If the mercenary's xenotype is non-violent and has security guards configured,
         /// auto-assigns a random guard animal from the xenotype's SecurityGuardList.
@@ -225,6 +267,7 @@ namespace FactionColonies
             {
                 MilUnitFC.ApplyImplantsToPawn(newPawn, loadout);
                 MilUnitFC.ApplyAbilitiesToPawn(newPawn, loadout);
+                MilUnitFC.ApplyMechanitorToPawn(newPawn, loadout);
             }
 
             merc.squad = squad;

@@ -661,17 +661,21 @@ namespace FactionColonies
             MilUnitFC prior = merc.currentLoadout;
             bool implantsChanged = LoadoutUpgradeUtil.ImplantsChanged(target, prior);
             bool psycastsChanged = LoadoutUpgradeUtil.PsycastsChanged(target, prior);
+            bool mechanitorChanged = LoadoutUpgradeUtil.MechanitorChanged(target, prior);
             merc.currentLoadout = target.Clone();
             squad.Equipment.StripPawn(merc);
             squad.Equipment.EquipPawn(merc, merc.currentLoadout);
             // EquipPawn handles apparel + weapons + inventory only. Implants are surgically applied
             // and psycasts are provider-managed, so reconcile each in place (preserving the pawn)
-            // when changed, and sync the companion animal too.
+            // when changed, and sync the companion animal + bonded mechs too.
             if (implantsChanged)
                 MilUnitFC.ReconcileImplantsOnPawn(merc.pawn, target, prior);
             if (psycastsChanged)
                 MilUnitFC.ReconcileAbilitiesOnPawn(merc.pawn, target);
+            if (mechanitorChanged)
+                MilUnitFC.ApplyMechanitorToPawn(merc.pawn, target);
             squad.Equipment.ReconcileAnimal(merc, target);
+            squad.Equipment.ReconcileMechs(merc, target);
         }
 
         private void FillSingleSlot(Mercenary merc, int cost, MilUnitFC blueprint)

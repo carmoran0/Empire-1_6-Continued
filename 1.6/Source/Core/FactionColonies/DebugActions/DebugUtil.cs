@@ -461,7 +461,7 @@ namespace FactionColonies
                     squad.Deployment.Map?.lordManager.RemoveLord(squad.Deployment.Lord);
                 }
 
-                foreach (Mercenary merc in squad.mercenaries.Concat(squad.animals).ToList())
+                foreach (Mercenary merc in squad.mercenaries.Concat(squad.animals).Concat(squad.mechs).ToList())
                 {
                     if (merc?.pawn != null && !merc.pawn.Destroyed)
                         merc.pawn.Destroy();

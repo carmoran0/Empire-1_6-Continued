@@ -71,6 +71,7 @@
 	<fcTabInventory>Inventory</fcTabInventory>
 	<fcTabImplants>Implants</fcTabImplants>
 	<fcTabAbilities>Abilities</fcTabAbilities>
+	<fcTabMechs>Mechs</fcTabMechs>
 
 	<!-- Inventory -->
 	<fcAddInventoryItem>+ Add Item</fcAddInventoryItem>
@@ -99,6 +100,18 @@
 	<fcClearAbilities>Clear</fcClearAbilities>
 	<fcApplyAbilities>Apply</fcApplyAbilities>
 	<fcCancelAbilities>Cancel</fcCancelAbilities>
+
+	<!-- Mechs / Mechanitor (Biotech) -->
+	<fcMakeMechanitor>Make this unit a mechanitor</fcMakeMechanitor>
+	<fcMechsHint>Enable "Make this unit a mechanitor" to give it a mechlink and assign controllable mechs. The mechs deploy alongside the unit in battle.</fcMechsHint>
+	<fcMechsNoBiotech>Mechanitors require the Biotech DLC.</fcMechsNoBiotech>
+	<fcMechBandwidth>Bandwidth: {0} / {1}</fcMechBandwidth>
+	<fcMechBandwidthExceeded>That would exceed the mechanitor's bandwidth.</fcMechBandwidthExceeded>
+	<fcMechWorkMode>Work mode</fcMechWorkMode>
+	<fcAddMech>+ Add Mech</fcAddMech>
+	<fcPickMech>Select Mech</fcPickMech>
+	<fcNoMechsAvailable>No researched mechs available</fcNoMechsAvailable>
+	<fcMechNotResearched>You haven't researched how to build {0} yet.</fcMechNotResearched>
 
 	<!-- Unit Race/PawnKind Errors -->
 	<FCChangeUnitRaceNoRaces>No available races</FCChangeUnitRaceNoRaces>

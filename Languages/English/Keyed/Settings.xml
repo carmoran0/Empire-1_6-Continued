@@ -57,6 +57,10 @@ Values in between dampen the effect of military efficiency on the auto combat.</
 	<FCSettingMercHealRateTip>Multiplier on the healing rate for off-map mercenaries. At 1.0 (default), an Empire merc heals at roughly the same per-day rate as a vanilla pawn in a basic bed being tended with industrial medicine by an unskilled doctor. Higher values heal faster; lower values heal slower.</FCSettingMercHealRateTip>
 	<FCSettingPsylinkCostMult>Unit Psylink Cost Multiplier</FCSettingPsylinkCostMult>
 	<FCSettingPsylinkCostMultTip>Multiplier on the silver cost added to a unit design per psylink level. At 1.0 (default), each level costs roughly the value of one psylink neuroformer.</FCSettingPsylinkCostMultTip>
+	<FCSettingMechCostMult>Unit Mech Cost Multiplier</FCSettingMechCostMult>
+	<FCSettingMechCostMultTip>Multiplier on the silver cost added to a mechanitor unit design per assigned mech. At 1.0 (default), each mech costs roughly its market value.</FCSettingMechCostMultTip>
+	<FCSettingMechlinkCost>Unit Mechlink Cost</FCSettingMechlinkCost>
+	<FCSettingMechlinkCostTip>Flat silver cost added to a unit design for making it a mechanitor (the mechlink itself), on top of per-mech costs. Default 1000 ~ the value of a mechlink.</FCSettingMechlinkCostTip>
 	<FCSettingPsycastCostMult>Overall Cost Multiplier</FCSettingPsycastCostMult>
 	<FCSettingPsycastCostMultTip>Multiplier applied to all per-point costs related to psycasting. Set to 0 to make everything free.</FCSettingPsycastCostMultTip>
 
