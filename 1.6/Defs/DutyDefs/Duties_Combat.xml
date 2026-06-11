@@ -33,6 +33,10 @@
                     <targetKeepRadius>150</targetKeepRadius>
                 </li>
                 <li Class="JobGiver_AIGotoNearestHostile"/>
+                <li Class="JobGiver_WanderNearDutyLocation">
+                    <wanderRadius>8</wanderRadius>
+                    <locomotionUrgencyOutsideRadius>Sprint</locomotionUrgencyOutsideRadius>
+                </li>
             </subNodes>
         </thinkNode>
     </DutyDef>

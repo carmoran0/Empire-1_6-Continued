@@ -46,4 +46,39 @@ namespace FactionColonies
             return true;
         }
     }
+
+    /// <summary>
+    /// Keeps a mercenary's avian companions from being destroyed when a deployed squad leaves the map.
+    /// <see cref="JobGiver_ExitMap"/> routes fliers of a non-player faction through its flying-exit branch
+    /// (<see cref="JobDefOf.ExitMapFlying"/>), which wraps the pawn in a <c>FlyerLeaving</c> skyfaller that
+    /// DESTROYS its contents on leave (<c>Skyfaller.LeaveMap -&gt; Destroy -&gt; ClearAndDestroyContents</c>).
+    /// Empire mercs are a non-player faction, so a merc's bird would be destroyed rather than preserved —
+    /// counting as a Missing sub-pawn the player must pay to replace. Redirect merc fliers to a normal ground
+    /// exit (a Goto with <c>exitMapOnArrival</c>), which routes through <c>Pawn.ExitMap -&gt; PassToWorld</c>
+    /// and is preserved by <see cref="MercenaryPassToWorld"/>. If no edge is reachable on foot we clear the
+    /// job (the pawn idles and is despawned/preserved when the deployment finalizes) — better a brief idle
+    /// than a destroyed companion. Patches the abstract base's TryGiveJob, so every JobGiver_ExitMap subclass
+    /// (ExitMapBest, etc.) is covered — none of them override it.
+    /// </summary>
+    [HarmonyPatch(typeof(JobGiver_ExitMap), "TryGiveJob")]
+    class MercAnimalNoFlyExit
+    {
+        static void Postfix(Pawn pawn, ref Job __result)
+        {
+            if (__result?.def != JobDefOf.ExitMapFlying) return;
+            if (FindFC.Military?.IsMercenaryPawn(pawn) != true) return;
+
+            if (RCellFinder.TryFindBestExitSpot(pawn, out IntVec3 dest, TraverseMode.ByPawn))
+            {
+                Job job = JobMaker.MakeJob(JobDefOf.Goto, dest);
+                job.exitMapOnArrival = true;
+                job.locomotionUrgency = LocomotionUrgency.Jog;
+                __result = job;
+            }
+            else
+            {
+                __result = null;
+            }
+        }
+    }
 }

@@ -445,7 +445,10 @@ namespace FactionColonies
                 for (int i = UsedApparelList.Count - 1; i >= 0; i--)
                 {
                     Apparel apparel = UsedApparelList[i];
-                    if (apparel.ParentHolder is Pawn_ApparelTracker tracker)
+                    // A reference-mode Scribe load can leave null entries (an apparel that wasn't saved /
+                    // couldn't resolve). Drop them rather than deref ParentHolder on null.
+                    if (apparel is null) { UsedApparelList.RemoveAt(i); continue; }
+                    if (apparel.ParentHolder is Pawn_ApparelTracker tracker && tracker.pawn is object)
                     {
                         Pawn pawn = tracker.pawn;
                         if ((pawn.Faction == FindFC.EmpireFaction ||
@@ -453,7 +456,7 @@ namespace FactionColonies
                             continue;
                     }
                     UsedApparelList.RemoveAt(i);
-                    if (apparel != null && !apparel.Destroyed)
+                    if (!apparel.Destroyed)
                         apparel.Destroy();
                 }
             }
@@ -463,7 +466,8 @@ namespace FactionColonies
                 for (int i = UsedWeaponList.Count - 1; i >= 0; i--)
                 {
                     ThingWithComps weapon = UsedWeaponList[i];
-                    if (weapon.ParentHolder is Pawn_EquipmentTracker tracker)
+                    if (weapon is null) { UsedWeaponList.RemoveAt(i); continue; }
+                    if (weapon.ParentHolder is Pawn_EquipmentTracker tracker && tracker.pawn is object)
                     {
                         Pawn pawn = tracker.pawn;
                         if ((pawn.Faction == FindFC.EmpireFaction ||
@@ -471,7 +475,7 @@ namespace FactionColonies
                             continue;
                     }
                     UsedWeaponList.RemoveAt(i);
-                    if (weapon != null && !weapon.Destroyed)
+                    if (!weapon.Destroyed)
                         weapon.Destroy();
                 }
             }
