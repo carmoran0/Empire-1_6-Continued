@@ -53,7 +53,13 @@ namespace FactionColonies
                         // recalc can leave them "uncontrolled" — re-assign them to the (now player)
                         // mechanitor's control groups so the player can command them.
                         Mercenary drafted = FindFC.Military?.FindMercByPawn(pawn);
-                        if (drafted != null) MercenaryPawnFactory.RebindMechs(drafted);
+                        if (drafted != null)
+                        {
+                            MercenaryPawnFactory.RebindMechs(drafted);
+                            // SetFaction above cascaded to the mount and ran ClearMind, ending its Mounted
+                            // job (Giddy Up 2). Re-mount so the merc stays seated through the draft.
+                            RemountMerc(drafted);
+                        }
                         // Track drafted NPC for faction restoration after battle
                         if (milComp != null && !milComp.draftedNPCs.Contains(pawn))
                             milComp.draftedNPCs.Add(pawn);
@@ -134,12 +140,37 @@ namespace FactionColonies
                                         p.jobs?.EndCurrentJob(JobCondition.InterruptForced);
                                 }
                             }
+                            // Re-mount after the faction switch (and the rejoin's EndCurrentJob, which also
+                            // ended the mount's Mounted job) so the merc stays seated through the undraft.
+                            if (merc != null) RemountMerc(merc);
                         };
                         break;
                     }
                 }
 
                 __result = output;
+            }
+        }
+
+        /// <summary>Re-mounts a merc on its assigned mount (Giddy Up 2) after a draft/undraft faction
+        /// switch. SetFaction runs ClearMind, which ends the mount's Mounted job (so it stops carrying the
+        /// rider) and drops it from any lord; this re-establishes the mount. No-op without Giddy Up 2 or a
+        /// mount.</summary>
+        static void RemountMerc(Mercenary merc)
+        {
+            if (!FactionCompat.GiddyUp2Active || merc?.pawn is null || !merc.pawn.Spawned || merc.pawn.Dead)
+                return;
+            foreach (Mercenary sub in merc.SubPawns())
+            {
+                if (sub is null || sub.subPawnType != Mercenary.SubPawnType.Mount) continue;
+                Pawn mount = sub.pawn;
+                if (mount is null || !mount.Spawned || mount.Dead) continue;
+                // The Mounted job runs the mount's constant think tree, which logs "ThinkNode_DutyConstant
+                // with no duty" if the mount has none — and the faction switch just dropped it from its
+                // lord. Give it a duty first (mirrors LordToil_DefendSelfAndMount's ordering).
+                if (mount.mindState != null && mount.mindState.duty is null)
+                    mount.mindState.duty = new PawnDuty(DutyDefOf.Defend, mount.Position, -1f);
+                GiddyUpUtil.Mount(merc.pawn, mount);
             }
         }
     }

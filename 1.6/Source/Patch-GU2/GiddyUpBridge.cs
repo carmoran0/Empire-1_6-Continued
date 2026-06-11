@@ -1,6 +1,8 @@
 using FactionColonies.util;
 using GiddyUp;
+using GiddyUp.Jobs;
 using GiddyUpCore.Core;
+using RimWorld;
 using Verse;
 
 namespace FactionColonies.GiddyUpCompat
@@ -16,6 +18,8 @@ namespace FactionColonies.GiddyUpCompat
     /// </summary>
     public class GiddyUpBridge : IGiddyUpBridge
     {
+        private static bool _allowedJobsConfigured;
+
         public bool IsMountable(PawnKindDef kind)
         {
             if (kind?.race is null) return false;
@@ -28,7 +32,13 @@ namespace FactionColonies.GiddyUpCompat
         public void Mount(Pawn rider, Pawn mount)
         {
             if (rider is null || mount is null) return;
-            if (rider.IsMounted()) return;   // idempotent — don't re-mount an already-mounted rider
+            EnsureMountedIdleJobsAllowed();
+            // Skip only when FULLY mounted: GU2's mounted state is set AND the animal is actually running
+            // its Mounted job. A draft/undraft faction switch runs ClearMind on the mount, which ends the
+            // Mounted job while leaving the mounted state set — fall through so GoMount(Instant) re-issues
+            // it (GoMount itself no-ops the job re-issue when it's already present). ResourceBank.JobDefOf
+            // is GU2's own [DefOf], so this is typed and guaranteed populated by game start.
+            if (rider.IsMounted() && mount.CurJobDef == ResourceBank.JobDefOf.Mounted) return;
             // Instant: set the mounted state directly (no walk-up job), as GU2 does for pre-mounted raiders.
             rider.GoMount(mount, MountUtility.GiveJobMethod.Instant);
             // GU2 draws the rider as a render node on the MOUNT's render tree and suppresses the rider's
@@ -36,6 +46,27 @@ namespace FactionColonies.GiddyUpCompat
             // mount a rider whose mount was already drawn (mid-deploy, after pods open), the mount's tree
             // lacks the rider node and the rider goes invisible. Rebuild it (same call the Mount job uses).
             MountedRiderRenderNodeUtility.RefreshMountedAnimalGraphics(mount);
+        }
+
+        /// <summary>
+        /// Keeps a mount from auto-dismounting when its rider is idle / holding position / wandering —
+        /// e.g. when the player drafts an Empire pawn (job becomes Wait_Combat) or undrafts it back into a
+        /// lord's wander/defend duty (Wait_Wander / GotoWander). GU2's RiderShouldDismount dismounts when
+        /// the rider's current job isn't in its AllowedJobs set and the rider is near its destination;
+        /// <see cref="JobDriver_Mounted.SetAllowedJob"/> is GU2's public hook to extend that set. Movement
+        /// (Goto) and forbidden-area dismounts are unaffected — those are handled separately. Done lazily
+        /// (first mount) so GU2 has already built its job cache (Setup.BuildAllowedJobsCache) by then; the
+        /// cache isn't cleared on rebuild, so a one-time add sticks.
+        /// </summary>
+        private static void EnsureMountedIdleJobsAllowed()
+        {
+            if (_allowedJobsConfigured) return;
+            _allowedJobsConfigured = true;
+            JobDriver_Mounted.SetAllowedJob(JobDefOf.Wait_Combat, false);
+            JobDriver_Mounted.SetAllowedJob(JobDefOf.Wait, false);
+            JobDriver_Mounted.SetAllowedJob(JobDefOf.Wait_MaintainPosture, false);
+            JobDriver_Mounted.SetAllowedJob(JobDefOf.Wait_Wander, false);
+            JobDriver_Mounted.SetAllowedJob(JobDefOf.GotoWander, false);
         }
     }
 }
