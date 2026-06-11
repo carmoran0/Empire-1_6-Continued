@@ -220,10 +220,17 @@ namespace FactionColonies
         public IEnumerable<Pawn> EquippedMechMercenaries =>
             SubPawnsOfType(Mercenary.SubPawnType.Mech).Where(mech => mech?.pawn != null).Select(mech => mech.pawn);
 
+        /// <summary>Mount animals (Giddy Up 2). They must spawn into the battle/deploy map like companion
+        /// animals so a rider can be mounted on them; they're filtered to riders in the battle/deploy
+        /// wiring (BattlefieldContext / LordJob_DeployMilitary), not here.</summary>
+        public IEnumerable<Pawn> EquippedMountMercenaries =>
+            SubPawnsOfType(Mercenary.SubPawnType.Mount).Where(m => m?.pawn != null).Select(m => m.pawn);
+
         public IEnumerable<Pawn> AllEquippedMercenaryPawns =>
             EquippedMercenaries.Select(merc => merc.pawn)
                 .Concat(EquippedAnimalMercenaries)
-                .Concat(EquippedMechMercenaries);
+                .Concat(EquippedMechMercenaries)
+                .Concat(EquippedMountMercenaries);
 
         /// <summary>Equipped mercs and animals that are eligible to be spawned into a battle map,
         /// excluding pawns that are currently downed, dead, destroyed, or already on a map (a
@@ -235,7 +242,8 @@ namespace FactionColonies
         public IEnumerable<Pawn> AllDeployedMercenaryPawns =>
             DeployedMercenaries.Select(merc => merc.pawn)
                 .Concat(DeployedMercenaryAnimals.Select(merc => merc.pawn))
-                .Concat(DeployedMercenaryMechs.Select(merc => merc.pawn));
+                .Concat(DeployedMercenaryMechs.Select(merc => merc.pawn))
+                .Concat(DeployedMercenaryMounts.Select(merc => merc.pawn));
 
         public IEnumerable<Mercenary> DeployedMercenaries =>
             mercenaries.Where(merc => merc?.pawn?.Map != null);
@@ -245,6 +253,9 @@ namespace FactionColonies
 
         public IEnumerable<Mercenary> DeployedMercenaryMechs =>
             SubPawnsOfType(Mercenary.SubPawnType.Mech).Where(merc => merc?.pawn?.Map != null);
+
+        public IEnumerable<Mercenary> DeployedMercenaryMounts =>
+            SubPawnsOfType(Mercenary.SubPawnType.Mount).Where(merc => merc?.pawn?.Map != null);
 
         /// <summary>The <see cref="MilitaryOperation"/> this squad is currently part of, if any.
         /// Returned via the <see cref="MilitaryOperationManager"/>'s squad index, so this is O(1)
@@ -424,9 +435,13 @@ namespace FactionColonies
                 sub.pawn = null;
             }
             Mercenary slot = sub;
-            if (sub.subPawnType == Mercenary.SubPawnType.Animal)
+            // Mounts are animals too — recreate them via CreateNewAnimal (which tags Animal) and restore
+            // the Mount tag so the rider gets re-mounted on next deploy/reconcile.
+            if (sub.subPawnType == Mercenary.SubPawnType.Animal || sub.subPawnType == Mercenary.SubPawnType.Mount)
             {
+                Mercenary.SubPawnType originalType = sub.subPawnType;
                 MercenaryPawnFactory.CreateNewAnimal(this, ref slot, sub.subPawnKind);
+                slot.subPawnType = originalType;
             }
             else
             {

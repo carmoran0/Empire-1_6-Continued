@@ -900,11 +900,13 @@ namespace FactionColonies
                         MilitaryEfficiencyUtil.ApplyCombatEfficiencyHediff(merc, efficiency);
                     }
 
-                    foreach (var animal in squad.AllSubPawns())
+                    // Only mounts are ridden (LordToil_DefendSelfAndMount mounts each rider). Companion
+                    // animals (subPawnType == Animal) are NOT added here, so they spawn and fight on foot.
+                    foreach (var sub in squad.AllSubPawns())
                     {
-                        if (animal.subPawnType != Mercenary.SubPawnType.Animal || animal.pawn is null) continue;
-                        if (animal.handler?.pawn is object)
-                            riders.Add(animal.handler.pawn, animal.pawn);
+                        if (sub.subPawnType != Mercenary.SubPawnType.Mount || sub.pawn is null) continue;
+                        if (sub.handler?.pawn is object)
+                            riders.Add(sub.handler.pawn, sub.pawn);
                     }
                 }
                 else if (!hasSquad)
@@ -970,6 +972,7 @@ namespace FactionColonies
 
                     if (rider is object)
                     {
+                        // A mount: spawn it next to its rider so GU2 can mount them together.
                         CellFinder.TryFindRandomCellInsideWith(new CellRect((int)rider.DrawPos.x - 5,
                                 (int)rider.DrawPos.z - 5, 10, 10),
                             testing => testing.Standable(map) && map.reachability.CanReachMapEdge(testing,
@@ -977,7 +980,7 @@ namespace FactionColonies
                     }
                     else
                     {
-                        LogUtil.Warning($"Defender animal {friendly.LabelShort} ({friendly.thingIDNumber}) has no rider pair; placing as a standalone defender.");
+                        // A companion animal (not a mount): spawns standalone and fights on foot.
                         tryFindLoc(out loc, friendly);
                     }
                 }

@@ -115,6 +115,16 @@
 	<fcNoMechsAvailable>No researched mechs available</fcNoMechsAvailable>
 	<fcMechNotResearched>You haven't researched how to build {0} yet.</fcMechNotResearched>
 
+	<!-- Companion animals (Animals tab) + Mount (Giddy Up 2) -->
+	<fcTabAnimals>Animals</fcTabAnimals>
+	<fcAddAnimal>+ Add Animal</fcAddAnimal>
+	<fcAnimalCount>Animals: {0} / {1}</fcAnimalCount>
+	<fcAnimalCapReached>This unit already has the maximum of {0} companion animals.</fcAnimalCapReached>
+	<fcNoAnimalsAssigned>No companion animals assigned</fcNoAnimalsAssigned>
+	<fcLabelMount>Mount</fcLabelMount>
+	<fcPickMount>Select Mount</fcPickMount>
+	<fcNoMountsAvailable>No mountable animals available</fcNoMountsAvailable>
+
 	<!-- Unit Race/PawnKind Errors -->
 	<FCChangeUnitRaceNoRaces>No available races</FCChangeUnitRaceNoRaces>
 	<fcNoAnimalsAvailable>No available animals</fcNoAnimalsAvailable>

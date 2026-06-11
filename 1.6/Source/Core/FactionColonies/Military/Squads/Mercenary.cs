@@ -29,24 +29,26 @@ namespace FactionColonies
         public MercenarySquadFC squad;
         public WorldSettlementFC settlement;
         public Mercenary handler;
-        /* Instance sub-pawns deep-owned by this merc. animals is future-proofed as a list
-         * (currently size 0 or 1 — the design field MilUnitFC.animal is still a single
-         * PawnKindDef); mechs holds the bonded mechanoids of a mechanitor merc. A wrapper
-         * with subPawnType != None and pawn == null is "assigned but absent" (dead, awaiting
-         * paid replacement). See handler for the owning-merc back-reference. */
+        /* Instance sub-pawns deep-owned by this merc. animals holds the merc's companion animals AND
+         * its single rideable mount (distinguished by subPawnType: Animal vs Mount); mechs holds the
+         * bonded mechanoids of a mechanitor merc. A wrapper with subPawnType != None and pawn == null
+         * is "assigned but absent" (dead, awaiting paid replacement). See handler for the owning-merc
+         * back-reference. */
         public List<Mercenary> animals = new List<Mercenary>();
         public List<Mercenary> mechs = new List<Mercenary>();
         public Pawn pawn;
         public int loadID;
 
-        /// <summary>Discriminates a sub-pawn wrapper. None for top-level mercs.</summary>
-        public enum SubPawnType { None, Animal, Mech }
+        /// <summary>Discriminates a sub-pawn wrapper. None for top-level mercs. Mount is a companion
+        /// animal the merc rides (Giddy Up 2); it lives in the animals list like a companion but is
+        /// ridden instead of fighting on foot.</summary>
+        public enum SubPawnType { None, Animal, Mech, Mount }
         /* Persisted sub-pawn identity. Lets a placeholder wrapper (pawn == null after death)
          * be recreated without reading a live pawn. */
         public SubPawnType subPawnType = SubPawnType.None;
-        public PawnKindDef subPawnKind;          // animal race OR mech kind
-        public int subPawnMechGroup;             // mech control group (animals: 0)
-        public MechWorkModeDef subPawnWorkMode;  // mech work mode (animals: null)
+        public PawnKindDef subPawnKind;          // animal/mount race OR mech kind
+        public int subPawnMechGroup;             // mech control group (animals/mounts: 0)
+        public MechWorkModeDef subPawnWorkMode;  // mech work mode (animals/mounts: null)
 
         /// <summary>A sub-pawn that needs paid replacement: it's assigned but its pawn is gone —
         /// never created, dead, or destroyed. Distinct from a downed/injured sub-pawn, which heals.

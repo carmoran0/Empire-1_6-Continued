@@ -499,7 +499,11 @@ namespace FactionColonies
         private static string BuildSubPawnBadge(Mercenary merc)
         {
             if (merc is null) return null;
-            string a = SubTypeBadgeSegment(merc.animals, "FCSubPawnBadgeAnimal", "FCSubPawnBadgeAnimals");
+            // merc.animals now also holds the single mount (subPawnType == Mount); count only true
+            // companions here so the "N animals" head is accurate (the mount shows in the gear slot).
+            List<Mercenary> companions = merc.animals?
+                .Where(x => x != null && x.subPawnType == Mercenary.SubPawnType.Animal).ToList();
+            string a = SubTypeBadgeSegment(companions, "FCSubPawnBadgeAnimal", "FCSubPawnBadgeAnimals");
             string m = SubTypeBadgeSegment(merc.mechs, "FCSubPawnBadgeMech", "FCSubPawnBadgeMechs");
             if (a is null) return m;
             if (m is null) return a;

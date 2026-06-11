@@ -15,7 +15,15 @@ namespace FactionColonies
         public bool isBlank;
         public double equipmentTotalCost;
         public int tickChanged = -1;
-        public PawnKindDef animal;
+
+        // Companion animals (Animals tab). Each row is a (kind, count) stack; the total is capped by
+        // FCSettings.maxAnimalSubpawns at add time. Companions fight on foot alongside the merc.
+        public List<SavedAnimal> animals = new List<SavedAnimal>();
+
+        // Rideable mount (gear-panel slot, Giddy Up 2 only). When GU2 is active and this is set, the
+        // merc spawns already mounted in manual battles / on deployment. Inert when GU2 is absent.
+        public PawnKindDef mount;
+
         public PawnKindDef pawnKind;
         public XenotypeDef xenotype;
         public string customXenotypeName;
@@ -207,7 +215,17 @@ namespace FactionColonies
             Scribe_Values.Look(ref equipmentTotalCost, "equipmentTotalCost", -1);
             Scribe_Values.Look(ref tickChanged, "tickChanged");
             Scribe_Defs.Look(ref pawnKind, "PawnKind");
-            Scribe_Defs.Look(ref animal, "animal");
+            Scribe_Collections.Look(ref animals, "animals", LookMode.Deep);
+            Scribe_Defs.Look(ref mount, "mount");
+            // Migrate pre-multi-animal saves: the old single companion lived under "animal".
+            // It was a companion (not a mount), so it migrates into the companions list.
+            PawnKindDef legacyAnimal = null;
+            Scribe_Defs.Look(ref legacyAnimal, "animal");
+            if (Scribe.mode == LoadSaveMode.LoadingVars && legacyAnimal != null)
+            {
+                if (animals == null) animals = new List<SavedAnimal>();
+                if (animals.Count == 0) animals.Add(new SavedAnimal(legacyAnimal, 1));
+            }
             Scribe_Defs.Look(ref xenotype, "xenotype");
             Scribe_Values.Look(ref customXenotypeName, "customXenotypeName");
 
@@ -249,6 +267,7 @@ namespace FactionColonies
                 if (abilities == null) abilities = new List<SavedAbility>();
                 if (mechs == null) mechs = new List<SavedMech>();
                 if (mechGroupWorkModes == null) mechGroupWorkModes = new List<MechWorkModeDef>();
+                if (animals == null) animals = new List<SavedAnimal>();
                 if (statModifiers == null) statModifiers = new List<PermanentStatModifier>();
                 // Mutual exclusivity: prefer XenotypeDef if both are set
                 if (xenotype != null && customXenotypeName != null)
@@ -1005,6 +1024,85 @@ namespace FactionColonies
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
         }
 
+        // --- Companion animals (Animals tab) ---
+
+        /// <summary>Total companion animals across all stack rows (sum of counts).</summary>
+        public int TotalAnimalCount
+        {
+            get
+            {
+                if (animals == null) return 0;
+                int total = 0;
+                foreach (SavedAnimal a in animals) total += Mathf.Max(1, a.count);
+                return total;
+            }
+        }
+
+        /// <summary>Adds (or tops up) a companion-animal stack. Hard-blocks the add when it would push
+        /// the total over FCSettings.maxAnimalSubpawns. Returns false (with a message) when rejected.
+        /// Unlike mechs, animals don't change the unit's own identity, so no MarkIdentityDirty.</summary>
+        public bool AddAnimal(PawnKindDef kind, int count = 1)
+        {
+            if (kind?.race == null || count <= 0) return false;
+            if (animals == null) animals = new List<SavedAnimal>();
+
+            if (TotalAnimalCount + count > FCSettings.maxAnimalSubpawns)
+            {
+                Messages.Message("fcAnimalCapReached".Translate(FCSettings.maxAnimalSubpawns), MessageTypeDefOf.RejectInput, false);
+                return false;
+            }
+
+            // Merge with an existing row of the same kind.
+            for (int i = 0; i < animals.Count; i++)
+            {
+                if (animals[i].kind == kind)
+                {
+                    SavedAnimal existing = animals[i];
+                    existing.count = Mathf.Max(1, existing.count) + count;
+                    animals[i] = existing;
+                    ChangeTick();
+                    MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+                    return true;
+                }
+            }
+
+            animals.Add(new SavedAnimal(kind, count));
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+            return true;
+        }
+
+        public void RemoveAnimal(int index)
+        {
+            if (animals == null || index < 0 || index >= animals.Count) return;
+            animals.RemoveAt(index);
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
+        /// <summary>Reduces a companion row's count by one, removing the row when it reaches zero.</summary>
+        public void DecrementAnimal(int index)
+        {
+            if (animals == null || index < 0 || index >= animals.Count) return;
+            SavedAnimal row = animals[index];
+            if (row.count <= 1) { RemoveAnimal(index); return; }
+            row.count -= 1;
+            animals[index] = row;
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
+        // --- Mount (Giddy Up 2) ---
+
+        /// <summary>Sets (or clears, when kind is null) the rideable mount. Only meaningful when Giddy
+        /// Up 2 is active; otherwise the field is inert and never spawns.</summary>
+        public void SetMount(PawnKindDef kind)
+        {
+            mount = kind;
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
         // --- Abilities / Psycasts ---
 
         public void SetPsylinkLevel(int level)
@@ -1242,8 +1340,15 @@ namespace FactionColonies
             foreach (SavedAbility a in abilities)
                 totalCost += AbilityCost(a);
 
-            if (animal != null)
-                totalCost += Math.Floor(animal.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier);
+            // Companion animals: each row's market value times its count. The mount (if any) reuses the
+            // same multiplier. The spawned animal/mount pawns are never re-counted by squad cost/power
+            // math, so their entire cost lives here on the design (mirrors the mech cost path below).
+            if (animals != null)
+                foreach (SavedAnimal a in animals)
+                    if (a.kind?.race != null)
+                        totalCost += Math.Floor(a.kind.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier) * Mathf.Max(1, a.count);
+            if (mount?.race != null)
+                totalCost += Math.Floor(mount.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier);
 
             // Mechanitor cost: a flat surcharge for the mechlink itself, plus each bonded mech's
             // market value. Mirrors the animal cost path — the spawned mech pawns are never re-counted
@@ -1351,7 +1456,8 @@ namespace FactionColonies
             copy.pawnKind = pawnKind;
             copy.xenotype = xenotype;
             copy.customXenotypeName = customXenotypeName;
-            copy.animal = animal;
+            copy.animals = new List<SavedAnimal>(animals ?? new List<SavedAnimal>());
+            copy.mount = mount;
             copy.forcedGender = forcedGender;
             copy.weapons = new List<SavedThing>(weapons ?? new List<SavedThing>());
             copy.apparel = new List<SavedThing>(apparel ?? new List<SavedThing>());

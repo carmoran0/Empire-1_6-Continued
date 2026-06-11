@@ -110,7 +110,17 @@ namespace FactionColonies
             Find.LetterStack.ReceiveLetter("FCDeploymentSuccessLabel".Translate(), deploymentDesc, LetterDefOf.NeutralEvent, new LookTargets(equippedPawns));
             FindFC.MilitaryManager?.CreateDeployOp(squad, currentMap.Tile);
 
-            LordMaker.MakeNewLord(FindFC.EmpireFaction, new LordJob_DeployMilitary(dropPosition, squad), currentMap, equippedPawns);
+            // Mounts (Giddy Up 2): map each mounted merc to its mount animal so the deploy lord can mount
+            // them once they spawn. Only mount-typed sub-pawns; companion animals deploy and fight on foot.
+            Dictionary<Pawn, Pawn> mounts = new Dictionary<Pawn, Pawn>();
+            foreach (Mercenary sub in squad.AllSubPawns())
+            {
+                if (sub.subPawnType != Mercenary.SubPawnType.Mount || sub.pawn is null) continue;
+                if (sub.handler?.pawn is object && !mounts.ContainsKey(sub.handler.pawn))
+                    mounts.Add(sub.handler.pawn, sub.pawn);
+            }
+
+            LordMaker.MakeNewLord(FindFC.EmpireFaction, new LordJob_DeployMilitary(dropPosition, squad, mounts), currentMap, equippedPawns);
         }
 
         /// <summary>

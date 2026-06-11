@@ -176,6 +176,13 @@ namespace FactionColonies
         public static float squadUpgradeCostMultiplier = DEFAULT_SQUAD_UPGRADE_COST_MULTIPLIER;
         public static int maxSquadSize = DEFAULT_MAX_SQUAD_SIZE;
 
+        /* Max companion animals a single merc design can carry (MilUnitFC.AddAnimal hard-blocks past
+         * this). Slider runs 1..MAX_ANIMAL_SUBPAWNS_SLIDER; lowering it never shrinks existing designs. */
+        public const int DEFAULT_MAX_ANIMAL_SUBPAWNS = 10;
+        public const int MIN_ANIMAL_SUBPAWNS = 1;
+        public const int MAX_ANIMAL_SUBPAWNS_SLIDER = 25;
+        public static int maxAnimalSubpawns = DEFAULT_MAX_ANIMAL_SUBPAWNS;
+
         /* Gene valuation weights. Used by GeneValuationUtil to score a xenotype's genes
          * into a cost multiplier applied to a mercenary's base race cost. Weights are
          * applied at read time over cached unweighted components, so changing these
@@ -381,6 +388,7 @@ namespace FactionColonies
             Scribe_Values.Look(ref squadHireCostMultiplier, "squadHireCostMultiplier", DEFAULT_SQUAD_HIRE_COST_MULTIPLIER);
             Scribe_Values.Look(ref squadUpgradeCostMultiplier, "squadUpgradeCostMultiplier", DEFAULT_SQUAD_UPGRADE_COST_MULTIPLIER);
             Scribe_Values.Look(ref maxSquadSize, "maxSquadSize", DEFAULT_MAX_SQUAD_SIZE);
+            Scribe_Values.Look(ref maxAnimalSubpawns, "maxAnimalSubpawns", DEFAULT_MAX_ANIMAL_SUBPAWNS);
             Scribe_Values.Look(ref geneValueWeightMvf,       "geneValueWeightMvf",       DEFAULT_GENE_W_MVF);
             Scribe_Values.Look(ref geneValueWeightMet,       "geneValueWeightMet",       DEFAULT_GENE_W_MET);
             Scribe_Values.Look(ref geneValueWeightArc,       "geneValueWeightArc",       DEFAULT_GENE_W_ARC);
@@ -395,6 +403,11 @@ namespace FactionColonies
             {
                 LogUtil.Warning($"Loaded suspicious maxSquadSize={maxSquadSize}; resetting to {DEFAULT_MAX_SQUAD_SIZE}.");
                 maxSquadSize = DEFAULT_MAX_SQUAD_SIZE;
+            }
+            if (Scribe.mode == LoadSaveMode.LoadingVars && maxAnimalSubpawns < MIN_ANIMAL_SUBPAWNS)
+            {
+                LogUtil.Warning($"Loaded suspicious maxAnimalSubpawns={maxAnimalSubpawns}; resetting to {DEFAULT_MAX_ANIMAL_SUBPAWNS}.");
+                maxAnimalSubpawns = DEFAULT_MAX_ANIMAL_SUBPAWNS;
             }
             Scribe_Collections.Look(ref lastSeenVersions, "lastSeenVersions", LookMode.Value, LookMode.Value);
             if (lastSeenVersions is null) lastSeenVersions = new Dictionary<string, string>();
@@ -797,6 +810,7 @@ namespace FactionColonies
                 squadHireCostMultiplier = DEFAULT_SQUAD_HIRE_COST_MULTIPLIER;
                 squadUpgradeCostMultiplier = DEFAULT_SQUAD_UPGRADE_COST_MULTIPLIER;
                 maxSquadSize = DEFAULT_MAX_SQUAD_SIZE;
+                maxAnimalSubpawns = DEFAULT_MAX_ANIMAL_SUBPAWNS;
                 squadDeploymentCostPercentage = DEFAULT_SQUAD_DEPLOYMENT_COST_PERCENTAGE;
                 deploymentBillLifespan_days = DEFAULT_DEPLOYMENT_BILL_LIFESPAN_DAYS;
                 geneValueWeightMvf       = DEFAULT_GENE_W_MVF;
@@ -1028,6 +1042,9 @@ namespace FactionColonies
             ls.Label("FCSettingMaxSquadSize".Translate() + ": " + maxSquadSize.ToString(), -1f, "FCSettingMaxSquadSizeTip".Translate());
             maxSquadSize = (int)ls.Slider(maxSquadSize, 1f, 60f);
 
+            ls.Label("FCSettingMaxAnimalSubpawns".Translate() + ": " + maxAnimalSubpawns.ToString(), -1f, "FCSettingMaxAnimalSubpawnsTip".Translate());
+            maxAnimalSubpawns = (int)ls.Slider(maxAnimalSubpawns, MIN_ANIMAL_SUBPAWNS, MAX_ANIMAL_SUBPAWNS_SLIDER);
+
             ls.Label("FCSettingSquadHireCostMultiplier".Translate() + ": " + squadHireCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingSquadHireCostMultiplierTip".Translate());
             squadHireCostMultiplier = ls.Slider(squadHireCostMultiplier, 0.0f, 5.0f);
 
@@ -1077,6 +1094,7 @@ namespace FactionColonies
             DrawSectionResetButton(ls, delegate
             {
                 maxSquadSize = DEFAULT_MAX_SQUAD_SIZE;
+                maxAnimalSubpawns = DEFAULT_MAX_ANIMAL_SUBPAWNS;
                 squadHireCostMultiplier = DEFAULT_SQUAD_HIRE_COST_MULTIPLIER;
                 squadUpgradeCostMultiplier = DEFAULT_SQUAD_UPGRADE_COST_MULTIPLIER;
                 squadDeploymentCostPercentage = DEFAULT_SQUAD_DEPLOYMENT_COST_PERCENTAGE;

@@ -21,6 +21,14 @@ namespace FactionColonies
         private int timeDeployed = 0;
         private bool readyForCommands = false;
 
+        // Rider -> mount animal for mercs with an assigned mount (Giddy Up 2). Applied once the deployed
+        // pawns have spawned (ApplyMountsIfNeeded) and re-applied on order changes (RestartPawnJobs) so a
+        // dismount caused by a player move/attack order is corrected. Empty without Giddy Up 2.
+        private Dictionary<Pawn, Pawn> mounts;
+        private List<Pawn> mountsKeys = new List<Pawn>();
+        private List<Pawn> mountsValues = new List<Pawn>();
+        private bool mountsApplied;
+
         private LordToil_DefendPoint lordToil_DefendPoint;
         private LordToil_HuntEnemies lordToil_HuntEnemies;
         private Map currentMap;
@@ -42,10 +50,11 @@ namespace FactionColonies
         /// <param name="currentOrderPosition"></param>
         /// <param name="squad"></param>
         /// <param name="maxDeploymentTime"></param>
-        public LordJob_DeployMilitary(IntVec3 currentOrderPosition, MercenarySquadFC squad, int maxDeploymentTime = DefaultMaxDeploymentTime)
+        public LordJob_DeployMilitary(IntVec3 currentOrderPosition, MercenarySquadFC squad, Dictionary<Pawn, Pawn> mounts = null, int maxDeploymentTime = DefaultMaxDeploymentTime)
         {
             this.currentOrderPosition = currentOrderPosition;
             this.squad = squad;
+            this.mounts = mounts;
 
             whenToForceLeave = maxDeploymentTime + Find.TickManager.TicksGame;
             timeDeployed = Find.TickManager.TicksGame;
@@ -98,12 +107,31 @@ namespace FactionColonies
         public override void LordJobTick()
         {
             base.LordJobTick();
+            ApplyMountsIfNeeded();
             if (!finalized
                 && Find.TickManager.TicksGame > whenToForceLeave + PostLeaveGraceTicks
                 && lord.ownedPawns.Count > 0)
             {
                 FinalizeDeployment();
             }
+        }
+
+        /// <summary>Mounts each rider on its mount once the deployed pawns are on the map (drop pods open
+        /// a few ticks after the lord forms). Runs once; player move/attack orders that dismount a rider
+        /// are corrected in <see cref="RestartPawnJobs"/>. No-op without mounts or Giddy Up 2.</summary>
+        private void ApplyMountsIfNeeded()
+        {
+            if (!FactionCompat.GiddyUp2Active || mountsApplied || mounts is null || mounts.Count == 0)
+                return;
+            // ReadyForCommands is true once all pawns have spawned (or after the 300-tick grace).
+            if (!ReadyForCommands) return;
+
+            foreach (KeyValuePair<Pawn, Pawn> pair in mounts)
+            {
+                if (pair.Key is object && pair.Value is object && pair.Key.Spawned && pair.Value.Spawned)
+                    GiddyUpUtil.Mount(pair.Key, pair.Value);
+            }
+            mountsApplied = true;
         }
 
         public override void Notify_AddedToLord()
@@ -126,6 +154,8 @@ namespace FactionColonies
             Scribe_References.Look(ref squad, "squad");
             Scribe_References.Look(ref currentMap, "currentMap");
             Scribe_Values.Look(ref finalized, "finalized");
+            Scribe_Values.Look(ref mountsApplied, "mountsApplied", false);
+            Scribe_Collections.Look(ref mounts, "mounts", LookMode.Reference, LookMode.Reference, ref mountsKeys, ref mountsValues);
 
             //PostLoadInit is the last loading pass
             if (Scribe.mode == LoadSaveMode.PostLoadInit) Init();
@@ -164,6 +194,17 @@ namespace FactionColonies
                 if (p is null) continue;
                 if (p.mindState is object) p.mindState.nextMoveOrderIsWait = false;
                 if (p.jobs?.curJob is object) p.jobs.EndCurrentJob(JobCondition.InterruptForced);
+            }
+
+            // Re-mount any rider the order change dismounted (GiddyUpUtil.Mount is idempotent, so
+            // already-mounted riders are untouched).
+            if (mounts is object)
+            {
+                foreach (KeyValuePair<Pawn, Pawn> pair in mounts)
+                {
+                    if (pair.Key is object && pair.Value is object && pair.Key.Spawned && pair.Value.Spawned)
+                        GiddyUpUtil.Mount(pair.Key, pair.Value);
+                }
             }
         }
 

@@ -262,7 +262,8 @@ namespace FactionColonies
     public class SavedUnitFC : IExposable
     {
         public string name;
-        public PawnKindDef animal;
+        public List<SavedAnimal> animals;
+        public PawnKindDef mount;
         public PawnKindDef pawnKind;
         public List<SavedThing> weapons;
         public List<SavedThing> apparel;
@@ -296,7 +297,8 @@ namespace FactionColonies
             isMechanitor = unit.isMechanitor;
             mechs = new List<SavedMech>(unit.mechs ?? new List<SavedMech>());
             mechGroupWorkModes = new List<MechWorkModeDef>(unit.mechGroupWorkModes ?? new List<MechWorkModeDef>());
-            animal = unit.animal;
+            animals = new List<SavedAnimal>(unit.animals ?? new List<SavedAnimal>());
+            mount = unit.mount;
             pawnKind = unit.pawnKind;
             xenotype = unit.xenotype;
             customXenotypeName = unit.customXenotypeName;
@@ -320,7 +322,10 @@ namespace FactionColonies
 
             MilUnitFC unit = MilTemplateFactory.CreateUnit(false);
             unit.name = name;
-            unit.animal = animal;
+            // Drop companion rows whose kind failed to resolve (mod removed); mount loads as null and
+            // is simply unassigned. Mirrors the mechs/abilities filtering below.
+            unit.animals = animals?.Where(a => a.kind != null).ToList() ?? new List<SavedAnimal>();
+            unit.mount = mount;
             unit.pawnKind = resolvedKind;
             unit.xenotype = xenotype;
             unit.customXenotypeName = customXenotypeName;
@@ -367,7 +372,16 @@ namespace FactionColonies
             Scribe_Values.Look(ref savedType, "savedType");
 
             Scribe_Values.Look(ref name, "name");
-            Scribe_Defs.Look(ref animal, "animal");
+            Scribe_Collections.Look(ref animals, "animals", LookMode.Deep);
+            Scribe_Defs.Look(ref mount, "mount");
+            // Migrate pre-multi-animal exports: the old single companion lived under "animal".
+            PawnKindDef legacyAnimal = null;
+            Scribe_Defs.Look(ref legacyAnimal, "animal");
+            if (Scribe.mode == LoadSaveMode.LoadingVars)
+            {
+                if (animals == null) animals = new List<SavedAnimal>();
+                if (animals.Count == 0 && legacyAnimal != null) animals.Add(new SavedAnimal(legacyAnimal, 1));
+            }
             Scribe_Defs.Look(ref pawnKind, "pawnKind");
             Scribe_Defs.Look(ref xenotype, "xenotype");
             Scribe_Values.Look(ref customXenotypeName, "customXenotypeName");
@@ -402,9 +416,11 @@ namespace FactionColonies
             List<string> missing = new List<string>();
 
             CheckDef(xmlParent, "pawnKind", pawnKind, missing);
-            CheckDef(xmlParent, "animal", animal, missing);
+            CheckDef(xmlParent, "mount", mount, missing);
             CheckDef(xmlParent, "xenotype", xenotype, missing);
 
+            int nullAnimals = animals?.Count(a => a.kind == null) ?? 0;
+            if (nullAnimals > 0) missing.Add($"{nullAnimals} companion animal(s)");
             int nullWeapons = weapons?.Count(w => w.thing == null) ?? 0;
             int nullApparel = apparel?.Count(a => a.thing == null) ?? 0;
             int nullInventory = inventory?.Count(i => i.thing == null) ?? 0;
@@ -794,6 +810,31 @@ namespace FactionColonies
             Scribe_Defs.Look(ref kind, "kind");
             Scribe_Values.Look(ref count, "count", 1);
             Scribe_Values.Look(ref group, "group", 0);
+        }
+    }
+
+    /* A companion-animal assignment chosen for a unit design: an animal PawnKindDef and how many of
+     * it to spawn alongside the merc. Stored as (kind, count) so a single row can represent several
+     * identical animals (mirrors SavedMech minus the mech-only group/work-mode). A kind that fails to
+     * resolve (mod removed) loads as null and is filtered out in SavedUnitFC.CreateMilUnit — the same
+     * graceful-degradation contract as SavedMech/SavedImplant. The companion total is capped by
+     * FCSettings.maxAnimalSubpawns at add time. The single rideable mount is a separate field, not a
+     * SavedAnimal. */
+    public struct SavedAnimal : IExposable
+    {
+        public PawnKindDef kind;
+        public int count;
+
+        public SavedAnimal(PawnKindDef kind, int count)
+        {
+            this.kind = kind;
+            this.count = Mathf.Max(1, count);
+        }
+
+        public void ExposeData()
+        {
+            Scribe_Defs.Look(ref kind, "kind");
+            Scribe_Values.Look(ref count, "count", 1);
         }
     }
 }

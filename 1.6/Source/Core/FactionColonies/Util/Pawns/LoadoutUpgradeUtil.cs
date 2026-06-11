@@ -69,13 +69,14 @@ namespace FactionColonies
         }
 
         /// <summary>True when <paramref name="target"/> differs from <paramref name="current"/>
-        /// in any applied way (animal, apparel set/stuff/quality/color, weapon). A null target
-        /// means "nothing assigned" -> false; a null current with a real target -> true.</summary>
+        /// in any applied way (companion animals, mount, apparel set/stuff/quality/color, weapon). A
+        /// null target means "nothing assigned" -> false; a null current with a real target -> true.</summary>
         public static bool LoadoutsDiffer(MilUnitFC target, MilUnitFC current)
         {
             if (target is null) return false;
             if (current is null) return true;
-            if (target.animal != current.animal) return true;
+            if (target.mount != current.mount) return true;
+            if (!AnimalsEquivalent(target.animals, current.animals)) return true;
             if (!ApparelEquivalent(target.apparel, current.apparel)) return true;
             if (!WeaponsEquivalent(target.weapons, current.weapons)) return true;
             if (!InventoryEquivalent(target.inventory, current.inventory)) return true;
@@ -96,6 +97,20 @@ namespace FactionColonies
             if (target.isMechanitor != current.isMechanitor) return true;
             if (!GroupWorkModesEquivalent(target.mechGroupWorkModes, current.mechGroupWorkModes)) return true;
             return !MechsEquivalent(target.mechs, current.mechs);
+        }
+
+        /* Order-independent equality over companion-animal rows (kind + count). */
+        public static bool AnimalsEquivalent(List<SavedAnimal> a, List<SavedAnimal> b)
+        {
+            int an = a == null ? 0 : a.Count(x => x.kind != null);
+            int bn = b == null ? 0 : b.Count(x => x.kind != null);
+            if (an != bn) return false;
+            if (an == 0) return true;
+            List<string> sa = a.Where(x => x.kind != null).Select(x => x.kind.defName + "|" + Math.Max(1, x.count)).OrderBy(s => s).ToList();
+            List<string> sb = b.Where(x => x.kind != null).Select(x => x.kind.defName + "|" + Math.Max(1, x.count)).OrderBy(s => s).ToList();
+            for (int i = 0; i < an; i++)
+                if (sa[i] != sb[i]) return false;
+            return true;
         }
 
         /* Order-independent equality over mech rows (kind + count + group). */

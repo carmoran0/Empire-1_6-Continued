@@ -21,6 +21,7 @@ namespace FactionColonies
         private Vector2 apparelListScrollPos;
         private Vector2 inventoryListScrollPos;
         private Vector2 implantListScrollPos;
+        private Vector2 animalListScrollPos;
         private Vector2 abilityListScrollPos;
         private Vector2 mechListScrollPos;
         private LoadoutTab activeTab = LoadoutTab.Apparel;
@@ -320,13 +321,17 @@ namespace FactionColonies
                 gearArea.y + 5f,
                 pawnWidth, pawnHeight);
 
-            // Weapon and animal slots below the pawn preview, side by side
+            // Weapon slot, plus a Mount slot when Giddy Up 2 is active. Without GU2 the weapon slot is
+            // centered alone and companion animals live entirely in the Animals tab.
+            bool showMount = FactionCompat.GiddyUp2Active;
             float slotsY = unitIcon.yMax + slotGap + 15f; // +15 for label above
-            float slotsWidth = slotSize * 2 + 20f;
+            float slotsWidth = showMount ? slotSize * 2 + 20f : slotSize;
             float slotsStartX = gearArea.x + (gearArea.width - slotsWidth) / 2f;
 
-            Rect AnimalCompanion = new Rect(slotsStartX, slotsY, slotSize, slotSize);
-            Rect EquipmentWeapon = new Rect(slotsStartX + slotSize + 20f, slotsY, slotSize, slotSize);
+            Rect MountSlot = new Rect(slotsStartX, slotsY, slotSize, slotSize);
+            Rect EquipmentWeapon = showMount
+                ? new Rect(slotsStartX + slotSize + 20f, slotsY, slotSize, slotSize)
+                : new Rect(slotsStartX, slotsY, slotSize, slotSize);
 
             // --- Always drawn: slot backgrounds and labels ---
             GameFont fontBefore = Text.Font;
@@ -334,8 +339,11 @@ namespace FactionColonies
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.UpperCenter;
 
-            Widgets.Label(new Rect(AnimalCompanion.x, AnimalCompanion.y - 15f, AnimalCompanion.width, 18f), "fcLabelAnimal".Translate());
-            Widgets.DrawMenuSection(AnimalCompanion);
+            if (showMount)
+            {
+                Widgets.Label(new Rect(MountSlot.x, MountSlot.y - 15f, MountSlot.width, 18f), "fcLabelMount".Translate());
+                Widgets.DrawMenuSection(MountSlot);
+            }
             Widgets.Label(new Rect(EquipmentWeapon.x, EquipmentWeapon.y - 15f, EquipmentWeapon.width, 18f), "fcLabelWeapon".Translate());
             Widgets.DrawMenuSection(EquipmentWeapon);
 
@@ -352,10 +360,10 @@ namespace FactionColonies
                 UIUtil.DrawPawnPortrait(unitIcon, preview, 1.2f);
             }
 
-            // --- Animal Companion Slot ---
-            if (Widgets.ButtonInvisible(AnimalCompanion))
+            // --- Mount Slot (Giddy Up 2 only) ---
+            if (showMount && Widgets.ButtonInvisible(MountSlot))
             {
-                Find.WindowStack.Add(new FCWindow_AnimalPicker(selectedUnit));
+                Find.WindowStack.Add(new FCWindow_MountPicker(selectedUnit));
             }
 
             // --- Weapon Slot ---
@@ -382,10 +390,10 @@ namespace FactionColonies
                 ));
             }
 
-            // Animal icon
-            if (selectedUnit.animal != null)
+            // Mount icon
+            if (showMount && selectedUnit.mount != null)
             {
-                Widgets.ButtonImage(AnimalCompanion, selectedUnit.animal.race.uiIcon);
+                Widgets.ButtonImage(MountSlot, selectedUnit.mount.race.uiIcon);
             }
 
             // Weapon icon
@@ -458,6 +466,16 @@ namespace FactionColonies
             else if (activeTab == LoadoutTab.Implants)
             {
                 ImplantListWidget.Draw(content, unit, ref implantListScrollPos, new ImplantListWidget.Options
+                {
+                    canEdit = true,
+                    showHeaderButtons = true,
+                    getEditTarget = () => unit,
+                    getDisplayUnit = () => unit,
+                });
+            }
+            else if (activeTab == LoadoutTab.Animals)
+            {
+                AnimalListWidget.Draw(content, unit, ref animalListScrollPos, new AnimalListWidget.Options
                 {
                     canEdit = true,
                     showHeaderButtons = true,

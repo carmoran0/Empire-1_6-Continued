@@ -13,6 +13,7 @@ namespace FactionColonies
         Apparel,
         Inventory,
         Implants,
+        Animals,
         Abilities,
         Mechs
     }
@@ -24,7 +25,7 @@ namespace FactionColonies
         public const float TabHeight = 28f;
 
         public static LoadoutTab Draw(Rect boundingBox, LoadoutTab selected, out Rect contentRect,
-            bool includeAbilities = true, bool includeMechs = false)
+            bool includeAbilities = true, bool includeMechs = false, bool includeAnimals = true)
         {
             // Build the list of present tabs in display order, with a parallel label list. Conditional
             // tabs are appended only when enabled, so a hidden tab never shifts another tab's index.
@@ -40,6 +41,11 @@ namespace FactionColonies
                 "fcTabInventory".Translate(),
                 "fcTabImplants".Translate()
             };
+            if (includeAnimals)
+            {
+                present.Add(LoadoutTab.Animals);
+                labels.Add("fcTabAnimals".Translate());
+            }
             if (includeAbilities)
             {
                 present.Add(LoadoutTab.Abilities);
