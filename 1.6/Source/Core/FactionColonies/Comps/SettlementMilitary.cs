@@ -281,29 +281,44 @@ namespace FactionColonies
             Scribe_Values.Look(ref artilleryTimer, "artilleryTimer");
             Scribe_Values.Look(ref settlementMilitaryLevel, "settlementMilitaryLevel");
 
-            /* On LoadingVars, fill the comp-side load buffers from XML so MilitaryMigrationUtil
+            /* On load, fill the comp-side migration buffers from XML so MilitaryMigrationUtil
              * can drain them in PostLoadInit. Canonical state lives on MilitaryOperationManager
              * (ops) and BattlefieldContext (battle pawns); save writes use the manager-owned
-             * layout, so these reads only resolve values when a comp-side XML is present. */
+             * layout, so nothing here is written on Saving (old-format comp XML only resolves
+             * when loading a pre-refactor save).
+             *
+             * The DIRECT comp-level reference reads (Scribe_References + LookMode.Reference
+             * lists) MUST run in BOTH LoadingVars and ResolvingCrossRefs: RimWorld registers
+             * each loadID in LoadingVars and only consumes it in ResolvingCrossRefs (see
+             * Scribe_References.Look / TakeResolvedRef). Gating them to LoadingVars alone leaves
+             * every loadID unconsumed -- "Not all loadIDs which were read were consumed" -- and
+             * leaves the buffers null, so the squad/battle migration silently drops its data.
+             * Deep reads (activeWaves, the forces) self-resolve via the global cross-ref pass
+             * (ScribeExtractor.SaveableFromNode registers them), so they stay LoadingVars-only. */
+            if (Scribe.mode == LoadSaveMode.LoadingVars || Scribe.mode == LoadSaveMode.ResolvingCrossRefs)
+            {
+                // Squad-first split: capture militarySquad from the XML into an [Unsaved] buffer.
+                // MigrateLegacyComp_MilitarySquad consumes it in PostLoadInit and writes
+                // squad.settlement = this + squad.autoDefend = buffer.
+                Scribe_References.Look(ref _legacyMilitarySquad, "militarySquad");
+                Scribe_References.Look(ref _legacyMilitaryEnemy, "militaryEnemy");
+
+                Scribe_Collections.Look(ref _legacyAttackers, "attackers", LookMode.Reference);
+                Scribe_Collections.Look(ref _legacyDefenders, "defenders", LookMode.Reference);
+                Scribe_Collections.Look(ref _legacyDraftedNPCs, "draftedNPCs", LookMode.Reference);
+            }
+
             if (Scribe.mode == LoadSaveMode.LoadingVars)
             {
-                // Squad-first split: capture militarySquad/autoDefend from the XML into
-                // [Unsaved] buffers. MigrateLegacyComp_MilitarySquad consumes them in
-                // PostLoadInit and writes squad.settlement = this + squad.autoDefend = buffer.
-                Scribe_References.Look(ref _legacyMilitarySquad, "militarySquad");
                 Scribe_Values.Look(ref _legacyAutoDefend, "autoDefend", false);
 
                 Scribe_Values.Look(ref _legacyMilitaryBusy, "militaryBusy", false);
                 Scribe_Defs.Look(ref _legacyMilitaryJob, "militaryJob");
                 Scribe_Values.Look(ref _legacyMilitaryLocation, "militaryLocation", PlanetTile.Invalid);
-                Scribe_References.Look(ref _legacyMilitaryEnemy, "militaryEnemy");
                 Scribe_Values.Look(ref _legacyIsUnderAttack, "isUnderAttack", false);
                 Scribe_Values.Look(ref _legacyBattleMapInitialized, "battleMapInitialized", false);
                 Scribe_Values.Look(ref _legacyInitialDefenderCount, "initialDefenderCount", 0);
 
-                Scribe_Collections.Look(ref _legacyAttackers, "attackers", LookMode.Reference);
-                Scribe_Collections.Look(ref _legacyDefenders, "defenders", LookMode.Reference);
-                Scribe_Collections.Look(ref _legacyDraftedNPCs, "draftedNPCs", LookMode.Reference);
                 Scribe_Collections.Look(ref _legacyActiveWaves, "activeWaves", LookMode.Deep);
 
                 MilitaryForce legacyAttackerForce = null;
