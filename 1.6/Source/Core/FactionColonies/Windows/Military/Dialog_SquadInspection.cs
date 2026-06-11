@@ -494,20 +494,27 @@ namespace FactionColonies
         }
 
         /// <summary>Compact roster + condition summary of a merc's sub-pawns, e.g.
-        /// "1 animal (downed) · 5 mechs (1 downed, 1 missing)". Counts both live and Missing
+        /// "1 animal (downed) · 1 mount · 5 mechs (1 downed, 1 missing)". Counts both live and Missing
         /// wrappers (the assigned roster). Null when the merc has none.</summary>
         private static string BuildSubPawnBadge(Mercenary merc)
         {
             if (merc is null) return null;
-            // merc.animals now also holds the single mount (subPawnType == Mount); count only true
-            // companions here so the "N animals" head is accurate (the mount shows in the gear slot).
+            // merc.animals holds companions (subPawnType == Animal) and the single mount (== Mount).
+            // Split them into separate segments so the mount is reported as "1 mount", not an animal.
             List<Mercenary> companions = merc.animals?
                 .Where(x => x != null && x.subPawnType == Mercenary.SubPawnType.Animal).ToList();
+            List<Mercenary> mounts = merc.animals?
+                .Where(x => x != null && x.subPawnType == Mercenary.SubPawnType.Mount).ToList();
             string a = SubTypeBadgeSegment(companions, "FCSubPawnBadgeAnimal", "FCSubPawnBadgeAnimals");
+            string mt = SubTypeBadgeSegment(mounts, "FCSubPawnBadgeMount", "FCSubPawnBadgeMounts");
             string m = SubTypeBadgeSegment(merc.mechs, "FCSubPawnBadgeMech", "FCSubPawnBadgeMechs");
-            if (a is null) return m;
-            if (m is null) return a;
-            return a + " · " + m;
+
+            List<string> parts = new List<string>(3);
+            if (a != null) parts.Add(a);
+            if (mt != null) parts.Add(mt);
+            if (m != null) parts.Add(m);
+            if (parts.Count == 0) return null;
+            return string.Join(" · ", parts);
         }
 
         /// <summary>One badge segment for a sub-pawn type: count head plus a parenthesized condition

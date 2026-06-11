@@ -36,6 +36,14 @@ namespace FactionColonies
             total += AbilitySystemRegistry.Active?.PsylinkCost(unit.psylinkLevel) ?? 0;
             if (unit.abilities != null)
                 foreach (SavedAbility a in unit.abilities) total += MilUnitFC.AbilityCost(a);
+            // Companion animals + mount: market value times count, mirroring the design-side cost in
+            // MilUnitFC.UpdateEquipmentTotalCost so the upgrade diff is non-zero when animals/mount change.
+            if (unit.animals != null)
+                foreach (SavedAnimal a in unit.animals)
+                    if (a.kind?.race != null)
+                        total += Math.Floor(a.kind.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier) * Math.Max(1, a.count);
+            if (unit.mount?.race != null)
+                total += Math.Floor(unit.mount.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier);
             // Mechanitor: flat mechlink surcharge + each bonded mech's market value. Matches the
             // design-side cost in MilUnitFC.UpdateEquipmentTotalCost so the upgrade diff stays in sync.
             if (ModsConfig.BiotechActive && unit.IsMechanitorDesign)

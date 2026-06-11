@@ -1,5 +1,6 @@
 using FactionColonies.util;
 using GiddyUp;
+using GiddyUpCore.Core;
 using Verse;
 
 namespace FactionColonies.GiddyUpCompat
@@ -30,6 +31,11 @@ namespace FactionColonies.GiddyUpCompat
             if (rider.IsMounted()) return;   // idempotent — don't re-mount an already-mounted rider
             // Instant: set the mounted state directly (no walk-up job), as GU2 does for pre-mounted raiders.
             rider.GoMount(mount, MountUtility.GiveJobMethod.Instant);
+            // GU2 draws the rider as a render node on the MOUNT's render tree and suppresses the rider's
+            // own draw. The Mount job rebuilds that tree at the end; GoMount(Instant) does NOT. So when we
+            // mount a rider whose mount was already drawn (mid-deploy, after pods open), the mount's tree
+            // lacks the rider node and the rider goes invisible. Rebuild it (same call the Mount job uses).
+            MountedRiderRenderNodeUtility.RefreshMountedAnimalGraphics(mount);
         }
     }
 }
