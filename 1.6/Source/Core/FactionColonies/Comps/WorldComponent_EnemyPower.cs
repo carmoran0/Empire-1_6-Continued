@@ -47,6 +47,26 @@ namespace FactionColonies
 
         public override void ExposeData()
         {
+            /* Before writing, drop entries whose key was destroyed/removed since the last
+             * recompute. No settlement-destruction hook evicts entries between the 5-day
+             * RecomputeAll passes, so a conquered foreign settlement can linger as a key; a
+             * LookMode.Reference key to a destroyed Settlement is saved as a dangling ref and
+             * logs "Null key while loading dictionary ... settlementPowers" on load. The
+             * PostLoadInit prune below stays as a backstop for already-saved games. */
+            if (Scribe.mode == LoadSaveMode.Saving)
+            {
+                if (settlementPowers is object)
+                {
+                    List<Settlement> staleSettlements = settlementPowers.Where(kv => kv.Key is null || kv.Key.Destroyed).Select(kv => kv.Key).ToList();
+                    foreach (Settlement k in staleSettlements) settlementPowers.Remove(k);
+                }
+                if (factionPowers is object)
+                {
+                    List<Faction> staleFactions = factionPowers.Where(kv => kv.Key is null).Select(kv => kv.Key).ToList();
+                    foreach (Faction k in staleFactions) factionPowers.Remove(k);
+                }
+            }
+
             Scribe_Collections.Look(ref settlementPowers, "settlementPowers", LookMode.Reference, LookMode.Deep, ref _scribeSettlementKeys, ref _scribeSettlementValues);
             Scribe_Collections.Look(ref factionPowers, "factionPowers", LookMode.Reference, LookMode.Deep, ref _scribeFactionKeys, ref _scribeFactionValues);
             Scribe_Values.Look(ref nextRecomputeTick, "nextRecomputeTick", -1);
