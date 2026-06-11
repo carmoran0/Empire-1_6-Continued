@@ -1236,6 +1236,8 @@ namespace FactionColonies
             {
                 LogUtil.MessageForce($"v{modVersion}");
             }
+
+            FactionCompat.CheckForMods();
         }
 
         public override string SettingsCategory()
