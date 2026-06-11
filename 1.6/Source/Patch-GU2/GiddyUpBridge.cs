@@ -1,7 +1,6 @@
 using FactionColonies.util;
 using GiddyUp;
 using Verse;
-using Verse.AI;
 
 namespace FactionColonies.GiddyUpCompat
 {
@@ -9,15 +8,13 @@ namespace FactionColonies.GiddyUpCompat
     /// Giddy Up 2 implementation of <see cref="IGiddyUpBridge"/>. Only exists in Empire.GiddyUp.dll,
     /// which is loaded only when Giddy Up 2 is active (LoadFolders.xml conditional loading).
     ///
-    /// Uses only GU2's PUBLIC surface: <see cref="ModSettings_GiddyUp.MountableCache"/> for the
-    /// mountability gate and <see cref="ExtendedDataStorage.isMounted"/> for the mounted-state check.
-    /// Mounting itself goes through GU2's "Mount" JobDef (GU2's MountUtility.GoMount is internal).
+    /// The Empire.GiddyUp project publicizes GiddyUpCore (Krafs.Publicizer + IgnoresAccessChecksTo), so
+    /// this calls GU2's internal MountUtility/StorageUtility directly with typed syntax — no reflection.
+    /// <see cref="Mount"/> uses GU2's instant mount (GiveJobMethod.Instant), the same path GU2 uses to
+    /// spawn pre-mounted raiders, so the merc ends up mounted immediately with no walk-up.
     /// </summary>
     public class GiddyUpBridge : IGiddyUpBridge
     {
-        // Resolved when the bridge is constructed (after defs load, via [StaticConstructorOnStartup]).
-        private static readonly JobDef MountJob = DefDatabase<JobDef>.GetNamedSilentFail("Mount");
-
         public bool IsMountable(PawnKindDef kind)
         {
             if (kind?.race is null) return false;
@@ -29,11 +26,10 @@ namespace FactionColonies.GiddyUpCompat
 
         public void Mount(Pawn rider, Pawn mount)
         {
-            if (MountJob is null || rider?.jobs is null || mount is null) return;
-            // Idempotent: GU2 tracks every mounted rider in this public set, so don't re-issue the job.
-            if (ExtendedDataStorage.isMounted.Contains(rider.thingIDNumber)) return;
-            Job job = new Job(MountJob, new LocalTargetInfo(mount)) { count = 1 };
-            rider.jobs.StartJob(job);
+            if (rider is null || mount is null) return;
+            if (rider.IsMounted()) return;   // idempotent — don't re-mount an already-mounted rider
+            // Instant: set the mounted state directly (no walk-up job), as GU2 does for pre-mounted raiders.
+            rider.GoMount(mount, MountUtility.GiveJobMethod.Instant);
         }
     }
 }
