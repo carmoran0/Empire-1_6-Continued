@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Verse;
+using Verse.AI.Group;
 using FactionColonies.util;
 
 namespace FactionColonies
@@ -54,29 +55,32 @@ namespace FactionColonies
             if (empireFaction != null && mech.Faction != empireFaction)
                 mech.SetFaction(empireFaction);
 
+            // Mechanoids aren't flesh, so PawnComponentsUtility only creates a relations tracker for a mech
+            // once it's a PLAYER overseer subject — a freshly generated Empire mech has mech.relations == null.
+            // AddDirectRelation dereferences otherPawn.relations (mech.relations) to add the reflexive entry,
+            // so without this it NREs ("Failed to bond mech ... NRE") and the mech is never actually bonded.
+            // Create the tracker up front, exactly as vanilla does (PawnComponentsUtility).
+            if (mech.relations is null) mech.relations = new Pawn_RelationsTracker(mech);
+
             try
             {
+                // Bond the mech to its overseer with the Overseer direct relation. This drives bandwidth
+                // accounting and makes the mech follow its overseer on a faction change
+                // (Pawn_MechanitorTracker.Notify_ChangedFaction iterates the overseer's Overseer relations).
+                // Empire mechanitors aren't the player faction, so PawnRelationWorker_Overseer.OnRelationCreated
+                // won't auto-assign a control group (IsMechanitor gates on player faction).
                 overseer.relations.AddDirectRelation(PawnRelationDefOf.Overseer, mech);
-                // Empire mechanitors aren't the player faction, so PawnRelationWorker_Overseer won't
-                // auto-assign a control group (IsMechanitor gates on player faction). The first
-                // AssignPawnControlGroup call also lazily creates the control groups from the
-                // MechControlGroups stat; we then move the mech into the exact group the design specifies
-                // and set that group's work mode (shared by all mechs in the group).
-                Pawn_MechanitorTracker tracker = overseer.mechanitor;
-                tracker.AssignPawnControlGroup(mech, workMode ?? MechWorkModeDefOf.Escort);
-                if (tracker.controlGroups.Count > 0)
-                {
-                    int idx = groupIndex;
-                    if (idx < 0) idx = 0;
-                    if (idx > tracker.controlGroups.Count - 1) idx = tracker.controlGroups.Count - 1;
-                    MechanitorControlGroup group = tracker.controlGroups[idx];
-                    group.SetWorkMode(workMode ?? MechWorkModeDefOf.Escort);
-                    group.Assign(mech);
-                }
+
+                // Assign the mech to its designed control group + work mode now, so the design's grouping is
+                // honored from creation rather than being clobbered by the vanilla auto-assign-to-group-0 that
+                // fires when the merc is later drafted. This is safe off-map: an unspawned mech's think tree
+                // enters the Despawned subtree (JobGiver_IdleWhileDespawned), so the job re-evaluation inside
+                // AssignPawnControlGroup never touches the (null) map.
+                AssignMechToControlGroup(overseer.mechanitor, mech, groupIndex, workMode);
             }
             catch (Exception ex)
             {
-                LogUtil.Warning($"Failed to bond mech {mechKind.defName} to {overseer.LabelShortCap}: {ex.Message}");
+                LogUtil.Warning($"Failed to bond mech {mechKind.defName} to {overseer.LabelShortCap}: {ex}");
             }
 
             merc.squad = squad;
@@ -86,6 +90,48 @@ namespace FactionColonies
             merc.subPawnKind = mechKind;
             merc.subPawnMechGroup = groupIndex;
             merc.subPawnWorkMode = workMode;
+        }
+
+        /// <summary>Assigns <paramref name="mech"/> to control group <paramref name="groupIndex"/> on
+        /// <paramref name="tracker"/> with <paramref name="workMode"/>, lazily creating the groups and
+        /// clamping the index into range. This runs vanilla job-determination (CheckForJobOverride)
+        /// internally, so it is only safe for a SPAWNED mech whose overseer is spawned — it NREs in the
+        /// think-tree's error-recovery path otherwise. Callers gate on Spawned.</summary>
+        private static void AssignMechToControlGroup(Pawn_MechanitorTracker tracker, Pawn mech, int groupIndex, MechWorkModeDef workMode)
+        {
+            if (tracker is null || mech is null) return;
+            MechWorkModeDef mode = workMode ?? MechWorkModeDefOf.Escort;
+            EnsureLordDutyAssigned(mech);
+
+            // The first call lazily creates the control groups from the MechControlGroups stat.
+            tracker.AssignPawnControlGroup(mech, mode);
+            if (tracker.controlGroups.Count > 0)
+            {
+                int idx = groupIndex;
+                if (idx < 0) idx = 0;
+                if (idx > tracker.controlGroups.Count - 1) idx = tracker.controlGroups.Count - 1;
+                MechanitorControlGroup group = tracker.controlGroups[idx];
+                group.SetWorkMode(mode);
+                group.Assign(mech);
+            }
+        }
+
+        /// <summary>Eagerly assigns a spawned mech its pending lord duty when it's in a duty-assigning lord
+        /// but its duty is currently null. Any control-group (re)assignment forces a job re-evaluation
+        /// (CheckForJobOverride); if the mech is in this transient lord-without-duty state, vanilla's
+        /// ThinkNode_Duty logs a hard error ("doing ThinkNode_Duty with no duty", which pops the dev
+        /// console). The state arises during a draft/undraft: Pawn.SetFaction clears the mind (duty -> null)
+        /// while Empire's LordJob_DefendColony.Notify_PawnLost re-adds the still-spawned pawn to the defense
+        /// lord, so for one frame the mech sits in a duty-assigning lord with no duty until the next
+        /// LordJobTick reassigns duties. We do that reassignment now so the forced re-eval sees a consistent
+        /// lord+duty state. ThinkNode_ConditionalHasLordDuty gates only on lord + AssignsDuties, which is
+        /// exactly the condition checked here.</summary>
+        private static void EnsureLordDutyAssigned(Pawn mech)
+        {
+            if (mech is null) return;
+            Lord lord = mech.GetLord();
+            if (lord?.CurLordToil != null && lord.CurLordToil.AssignsDuties && mech.mindState?.duty is null)
+                lord.CurLordToil.UpdateAllDuties();
         }
 
         /// <summary>Reverses <see cref="CreateNewMech"/>'s bond: unassigns <paramref name="mech"/> from the
@@ -124,6 +170,65 @@ namespace FactionColonies
             {
                 LogUtil.Warning($"Failed to unbond mech from {overseer.LabelShortCap}: {ex.Message}");
             }
+        }
+
+        /// <summary>Re-establishes mechanitor control over a merc's mechs after a faction change.
+        /// Drafting an Empire mechanitor to the player (or undrafting back) runs vanilla
+        /// <c>Pawn_MechanitorTracker.Notify_BandwidthChanged</c>, which can drop mechs to "uncontrolled"
+        /// because the control-group/bandwidth bookkeeping wasn't maintained while it was a non-player
+        /// mechanitor. Re-adding the Overseer relation (if lost) and re-assigning each mech to its
+        /// control group reconnects them. Mechs that genuinely exceed the overseer's bandwidth will still
+        /// be dropped by the subsequent bandwidth recalc — that's a real design constraint.</summary>
+        public static void RebindMechs(Mercenary merc)
+        {
+            Pawn overseer = merc?.pawn;
+            if (!ModsConfig.BiotechActive || overseer?.mechanitor is null || merc.mechs is null) return;
+            Pawn_MechanitorTracker tracker = overseer.mechanitor;
+            foreach (Mercenary mw in merc.mechs)
+            {
+                Pawn m = mw?.pawn;
+                // Only rebind mechs that are actually in the battle (spawned, alive). Missing placeholders
+                // (pawn null) and off-map mechs aren't part of the current draft/undraft fight.
+                if (m is null || m.Dead || m.Destroyed || !m.Spawned) continue;
+                try
+                {
+                    // Settle the mech's lord-duty state before anything forces a job re-evaluation. Adding
+                    // the Overseer relation to a player-faction overseer auto-assigns a control group
+                    // (OnRelationCreated -> AssignPawnControlGroup, vanilla, bypassing our helper), which
+                    // would hit the same ThinkNode_Duty error this guards against, so run it up front.
+                    EnsureLordDutyAssigned(m);
+
+                    // Test the relation on the OVERSEER's side (authoritative) rather than m.GetOverseer()
+                    // (the mech's reflexive entry can be out of sync after a faction swap), so we never
+                    // re-add an existing relation — that logs "Tried to add the same relation twice".
+                    bool relationExists = overseer.relations != null
+                        && overseer.relations.DirectRelationExists(PawnRelationDefOf.Overseer, m);
+                    if (!relationExists && overseer.relations != null && m.relations != null)
+                    {
+                        // For a player-faction overseer, AddDirectRelation -> OnRelationCreated already
+                        // assigns a control group, so the GetControlGroup check below short-circuits.
+                        overseer.relations.AddDirectRelation(PawnRelationDefOf.Overseer, m);
+                    }
+                    // Assign a control group only if the mech isn't already in one. This both restores
+                    // mechs that were bonded off-map but never grouped (the replacement case) and avoids
+                    // re-assigning ones the relation-add just grouped (double SetWorkModeForPawn churn).
+                    if (tracker.GetControlGroup(m) is null)
+                        AssignMechToControlGroup(tracker, m, mw.subPawnMechGroup, mw.subPawnWorkMode);
+                }
+                catch (Exception e)
+                {
+                    LogUtil.Warning($"Failed to rebind mech {m.LabelShortCap} to {overseer.LabelShortCap}: {e.Message}");
+                }
+            }
+
+            // Rebuild controlledPawns from the (design-grouped) assignments. AssignPawnControlGroup does
+            // this internally, but we skip it for mechs already in their group (to preserve the design
+            // grouping set at creation), so trigger the recalc explicitly — otherwise the mechs can stay
+            // flagged "uncontrolled" after a faction change even though they're correctly bonded and grouped.
+            // Mechs whose combined bandwidth exceeds the overseer's MechBandwidth stat are genuinely dropped
+            // here; that's a real design constraint, not a bug.
+            try { tracker.Notify_BandwidthChanged(); }
+            catch (Exception e) { LogUtil.Warning($"Bandwidth recalc failed for {overseer.LabelShortCap}: {e.Message}"); }
         }
 
         /// <summary>

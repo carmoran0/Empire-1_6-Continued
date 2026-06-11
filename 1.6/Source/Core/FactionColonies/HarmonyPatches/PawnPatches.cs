@@ -1,6 +1,7 @@
 ﻿using FactionColonies.util;
 using HarmonyLib;
 using Verse;
+using RimWorld;
 
 namespace FactionColonies
 {
@@ -84,6 +85,29 @@ namespace FactionColonies
                 MercenaryPawnFactory.UnbondMech(sub.handler.pawn, sub.pawn);
             sub.pawn = null;
             FindFC.Military?.RebuildMercenaryPawnSet();
+        }
+    }
+
+    // Whenever a mercenary changes faction (drafted to the player, undrafted back to the Empire,
+    // forced back to Empire on death/recall, etc.), carry all of its sub-pawns along. Vanilla has no
+    // drafting for animals/mechs, but they must share the merc's faction so player control, mechanitor
+    // bonds, and AI all behave. Sub-pawns have no sub-pawns of their own, so this never recurses.
+    [HarmonyPatch(typeof(Pawn), nameof(Pawn.SetFaction))]
+    class MercSubPawnsFollowFaction
+    {
+        static void Postfix(Pawn __instance, Faction newFaction)
+        {
+            if (newFaction is null) return;
+            MilitaryFC mfc = FindFC.Military;
+            if (mfc is null || !mfc.IsMercenaryPawn(__instance)) return;
+            Mercenary merc = mfc.FindMercByPawn(__instance);
+            if (merc is null) return; // not a top-level slot merc (e.g. a sub-pawn) — nothing to cascade
+            foreach (Mercenary sub in merc.SubPawns())
+            {
+                Pawn p = sub?.pawn;
+                if (p != null && !p.Dead && !p.Destroyed && p.Faction != newFaction)
+                    p.SetFaction(newFaction);
+            }
         }
     }
 

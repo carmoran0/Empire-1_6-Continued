@@ -373,6 +373,21 @@ namespace FactionColonies
             return null;
         }
 
+        /// <summary>Finds the top-level <see cref="Mercenary"/> (squad slot) whose live pawn is
+        /// <paramref name="unit"/>, or null if <paramref name="unit"/> isn't a slot merc (e.g. it's a
+        /// sub-pawn). Used to cascade a merc's faction change down to its sub-pawns.</summary>
+        public Mercenary FindMercByPawn(Pawn unit)
+        {
+            if (unit is null) return null;
+            foreach (var squad in mercenarySquads)
+            {
+                if (squad?.mercenaries is null) continue;
+                foreach (var merc in squad.mercenaries)
+                    if (merc?.pawn == unit) return merc;
+            }
+            return null;
+        }
+
         public IEnumerable<Mercenary> AllMercenaries =>
             mercenarySquads.SelectMany(squad =>
                 ((IEnumerable<Mercenary>)squad.mercenaries).Concat(squad.AllSubPawns()));
