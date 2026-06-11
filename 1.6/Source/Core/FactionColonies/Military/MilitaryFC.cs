@@ -47,7 +47,23 @@ namespace FactionColonies
             if (fireSupportId > nextMilitaryFireSupportId) nextMilitaryFireSupportId = fireSupportId;
         }
 
-        public bool IsMercenaryPawn(Pawn pawn) => mercenaryPawnSet.Contains(pawn);
+        /// <summary>True if <paramref name="pawn"/> is a squad pawn — a mercenary slot pawn OR one of their
+        /// bonded sub-pawns (mech / companion animal). Fast O(1) via the cache; on a cache miss it falls
+        /// back to the authoritative ownership scan and self-heals the cache, so a lagging cache (e.g. a
+        /// freshly bonded mech not yet followed by a RebuildMercenaryPawnSet) can never make a consumer —
+        /// the death patch, the PassToWorld guard, the faction cascade — treat a live squad pawn as a
+        /// stranger (which is what let battle-end cleanup wrongly destroy mechs).</summary>
+        public bool IsMercenaryPawn(Pawn pawn)
+        {
+            if (pawn is null) return false;
+            if (mercenaryPawnSet.Contains(pawn)) return true;
+            if (FindMercByPawn(pawn) is object || FindSubPawnWrapper(pawn) is object)
+            {
+                mercenaryPawnSet.Add(pawn); // self-heal: keep repeat lookups O(1)
+                return true;
+            }
+            return false;
+        }
 
         public void RebuildMercenaryPawnSet()
         {
