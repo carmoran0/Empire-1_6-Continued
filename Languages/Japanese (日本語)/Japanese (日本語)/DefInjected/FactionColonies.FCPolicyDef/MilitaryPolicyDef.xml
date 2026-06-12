@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: A Faction Disarmed -->
+  <aFactionDisarmed.label>武装解除派閥</aFactionDisarmed.label>
+  <!-- EN: There is very little, if any trained military forces in the faction. -->
+  <aFactionDisarmed.desc>派閥内に訓練された軍事力はほとんど、あるいはまったく存在しない。</aFactionDisarmed.desc>
+
+  <!-- EN: Heavy Conscription -->
+  <heavyConscription.label>重徴兵制</heavyConscription.label>
+  <!-- EN: A large number of the populace is conscripted into the settlement's military forces. -->
+  <heavyConscription.desc>多数の住民が入植地の軍事力に徴兵されている。</heavyConscription.desc>
+
+  <!-- EN: Slave Army -->
+  <slaveArmy.label>奴隷軍</slaveArmy.label>
+  <!-- EN: The majority of your settlements' military forces is comprised of slaves or those in forced servitude. -->
+  <slaveArmy.desc>入植地の軍事力の大部分が奴隷や強制労役者で構成されている。</slaveArmy.desc>
+
+  <!-- EN: Volunteer Service -->
+  <volunteerService.label>志願兵制</volunteerService.label>
+  <!-- EN: The military force of your settlements is by volunteers only. -->
+  <volunteerService.desc>入植地の軍事力は志願者のみで構成されている。</volunteerService.desc>
+
+</LanguageData>

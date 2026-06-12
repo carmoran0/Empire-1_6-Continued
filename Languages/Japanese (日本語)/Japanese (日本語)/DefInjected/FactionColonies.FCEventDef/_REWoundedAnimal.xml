@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Wounded Animal -->
+  <woundedAnimal_0.label>負傷した動物</woundedAnimal_0.label>
+  <!-- EN: A farmer of one of your settlements has brought a wounded animal to your capital. He states that it entered their town and would refuse to leave. The animal looks sickly and on edge. It looks like it could snap at any moment... -->
+  <woundedAnimal_0.desc>あなたの入植地のひとりの農夫が、負傷した動物を首都へ連れてきた。農夫によると、その動物が町に入り込み、立ち去ろうとしないとのことだ。動物は病的な様子で神経を尖らせており、今にも暴れ出しそうに見える……</woundedAnimal_0.desc>
+
+  <!-- EN: Wounded Animal -->
+  <woundedAnimal_1-1.label>負傷した動物</woundedAnimal_1-1.label>
+  <!-- EN: The animal remains calm. Your colonists guide it in without issue. -->
+  <woundedAnimal_1-1.desc>動物は落ち着いたままだった。入植者たちは問題なく動物を誘導することができた。</woundedAnimal_1-1.desc>
+
+  <!-- EN: Wounded Animal -->
+  <woundedAnimal_1-2.label>負傷した動物</woundedAnimal_1-2.label>
+  <!-- EN: As the animal is guided in, it starts to fight against the settlers delivering it. It quickly becomes more and more aggressive and all attempts to calm it start to fail. Several settlers are heavily injured or die. Unfortunately, this will affect production for a period of time. -->
+  <woundedAnimal_1-2.desc>動物を誘導しようとしたところ、連れてきた入植者たちに向かって暴れ始めた。動物はみるみる凶暴化し、なだめようとする試みはことごとく失敗に終わった。数人の入植者が重傷を負い、あるいは命を落とした。残念ながら、この影響でしばらくの間、生産に支障が出るだろう。</woundedAnimal_1-2.desc>
+
+  <!-- EN: Wounded Animal -->
+  <woundedAnimal_1-3f.label>負傷した動物</woundedAnimal_1-3f.label>
+  <!-- EN: Despite the handler's best efforts, the animal lashes out. The handler manages to contain the situation, but sustains injuries in the process. -->
+  <woundedAnimal_1-3f.desc>ハンドラーの懸命な努力にもかかわらず、動物は暴れ出した。ハンドラーはなんとか事態を収拾したものの、その過程で負傷してしまった。</woundedAnimal_1-3f.desc>
+
+  <!-- EN: Wounded Animal -->
+  <woundedAnimal_1-3s.label>負傷した動物</woundedAnimal_1-3s.label>
+  <!-- EN: The trained handler approaches the animal with care and expertise. It calms down and allows itself to be guided in safely. -->
+  <woundedAnimal_1-3s.desc>熟練したハンドラーが慎重かつ巧みに動物に近づいた。動物は落ち着きを取り戻し、安全に誘導されることを受け入れた。</woundedAnimal_1-3s.desc>
+
+</LanguageData>

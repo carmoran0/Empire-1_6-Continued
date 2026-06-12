@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: What are you doing? Keep digging! -->
+  <strangeDiscovery_0_1.label>何をしている？掘り続けろ！</strangeDiscovery_0_1.label>
+
+  <!-- EN: Send in the military to escort the miners. -->
+  <strangeDiscovery_0_2.label>軍を送り込み、採掘者を護衛させろ。</strangeDiscovery_0_2.label>
+
+  <!-- EN: Avoid it! Continue mining elsewhere. -->
+  <strangeDiscovery_0_3.label>近づくな！別の場所で採掘を続けよ。</strangeDiscovery_0_3.label>
+
+</LanguageData>

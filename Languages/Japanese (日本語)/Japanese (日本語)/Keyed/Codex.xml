@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+	<!-- Codex Window Chrome -->
+	<!-- EN: Empire Codex -->
+  <FCCodexTitle>帝国コーデックス</FCCodexTitle>
+	<!-- EN: Info -->
+  <FCCodexTabInfo>情報</FCCodexTabInfo>
+	<!-- EN: Select an entry from the left to view details. -->
+  <FCCodexSelectEntry>左のリストから項目を選択して詳細を確認してください。</FCCodexSelectEntry>
+	<!-- EN: Current Game Values -->
+  <FCCodexLiveData>現在のゲーム数値</FCCodexLiveData>
+	<!-- EN: See Also: -->
+  <FCCodexSeeAlso>関連項目：</FCCodexSeeAlso>
+	<!-- EN: Enabled -->
+  <FCCodexEnabled>有効</FCCodexEnabled>
+	<!-- EN: Disabled -->
+  <FCCodexDisabled>無効</FCCodexDisabled>
+
+	<!-- Threat Level Provider -->
+	<!-- EN: No settlements — ETL defaults to 1.0×. -->
+  <FCCodexETLNoSettlements>入植地なし — ETL はデフォルト 1.0× です。</FCCodexETLNoSettlements>
+	<!-- EN: Current ETL: {0}× -->
+  <FCCodexETLCurrent>現在の ETL：{0}×</FCCodexETLCurrent>
+	<!-- EN: Components: -->
+  <FCCodexETLBreakdown>構成要素：</FCCodexETLBreakdown>
+	<!-- EN: Avg Level: {0} -->
+  <FCCodexETLAvgLevel>平均レベル：{0}</FCCodexETLAvgLevel>
+	<!-- EN: Max Level: {0} -->
+  <FCCodexETLMaxLevel>最大レベル：{0}</FCCodexETLMaxLevel>
+	<!-- EN: +{0} -->
+  <FCCodexETLContrib>+{0}</FCCodexETLContrib>
+	<!-- EN: Income: {0} silver -->
+  <FCCodexETLIncome>収入：{0} シルバー</FCCodexETLIncome>
+	<!-- EN: Settlements: {0} -->
+  <FCCodexETLCount>入植地数：{0}</FCCodexETLCount>
+	<!-- EN: Handicap Cap: {0}× -->
+  <FCCodexETLHandicapCap>ハンディキャップ上限：{0}×</FCCodexETLHandicapCap>
+	<!-- EN: Max Setting: {0}× -->
+  <FCCodexETLMaxSetting>最大設定値：{0}×</FCCodexETLMaxSetting>
+
+	<!-- Battle Simulation Provider -->
+	<!-- EN: Current Battle Parameters -->
+  <FCCodexBattleParams>現在の戦闘パラメータ</FCCodexBattleParams>
+	<!-- EN: Defender Advantage: {0}× ({1}% force bonus) -->
+  <FCCodexBattleDefAdv>防衛側有利：{0}×（戦力ボーナス {1}%）</FCCodexBattleDefAdv>
+	<!-- EN: Efficiency Damping: {0} -->
+  <FCCodexBattleDamping>効率減衰値：{0}</FCCodexBattleDamping>
+	<!-- EN: Example: raw efficiency {0}× → dampened to {1}× -->
+  <FCCodexBattleDampExample>例：生の効率 {0}× → 減衰後 {1}×</FCCodexBattleDampExample>
+
+	<!-- Resource Production Provider -->
+	<!-- EN: No settlements to show production data. -->
+  <FCCodexResNoSettlements>生産データを表示できる入植地がありません。</FCCodexResNoSettlements>
+	<!-- EN: No workers assigned to any resource yet. -->
+  <FCCodexResNoWorkers>まだどの資源にも労働者が割り当てられていません。</FCCodexResNoWorkers>
+	<!-- EN: Example: {0} — {1} -->
+  <FCCodexResExample>例：{0} — {1}</FCCodexResExample>
+	<!-- EN: Stage 1 (Additives): {0} base -->
+  <FCCodexResStage1>段階 1（加算値）：基本 {0}</FCCodexResStage1>
+	<!-- EN: Stage 2 (Multipliers): ×{0} (includes prosperity {1}%) -->
+  <FCCodexResStage2>段階 2（乗数）：×{0}（繁栄度 {1}% を含む）</FCCodexResStage2>
+	<!-- EN: Stage 3 (Workers): {0} workers → {1} total production -->
+  <FCCodexResStage3>段階 3（労働者）：{0} 人 → 総生産量 {1}</FCCodexResStage3>
+	<!-- EN: Silver conversion: {0} silver/unit → {1} silver value -->
+  <FCCodexResSilver>シルバー換算：{0} シルバー/単位 → 総額 {1} シルバー</FCCodexResSilver>
+
+	<!-- Prosperity Provider -->
+	<!-- EN: No settlements to show prosperity data. -->
+  <FCCodexProsNoSettlements>繁栄度データを表示できる入植地がありません。</FCCodexProsNoSettlements>
+	<!-- EN: Per-Settlement Breakdown -->
+  <FCCodexProsHeader>入植地別詳細</FCCodexProsHeader>
+	<!-- EN: Prosperity: {0} -->
+  <FCCodexProsCurrent>繁栄度：{0}</FCCodexProsCurrent>
+	<!-- EN: Target: {0} -->
+  <FCCodexProsTargetVal>目標値：{0}</FCCodexProsTargetVal>
+	<!-- EN: Happiness: {0} -->
+  <FCCodexProsHappiness>幸福度：{0}</FCCodexProsHappiness>
+	<!-- EN: Loyalty: {0} -->
+  <FCCodexProsLoyalty>忠誠心：{0}</FCCodexProsLoyalty>
+	<!-- EN: Stability: {0} -->
+  <FCCodexProsStability>安定度：{0}</FCCodexProsStability>
+	<!-- EN: Drift: {0}/day -->
+  <FCCodexProsDrift>変動：{0}/日</FCCodexProsDrift>
+	<!-- EN: Production: ×{0} -->
+  <FCCodexProsProdMult>生産量：×{0}</FCCodexProsProdMult>
+
+	<!-- Worker Overwork Provider -->
+	<!-- EN: Current Worker Parameters -->
+  <FCCodexWorkerParams>現在の労働者パラメータ</FCCodexWorkerParams>
+	<!-- EN: Base worker cost: {0} silver -->
+  <FCCodexWorkerBaseCost>基本労働者コスト：{0} シルバー</FCCodexWorkerBaseCost>
+	<!-- EN: Formula: cost × (1 + overwork/20) -->
+  <FCCodexWorkerFormula>計算式：コスト × (1 + 過労/20)</FCCodexWorkerFormula>
+	<!-- EN: Each worker over soft cap adds 5% cost -->
+  <FCCodexWorkerFormulaDesc>ソフトキャップを超えた労働者 1 人につきコストが 5% 増加します。</FCCodexWorkerFormulaDesc>
+	<!-- EN: Example: {0} workers over cap → +{1}% cost → {2} silver per worker -->
+  <FCCodexWorkerExample>例：キャップ超過 {0} 人 → コスト +{1}% → 労働者 1 人あたり {2} シルバー</FCCodexWorkerExample>
+
+	<!-- Military Cooldown Provider -->
+	<!-- EN: Current Cooldown Parameters -->
+  <FCCodexCooldownParams>現在のクールダウンパラメータ</FCCodexCooldownParams>
+	<!-- EN: Defense ops: 24 hours flat (squad re-organizes locally). -->
+  <FCCodexCooldownTravelDefense>防衛作戦：一律 24 時間（分隊は現地で再編成します）。</FCCodexCooldownTravelDefense>
+	<!-- EN: Offense ops: calculated travel time for the squad to return from the target tile to its home settlement. -->
+  <FCCodexCooldownTravelOffense>攻撃作戦：目標タイルから本拠地入植地まで分隊が帰還するのにかかる移動時間で計算されます。</FCCodexCooldownTravelOffense>
+	<!-- EN: Injured pawns reduce the squad's combat effectiveness until they heal; the squad inspection window shows the estimated healing time. Dead mercenaries leave their slot empty until the player fills it. -->
+  <FCCodexCooldownEffectivenessNote>負傷したポーンは回復するまで分隊の戦闘能力を低下させます。分隊確認ウィンドウで推定回復時間を確認できます。死亡した傭兵はプレイヤーが補充するまでそのスロットが空白のままになります。</FCCodexCooldownEffectivenessNote>
+
+	<!-- Attack Frequency Provider -->
+	<!-- EN: Current Attack Frequency Parameters -->
+  <FCCodexFreqParams>現在の攻撃頻度パラメータ</FCCodexFreqParams>
+	<!-- EN: Base interval range: {0}–{1} days -->
+  <FCCodexFreqRange>基本間隔：{0}〜{1} 日</FCCodexFreqRange>
+	<!-- EN: Your settlement count: {0} -->
+  <FCCodexFreqCount>入植地数：{0}</FCCodexFreqCount>
+	<!-- EN: Frequency curve (settlements → multiplier): -->
+  <FCCodexFreqCurve>頻度カーブ（入植地数 → 倍率）：</FCCodexFreqCurve>
+	<!-- EN: {0} settlements → {1}× -->
+  <FCCodexFreqPoint>{0} 入植地 → {1}×</FCCodexFreqPoint>
+
+	<!-- Difficulty Settings Provider -->
+	<!-- EN: Current difficulty: {0} -->
+  <FCCodexDiffCurrent>現在の難易度：{0}</FCCodexDiffCurrent>
+	<!-- EN: Difficulty → Silver/Res | Tax Days | Tithe Mod | Worker Cost -->
+  <FCCodexDiffHeader>難易度 → シルバー/資源 | 課税日数 | 十分の一税補正 | 労働者コスト</FCCodexDiffHeader>
+	<!-- EN: {0}: {1} | {2}d | {3} | {4} -->
+  <FCCodexDiffRow>{0}：{1} | {2}日 | {3} | {4}</FCCodexDiffRow>
+	<!-- EN: Your custom values: -->
+  <FCCodexDiffCustomLabel>カスタム設定値：</FCCodexDiffCustomLabel>
+	<!-- EN:   {0}: {1} -->
+  <FCCodexDiffCustomRow>　{0}：{1}</FCCodexDiffCustomRow>
+
+	<!-- Settlement Types Tab -->
+	<!-- EN: Settlements -->
+  <FCCodexTabSettlements>入植地</FCCodexTabSettlements>
+	<!-- EN: Select a settlement type from the left to view details. -->
+  <FCCodexSelectSettlement>左のリストから入植地の種類を選択して詳細を確認してください。</FCCodexSelectSettlement>
+	<!-- EN: Key Stats -->
+  <FCCodexSettlementStats>主要ステータス</FCCodexSettlementStats>
+	<!-- EN: Workers: {0} base, +{1} per level -->
+  <FCCodexSettlementWorkers>労働者：基本 {0}、レベルごとに +{1}</FCCodexSettlementWorkers>
+	<!-- EN: Max Level: {0} -->
+  <FCCodexSettlementMaxLevel>最大レベル：{0}</FCCodexSettlementMaxLevel>
+	<!-- EN: Building Slots -->
+  <FCCodexSettlementBuildingSlots>建物スロット</FCCodexSettlementBuildingSlots>
+	<!-- EN: Level -->
+  <FCCodexSettlementBuildingSlotsLevel>レベル</FCCodexSettlementBuildingSlotsLevel>
+	<!-- EN: Building Slots -->
+  <FCCodexSettlementBuildingSlotsCount>建物スロット</FCCodexSettlementBuildingSlotsCount>
+	<!-- EN: Workers -->
+  <FCCodexSettlementBuildingSlotsWorkers>労働者</FCCodexSettlementBuildingSlotsWorkers>
+	<!-- EN: Planet Layer: {0} -->
+  <FCCodexSettlementPlanetLayer>惑星層：{0}</FCCodexSettlementPlanetLayer>
+	<!-- EN: Manual Battle: {0} -->
+  <FCCodexSettlementManualBattle>手動戦闘：{0}</FCCodexSettlementManualBattle>
+	<!-- EN: Can Be Raided: {0} -->
+  <FCCodexSettlementCanBeRaided>略奪対象：{0}</FCCodexSettlementCanBeRaided>
+	<!-- EN: Raid Targeting Weight: {0} -->
+  <FCCodexSettlementRaidWeight>略奪対象重み：{0}</FCCodexSettlementRaidWeight>
+	<!-- EN: Available Resources -->
+  <FCCodexSettlementResources>利用可能な資源</FCCodexSettlementResources>
+	<!-- EN: Stat Modifiers -->
+  <FCCodexSettlementStatModifiers>ステータス修正値</FCCodexSettlementStatModifiers>
+	<!-- EN: Tech Requirements -->
+  <FCCodexSettlementTechReqs>技術要件</FCCodexSettlementTechReqs>
+	<!-- EN: Tech Level: {0} -->
+  <FCCodexSettlementTechLevel>技術レベル：{0}</FCCodexSettlementTechLevel>
+	<!-- EN: Research: {0} -->
+  <FCCodexSettlementResearch>研究：{0}</FCCodexSettlementResearch>
+	<!-- EN: Biome Restrictions -->
+  <FCCodexSettlementBiomes>バイオーム制限</FCCodexSettlementBiomes>
+	<!-- EN: All biomes -->
+  <FCCodexSettlementAllBiomes>すべてのバイオーム</FCCodexSettlementAllBiomes>
+	<!-- EN: Blocked: {0} -->
+  <FCCodexSettlementBlockedBiomes>禁止：{0}</FCCodexSettlementBlockedBiomes>
+	<!-- EN: Allowed only: {0} -->
+  <FCCodexSettlementAllowedBiomes>許可のみ：{0}</FCCodexSettlementAllowedBiomes>
+	<!-- EN: Yes -->
+  <FCCodexYes>はい</FCCodexYes>
+	<!-- EN: No -->
+  <FCCodexNo>いいえ</FCCodexNo>
+
+	<!-- Resources Tab -->
+	<!-- EN: Resources -->
+  <FCCodexTabResources>資源</FCCodexTabResources>
+	<!-- EN: Select a resource from the left to view details. -->
+  <FCCodexSelectResource>左のリストから資源を選択して詳細を確認してください。</FCCodexSelectResource>
+	<!-- EN: Key Info -->
+  <FCCodexResourceKeyInfo>主要情報</FCCodexResourceKeyInfo>
+	<!-- EN: Pool Resource -->
+  <FCCodexResourcePoolResource>プール資源</FCCodexResourcePoolResource>
+	<!-- EN: Titheable: {0} -->
+  <FCCodexResourceTitheable>十分の一税対象：{0}</FCCodexResourceTitheable>
+	<!-- EN: Default Resource: {0} -->
+  <FCCodexResourceDefaultResource>デフォルト資源：{0}</FCCodexResourceDefaultResource>
+	<!-- EN: Min Tech Level: {0} -->
+  <FCCodexResourceMinTechLevel>最低技術レベル：{0}</FCCodexResourceMinTechLevel>
+	<!-- EN: Max Tech Level: {0} -->
+  <FCCodexResourceMaxTechLevel>最大技術レベル：{0}</FCCodexResourceMaxTechLevel>
+	<!-- EN: Defense Weight: {0} -->
+  <FCCodexResourceDefenseWeight>防衛重み：{0}</FCCodexResourceDefenseWeight>
+	<!-- EN: Biome Production -->
+  <FCCodexResourceBiomeProduction>バイオーム別生産量</FCCodexResourceBiomeProduction>
+	<!-- EN: Biome -->
+  <FCCodexResourceBiomeName>バイオーム</FCCodexResourceBiomeName>
+	<!-- EN: Additive -->
+  <FCCodexResourceBiomeAdditive>加算値</FCCodexResourceBiomeAdditive>
+	<!-- EN: Multiplier -->
+  <FCCodexResourceBiomeMultiplier>乗数</FCCodexResourceBiomeMultiplier>
+	<!-- EN: Total -->
+  <FCCodexResourceBiomeTotal>合計</FCCodexResourceBiomeTotal>
+	<!-- EN: Tithe Items ({0}) -->
+  <FCCodexResourceTitheItems>十分の一税品目（{0}）</FCCodexResourceTitheItems>
+	<!-- EN: Search tithe items... -->
+  <FCCodexResourceSearchTithe>十分の一税品目を検索...</FCCodexResourceSearchTithe>
+	<!-- EN: Compatible Settlements -->
+  <FCCodexResourceCompatibleSettlements>対応入植地</FCCodexResourceCompatibleSettlements>
+	<!-- EN: Requires: {0} -->
+  <FCCodexResourceRequiresResearch>必要条件：{0}</FCCodexResourceRequiresResearch>
+
+	<!-- Buildings Tab -->
+	<!-- EN: Buildings -->
+  <FCCodexTabBuildings>建物</FCCodexTabBuildings>
+	<!-- EN: Select a building from the left to view details. -->
+  <FCCodexSelectBuilding>左のリストから建物を選択して詳細を確認してください。</FCCodexSelectBuilding>
+	<!-- EN: Search buildings... -->
+  <FCCodexSearchBuildings>建物を検索...</FCCodexSearchBuildings>
+	<!-- EN: Stats -->
+  <FCCodexBuildingStats>ステータス</FCCodexBuildingStats>
+	<!-- EN: Cost: {0} silver -->
+  <FCCodexBuildingCost>コスト：{0} シルバー</FCCodexBuildingCost>
+	<!-- EN: Construction Time: {0} -->
+  <FCCodexBuildingDuration>建設時間：{0}</FCCodexBuildingDuration>
+	<!-- EN: Upkeep: {0} silver -->
+  <FCCodexBuildingUpkeep>維持費：{0} シルバー</FCCodexBuildingUpkeep>
+	<!-- EN: Income: {0} silver -->
+  <FCCodexBuildingIncome>収入：{0} シルバー</FCCodexBuildingIncome>
+	<!-- EN: Tech Level: {0} -->
+  <FCCodexBuildingTechLevel>技術レベル：{0}</FCCodexBuildingTechLevel>
+	<!-- EN: Modifiers -->
+  <FCCodexBuildingModifiers>修正値</FCCodexBuildingModifiers>
+	<!-- EN: Required Buildings -->
+  <FCCodexBuildingRequired>必要な建物</FCCodexBuildingRequired>
+	<!-- EN: Upgrade Tree -->
+  <FCCodexBuildingUpgrades>アップグレードツリー</FCCodexBuildingUpgrades>
+	<!-- EN: Required By -->
+  <FCCodexBuildingRequiredBy>必要とされている建物</FCCodexBuildingRequiredBy>
+	<!-- EN: General -->
+  <FCCodexBuildingTechGeneral>一般</FCCodexBuildingTechGeneral>
+	<!-- EN: Compatible Settlements -->
+  <FCCodexBuildingCompatibleSettlements>対応入植地</FCCodexBuildingCompatibleSettlements>
+	<!-- EN: Terrain Restrictions -->
+  <FCCodexBuildingBiomeRestrictions>地形制限</FCCodexBuildingBiomeRestrictions>
+	<!-- EN: Biomes: -->
+  <FCCodexBuildingApplicableBiomes>バイオーム：</FCCodexBuildingApplicableBiomes>
+	<!-- EN: Hilliness: {0} to {1} -->
+  <FCCodexBuildingHilliness>起伏度：{0} 〜 {1}</FCCodexBuildingHilliness>
+	<!-- EN: Max Hilliness: {0} -->
+  <FCCodexBuildingMaxHilliness>最大起伏度：{0}</FCCodexBuildingMaxHilliness>
+	<!-- EN: Min Hilliness: {0} -->
+  <FCCodexBuildingMinHilliness>最小起伏度：{0}</FCCodexBuildingMinHilliness>
+	<!-- EN: All biomes -->
+  <FCCodexBuildingAllBiomes>すべてのバイオーム</FCCodexBuildingAllBiomes>
+	<!-- EN: Any terrain -->
+  <FCCodexBuildingAnyTerrain>すべての地形</FCCodexBuildingAnyTerrain>
+
+	<!-- Enhanced Tooltips -->
+	<!-- EN: Production multiplier = prosperity / 100. At 50%, you produce half as much. -->
+  <FCCodexTipProsFormula>生産倍率 = 繁栄度 ÷ 100。繁栄度 50% の場合、生産量は半分になります。</FCCodexTipProsFormula>
+	<!-- EN: Range across settlements: {0}% - {1}% -->
+  <FCCodexTipProsRange>入植地間の範囲：{0}% 〜 {1}%</FCCodexTipProsRange>
+	<!-- EN: {0} naturally increases by 1/day, unless there is a negative modifier. Policies, buildings, and events can incresae or decrease this rate. This stat feeds into the prosperity target. -->
+  <FCCodexTipSocialDrift>{0} はマイナス修正がない限り、自然に 1/日 増加します。政策・建物・イベントによってこの速度は上下します。この数値は繁栄度の目標値に影響します。</FCCodexTipSocialDrift>
+	<!-- EN: Unrest naturally decreases by 1/day, unless there is a penalty modifier. Policies, buildings, and events can increase or decrease this rate. Lower unrest raises the prosperity target. -->
+  <FCCodexTipUnrestDrift>不満はペナルティ修正がない限り、自然に 1/日 減少します。政策・建物・イベントによってこの速度は上下します。不満が低いほど繁栄度の目標値が上がります。</FCCodexTipUnrestDrift>
+	<!-- EN: Income: {0} silver\nUpkeep: {1} silver\nProfit: {2} silver\n\nIncome is the total silver value of all settlement production. Upkeep includes worker costs, building maintenance, and military expenses. -->
+  <FCCodexTipProfitBreakdown>収入：{0} シルバー\n維持費：{1} シルバー\n利益：{2} シルバー\n\n収入はすべての入植地生産物のシルバー総額です。維持費には労働者コスト・建物の維持・軍事費が含まれます。</FCCodexTipProfitBreakdown>
+	<!-- EN: Tax collection every {0} days (configurable in settings).\n -->
+  <FCCodexTipTaxTimer>税徴収は {0} 日ごとに行われます（設定で変更可能）。\n</FCCodexTipTaxTimer>
+	<!-- EN: Tax income uses the AVERAGE of daily production snapshots across the tax period, not a single snapshot at collection time. Building or losing things mid-period affects the average proportionally. -->
+  <FCCodexTipTaxAveraging>税収入は徴収時点の単一スナップショットではなく、課税期間中の日次生産スナップショットの平均値を使用します。期間中に建物を建てたり失ったりした場合、その影響は平均値に比例して反映されます。</FCCodexTipTaxAveraging>
+
+</LanguageData>

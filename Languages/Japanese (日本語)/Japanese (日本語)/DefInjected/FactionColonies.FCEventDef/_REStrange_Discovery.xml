@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Strange Discovery -->
+  <strangeDiscovery_0.label>奇妙な発見</strangeDiscovery_0.label>
+  <!-- EN: Deep in the mines, a strange presence has been felt and the miners have stopped working to investigate it. -->
+  <strangeDiscovery_0.desc>鉱山の奥深くで奇妙な気配が感じられ、採掘者たちは作業を止めて調査に乗り出した。</strangeDiscovery_0.desc>
+
+  <!-- EN: Strange Discovery -->
+  <strangeDiscovery_1-1.label>奇妙な発見</strangeDiscovery_1-1.label>
+  <!-- EN: Your miners start to investigate under military escort... -->
+  <strangeDiscovery_1-1.desc>採掘者たちは軍の護衛のもと調査を開始する……</strangeDiscovery_1-1.desc>
+
+  <!-- EN: Strange Discovery -->
+  <strangeDiscovery_1-1b.label>奇妙な発見</strangeDiscovery_1-1b.label>
+  <!-- EN: Your miners press deeper into the unknown... -->
+  <strangeDiscovery_1-1b.desc>採掘者たちは未知の奥へとさらに進んでいく……</strangeDiscovery_1-1b.desc>
+
+  <!-- EN: Strange Discovery -->
+  <strangeDiscovery_1-2.label>奇妙な発見</strangeDiscovery_1-2.label>
+  <!-- EN: Your miners start to investigate under military escort... -->
+  <strangeDiscovery_1-2.desc>採掘者たちは軍の護衛のもと調査を開始する……</strangeDiscovery_1-2.desc>
+
+  <!-- EN: Strange Discovery -->
+  <strangeDiscovery_1-3.label>奇妙な発見</strangeDiscovery_1-3.label>
+  <!-- EN: Your miners start to investigate... -->
+  <strangeDiscovery_1-3.desc>採掘者たちは調査を開始する……</strangeDiscovery_1-3.desc>
+
+  <!-- EN: Strange Discovery -->
+  <strangeDiscovery_2-1.label>奇妙な発見</strangeDiscovery_2-1.label>
+  <!-- EN: After investigating, the miners found several veins of ore all clumped together! Someone must have wanted us to find this.\n\nYou will receive a small group of ores that the miners dug up. -->
+  <strangeDiscovery_2-1.desc>調査の結果、採掘者たちはいくつかの鉱脈が一か所に固まっているのを発見した！誰かに見つけてほしかったに違いない。\n\n採掘者が掘り出した少量の鉱石を受け取る。</strangeDiscovery_2-1.desc>
+
+  <!-- EN: Strange Discovery -->
+  <strangeDiscovery_2-1b.label>奇妙な発見</strangeDiscovery_2-1b.label>
+  <!-- EN: The miners struck an exceptionally rich vein near the disturbance! Someone must have wanted us to find this.\n\nYou will receive a haul of ores that the miners dug up. -->
+  <strangeDiscovery_2-1b.desc>採掘者たちは異変のあった場所の近くで特別に豊かな鉱脈を発見した！誰かに見つけてほしかったに違いない。\n\n採掘者が掘り出した大量の鉱石を受け取る。</strangeDiscovery_2-1b.desc>
+
+  <!-- EN: Strange Discovery -->
+  <strangeDiscovery_2-2.label>奇妙な発見</strangeDiscovery_2-2.label>
+  <!-- EN: When your miners investigated, a large insectoid attacked! Luckily, the security force sent with the miners fought off the creature with no casualties. A report of the event has been sent up for investigation. -->
+  <strangeDiscovery_2-2.desc>採掘者たちが調査中、巨大な虫型生物が襲いかかった！幸い、同行していた警備部隊が犠牲者なしに撃退した。事態の報告書が調査のために上申された。</strangeDiscovery_2-2.desc>
+
+  <!-- EN: Strange Discovery -->
+  <strangeDiscovery_2-3.label>奇妙な発見</strangeDiscovery_2-3.label>
+  <!-- EN: When your miners investigated, a large insectoid attacked! A few of the miners were killed before the creature was slain. Due to this, a number of workers have decided to stay home after the traumatic event. -->
+  <strangeDiscovery_2-3.desc>採掘者たちが調査中、巨大な虫型生物が襲いかかった！生物を倒す前に採掘者が数名命を落とした。この凄惨な出来事の後、何人かの労働者は仕事を休むことにした。</strangeDiscovery_2-3.desc>
+
+</LanguageData>

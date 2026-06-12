@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: There's little we can do. We'll endure the shortage. -->
+  <foodShortage_0_1.label>できることは少ない。食料不足を耐え忍ぶしかない。</foodShortage_0_1.label>
+
+  <!-- EN: Purchase emergency food imports to soften the blow. -->
+  <foodShortage_0_2.label>緊急食料輸入を購入し、打撃を和らげる。</foodShortage_0_2.label>
+
+  <!-- EN: Enforce strict rationing — shared sacrifice builds loyalty. -->
+  <foodShortage_0_3.label>厳格な配給制を実施する——共に苦難を分かち合うことで忠誠心が育まれる。</foodShortage_0_3.label>
+
+  <!-- EN: Let the slaves starve. The workers will eat. -->
+  <foodShortage_0_4.label>奴隷を飢えさせろ。労働者には食わせる。</foodShortage_0_4.label>
+
+</LanguageData>

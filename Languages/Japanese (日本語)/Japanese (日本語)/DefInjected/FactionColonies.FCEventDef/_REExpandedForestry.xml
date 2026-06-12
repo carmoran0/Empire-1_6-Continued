@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Expanded Forestry -->
+  <expandedForestry_0.label>林業の拡大</expandedForestry_0.label>
+  <!-- EN: Some of your settlements have expanded their forestry production this week. How should the extra timber be used? -->
+  <expandedForestry_0.desc>今週、いくつかの入植地で林業生産が拡大された。余剰の木材をどう活用すべきか？</expandedForestry_0.desc>
+
+  <!-- EN: Expanded Forestry -->
+  <expandedForestry_1-1.label>林業の拡大</expandedForestry_1-1.label>
+  <!-- EN: The expanded logging operations continue. -->
+  <expandedForestry_1-1.desc>拡大された伐採作業が継続されている。</expandedForestry_1-1.desc>
+
+  <!-- EN: Expanded Forestry (Sold) -->
+  <expandedForestry_1-2.label>林業の拡大（売却）</expandedForestry_1-2.label>
+  <!-- EN: The extra timber is sold to passing traders for a tidy profit. -->
+  <expandedForestry_1-2.desc>余剰の木材は通りかかった商人に売却され、まとまった利益を得た。</expandedForestry_1-2.desc>
+
+  <!-- EN: Expanded Forestry (Construction Stockpile) -->
+  <expandedForestry_1-3.label>林業の拡大（建設用備蓄）</expandedForestry_1-3.label>
+  <!-- EN: Lumber is stockpiled for construction projects, and construction speeds up. -->
+  <expandedForestry_1-3.desc>木材が建設プロジェクト用に備蓄され、建設速度が向上した。</expandedForestry_1-3.desc>
+
+</LanguageData>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+	<!-- Generic Labels -->
+	<!-- EN: Name -->
+  <FCName>名前</FCName>
+	<!-- EN: None -->
+  <FCNone>なし</FCNone>
+	<!-- EN: No -->
+  <FCNo>いいえ</FCNo>
+	<!-- EN: Yes -->
+  <FCYes>はい</FCYes>
+	<!-- EN: Set -->
+  <FCSet>設定</FCSet>
+	<!-- EN: Deploy -->
+  <FCDeploy>展開</FCDeploy>
+	<!-- EN: Reset -->
+  <FCReset>リセット</FCReset>
+	<!-- EN: Base -->
+  <FCBase>基本値</FCBase>
+	<!-- EN: Modifier -->
+  <FCModifier>修正値</FCModifier>
+	<!-- EN: Final -->
+  <FCFinal>最終値</FCFinal>
+	<!-- EN: Tile Modifiers -->
+  <FCCreateColonyTileModifiersTitle>タイル修正値</FCCreateColonyTileModifiersTitle>
+	<!-- EN: Effect -->
+  <FCEffect>効果</FCEffect>
+	<!-- EN: Info -->
+  <FCInfo>情報</FCInfo>
+	<!-- EN: Total -->
+  <FCTotal>合計</FCTotal>
+	<!-- EN: Mult -->
+  <FCMult>倍率</FCMult>
+	<!-- EN: Date -->
+  <FCDate>日付</FCDate>
+	<!-- EN: Selected -->
+  <FCSelected>選択済み</FCSelected>
+	<!-- EN: Select -->
+  <FCSelect>選択</FCSelect>
+	<!-- EN: Enabled -->
+  <FCIsAllowed>有効</FCIsAllowed>
+	<!-- EN: Disabled -->
+  <FCIsNotAllowed>無効</FCIsNotAllowed>
+	<!-- EN: Per-Worker -->
+  <FCPerWorker>労働者一人当たり</FCPerWorker>
+	<!-- EN: {0}/{1} -->
+  <FCNumRatio>{0}/{1}</FCNumRatio>
+	<!-- EN:  a settlement  -->
+  <FCASettlement>入植地</FCASettlement>
+	<!-- EN: This will be added to in the future -->
+  <FCAddedInFuture>将来追加予定</FCAddedInFuture>
+	<!-- EN: Item -->
+  <FCItem>アイテム</FCItem>
+
+	<!-- Tab Labels -->
+	<!-- EN: Settlements -->
+  <FCColonies>入植地</FCColonies>
+	<!-- EN: Bills -->
+  <FCBills>請求書</FCBills>
+	<!-- EN: Events -->
+  <FCEvents>イベント</FCEvents>
+	<!-- EN: Settlement -->
+  <FCSettlement>入植地</FCSettlement>
+	<!-- EN: Settlements -->
+  <FCSettlements>入植地一覧</FCSettlements>
+	<!-- EN: Overview -->
+  <FCOverview>概要</FCOverview>
+	<!-- EN: Travel Time -->
+  <FCTravelTime>移動時間</FCTravelTime>
+	<!-- EN: Construction Time -->
+  <FCConstructionTime>建設時間</FCConstructionTime>
+
+	<!-- Buttons -->
+	<!-- EN: This button is not available yet -->
+  <FCButtonNotAvailable>このボタンはまだ使用できません</FCButtonNotAvailable>
+	<!-- EN: Confirm Changes -->
+  <FCConfirmChanges>変更を確定</FCConfirmChanges>
+	<!-- EN: Confirm -->
+  <FCConfirm>確認</FCConfirm>
+	<!-- EN: Confirm Decision -->
+  <FCConfirmDecision>決定を確認</FCConfirmDecision>
+	<!-- EN: Found a {0} for {1} silver? -->
+  <FCConfirmSettle>{1}シルバーで{0}を建設しますか？</FCConfirmSettle>
+	<!-- EN: Don't show this again -->
+  <FCConfirmDontShowAgain>今後表示しない</FCConfirmDontShowAgain>
+	<!-- EN: View -->
+  <FCView>表示</FCView>
+	<!-- EN: Go To -->
+  <FCGoTo>移動</FCGoTo>
+	<!-- EN: Report -->
+  <FCReport>レポート</FCReport>
+	<!-- EN: Reports -->
+  <FCReports>レポート一覧</FCReports>
+	<!-- EN: Actions -->
+  <FCActions>アクション</FCActions>
+	<!-- EN: View Info -->
+  <FCViewInfo>詳細を表示</FCViewInfo>
+	<!-- EN: Set Map -->
+  <FCSetMap>マップを設定</FCSetMap>
+	<!-- EN: Action Available -->
+  <FCActionAvailable>アクション可能</FCActionAvailable>
+
+	<!-- Generic Actions -->
+	<!-- EN: Auto-Resolve -->
+  <FCAutoResolve>自動解決</FCAutoResolve>
+	<!-- EN: Auto-Resolving : {0} -->
+  <FCAutoResolving>自動解決中：{0}</FCAutoResolving>
+	<!-- EN: Bills are now autoresolving! -->
+  <FCBillsAutoResolving>請求書が自動解決されるようになりました！</FCBillsAutoResolving>
+	<!-- EN: Bills are now not autoresolving. -->
+  <FCBillsNotAutoResolving>請求書の自動解決が無効になりました。</FCBillsNotAutoResolving>
+	<!-- EN: Desc -->
+  <FCDesc>説明</FCDesc>
+	<!-- EN: Create New Faction -->
+  <FCCreateNewFaction>新しい派閥を作成</FCCreateNewFaction>
+	<!-- EN: Reset to Default -->
+  <FCResetToDefault>デフォルトに戻す</FCResetToDefault>
+	<!-- EN: Set Point Ref -->
+  <FCSetPointRef>基準点を設定</FCSetPointRef>
+	<!-- EN: No Valid Settlements -->
+  <FCNoValidSettlements>有効な入植地がありません</FCNoValidSettlements>
+	<!-- EN: No special actions to take -->
+  <FCNoSpecialActions>特別なアクションはありません</FCNoSpecialActions>
+	<!-- EN: That Building is locked -->
+  <FCBuildingLocked>この建物はロックされています</FCBuildingLocked>
+	<!-- EN: Unlocks at settlement level {0}. -->
+  <FCBuildingLockedLevel>入植地レベル{0}で解放されます。</FCBuildingLockedLevel>
+	<!-- EN: Maximum building slots reached for this settlement type. -->
+  <FCBuildingLockedMax>この入植地タイプの建物スロット上限に達しました。</FCBuildingLockedMax>
+	<!-- EN: Capital -->
+  <FCCapital>首都</FCCapital>
+
+	<!-- Float Menu -->
+	<!-- EN: Type to search: -->
+  <FCFloatMenuSearchable>検索：</FCFloatMenuSearchable>
+	<!-- EN: Force Open -->
+  <FCSMFForceOpen>強制開放</FCSMFForceOpen>
+
+	<!-- Errors -->
+	<!-- EN: Action not allowed -->
+  <FCActionNotAllowed>このアクションは許可されていません</FCActionNotAllowed>
+	<!-- EN: Are you sure you want to delete "{0}"? -->
+  <FCConfirmDelete>「{0}」を削除してもよろしいですか？</FCConfirmDelete>
+	<!-- EN: That name is invalid -->
+  <FCNameIsInvalid>この名前は無効です</FCNameIsInvalid>
+	<!-- EN: If you can read this, something went wrong. -->
+  <FCGenericError>このメッセージが見えているなら、何かエラーが発生しています。</FCGenericError>
+	<!-- EN: You do not have enough silver on the map to pay for that option -->
+  <FCNotEnoughSilverOption>このオプションを購入するためのシルバーがマップ上に不足しています</FCNotEnoughSilverOption>
+	<!-- EN: Requires: {0} -->
+  <FCOptionRequiresPolicy>必要条件：{0}</FCOptionRequiresPolicy>
+	<!-- EN: Requires one of: {0} -->
+  <FCOptionRequiresPolicyAny>いずれか一つが必要：{0}</FCOptionRequiresPolicyAny>
+
+</LanguageData>

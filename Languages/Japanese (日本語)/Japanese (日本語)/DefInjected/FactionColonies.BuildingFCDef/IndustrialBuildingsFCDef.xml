@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Adult Entertainment Centre -->
+  <adultEntertainmentCentre.label>アダルトエンターテインメントセンター</adultEntertainmentCentre.label>
+  <!-- EN: A place for the local people to spend a dime and have a good time. -->
+  <adultEntertainmentCentre.desc>地元の人々が少しのお金で楽しい時間を過ごせる場所。</adultEntertainmentCentre.desc>
+
+  <!-- EN: Animal Testing Facility -->
+  <animalTestingFacility.label>動物実験施設</animalTestingFacility.label>
+  <!-- EN: A research lab dedicated to testing products on animals. Unethical, but useful. -->
+  <animalTestingFacility.desc>動物に製品をテストするための研究施設。非倫理的だが、有用ではある。</animalTestingFacility.desc>
+
+  <!-- EN: Apartment Housing -->
+  <apartmentHousing.label>集合住宅</apartmentHousing.label>
+  <!-- EN: A large apartment block to house local workers. -->
+  <apartmentHousing.desc>地元の労働者を収容するための大型アパートブロック。</apartmentHousing.desc>
+
+  <!-- EN: Artillery Outpost -->
+  <artilleryOutpost.label>砲兵前哨基地</artilleryOutpost.label>
+  <!-- EN: When this building is built, an artillery strike can be called for a cost in the military menu. -->
+  <artilleryOutpost.desc>この建物を建設すると、軍事メニューからコストを支払って砲撃を要請できるようになる。</artilleryOutpost.desc>
+
+  <!-- EN: Battery Power Station -->
+  <batteryPowerStation.label>蓄電発電所</batteryPowerStation.label>
+  <!-- EN: A power station to store excess energy production. -->
+  <batteryPowerStation.desc>余剰エネルギーを蓄積するための発電所。</batteryPowerStation.desc>
+
+  <!-- EN: Clean Energy Lab -->
+  <cleanEnergyLab.label>クリーンエネルギー研究所</cleanEnergyLab.label>
+  <!-- EN: A research lab dedicated to researching and producing more efficient clean forms of energy. -->
+  <cleanEnergyLab.desc>より効率的なクリーンエネルギーの研究と生産に特化した研究施設。</cleanEnergyLab.desc>
+
+  <!-- EN: Firearms Factory -->
+  <firearmsFactory.label>銃器工場</firearmsFactory.label>
+  <!-- EN: A factory that produces mass quantities of firearms. -->
+  <firearmsFactory.desc>銃器を大量生産する工場。</firearmsFactory.desc>
+
+  <!-- EN: Forced Work Camps -->
+  <forcedWorkCamps.label>強制労働収容所</forcedWorkCamps.label>
+  <!-- EN: Put those prisoners to work and increase your production! -->
+  <forcedWorkCamps.desc>囚人を労働に駆り立て、生産量を増やせ！</forcedWorkCamps.desc>
+
+  <!-- EN: Industrial Mining Equipment Depot -->
+  <IMED.label>産業用採掘機材倉庫</IMED.label>
+  <!-- EN: Build a place to store and maintain big ugly machines that chew through rock like it's cardboard. -->
+  <IMED.desc>岩盤を段ボールのように食い破る大型の採掘機械を保管・整備する施設を建設する。</IMED.desc>
+
+  <!-- EN: Indoor Hydroponics -->
+  <indoorHydroponics.label>室内水耕栽培</indoorHydroponics.label>
+  <!-- EN: Food is produced indoors, protecting it from the harshes from the world. -->
+  <indoorHydroponics.desc>食料を屋内で生産し、過酷な外の環境から守る。</indoorHydroponics.desc>
+
+  <!-- EN: In-House Merc Company -->
+  <inhouseMercCompany.label>専属傭兵部隊</inhouseMercCompany.label>
+  <!-- EN: Barracks for an in-house mercenary company. They will provide security for the settlement. -->
+  <inhouseMercCompany.desc>専属傭兵部隊のための兵舎。入植地の警備を担ってくれる。</inhouseMercCompany.desc>
+
+  <!-- EN: Junk Food Factory -->
+  <JunkFoodFactory.label>ジャンクフード工場</JunkFoodFactory.label>
+  <!-- EN: It's quick, cheap, and unhealthy. The locals will complain about the lack of quality, but they'll be too unhealthy to do anything about it. -->
+  <JunkFoodFactory.desc>手早く、安価で、不健康。住民は品質の低さに不満を言うが、体が不健康すぎて何もできないだろう。</JunkFoodFactory.desc>
+
+  <!-- EN: Volcanology Lab -->
+  <lavaLab.label>火山学研究所</lavaLab.label>
+  <!-- EN: A research facility dedicated to studying volcanology and any potential practical applications. -->
+  <lavaLab.desc>火山学と実用的な応用可能性を研究するための施設。</lavaLab.desc>
+
+  <!-- EN: Geothermal Power Plant -->
+  <lavaPlant.label>地熱発電所</lavaPlant.label>
+  <!-- EN: Harness the easily accessible geothermal energy of volcanically active areas for power generation. -->
+  <lavaPlant.desc>火山活動が活発な地域の地熱エネルギーを利用して発電する。</lavaPlant.desc>
+
+  <!-- EN: Local Zoo -->
+  <LocalZoo.label>地元動物園</LocalZoo.label>
+  <!-- EN: A place for people to ogle various different animals as they pass through the settlement for fun and profit! -->
+  <LocalZoo.desc>様々な動物を見物しながら楽しみと収益を得られる入植地の観光スポット！</LocalZoo.desc>
+
+  <!-- EN: Research Labs -->
+  <researchLabs.label>研究所</researchLabs.label>
+  <!-- EN: Scienctists spend their days researching here. -->
+  <researchLabs.desc>科学者たちが日々研究に励む施設。</researchLabs.desc>
+
+  <!-- EN: Rimazon Warehouse -->
+  <rimazonWarehouse.label>リマゾン倉庫</rimazonWarehouse.label>
+  <!-- EN: A warehouse stocked full of goods marked to be shipped. -->
+  <rimazonWarehouse.desc>出荷予定の商品でいっぱいの倉庫。</rimazonWarehouse.desc>
+
+  <!-- EN: Soil Reclamation Bureau -->
+  <soilFixer.label>土壌再生局</soilFixer.label>
+  <!-- EN: Restores fertility to the damaged and depleted soil of Scarlands. -->
+  <soilFixer.desc>スカーランドの荒廃した土壌の肥沃度を回復させる。</soilFixer.desc>
+
+  <!-- EN: Solar Plant -->
+  <solarPlant.label>太陽光発電所</solarPlant.label>
+  <!-- EN: A solar powerplant to produce extra energy. -->
+  <solarPlant.desc>余剰エネルギーを生産するための太陽光発電所。</solarPlant.desc>
+
+  <!-- EN: Textile Factory -->
+  <TextileFactory.label>繊維工場</TextileFactory.label>
+  <!-- EN: Making clothes is so much easier when machines do most of the work! -->
+  <TextileFactory.desc>機械がほとんどの作業をこなすと、衣服作りがずっと楽になる！</TextileFactory.desc>
+
+  <!-- EN: Tree Farm -->
+  <TreeFarm.label>植林場</TreeFarm.label>
+  <!-- EN: Stop stripping forest of trees and just grow your own! -->
+  <TreeFarm.desc>森林から木を伐採し続けるのはやめて、自分で育てよう！</TreeFarm.desc>
+
+</LanguageData>

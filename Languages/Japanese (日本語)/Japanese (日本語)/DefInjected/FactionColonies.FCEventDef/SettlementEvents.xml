@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Constructing Building -->
+  <constructBuilding.label>建物の建設中</constructBuilding.label>
+  <!-- EN: A building is being constructed. -->
+  <constructBuilding.desc>建物が建設されています。</constructBuilding.desc>
+
+  <!-- EN: Enacting a Policy -->
+  <enactFactionPolicy.label>政策の制定</enactFactionPolicy.label>
+  <!-- EN: A faction-wide policy is being enacted. -->
+  <enactFactionPolicy.desc>派閥全体に関わる政策が制定されています。</enactFactionPolicy.desc>
+
+  <!-- EN: Enacting a Policy -->
+  <enactSettlementPolicy.label>政策の制定</enactSettlementPolicy.label>
+  <!-- EN: A settlement-wide policy is being enacted. -->
+  <enactSettlementPolicy.desc>入植地全体に関わる政策が制定されています。</enactSettlementPolicy.desc>
+
+  <!-- EN: null -->
+  <Null.label>なし</Null.label>
+  <!-- EN: A blank event. -->
+  <Null.desc>空のイベントです。</Null.desc>
+
+  <!-- EN: Found Settlement -->
+  <settleNewColony.label>入植地の設立</settleNewColony.label>
+  <!-- EN: A caravan is forming a new settlement. -->
+  <settleNewColony.desc>キャラバンが新しい入植地を形成しています。</settleNewColony.desc>
+
+  <!-- EN: Settlement Taxes En-Route -->
+  <taxColony.label>入植地の税輸送中</taxColony.label>
+  <!-- EN: A caravan is delivering taxes. -->
+  <taxColony.desc>キャラバンが税を届けています。</taxColony.desc>
+
+  <!-- EN: Upgrading A Settlement -->
+  <upgradeSettlement.label>入植地のアップグレード</upgradeSettlement.label>
+  <!-- EN: A settlement is being upgraded. -->
+  <upgradeSettlement.desc>入植地がアップグレードされています。</upgradeSettlement.desc>
+
+</LanguageData>

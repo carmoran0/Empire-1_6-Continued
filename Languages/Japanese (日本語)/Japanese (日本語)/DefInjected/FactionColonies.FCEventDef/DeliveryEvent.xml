@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Delivery -->
+  <deliveryArrival.label>配送</deliveryArrival.label>
+  <!-- EN: A transport ship carrying items or pawns is traveling to your map -->
+  <deliveryArrival.desc>アイテムまたはポーンを積んだ輸送船がマップへ向かっています。</deliveryArrival.desc>
+
+</LanguageData>

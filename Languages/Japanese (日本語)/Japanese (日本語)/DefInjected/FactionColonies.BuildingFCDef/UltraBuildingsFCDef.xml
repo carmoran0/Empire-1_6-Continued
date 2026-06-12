@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Archotech Animal Beacon -->
+  <AnimalBeacon.label>アーコテック動物ビーコン</AnimalBeacon.label>
+  <!-- EN: An archotech tower that emits a signal which lures distant animals and calms nearby ones. -->
+  <AnimalBeacon.desc>遠くの動物を引き寄せ、近くの動物を落ち着かせる信号を発するアーコテックの塔。</AnimalBeacon.desc>
+
+  <!-- EN: Archotech Generator -->
+  <archotechGenerator.label>アーコテック発電機</archotechGenerator.label>
+  <!-- EN: An arcane generator that even the maintainers can't hope to understand, but have acquired. -->
+  <archotechGenerator.desc>管理者でさえ理解できないが、何とか手に入れた神秘的な発電機。</archotechGenerator.desc>
+
+  <!-- EN: Archotech Light Converter -->
+  <LightConverter.label>アーコテック光変換装置</LightConverter.label>
+  <!-- EN: A large, vanometrically powered, archotech machine that can turn light into just about anything that isn't alive. Needs a constant military presence to ward off raiders. -->
+  <LightConverter.desc>バノメトリックで駆動する大型アーコテック機械で、光を生き物以外のほぼあらゆるものに変換できる。略奪者を撃退するため常時軍事力の駐留が必要。</LightConverter.desc>
+
+  <!-- EN: Orbital Space Laser -->
+  <OrbitalSpaceLaser.label>軌道宇宙レーザー</OrbitalSpaceLaser.label>
+  <!-- EN: It's kind of like a nuclear bomb, but reusable and solar powered. -->
+  <OrbitalSpaceLaser.desc>核爆弾に近いが、再利用可能で太陽光で動く。</OrbitalSpaceLaser.desc>
+
+  <!-- EN: Transdimentional Market -->
+  <TransdimensionalMarket.label>次元間市場</TransdimensionalMarket.label>
+  <!-- EN: It's one thing to trade across the galaxy. It's another to build a flaming obsidian monolith to trade with the residents of a hell-dimension. -->
+  <TransdimensionalMarket.desc>銀河を越えた交易も大したものだが、地獄次元の住人と取引するために燃え盛る黒曜石のモノリスを建てるのは話が別だ。</TransdimensionalMarket.desc>
+
+  <!-- EN: Trapped Archotech AI -->
+  <TrappedAI.label>封印されたアーコテックAI</TrappedAI.label>
+  <!-- EN: An archotech level AI trapped in a closed network. It's perfectly safe unless someone lets it out. -->
+  <TrappedAI.desc>閉鎖されたネットワークに閉じ込められたアーコテック級AI。誰かが解放しない限りは完全に安全だ。</TrappedAI.desc>
+
+  <!-- EN: Union Offices -->
+  <UnionOffices.label>労働組合事務所</UnionOffices.label>
+  <!-- EN: A central building for local unions to operate out of. It's amazing how much happier and willing to work people are when you treat them well. -->
+  <UnionOffices.desc>地域の労働組合が活動する中央施設。人を丁重に扱うと、どれほど幸福になり意欲的に働くかが分かる。</UnionOffices.desc>
+
+</LanguageData>

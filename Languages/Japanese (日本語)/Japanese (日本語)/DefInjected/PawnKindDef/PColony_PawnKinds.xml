@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: empire elite -->
+  <PColony_Elite.label>帝国精鋭兵</PColony_Elite.label>
+
+  <!-- EN: empire soldier -->
+  <PColony_Fighter.label>帝国兵士</PColony_Fighter.label>
+
+  <!-- EN: empire guard -->
+  <PColony_Guard.label>帝国衛兵</PColony_Guard.label>
+
+  <!-- EN: empire leader -->
+  <PColony_Leader.label>帝国指導者</PColony_Leader.label>
+
+  <!-- EN: empire trader -->
+  <PColony_Trader.label>帝国商人</PColony_Trader.label>
+
+  <!-- EN: empire citizen -->
+  <PColony_Villager.label>帝国市民</PColony_Villager.label>
+  
+</LanguageData>

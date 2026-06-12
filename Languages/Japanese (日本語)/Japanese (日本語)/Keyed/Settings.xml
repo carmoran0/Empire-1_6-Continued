@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+	<!-- Mod Settings -->
+	<!-- EN: Empire Refactored -->
+  <FCSettingsModName>Empire Refactored</FCSettingsModName>
+
+	<!-- EN: Silver amount gained per resource -->
+  <FCSettingSilverPerResource>資源あたりのシルバー獲得量</FCSettingSilverPerResource>
+	<!-- EN: Days between tax time -->
+  <FCSettingDaysBetweenTax>徴税間隔（日数）</FCSettingDaysBetweenTax>
+	<!-- EN: Production Tithe Modifier -->
+  <FCSettingProductionTitheMod>生産十分の一税の修正値</FCSettingProductionTitheMod>
+	<!-- EN: Cost Per Worker -->
+  <FCSettingWorkerCost>労働者一人あたりのコスト</FCSettingWorkerCost>
+	<!-- EN: Max Settlement Level -->
+  <FCSettingMaxSettlementLevel>入植地の最大レベル</FCSettingMaxSettlementLevel>
+	<!-- EN: Disable Hostile Military Actions -->
+  <FCSettingDisableHostileMilActions>敵対的軍事行動を無効化</FCSettingDisableHostileMilActions>
+	<!-- EN: Disable Random Events -->
+  <FCSettingDisableRandomEvents>ランダムイベントを無効化</FCSettingDisableRandomEvents>
+	<!-- EN: Enable or disable individual events below. Disabled events will not fire in any save. -->
+  <FCSettingConfigureEvents>以下のイベントを個別に有効・無効にします。無効にしたイベントはどのセーブデータでも発生しません。</FCSettingConfigureEvents>
+	<!-- EN: General -->
+  <FCSettingsTabGeneral>一般</FCSettingsTabGeneral>
+	<!-- EN: Events -->
+  <FCSettingsTabEvents>イベント</FCSettingsTabEvents>
+	<!-- EN: Military -->
+  <FCSettingsTabMilitary>軍事</FCSettingsTabMilitary>
+	<!-- EN: Road Builder -->
+  <FCSettingsTabRoadBuilder>道路建設</FCSettingsTabRoadBuilder>
+	<!-- EN: The Road Builder automatically connects your Empire settlements with roads using a Minimum Spanning Tree algorithm, which is recalculated on the following events:
+ - each time a settlement is founded or lost
+ - when you research a new level of roads
+
+This requires computing pathfinding costs between many pairs of settlements, which can be expensive with many settlements, or with very sparse settlements.
+
+By default, this computation runs on a background thread to avoid freezing the game. If you experience issues with threading, you can disable it and optionally spread the computation across multiple ticks instead.
+
+Spreading out the computation will reduce the impact on performance, but no roads will build until the MST is fully constructed. So the more you throttle the algorithm, the longer it will take for your roads to start building. -->
+  <FCSettingRoadBuilderDesc>道路建設機能は最小全域木アルゴリズムを用いて帝国の入植地間を自動的に道路で結びます。以下のイベント発生時に再計算されます：
+ - 入植地が新設・消滅するたびに
+ - 道路の新しいレベルを研究したとき
+
+これは多くの入植地間の経路コストを計算する必要があり、入植地が多い場合や分散している場合は負荷が高くなります。
+
+デフォルトでは、ゲームのフリーズを防ぐためにバックグラウンドスレッドで処理されます。スレッド処理に問題がある場合は無効にして、複数ティックに分散して処理することもできます。
+
+分散処理はパフォーマンスへの影響を軽減しますが、MSTが完全に構築されるまで道路建設は開始されません。スロットルをかけるほど道路建設の開始が遅くなります。</FCSettingRoadBuilderDesc>
+	<!-- EN: Enable All Events -->
+  <FCSettingEnableAllEvents>全イベントを有効化</FCSettingEnableAllEvents>
+	<!-- EN: Dead Pawns Increase Military Cooldown -->
+  <FCSettingDeadPawnsIncreaseMilCooldown>戦死者が軍事クールダウンを増加させる</FCSettingDeadPawnsIncreaseMilCooldown>
+	<!-- EN: Disable Forced Pausing During Events -->
+  <FCSettingForcedPausing>イベント中の強制一時停止を無効化</FCSettingForcedPausing>
+	<!-- EN: Event option misclick protection: {0}s -->
+  <FCSettingEventOptionDelay>イベント選択の誤クリック防止時間：{0}秒</FCSettingEventOptionDelay>
+	<!-- EN: Battle Mode:  -->
+  <FCSettingBattleMode>戦闘モード：</FCSettingBattleMode>
+	<!-- EN: Auto-Resolve -->
+  <FCBattleModeAuto>自動解決</FCBattleModeAuto>
+	<!-- EN: All battles resolve automatically. -->
+  <FCBattleModeAutoDesc>全ての戦闘が自動的に解決されます。</FCBattleModeAutoDesc>
+	<!-- EN: Manual -->
+  <FCBattleModeManual>手動</FCBattleModeManual>
+	<!-- EN: All battles generate a map for manual combat. -->
+  <FCBattleModeManualDesc>全ての戦闘でマップが生成され、手動で戦闘を行います。</FCBattleModeManualDesc>
+	<!-- EN: Hybrid -->
+  <FCBattleModeHybrid>ハイブリッド</FCBattleModeHybrid>
+	<!-- EN: Battles auto-resolve unless you send a caravan to defend. -->
+  <FCBattleModeHybridDesc>防衛にキャラバンを送らない限り、戦闘は自動解決されます。</FCBattleModeHybridDesc>
+	<!-- EN: Min/Max Days Until Military Action (ex. Settlements being attacked) -->
+  <FCSettingMinMaxMilitaryAction>軍事行動までの最小/最大日数（例：入植地への攻撃）</FCSettingMinMaxMilitaryAction>
+	<!-- EN: Maximum Threat Scaling -->
+  <FCSettingMaxThreatScaling>脅威の最大スケーリング</FCSettingMaxThreatScaling>
+	<!-- EN: Defender Advantage -->
+  <FCSettingDefenderAdvantage>防衛側有利</FCSettingDefenderAdvantage>
+	<!-- EN: Efficiency Combat Influence (0 = HP only, 1 = full roll effect) -->
+  <FCSettingEfficiencyDamping>効率の戦闘影響度（0=HPのみ、1=完全効果）</FCSettingEfficiencyDamping>
+	<!-- EN: Controls how much the military efficiency stat affects auto-resolve battle outcomes.
+
+At 0, military efficiency affects only the effective level of both forces.
+
+At 1, military efficiency fully affects each round of auto combat. Military forces of lower level but higher efficiency can often beat forces of a higher level, but lower efficiency.
+
+Values in between dampen the effect of military efficiency on the auto combat. -->
+  <FCSettingEfficiencyDampingTooltip>軍事効率ステータスが自動解決の戦闘結果にどれだけ影響するかを制御します。
+
+0の場合、軍事効率は両軍の実効レベルにのみ影響します。
+
+1の場合、軍事効率が自動戦闘の各ラウンドに完全に影響します。レベルが低くても効率が高い軍は、レベルが高くても効率が低い軍に勝てることがあります。
+
+中間の値では、自動戦闘に対する軍事効率の影響が軽減されます。</FCSettingEfficiencyDampingTooltip>
+	<!-- EN: Mercenary Heal Rate -->
+  <FCSettingMercHealRate>傭兵の回復速度</FCSettingMercHealRate>
+	<!-- EN: How fast undeployed mercenary pawns heal their injuries, in hit points per in-game hour. Only one injury heals at a time. -->
+  <FCSettingMercHealRateTip>未展開の傭兵ポーンが負傷を回復する速度（ゲーム内1時間あたりのHP）。一度に回復する負傷は1つのみです。</FCSettingMercHealRateTip>
+	<!-- EN: Min/Max Days Until Random Event -->
+  <FCSettingMinMaxRandomEvent>ランダムイベントまでの最小/最大日数</FCSettingMinMaxRandomEvent>
+	<!-- EN: Show confirmation when founding settlements -->
+  <FCSettingShowSettleConfirm>入植地設立時に確認を表示する</FCSettingShowSettleConfirm>
+	<!-- EN: Use threaded road computation -->
+  <FCSettingUseThreadedRoadComputation>スレッド処理による道路計算を使用する</FCSettingUseThreadedRoadComputation>
+	<!-- EN: Computes road paths on a background thread for better performance. Disable this if you experience issues with road building. -->
+  <FCSettingUseThreadedRoadComputationDesc>パフォーマンス向上のためバックグラウンドスレッドで道路経路を計算します。道路建設に問題が生じた場合は無効にしてください。</FCSettingUseThreadedRoadComputationDesc>
+	<!-- EN: Edges per road tick -->
+  <FCSettingEdgesPerRoadTick>道路ティックごとのエッジ数</FCSettingEdgesPerRoadTick>
+	<!-- EN: Flush Road Path Cache -->
+  <FCSettingFlushRoadCache>道路経路キャッシュをクリア</FCSettingFlushRoadCache>
+	<!-- EN: Enable Verbose Logging -->
+  <FCSettingEnableDebugLogging>詳細ログを有効化</FCSettingEnableDebugLogging>
+	<!-- EN: Reset Settings -->
+  <FCSettingResetButton>設定をリセット</FCSettingResetButton>
+	<!-- EN: Open Patch Notes Window -->
+  <FCOpenPatchNotes>パッチノートを開く</FCOpenPatchNotes>
+
+	<!-- EN: Medieval Tech Only -->
+  <FCMedievalTechOnly>中世技術のみ</FCMedievalTechOnly>
+	<!-- EN: Mirror player faction tech level -->
+  <FCMirrorPlayerTechLevel>プレイヤー派閥の技術レベルを反映</FCMirrorPlayerTechLevel>
+	<!-- EN: When enabled, the Empire faction's tech level is pinned to the player faction's tech level. Research projects no longer advance the Empire's tech level. -->
+  <FCMirrorPlayerTechLevelDesc>有効にすると、帝国派閥の技術レベルがプレイヤー派閥の技術レベルに固定されます。研究プロジェクトによる帝国の技術レベル向上は行われなくなります。</FCMirrorPlayerTechLevelDesc>
+
+	<!-- Difficulty Settings -->
+	<!-- EN: Empire Difficulty -->
+  <FCSettingEmpireDifficulty>帝国の難易度</FCSettingEmpireDifficulty>
+	<!-- EN: Peaceful -->
+  <FCDifficultyPeaceful>平和</FCDifficultyPeaceful>
+	<!-- EN: Community Builder -->
+  <FCDifficultyCommunityBuilder>コミュニティビルダー</FCDifficultyCommunityBuilder>
+	<!-- EN: (Default) Adventure Story -->
+  <FCDifficultyAdventureStory>（デフォルト）冒険物語</FCDifficultyAdventureStory>
+	<!-- EN: Strive To Survive -->
+  <FCDifficultyStriveToSurvive>生存への挑戦</FCDifficultyStriveToSurvive>
+	<!-- EN: Blood and Dust -->
+  <FCDifficultyBloodAndDust>血と塵</FCDifficultyBloodAndDust>
+	<!-- EN: Losing Is Fun -->
+  <FCDifficultyLosingIsFun>敗北もまた楽し</FCDifficultyLosingIsFun>
+	<!-- EN: Custom -->
+  <FCDifficultyCustom>カスタム</FCDifficultyCustom>
+	<!-- EN: For players who want a relaxed empire management experience with generous resource gains and frequent tax collection. -->
+  <FCDifficultyPeacefulDesc>豊富な資源獲得と頻繁な徴税で、気軽に帝国経営を楽しみたいプレイヤー向けです。</FCDifficultyPeacefulDesc>
+	<!-- EN: Easy difficulty with good resource gains and moderate tax frequency. -->
+  <FCDifficultyCommunityBuilderDesc>良好な資源獲得と適度な徴税頻度のイージー難易度です。</FCDifficultyCommunityBuilderDesc>
+	<!-- EN: Balanced difficulty for most players.Moderate resource gains with reasonable tax intervals. -->
+  <FCDifficultyAdventureStoryDesc>ほとんどのプレイヤー向けのバランスのとれた難易度です。適度な資源獲得と合理的な徴税間隔です。</FCDifficultyAdventureStoryDesc>
+	<!-- EN: Challenging difficulty with reduced resources and longer tax intervals. -->
+  <FCDifficultyStriveToSurviveDesc>資源が減少し、徴税間隔が長くなる高難易度です。</FCDifficultyStriveToSurviveDesc>
+	<!-- EN: Hard difficulty with limited resources and infrequent tax collection. -->
+  <FCDifficultyBloodAndDustDesc>資源が限られ、徴税が稀なハード難易度です。</FCDifficultyBloodAndDustDesc>
+	<!-- EN: Brutal difficulty for masochists. Minimal resources and very long tax intervals. -->
+  <FCDifficultyLosingIsFunDesc>マゾヒスト向けの過酷な難易度です。資源は最小限で、徴税間隔は非常に長いです。</FCDifficultyLosingIsFunDesc>
+	<!-- EN: Customize all empire settings manually. -->
+  <FCDifficultyCustomDesc>帝国の全設定を手動でカスタマイズします。</FCDifficultyCustomDesc>
+
+	<!-- EN: Empire Mod Version: {0} -->
+  <FCModVersion>Empire Modバージョン：{0}</FCModVersion>
+
+	<!-- Warnings -->
+	<!-- EN: Please reset your capital location. If you continue to see this after reseting, please report it. -->
+  <FCResetCapitalLocationWarning>首都の場所をリセットしてください。リセット後もこの表示が続く場合は報告してください。</FCResetCapitalLocationWarning>
+	<!-- EN: Your tax map has not been set. Please set it using the faction menu. -->
+  <FCTaxMapNotSetWarning>徴税マップが設定されていません。派閥メニューから設定してください。</FCTaxMapNotSetWarning>
+	<!-- EN: Manual or Hybrid battle mode is active. If you encounter map generation errors, switch back to Auto-Resolve. -->
+  <FCAutoResolveDisabledWarning>手動またはハイブリッド戦闘モードが有効です。マップ生成エラーが発生した場合は自動解決に戻してください。</FCAutoResolveDisabledWarning>
+	<!-- EN: Manual Settlement Defence -->
+  <FCManualDefenseWarningLabel>手動入植地防衛</FCManualDefenseWarningLabel>
+	<!-- EN: Manual and Hybrid battle modes generate maps for settlement defense. If you encounter issues, switch to Auto-Resolve mode in settings. -->
+  <FCManualDefenseWarningDesc>手動およびハイブリッド戦闘モードでは、入植地防衛のためのマップが生成されます。問題が発生した場合は、設定から自動解決モードに切り替えてください。</FCManualDefenseWarningDesc>
+	<!-- EN: No tax delivery location set. Either set a tax delivery map or enable tax delivery on a tax spot. -->
+  <FCTaxDeliveryNotSetWarning>税の配達場所が設定されていません。税の配達マップを設定するか、徴税ポイントで税の配達を有効にしてください。</FCTaxDeliveryNotSetWarning>
+	<!-- EN: No empire capital established. Either use 'Set Capital' in the Empire menu or build and activate a Capital Seat. -->
+  <FCCapitalNotSetWarning>帝国の首都が設定されていません。帝国メニューの「首都を設定」を使用するか、首都の座を建設して有効化してください。</FCCapitalNotSetWarning>
+
+</LanguageData>

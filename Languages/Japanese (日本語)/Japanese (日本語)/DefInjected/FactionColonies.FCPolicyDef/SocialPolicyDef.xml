@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Company Union -->
+  <companyUnion.label>企業連合</companyUnion.label>
+  <!-- EN: A corporation that has struck out to create their own self-sufficient trade empire. -->
+  <companyUnion.desc>独自の自給自足型交易帝国を築き上げた企業体。</companyUnion.desc>
+
+  <!-- EN: Diversity We Embrace -->
+  <diversityWeEmbrace.label>多様性の尊重</diversityWeEmbrace.label>
+  <!-- EN: A diverse society has no unfilled cracks that could collapse itself. -->
+  <diversityWeEmbrace.desc>多様性ある社会には、自らを崩壊させるような空洞が生まれない。</diversityWeEmbrace.desc>
+
+  <!-- EN: One People United -->
+  <onePeopleUnited.label>一つの民、一つの意志</onePeopleUnited.label>
+  <!-- EN: A society united by common cause holds the strongest of wills for the hardest duties. -->
+  <onePeopleUnited.desc>共通の目的で結束した社会は、最も過酷な任務にも揺るぎない意志を持つ。</onePeopleUnited.desc>
+
+  <!-- EN: Royal Heritage -->
+  <royalHeritage.label>王家の遺産</royalHeritage.label>
+  <!-- EN: A society under the command of a royal family is unified in its traditions. -->
+  <royalHeritage.desc>王家の統治のもとにある社会は、伝統において一致団結している。</royalHeritage.desc>
+
+  <!-- EN: Science Foundation -->
+  <scienceFoundation.label>科学財団</scienceFoundation.label>
+  <!-- EN: A society that values knowledge and exploring the unknown. -->
+  <scienceFoundation.desc>知識と未知の探求を重んじる社会。</scienceFoundation.desc>
+
+  <!-- EN: Trader's Federation -->
+  <tradersFederation.label>商人連盟</tradersFederation.label>
+  <!-- EN: A society in which those of power are those with the wealth to spend. -->
+  <tradersFederation.desc>富を持つ者が権力を握る社会。</tradersFederation.desc>
+
+</LanguageData>

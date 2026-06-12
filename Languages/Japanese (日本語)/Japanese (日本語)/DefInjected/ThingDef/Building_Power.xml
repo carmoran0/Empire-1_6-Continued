@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: faction power generator -->
+  <EmpirePowerGenerator.label>派閥発電機</EmpirePowerGenerator.label>
+  <!-- EN: Outputs energy created by your settlements to your colony! -->
+  <EmpirePowerGenerator.description>入植地で生み出されたエネルギーをコロニーに供給する。</EmpirePowerGenerator.description>
+  
+</LanguageData>

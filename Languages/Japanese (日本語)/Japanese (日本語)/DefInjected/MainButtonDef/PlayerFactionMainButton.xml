@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Settlements -->
+  <PColonyMainButton.label>入植地</PColonyMainButton.label>
+  <!-- EN: Found and manage your NPC settlements -->
+  <PColonyMainButton.description>NPC入植地を設立・管理する</PColonyMainButton.description>
+
+</LanguageData>

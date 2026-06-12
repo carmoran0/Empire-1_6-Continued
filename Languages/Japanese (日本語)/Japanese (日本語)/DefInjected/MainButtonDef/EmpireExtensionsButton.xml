@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Empire+ -->
+  <EmpireExtensionsButton.label>帝国+</EmpireExtensionsButton.label>
+  <!-- EN: Extension tabs added by Empire submods -->
+  <EmpireExtensionsButton.description>帝国サブMODによって追加された拡張タブ</EmpireExtensionsButton.description>
+
+</LanguageData>

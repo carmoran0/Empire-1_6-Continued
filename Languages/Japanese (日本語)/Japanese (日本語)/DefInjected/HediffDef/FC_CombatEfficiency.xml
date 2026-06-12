@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: well-trained -->
+  <FC_CombatEfficiency_Buff.label>精鋭訓練済み</FC_CombatEfficiency_Buff.label>
+  <!-- EN: This combatant benefits from superior training and coordination provided by their settlement's military infrastructure.\n        \n- - - - - -\n        \nThe buffs applied by this hediff are scaled by the military efficiency of the defending/home settlement (for player Empire pawns) or by the military efficiency of their faction (for enemy NPC pawns). -->
+  <FC_CombatEfficiency_Buff.description>この戦闘員は、入植地の軍事インフラによる優れた訓練と連携の恩恵を受けている。\n        \n- - - - - -\n        \nこのヘディフが付与するバフは、防衛側・本拠地の入植地の軍事効率（プレイヤーの帝国ポーンの場合）、または所属派閥の軍事効率（敵NPCポーンの場合）に応じてスケールする。</FC_CombatEfficiency_Buff.description>
+  <!-- EN: This combatant benefits from superior training and coordination provided by their settlement's military infrastructure. -->
+  <FC_CombatEfficiency_Buff.overrideTooltip>この戦闘員は、入植地の軍事インフラによる優れた訓練と連携の恩恵を受けている。</FC_CombatEfficiency_Buff.overrideTooltip>
+
+  <!-- EN: poorly trained -->
+  <FC_CombatEfficiency_Debuff.label>訓練不足</FC_CombatEfficiency_Debuff.label>
+  <!-- EN: This combatant suffers from inadequate training and poor coordination due to their settlement's weak military infrastructure.\n\n- - - - - -\n\nThe penalties applied by this hediff are scaled by the military efficiency of the defending/home settlement (for player Empire pawns) or by the military efficiency of their faction (for enemy NPC pawns). -->
+  <FC_CombatEfficiency_Debuff.description>この戦闘員は、入植地の脆弱な軍事インフラによる不十分な訓練と連携不足に苦しんでいる。\n\n- - - - - -\n\nこのヘディフが付与するペナルティは、防衛側・本拠地の入植地の軍事効率（プレイヤーの帝国ポーンの場合）、または所属派閥の軍事効率（敵NPCポーンの場合）に応じてスケールする。</FC_CombatEfficiency_Debuff.description>
+  <!-- EN: This combatant suffers from inadequate training and poor coordination due to their settlement's weak military infrastructure. -->
+  <FC_CombatEfficiency_Debuff.overrideTooltip>この戦闘員は、入植地の脆弱な軍事インフラによる不十分な訓練と連携不足に苦しんでいる。</FC_CombatEfficiency_Debuff.overrideTooltip>
+  
+</LanguageData>

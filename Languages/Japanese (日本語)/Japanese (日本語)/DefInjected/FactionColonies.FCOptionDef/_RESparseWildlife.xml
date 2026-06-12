@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: We'll manage without the wildlife. -->
+  <sparseWildlife_0_1.label>野生動物がいなくてもやっていける。</sparseWildlife_0_1.label>
+
+  <!-- EN: Send hunting parties further afield. -->
+  <sparseWildlife_0_2.label>狩猟隊をより遠くへ送り込め。</sparseWildlife_0_2.label>
+
+  <!-- EN: Shift focus to farming the land instead. -->
+  <sparseWildlife_0_3.label>代わりに農耕へと重点を移せ。</sparseWildlife_0_3.label>
+
+</LanguageData>

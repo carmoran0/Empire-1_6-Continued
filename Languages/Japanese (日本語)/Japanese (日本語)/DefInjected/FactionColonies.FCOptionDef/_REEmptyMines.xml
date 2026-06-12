@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: The miners will have to wait for new veins to appear. -->
+  <emptyMines_0_1.label>鉱夫たちは新しい鉱脈が現れるのを待つしかない。</emptyMines_0_1.label>
+
+  <!-- EN: Hire prospectors to search for untapped deposits. -->
+  <emptyMines_0_2.label>探鉱者を雇い、未開拓の鉱床を探させる。</emptyMines_0_2.label>
+
+  <!-- EN: Redirect the idle miners to settlement construction. -->
+  <emptyMines_0_3.label>手が空いた鉱夫を入植地の建設作業に回す。</emptyMines_0_3.label>
+
+</LanguageData>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: animals -->
+  <RTD_Animals.label>動物</RTD_Animals.label>
+  <!-- EN: A resource category for livestock and animal products. -->
+  <RTD_Animals.description>家畜および動物産品の資源カテゴリー。</RTD_Animals.description>
+  <!-- EN: Tile environment -->
+  <RTD_Animals.modExtensions.1.extDesc>タイル環境</RTD_Animals.modExtensions.1.extDesc>
+
+  <!-- EN: apparel -->
+  <RTD_Apparel.label>衣料品</RTD_Apparel.label>
+  <!-- EN: A resource category for apparel. -->
+  <RTD_Apparel.description>衣料品の資源カテゴリー。</RTD_Apparel.description>
+
+  <!-- EN: chemfuel -->
+  <RTD_Chemfuel.label>ケムフュエル</RTD_Chemfuel.label>
+  <!-- EN: A resource category for chemfuel. -->
+  <RTD_Chemfuel.description>ケムフュエルの資源カテゴリー。</RTD_Chemfuel.description>
+
+  <!-- EN: food -->
+  <RTD_Food.label>食料</RTD_Food.label>
+  <!-- EN: A resource category for meals and plant foods. -->
+  <RTD_Food.description>食事および植物性食品の資源カテゴリー。</RTD_Food.description>
+  <!-- EN: Tile hilliness -->
+  <RTD_Food.modExtensions.0.extDesc>タイルの起伏</RTD_Food.modExtensions.0.extDesc>
+  <!-- EN: Tile environment -->
+  <RTD_Food.modExtensions.1.extDesc>タイル環境</RTD_Food.modExtensions.1.extDesc>
+
+  <!-- EN: logging -->
+  <RTD_Logging.label>木材採取</RTD_Logging.label>
+  <!-- EN: A resource category for logging. -->
+  <RTD_Logging.description>木材採取の資源カテゴリー。</RTD_Logging.description>
+  <!-- EN: Tile environment -->
+  <RTD_Logging.modExtensions.0.extDesc>タイル環境</RTD_Logging.modExtensions.0.extDesc>
+
+  <!-- EN: medicine -->
+  <RTD_Medicine.label>医薬品</RTD_Medicine.label>
+  <!-- EN: A resource category for medicine. -->
+  <RTD_Medicine.description>医薬品の資源カテゴリー。</RTD_Medicine.description>
+  <!-- EN: Tile environment -->
+  <RTD_Medicine.modExtensions.0.extDesc>タイル環境</RTD_Medicine.modExtensions.0.extDesc>
+
+  <!-- EN: mining -->
+  <RTD_Mining.label>採掘</RTD_Mining.label>
+  <!-- EN: A resource category for mining materials. -->
+  <RTD_Mining.description>採掘素材の資源カテゴリー。</RTD_Mining.description>
+  <!-- EN: Tile hilliness -->
+  <RTD_Mining.modExtensions.0.extDesc>タイルの起伏</RTD_Mining.modExtensions.0.extDesc>
+  <!-- EN: Tile environment -->
+  <RTD_Mining.modExtensions.1.extDesc>タイル環境</RTD_Mining.modExtensions.1.extDesc>
+
+  <!-- EN: power -->
+  <RTD_Power.label>電力</RTD_Power.label>
+  <!-- EN: A resource category for power. -->
+  <RTD_Power.description>電力の資源カテゴリー。</RTD_Power.description>
+  <!-- EN: Tile hilliness -->
+  <RTD_Power.modExtensions.1.extDesc>タイルの起伏</RTD_Power.modExtensions.1.extDesc>
+
+  <!-- EN: research -->
+  <RTD_Research.label>研究</RTD_Research.label>
+  <!-- EN: A resource category for research. -->
+  <RTD_Research.description>研究の資源カテゴリー。</RTD_Research.description>
+  <!-- EN: Tile hilliness -->
+  <RTD_Research.modExtensions.1.extDesc>タイルの起伏</RTD_Research.modExtensions.1.extDesc>
+  <!-- EN: Tile environment -->
+  <RTD_Research.modExtensions.2.extDesc>タイル環境</RTD_Research.modExtensions.2.extDesc>
+
+  <!-- EN: weapons -->
+  <RTD_Weapons.label>武器</RTD_Weapons.label>
+  <!-- EN: A resource category for weapons. -->
+  <RTD_Weapons.description>武器の資源カテゴリー。</RTD_Weapons.description>
+  <!-- EN: Tile hilliness -->
+  <RTD_Weapons.modExtensions.0.extDesc>タイルの起伏</RTD_Weapons.modExtensions.0.extDesc>
+
+</LanguageData>

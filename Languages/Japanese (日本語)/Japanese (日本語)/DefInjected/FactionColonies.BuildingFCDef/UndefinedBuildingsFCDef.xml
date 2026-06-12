@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Ammunition Mines -->
+  <AmmunitionMines.label>弾薬採掘場</AmmunitionMines.label>
+  <!-- EN: From flint for arrows to the materials for bullets and gunpowder, these mines take up space that could be used for other resource mining. -->
+  <AmmunitionMines.desc>矢用の火打ち石から銃弾や火薬の材料まで、他の資源採掘に使えるスペースを占有する採掘場。</AmmunitionMines.desc>
+
+  <!-- EN: Barracks -->
+  <barracks.label>兵舎</barracks.label>
+  <!-- EN: A buildings to house the local troops. -->
+  <barracks.desc>地域の兵士を収容するための建物。</barracks.desc>
+
+  <!-- EN: Deforestation Camp -->
+  <deforestationCamp.label>森林伐採キャンプ</deforestationCamp.label>
+  <!-- EN: A camp that the local forests are stripped of all their resources and the life within. -->
+  <deforestationCamp.desc>地域の森林からあらゆる資源と生命を根こそぎ奪い取るキャンプ。</deforestationCamp.desc>
+
+  <!-- EN: Psychedelic Drug Den -->
+  <DrugDen.label>幻覚薬の巣窟</DrugDen.label>
+  <!-- EN: It's amazing the discoveries people make while absurdly high. Sometimes those discoveries are even useful! -->
+  <DrugDen.desc>ひどくハイな状態で人々が行う発見には驚かされる。時にはその発見が実際に役立つこともある！</DrugDen.desc>
+
+  <!-- EN: Farmland -->
+  <Farmland.label>農地</Farmland.label>
+  <!-- EN: A section of land dedicated to growing edible plants. -->
+  <Farmland.desc>食用植物の栽培に特化した区画の土地。</Farmland.desc>
+
+  <!-- EN: Flint Storage -->
+  <FlintStorage.label>火打ち石倉庫</FlintStorage.label>
+  <!-- EN: A Storage for Flint. -->
+  <FlintStorage.desc>火打ち石の保管庫。</FlintStorage.desc>
+
+  <!-- EN: Fur Hunter Camp -->
+  <FurHunterCamp.label>毛皮ハンターキャンプ</FurHunterCamp.label>
+  <!-- EN: A camp for your Fur Hunter. -->
+  <FurHunterCamp.desc>毛皮ハンターのためのキャンプ。</FurHunterCamp.desc>
+
+  <!-- EN: Giant Hamster Wheel -->
+  <HamsterWheel.label>巨大ハムスターホイール</HamsterWheel.label>
+  <!-- EN: It's not much, but it's better than nothing! -->
+  <HamsterWheel.desc>大したものではないが、ないよりはマシだ！</HamsterWheel.desc>
+
+  <!-- EN: Herbal Medicine Farm -->
+  <herbalMedicineFarm.label>ハーブ薬草農場</herbalMedicineFarm.label>
+  <!-- EN: A small farm to grow herbal medicine. -->
+  <herbalMedicineFarm.desc>ハーブ薬草を育てる小さな農場。</herbalMedicineFarm.desc>
+
+  <!-- EN: Migrant Housing -->
+  <migrantHousing.label>移民住宅</migrantHousing.label>
+  <!-- EN: Local housing for traveling migrants to stay in. -->
+  <migrantHousing.desc>旅する移民が滞在するための地域住宅。</migrantHousing.desc>
+
+  <!-- EN: Quarry -->
+  <quarry.label>採石場</quarry.label>
+  <!-- EN: Torn up land being used to mine for valuable ore. -->
+  <quarry.desc>貴重な鉱石を採掘するために掘り起こされた土地。</quarry.desc>
+
+  <!-- EN: SlavePit -->
+  <SlavePit.label>奴隷穴</SlavePit.label>
+  <!-- EN: A pit where Slaves goes to sleep. -->
+  <SlavePit.desc>奴隷が眠る穴。</SlavePit.desc>
+
+  <!-- EN: Tanning Workshop -->
+  <TanningWorkshop.label>なめし革工房</TanningWorkshop.label>
+  <!-- EN: A workshop designed to turn animal hides into leather. -->
+  <TanningWorkshop.desc>動物の皮を革に加工するための工房。</TanningWorkshop.desc>
+
+  <!-- EN: Trading Post -->
+  <tradingPost.label>交易所</tradingPost.label>
+  <!-- EN: A small outpost that roving traders frequent. -->
+  <tradingPost.desc>行商人が頻繁に立ち寄る小さな前哨地。</tradingPost.desc>
+
+  <!-- EN: Training Yard -->
+  <trainingYard.label>訓練場</trainingYard.label>
+  <!-- EN: A place for your soldiers to train. -->
+  <trainingYard.desc>兵士が訓練するための場所。</trainingYard.desc>
+
+</LanguageData>

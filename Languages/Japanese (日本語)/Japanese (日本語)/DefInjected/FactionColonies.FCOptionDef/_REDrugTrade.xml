@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Find the source of this drug trade! -->
+  <drugTrade_0_1.label>この薬物取引の出所を突き止めろ！</drugTrade_0_1.label>
+
+  <!-- EN: Are the drugs keeping my subjects content? Yes? Then leave it be. -->
+  <drugTrade_0_2.label>薬物が民衆を満足させているのか？そうなら、放っておけ。</drugTrade_0_2.label>
+
+  <!-- EN: I said, take down the facility! We do not require such a degenerate pleasure. -->
+  <drugTrade_2-1_1.label>施設を叩き潰せと言ったはずだ！そのような堕落した快楽は不要だ。</drugTrade_2-1_1.label>
+
+  <!-- EN: We could... incorporate it into our official production lines. -->
+  <drugTrade_2-1_2.label>これを……公式の生産ラインに組み込むことも考えられる。</drugTrade_2-1_2.label>
+
+  <!-- EN: Continue production! -->
+  <drugTrade_4-1_1.label>生産を続けろ！</drugTrade_4-1_1.label>
+
+  <!-- EN: Cancel Production -->
+  <drugTrade_4-1_2.label>生産を中止する</drugTrade_4-1_2.label>
+
+</LanguageData>

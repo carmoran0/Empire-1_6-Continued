@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+	<!-- Squad Management -->
+	<!-- EN: Assigned Squad -->
+  <FCMilitaryTableSquad>割り当て済み分隊</FCMilitaryTableSquad>
+	<!-- EN: Set Squad -->
+  <FCMilitaryTableSetSquad>分隊を設定</FCMilitaryTableSetSquad>
+	<!-- EN: Deploy Squad -->
+  <FCMilitaryTableDeploySquad>分隊を展開</FCMilitaryTableDeploySquad>
+	<!-- EN: Reset Squad -->
+  <FCMilitaryTableResetSquad>分隊をリセット</FCMilitaryTableResetSquad>
+	<!-- EN: Manage Squads -->
+  <FCMilitaryTableButtonCreateSquad>分隊を管理</FCMilitaryTableButtonCreateSquad>
+	<!-- EN: Manage Units -->
+  <FCMilitaryTableButtonCreateUnit>ユニットを管理</FCMilitaryTableButtonCreateUnit>
+	<!-- EN: Manage Fire Support -->
+  <FCMilitaryTableButtonCreateFireSupport>火力支援を管理</FCMilitaryTableButtonCreateFireSupport>
+	<!-- EN: Are you sure? Click to confirm -->
+  <FCMilTableConfirm>よろしいですか？クリックして確認</FCMilTableConfirm>
+	<!-- EN: No Available Squads -->
+  <FCNoSquadAvailable>利用可能な分隊なし</FCNoSquadAvailable>
+	<!-- EN: Pawns have been regenerated for the squad -->
+  <FCResetSquadPawns>分隊のポーンが再生成されました</FCResetSquadPawns>
+	<!-- EN: There are no pawns to reset. Assign a squad first. -->
+  <FCResetSquadRejected>リセットするポーンがいません。先に分隊を割り当ててください。</FCResetSquadRejected>
+	<!-- EN: Select Deployed Squad -->
+  <FCSelectDeployedSquad>展開する分隊を選択</FCSelectDeployedSquad>
+	<!-- EN: {0}'s {1} -->
+  <FCSelectedDeployedSquad>{0}の{1}</FCSelectedDeployedSquad>
+	<!-- EN: No squads available -->
+  <FCNoSquadsAvailable>利用可能な分隊がありません</FCNoSquadsAvailable>
+
+	<!-- Unit Customization -->
+	<!-- EN: Exported Unit -->
+  <FCExportUnit>エクスポート済みユニット</FCExportUnit>
+	<!-- EN: Exported Squad -->
+  <FCExportSquad>エクスポート済み分隊</FCExportSquad>
+	<!-- EN: {0} can't be modified: {1} -->
+  <FCCantBeModified>{0}は変更できません: {1}</FCCantBeModified>
+	<!-- EN: A squad containing it is deployed -->
+  <FCReasonDeployed>このユニットを含む分隊が展開中です</FCReasonDeployed>
+	<!-- EN: A squad containing it is defending a settlement -->
+  <FCReasonDefending>このユニットを含む分隊が入植地を防衛中です</FCReasonDefending>
+	<!-- EN: The squad is currently deployed -->
+  <FCReasonDeployedSquad>この分隊は現在展開中です</FCReasonDeployedSquad>
+	<!-- EN: The squad is currently defending a settlement -->
+  <FCReasonDefendingSquad>この分隊は現在入植地を防衛中です</FCReasonDefendingSquad>
+	<!-- EN: Import Unit -->
+  <FCImportUnit>ユニットをインポート</FCImportUnit>
+	<!-- EN: Clear Unit Slot -->
+  <FCClearUnitSlot>ユニットスロットをクリア</FCClearUnitSlot>
+	<!-- EN: Degraded -->
+  <FCDegraded>劣化</FCDegraded>
+
+	<!-- Outfit Slots -->
+	<!-- EN: Head -->
+  <fcLabelHead>頭部</fcLabelHead>
+	<!-- EN: Shirt -->
+  <fcLabelShirt>シャツ</fcLabelShirt>
+	<!-- EN: Chest -->
+  <fcLabelChest>胸部</fcLabelChest>
+	<!-- EN: Over -->
+  <fcLabelOver>アウター</fcLabelOver>
+	<!-- EN: Belt -->
+  <fcLabelBelt>ベルト</fcLabelBelt>
+	<!-- EN: Pants -->
+  <fcLabelPants>パンツ</fcLabelPants>
+	<!-- EN: Weapon -->
+  <fcLabelWeapon>武器</fcLabelWeapon>
+	<!-- EN: Animal -->
+  <fcLabelAnimal>動物</fcLabelAnimal>
+	<!-- EN: Ammo -->
+  <fcLabelAmmo>弾薬</fcLabelAmmo>
+	<!-- EN: Any -->
+  <fcAmmoAny>任意</fcAmmoAny>
+
+	<!-- Unit Buttons -->
+	<!-- EN: Rename Unit -->
+  <FCRenameUnit>ユニット名を変更</FCRenameUnit>
+	<!-- EN: Are you sure you want to delete "{0}"? -->
+  <FCConfirmDeleteUnit>「{0}」を削除してもよろしいですか？</FCConfirmDeleteUnit>
+	<!-- EN: Reset to default -->
+  <FCResetUnitToDefaultButton>デフォルトにリセット</FCResetUnitToDefaultButton>
+	<!-- EN: Delete unit -->
+  <FCDeleteUnitButton>ユニットを削除</FCDeleteUnitButton>
+	<!-- EN: Select a unit -->
+  <FCSelectAUnitButton>ユニットを選択</FCSelectAUnitButton>
+	<!-- EN: Roll a new pawn -->
+  <FCRollANewUnitButton>新しいポーンを生成</FCRollANewUnitButton>
+	<!-- EN: Change Race -->
+  <FCChangeUnitRaceButton>種族を変更</FCChangeUnitRaceButton>
+	<!-- EN: Change Xenotype -->
+  <FCChangeUnitXenoButton>異種型を変更</FCChangeUnitXenoButton>
+	<!-- EN: Export unit -->
+  <FCExportUnitButton>ユニットをエクスポート</FCExportUnitButton>
+
+	<!-- Unit Equipment -->
+	<!-- EN: Choose Apparel Color -->
+  <fcChooseApparelColor>衣服の色を選択</fcChooseApparelColor>
+	<!-- EN: Set All Colors -->
+  <fcSetAllColors>すべての色を設定</fcSetAllColors>
+	<!-- EN: Clear Colors -->
+  <fcClearColors>色をクリア</fcClearColors>
+	<!-- EN: Equipped Apparel -->
+  <fcEquippedApparel>装備中の衣服</fcEquippedApparel>
+	<!-- EN: + Add -->
+  <fcAddApparel>＋ 追加</fcAddApparel>
+	<!-- EN: Replaces -->
+  <fcReplacesApparel>置き換え</fcReplacesApparel>
+	<!-- EN: Total Equipment Cost:  -->
+  <FCTotalEquipmentCostLabel>装備合計コスト: </FCTotalEquipmentCostLabel>
+	<!-- EN: Unequip -->
+  <FCUnitActionUnequipThing>装備解除</FCUnitActionUnequipThing>
+	<!-- EN: Select Weapon -->
+  <fcPickWeapon>武器を選択</fcPickWeapon>
+	<!-- EN: Select Apparel -->
+  <fcPickApparel>衣服を選択</fcPickApparel>
+	<!-- EN: Select Animal -->
+  <fcPickAnimal>動物を選択</fcPickAnimal>
+	<!-- EN: No material selection needed -->
+  <fcNoMaterialNeeded>素材選択は不要です</fcNoMaterialNeeded>
+	<!-- EN: Selected: {0} - Cost: {1} -->
+  <fcPickerSummary>選択中: {0} - コスト: {1}</fcPickerSummary>
+	<!-- EN: Select an item first -->
+  <fcPickerSelectItem>先にアイテムを選択してください</fcPickerSelectItem>
+	<!-- EN: Select a material for this item -->
+  <fcPickerSelectStuff>このアイテムの素材を選択してください</fcPickerSelectStuff>
+
+	<!-- Unit Race/PawnKind Errors -->
+	<!-- EN: No available races -->
+  <FCChangeUnitRaceNoRaces>利用可能な種族がありません</FCChangeUnitRaceNoRaces>
+	<!-- EN: No available animals -->
+  <fcNoAnimalsAvailable>利用可能な動物がありません</fcNoAnimalsAvailable>
+	<!-- EN: No available Xeno -->
+  <FCChangeUnitXenoNoXenos>利用可能な異種型がありません</FCChangeUnitXenoNoXenos>
+	<!-- EN: Couldn't find any{0}PawnKindDefs for techlevels: {1} with the {2} race. Empire will generate {2}{3}using the techlevel: {4}. -->
+  <FCNoPawnKindDefOfTypeOfRaceWarning>技術レベル{1}における{2}種族の{0}PawnKindDefが見つかりませんでした。帝国は技術レベル{4}を使用して{2}{3}を生成します。</FCNoPawnKindDefOfTypeOfRaceWarning>
+	<!-- EN: Couldn't find any{0}PawnKindDefs for any techlevel with the {1} race. They will not be able to be generated! -->
+  <FCNoPawnKindDefOfTypeOfRaceError>{1}種族の{0}PawnKindDefがいずれの技術レベルにも見つかりませんでした。このユニットは生成できません！</FCNoPawnKindDefOfTypeOfRaceError>
+	<!-- EN: The races you selected are missing critical PawnKindDefs! Your faction may generate Humans to fill the gap. -->
+  <FCMissingPawnKindDefsCriticalError>選択した種族に重要なPawnKindDefが不足しています！派閥は不足分を補うために人間を生成することがあります。</FCMissingPawnKindDefsCriticalError>
+
+	<!-- Squad Design -->
+	<!-- EN: Create New Squad -->
+  <FCCreateNewSquad>新しい分隊を作成</FCCreateNewSquad>
+	<!-- EN: Import Squad -->
+  <FCImportSquad>分隊をインポート</FCImportSquad>
+	<!-- EN: Rename Squad -->
+  <FCRenameSquad>分隊名を変更</FCRenameSquad>
+	<!-- EN: Are you sure you want to delete "{0}"? -->
+  <FCConfirmDeleteSquad>「{0}」を削除してもよろしいですか？</FCConfirmDeleteSquad>
+	<!-- EN: Squad is full (30/30 units) -->
+  <FCSquadFull>分隊が満員です（30/30ユニット）</FCSquadFull>
+	<!-- EN: Add Unit -->
+  <FCAddUnit>ユニットを追加</FCAddUnit>
+	<!-- EN: Units: {0} / 30 -->
+  <FCSquadUnitCount>ユニット: {0} / 30</FCSquadUnitCount>
+	<!-- EN: Export squad -->
+  <FCExportSquadButton>分隊をエクスポート</FCExportSquadButton>
+	<!-- EN: Delete squad -->
+  <FCDeleteSquadButton>分隊を削除</FCDeleteSquadButton>
+	<!-- EN: Total Squad Equipment Cost: {0} / {1} (Max Cost) -->
+  <FCTotalSquadEquipmentCost>分隊装備合計コスト: {0} / {1}（最大コスト）</FCTotalSquadEquipmentCost>
+	<!-- EN: Total Squad Equipment Cost: {0} / No Reference -->
+  <FCTotalSquadEquipmentCostNoRef>分隊装備合計コスト: {0} / 参照なし</FCTotalSquadEquipmentCostNoRef>
+	<!-- EN: Delete Squad -->
+  <FCDeleteSquad>分隊を削除</FCDeleteSquad>
+	<!-- EN: Select A Squad -->
+  <FCSelectASquad>分隊を選択</FCSelectASquad>
+	<!-- EN:  - Military Level :  -->
+  <FCMilitaryLevelLabel> - 軍事レベル: </FCMilitaryLevelLabel>
+	<!-- EN: You can't deploy a squad with no equipped personnel! -->
+  <FCNoSquadEquipped>装備した人員がいない分隊は展開できません！</FCNoSquadEquipped>
+	<!-- EN: There is no squad loadout assigned to that settlement! -->
+  <FCNoSquadLoadoutAssigned>その入植地に割り当てられた分隊装備がありません！</FCNoSquadLoadoutAssigned>
+	<!-- EN: There is no military squad assigned to that settlement! -->
+  <FCNoSquadAssigned>その入植地に割り当てられた軍事分隊がありません！</FCNoSquadAssigned>
+	<!-- EN: That squad exceeds the settlement's max allotted cost -->
+  <FCSquadExceedsMaxCost>その分隊は入植地の最大許容コストを超えています</FCSquadExceedsMaxCost>
+	<!-- EN: Reset Pawns -->
+  <fcResetSquadPawns>ポーンをリセット</fcResetSquadPawns>
+	<!-- EN: This will destroy all existing mercenary pawns in "{0}" and generate entirely new ones. Their identities, appearance, and any battle experience will be lost.\n\nThis is intended for fixing corrupted pawns. Are you sure? -->
+  <fcResetSquadPawnsConfirm>「{0}」内のすべての傭兵ポーンを破棄し、まったく新しいポーンを生成します。彼らの個人情報、外見、戦闘経験はすべて失われます。\n\nこれは壊れたポーンを修正するための機能です。本当によろしいですか？</fcResetSquadPawnsConfirm>
+	<!-- EN: Regenerate all mercenary pawns in this squad. Destroys existing pawns and creates new ones with different identities. Only available for squads assigned to a settlement. -->
+  <fcResetSquadPawnsTip>この分隊のすべての傭兵ポーンを再生成します。既存のポーンを破棄し、異なる個人情報を持つ新しいポーンを作成します。入植地に割り当てられた分隊にのみ使用可能です。</fcResetSquadPawnsTip>
+	<!-- EN: Create New Unit -->
+  <FCCreateNewUnit>新しいユニットを作成</FCCreateNewUnit>
+
+	<!-- Fire Support Design -->
+	<!-- EN: New Fire Support -->
+  <FCCreateNewFireSupport>新しい火力支援</FCCreateNewFireSupport>
+	<!-- EN: Delete Support -->
+  <FCDeleteSupport>支援を削除</FCDeleteSupport>
+	<!-- EN: Add new projectile -->
+  <FCAddNewProjectile>新しい発射体を追加</FCAddNewProjectile>
+	<!-- EN: Rename Fire Support -->
+  <FCRenameFireSupport>火力支援名を変更</FCRenameFireSupport>
+	<!-- EN: Are you sure you want to delete "{0}"? -->
+  <FCConfirmDeleteFireSupport>「{0}」を削除してもよろしいですか？</FCConfirmDeleteFireSupport>
+	<!-- EN: Delete -->
+  <FCDeleteFireSupportButton>削除</FCDeleteFireSupportButton>
+	<!-- EN: Cost: {0} -->
+  <FCFireSupportCostLabel>コスト: {0}</FCFireSupportCostLabel>
+	<!-- EN: Cost: {0} / {1} (Max) -->
+  <FCFireSupportCostRefLabel>コスト: {0} / {1}（最大）</FCFireSupportCostRefLabel>
+	<!-- EN: Projectiles: {0} -->
+  <FCFireSupportProjectileCount>発射体: {0}</FCFireSupportProjectileCount>
+	<!-- EN: Duration: {0}s -->
+  <FCFireSupportDuration>継続時間: {0}秒</FCFireSupportDuration>
+	<!-- EN: Accuracy (tile radius): {0}  ·  Cost modifier: +{1}% -->
+  <FCFireSupportAccuracyLabel>精度（タイル半径）: {0}  ·  コスト修正: +{1}%</FCFireSupportAccuracyLabel>
+	<!-- EN: Select a fire support -->
+  <FCSelectAFireSupport>火力支援を選択</FCSelectAFireSupport>
+	<!-- EN: Import -->
+  <FCImportFireSupport>インポート</FCImportFireSupport>
+	<!-- EN: Export -->
+  <FCExportFireSupportButton>エクスポート</FCExportFireSupportButton>
+	<!-- EN: Exported Fire Support -->
+  <FCExportFireSupport>エクスポート済み火力支援</FCExportFireSupport>
+	<!-- EN: No available projectiles found -->
+  <FCNoProjectilesFound>利用可能な発射体が見つかりません</FCNoProjectilesFound>
+	<!-- EN: Options -->
+  <FCFireSupportOptions>オプション</FCFireSupportOptions>
+	<!-- EN: Insert Projectile Above Slot -->
+  <FCInsertProjectileAbove>このスロットの上に発射体を挿入</FCInsertProjectileAbove>
+	<!-- EN: Duplicate -->
+  <FCDuplicate>複製</FCDuplicate>
+
+	<!-- Navigation Buttons -->
+	<!-- EN: Units -->
+  <FCNavUnits>ユニット</FCNavUnits>
+	<!-- EN: Squads -->
+  <FCNavSquads>分隊</FCNavSquads>
+	<!-- EN: Fire Support -->
+  <FCNavFireSupport>火力支援</FCNavFireSupport>
+	<!-- EN: Edit this unit's equipment -->
+  <FCEditUnitTooltip>このユニットの装備を編集</FCEditUnitTooltip>
+
+	<!-- Unit Types -->
+	<!-- EN: Pawns -->
+  <FCPawns>ポーン</FCPawns>
+	<!-- EN: Trader -->
+  <FCTrader>商人</FCTrader>
+	<!-- EN: Fighter -->
+  <FCFighter>戦闘員</FCFighter>
+	<!-- EN: Non Mercenary -->
+  <FCNonMercenary>非傭兵</FCNonMercenary>
+
+	<!-- Import/Export -->
+	<!-- EN: Import -->
+  <FCImport>インポート</FCImport>
+	<!-- EN: Imported {0} -->
+  <FCImported>{0}をインポートしました</FCImported>
+	<!-- EN: Deleted {0} -->
+  <FCDeleted>{0}を削除しました</FCDeleted>
+
+	<!-- Prisoners -->
+	<!-- EN: Prisoners -->
+  <FCPrisonersMenu>囚人</FCPrisonersMenu>
+	<!-- EN: workload -->
+  <FCWorkload>作業負荷</FCWorkload>
+	<!-- EN: heavy -->
+  <FCHeavy>重労働</FCHeavy>
+	<!-- EN: medium -->
+  <FCMedium>中程度</FCMedium>
+	<!-- EN: light -->
+  <FCLight>軽労働</FCLight>
+	<!-- EN: Adds +2 to worker soft cap (Max Workers Before Scaling Costs). Reduces health by 20. -->
+  <FCHeavyExplanation>労働者ソフト上限（コスト増加前の最大労働者数）に+2を追加します。体力が20減少します。</FCHeavyExplanation>
+	<!-- EN: Adds +1 to worker soft cap (Max Workers Before Scaling Costs). Reduces health by 10. -->
+  <FCMediumExplanation>労働者ソフト上限（コスト増加前の最大労働者数）に+1を追加します。体力が10減少します。</FCMediumExplanation>
+	<!-- EN: Adds +1 to worker hard cap (Over-Max Workers). Increases health by 4 -->
+  <FCLightExplanation>労働者ハード上限（超過労働者数）に+1を追加します。体力が4増加します。</FCLightExplanation>
+	<!-- EN: Sell Pawn -->
+  <FCSellPawn>ポーンを売却</FCSellPawn>
+	<!-- EN: Return To Player -->
+  <FCReturnToPlayer>プレイヤーに返還</FCReturnToPlayer>
+	<!-- EN: Value will be added to next bill from the settlement -->
+  <FCSellPawnInfo>金額は入植地からの次の請求書に追加されます</FCSellPawnInfo>
+	<!-- EN: Prisoner: {0} has been enslaved and delivered to {1} -->
+  <FCPrisonerCaptureInfo>囚人: {0}が奴隷にされ、{1}に引き渡されました</FCPrisonerCaptureInfo>
+	<!-- EN: You can't send a prisoner to your settlements when the map has a danger level of {0}! -->
+  <FCCantSendWithDangerLevel>マップの危険レベルが{0}の場合、囚人を入植地に送ることができません！</FCCantSendWithDangerLevel>
+	<!-- EN: {0} - Settlement Level: {1}, Prisoners: {2} -->
+  <FCFloatMenuOptionSendPrisonerToSettlement>{0} - 入植地レベル: {1}、囚人: {2}</FCFloatMenuOptionSendPrisonerToSettlement>
+	<!-- EN: A prisoner is being delivered to you -->
+  <FCAPrisonerIsBeingDeliveredToYou>囚人が届けられています</FCAPrisonerIsBeingDeliveredToYou>
+	<!-- EN: No prisoners at this settlement. -->
+  <FCNoPrisoners>この入植地に囚人はいません。</FCNoPrisoners>
+	<!-- EN: Prisoners — {0} -->
+  <FCPrisonerWindowTitle>囚人 — {0}</FCPrisonerWindowTitle>
+
+	<!-- Mercenary -->
+	<!-- EN: Request Mercenary -->
+  <FCRequestMercenary>傭兵を要請</FCRequestMercenary>
+	<!-- EN: The Request Mercenary action is available for use -->
+  <FCActionMercenaryRefreshed>傭兵要請アクションが使用可能になりました</FCActionMercenaryRefreshed>
+	<!-- EN: You cannot use that action for until another {0} -->
+  <FCActionMercenaryOnCooldown>このアクションはあと{0}経過するまで使用できません</FCActionMercenaryOnCooldown>
+
+</LanguageData>

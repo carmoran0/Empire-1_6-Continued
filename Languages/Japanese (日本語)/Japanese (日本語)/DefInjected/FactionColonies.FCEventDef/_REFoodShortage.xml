@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Widespread Food Shortage -->
+  <foodShortage_0.label>広域食料不足</foodShortage_0.label>
+  <!-- EN: There's a widespread food shortage in the affected regions. Your settlements need guidance on how to handle this crisis. -->
+  <foodShortage_0.desc>影響を受けた地域で広範な食料不足が発生している。入植地がこの危機にどう対処すべきか、指針が必要だ。</foodShortage_0.desc>
+
+  <!-- EN: Food Shortage -->
+  <foodShortage_1-1.label>食料不足</foodShortage_1-1.label>
+  <!-- EN: Your settlements endure the food shortage. -->
+  <foodShortage_1-1.desc>入植地の人々は食料不足に耐え忍んでいる。</foodShortage_1-1.desc>
+
+  <!-- EN: Food Shortage (Imports) -->
+  <foodShortage_1-2.label>食料不足（緊急輸入）</foodShortage_1-2.label>
+  <!-- EN: Emergency imports have arrived, lessening the impact of the food shortage. -->
+  <foodShortage_1-2.desc>緊急輸入物資が到着し、食料不足の影響が軽減された。</foodShortage_1-2.desc>
+
+  <!-- EN: Food Shortage (Rationing) -->
+  <foodShortage_1-3.label>食料不足（配給制）</foodShortage_1-3.label>
+  <!-- EN: Strict rationing is in effect. Citizens admire the shared sacrifice. -->
+  <foodShortage_1-3.desc>厳格な配給制が実施されている。市民たちは共に苦難を分かち合う姿勢を称え合っている。</foodShortage_1-3.desc>
+
+  <!-- EN: Food Shortage (Slaves Starved) -->
+  <foodShortage_1-4.label>食料不足（奴隷への負担）</foodShortage_1-4.label>
+  <!-- EN: The slaves bear the brunt of the shortage. Food production continues unaffected, but the workforce is diminished. -->
+  <foodShortage_1-4.desc>奴隷たちが食料不足の最大の打撃を受けた。食料生産は影響を受けずに継続されているが、労働力が減少した。</foodShortage_1-4.desc>
+
+</LanguageData>

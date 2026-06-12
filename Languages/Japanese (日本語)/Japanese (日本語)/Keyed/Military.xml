@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+	<!-- Attack/Raid/Capture Actions -->
+	<!-- EN: Attack Settlement -->
+  <FCAttackSettlement>入植地を攻撃</FCAttackSettlement>
+	<!-- EN: Capture Settlement -->
+  <FCCaptureSettlement>入植地を占領</FCCaptureSettlement>
+	<!-- EN: Enslave Population -->
+  <FCEnslavePopulation>住民を奴隷化</FCEnslavePopulation>
+	<!-- EN: Raid Settlement -->
+  <FCRaidSettlement>入植地を略奪</FCRaidSettlement>
+	<!-- EN: Try to capture using {0}'s military (Level {1}). -->
+  <FCCaptureFloatMenuOption>{0}の軍事力（レベル{1}）で占領を試みる。</FCCaptureFloatMenuOption>
+	<!-- EN: Try to raid using {0}'s military (Level {1}). -->
+  <FCRaidFloatMenuOption>{0}の軍事力（レベル{1}）で略奪を試みる。</FCRaidFloatMenuOption>
+	<!-- EN: Try to enslave using {0}'s military (Level {1}). -->
+  <FCEnslaveFloatMenuOption>{0}の軍事力（レベル{1}）で奴隷化を試みる。</FCEnslaveFloatMenuOption>
+
+	<!-- Attack Notifications -->
+	<!-- EN: {0} is about to be attacked by the {1} faction. -->
+  <FCSettlementAboutToBeAttacked>{0}が{1}派閥に攻撃されようとしている。</FCSettlementAboutToBeAttacked>
+	<!-- EN: Battle Forecast:\nEnemy power: {0} (Efficiency: x{1})\nDefense power: {2} (Efficiency: x{3})\nEstimated chance of victory: {4}% -->
+  <FCBattleForecast>戦闘予測:\n敵の戦力: {0}（効率: x{1}）\n防衛戦力: {2}（効率: x{3}）\n勝利推定確率: {4}%</FCBattleForecast>
+	<!-- EN: Settlement In Danger -->
+  <FCSettlementInDanger>入植地が危険にさらされている</FCSettlementInDanger>
+	<!-- EN: {0}'s military forces are raiding {1} -->
+  <FCSettlementMilitaryForcesRaiding>{0}の軍事力が{1}を略奪している</FCSettlementMilitaryForcesRaiding>
+	<!-- EN: {0}'s military forces are attempting to enslave the population of {1} -->
+  <FCSettlementMilitaryForcesEnslave>{0}の軍事力が{1}の住民を奴隷化しようとしている</FCSettlementMilitaryForcesEnslave>
+	<!-- EN: {0}'s military forces are attempting to capture {1} -->
+  <FCSettlementMilitaryForcesCapturing>{0}の軍事力が{1}を占領しようとしている</FCSettlementMilitaryForcesCapturing>
+	<!-- EN: That settlement is under attack -->
+  <FCSettlementUnderAttack>その入植地は攻撃を受けている</FCSettlementUnderAttack>
+	<!-- EN: Settlement is not under attack -->
+  <FCSettlementNotBeingAttacked>入植地は攻撃を受けていない</FCSettlementNotBeingAttacked>
+	<!-- EN: The target is already being attacked -->
+  <FCTargetAlreadyBeingAttacked>その目標はすでに攻撃されている</FCTargetAlreadyBeingAttacked>
+
+	<!-- Military Sent Notifications -->
+	<!-- EN: Military Sent -->
+  <FCMilitarySent>軍事力を派遣</FCMilitarySent>
+	<!-- EN: Military Action -->
+  <FCMilitaryAction>軍事行動</FCMilitaryAction>
+	<!-- EN: The military forces of {0} have been sent to defend {1} -->
+  <FCMilitarySentToDefend>{0}の軍事力が{1}の防衛に派遣された</FCMilitarySentToDefend>
+	<!-- EN: The military force is already assigned. -->
+  <FCMilitaryAlreadyAssigned>その軍事力はすでに配備されている。</FCMilitaryAlreadyAssigned>
+	<!-- EN: The military forces of {0} have been sent to defend {1}. They have an effective force of {2} -->
+  <FCForeignMilitarySwitch>{0}の軍事力が{1}の防衛に派遣された。実効戦力は{2}である</FCForeignMilitarySwitch>
+	<!-- EN: The military forces of {0} have been sent to capture {1} -->
+  <FCMilitarySentCapture>{0}の軍事力が{1}の占領に派遣された</FCMilitarySentCapture>
+	<!-- EN: The military forces of {0} have been sent to raid {1} -->
+  <FCMilitarySentRaid>{0}の軍事力が{1}の略奪に派遣された</FCMilitarySentRaid>
+	<!-- EN: The military forces of {0} have been sent to enslave the population of {1} -->
+  <FCMilitarySentEnslave>{0}の軍事力が{1}の住民の奴隷化に派遣された</FCMilitarySentEnslave>
+	<!-- EN: {0}'s military forces are re-organizing after their last mission. -->
+  <FCMilitaryForcesReorganizing>{0}の軍事力は前回の任務後に再編成中だ。</FCMilitaryForcesReorganizing>
+	<!-- EN: The military forces of {0} are ready to be used again -->
+  <FCMilitaryCooldown>{0}の軍事力が再度使用可能になった</FCMilitaryCooldown>
+	<!-- EN: You cannot make a military without a faction! -->
+  <FCNoFactionForMilitary>派閥なしでは軍事力を編成できない！</FCNoFactionForMilitary>
+
+	<!-- Raid/Capture Results -->
+	<!-- EN: Raid Loot -->
+  <FCRaidLoot>略奪品</FCRaidLoot>
+	<!-- EN: The raid on {0} has been completed successfully -->
+  <FCRaidEnemySettlementSuccess>{0}への略奪が成功した</FCRaidEnemySettlementSuccess>
+	<!-- EN: Raid Failure -->
+  <FCRaidFailure>略奪失敗</FCRaidFailure>
+	<!-- EN: The raid on {0} has resulted in failure -->
+  <FCRaidEnemySettlementFailure>{0}への略奪は失敗に終わった</FCRaidEnemySettlementFailure>
+	<!-- EN: {0}'s military forces have successfully captured {1}. Due to the previous faction's tech level, the starting settlement level of the new settlement is {2}. -->
+  <FCCaptureEnemySettlementSuccess>{0}の軍事力が{1}の占領に成功した。前の派閥の技術レベルにより、新しい入植地の開始レベルは{2}となる。</FCCaptureEnemySettlementSuccess>
+	<!-- EN: {0}'s military forces has failed to capture {1} -->
+  <FCCaptureEnemySettlementFailure>{0}の軍事力は{1}の占領に失敗した</FCCaptureEnemySettlementFailure>
+	<!-- EN: Overwhelming Victory -->
+  <FCOverwhelmingVictory>圧倒的勝利</FCOverwhelmingVictory>
+	<!-- EN: Due to your military force's overwhelming victory, the military force is still available for deployment. -->
+  <FCOverwhelmingVictoryDesc>軍事力の圧倒的勝利により、軍事力はまだ展開可能な状態だ。</FCOverwhelmingVictoryDesc>
+
+	<!-- Defense -->
+	<!-- EN: Defense Successful -->
+  <FCDefenseSuccessful>防衛成功</FCDefenseSuccessful>
+	<!-- EN: The defense of {0} was successful! -->
+  <FCDefenseSuccessfulFull>{0}の防衛は成功した！</FCDefenseSuccessfulFull>
+	<!-- EN: Defense Failure -->
+  <FCDefenseFailure>防衛失敗</FCDefenseFailure>
+	<!-- EN: The defense of our settlement, {0}, has been crushed. -->
+  <FCDefenseFailureFull>我々の入植地{0}の防衛は壊滅した。</FCDefenseFailureFull>
+	<!-- EN: The battle is over. Gather your forces and leave the settlement when ready. -->
+  <FCDefenseBattleOverLeaveMap>戦闘は終わった。部隊をまとめ、準備が整ったら入植地を離れよ。</FCDefenseBattleOverLeaveMap>
+	<!-- EN: The battle isn't over until every hostile has died or left the map. -->
+  <FCReformCaravanBattleStillActive>すべての敵が倒されるか撤退するまで、戦闘は終わらない。</FCReformCaravanBattleStillActive>
+	<!-- EN: Battle for {0} -->
+  <FCManualBattleStarted>{0}をめぐる戦闘</FCManualBattleStarted>
+	<!-- EN: {0} is under attack by {1}! Take command of the settlement's defenses. -->
+  <FCManualBattleStartedDesc>{0}が{1}に攻撃されている！入植地の防衛指揮を執れ。</FCManualBattleStartedDesc>
+	<!-- EN: Defend -->
+  <FCDefendColony>防衛</FCDefendColony>
+	<!-- EN: Defend your Settlement manually -->
+  <FCDefendColonyDesc>入植地を手動で防衛する</FCDefendColonyDesc>
+	<!-- EN: Set Defending Force -->
+  <FCDefendSettlement>防衛部隊を設定</FCDefendSettlement>
+	<!-- EN: Settlement Defending: {0}'s - Power {1} - Victory: {2}% -->
+  <FCSettlementDefendingInformation>入植地防衛: {0} - 戦力 {1} - 勝率: {2}%</FCSettlementDefendingInformation>
+	<!-- EN: Reset to home settlement's defense - Power {0} - Victory: {1}% -->
+  <FCResetToHomeSettlement>本拠入植地の防衛にリセット - 戦力 {0} - 勝率: {1}%</FCResetToHomeSettlement>
+	<!-- EN: Change Defending Force -->
+  <FCChangeDefendingForce>防衛部隊を変更</FCChangeDefendingForce>
+	<!-- EN: That military force is already defending the target -->
+  <FCMilitaryAlreadyDefendingSettlement>その軍事力はすでにその目標を防衛している</FCMilitaryAlreadyDefendingSettlement>
+	<!-- EN: The defending military has been reset as the defense force for the settlement -->
+  <FCDefendingMilitaryReset>防衛軍がこの入植地の防衛部隊としてリセットされた</FCDefendingMilitaryReset>
+	<!-- EN: {0} is now defending this settlement. -->
+  <FCExternalDefenderAssigned>{0}がこの入植地を防衛するようになった。</FCExternalDefenderAssigned>
+	<!-- EN: {0} has been automatically assigned to defend. -->
+  <FCExternalDefenderAutoAssigned>{0}が自動的に防衛に割り当てられた。</FCExternalDefenderAutoAssigned>
+	<!-- EN: Automatically defending attacked settlements: {0} -->
+  <FCToggleAutoDefend>攻撃された入植地を自動防衛: {0}</FCToggleAutoDefend>
+	<!-- EN: Keep in mind that this setting is not the same as the automatic battle resolve setting found in the settings menu! -->
+  <FCAutoDefendWarning>この設定は設定メニューにある自動戦闘解決の設定とは異なることに注意！</FCAutoDefendWarning>
+	<!-- EN: Auto-Resolve mode is enabled. Switch to Manual or Hybrid in settings to fight battles manually. -->
+  <FCAutoBattleEnabledNoManualFight>自動解決モードが有効になっている。手動で戦闘するには設定でマニュアルまたはハイブリッドに切り替えよ。</FCAutoBattleEnabledNoManualFight>
+	<!-- EN: Hybrid battle mode is enabled. Send a caravan to manually defend this settlement. -->
+  <FCHybridBattleEnabledNoManualFight>ハイブリッド戦闘モードが有効になっている。この入植地を手動防衛するにはキャラバンを派遣せよ。</FCHybridBattleEnabledNoManualFight>
+	<!-- EN: This settlement type does not support manual battles. All battles here are auto-resolved. -->
+  <FCSettlementTypeNoManualBattle>この入植地タイプは手動戦闘に対応していない。ここでの戦闘はすべて自動解決される。</FCSettlementTypeNoManualBattle>
+	<!-- EN: Send a caravan to this settlement before the attack to fight manually. -->
+  <FCSettlementAttackHybridHint>攻撃前にキャラバンをこの入植地に派遣することで手動戦闘ができる。</FCSettlementAttackHybridHint>
+
+	<!-- Raid Damage -->
+	<!-- EN: Penalties suffered: -->
+  <FCDefenseFailurePenaltiesHeader>受けたペナルティ:</FCDefenseFailurePenaltiesHeader>
+	<!-- EN: Prosperity: -{0} -->
+  <FCDefenseFailureProsperityLoss>繁栄度: -{0}</FCDefenseFailureProsperityLoss>
+	<!-- EN: Happiness: -{0} -->
+  <FCDefenseFailureHappinessLoss>幸福度: -{0}</FCDefenseFailureHappinessLoss>
+	<!-- EN: Loyalty: -{0} -->
+  <FCDefenseFailureLoyaltyLoss>忠誠心: -{0}</FCDefenseFailureLoyaltyLoss>
+	<!-- EN: Buildings were protected from destruction by your policies. -->
+  <FCDefenseFailureBuildingsProtected>政策により建物は破壊から守られた。</FCDefenseFailureBuildingsProtected>
+	<!-- EN: {0} has been destroyed in the raid. -->
+  <FCBuildingDestroyedInRaid>{0}が略奪で破壊された。</FCBuildingDestroyedInRaid>
+	<!-- EN: The settlement level has decreased by one. -->
+  <FCSettlementDeleveledRaid>入植地のレベルが一段階低下した。</FCSettlementDeleveledRaid>
+	<!-- EN: Collateral Damage -->
+  <FCScorchedEarthCollateralTitle>巻き添え被害</FCScorchedEarthCollateralTitle>
+	<!-- EN: The defense of {0} was successful, but the Scorched Earth doctrine caused collateral damage: -->
+  <FCScorchedEarthCollateralHeader>{0}の防衛は成功したが、焦土作戦により巻き添え被害が発生した:</FCScorchedEarthCollateralHeader>
+	<!-- EN: {0} injured caravan member(s) are being transported home. Estimated arrival: {1} days. -->
+  <FCInjuredCaravanMembersReturning>{0}名の負傷したキャラバン隊員が帰還中だ。到着予定: {1}日後。</FCInjuredCaravanMembersReturning>
+
+	<!-- Battle Ending -->
+	<!-- EN: Ending attack... -->
+  <FCEndingAttack>攻撃を終了中...</FCEndingAttack>
+	<!-- EN: Error ending attack -->
+  <FCErrorEndingAttack>攻撃終了エラー</FCErrorEndingAttack>
+	<!-- EN: There was a problem ending the attack. Most likely, the map didn't delete correctly.
+		Please report this if you don't get your colonists sent to defend back, or your military never comes off
+		cooldown.
+	 -->
+  <FCErrorEndingAttackDescription>攻撃終了中に問題が発生した。マップが正しく削除されなかった可能性がある。
+		防衛に派遣した入植者が戻らない場合や軍事力のクールダウンが解除されない場合は報告してください。
+	</FCErrorEndingAttackDescription>
+
+	<!-- Deployment -->
+	<!-- EN: Send To Settlement -->
+  <FCSendToSettlement>入植地に送る</FCSendToSettlement>
+	<!-- EN: You do not have enough silver to re-deploy that squad! -->
+  <FCNotEnoughSilverToDeploySquad>その分隊を再展開するシルバーが足りない！</FCNotEnoughSilverToDeploySquad>
+	<!-- EN: {0} days are left until the ability to re-deploy squads is refreshed -->
+  <FCXDaysToRedeploy>分隊再展開が可能になるまであと{0}日</FCXDaysToRedeploy>
+	<!-- EN: Drop-Pod -->
+  <FCDropPodDeploymentOption>ドロップポッド</FCDropPodDeploymentOption>
+	<!-- EN: Walk into Map -->
+  <FCWalkIntoMapDeploymentOption>マップへ徒歩移動</FCWalkIntoMapDeploymentOption>
+	<!-- EN:  disabled because "Medieval Tech Only" is enabled -->
+  <FCDropPodDeploymentOptionUnavailableReasonMedieval>「中世技術のみ」が有効なため使用不可</FCDropPodDeploymentOptionUnavailableReasonMedieval>
+	<!-- EN:  unavailable without the {0} research -->
+  <FCDropPodDeploymentOptionUnavailableReasonTech>{0}の研究がないため使用不可</FCDropPodDeploymentOptionUnavailableReasonTech>
+	<!-- EN: The drop pod research could not be found! Are you running a mod list that removes it? -->
+  <FCErrorDropPodResearchCouldNotBeFound>ドロップポッドの研究が見つからない！それを削除するModを使用していないか確認してください。</FCErrorDropPodResearchCouldNotBeFound>
+	<!-- EN: You cannot deploy your military to another settlement! -->
+  <FCMilitaryTriedDeployingToSettlementFC>別の入植地に軍事力を展開することはできない！</FCMilitaryTriedDeployingToSettlementFC>
+	<!-- EN: Military Action -->
+  <FCMilitaryAction>軍事行動</FCMilitaryAction>
+	<!-- EN: Select Move Position -->
+  <FCSelectMilitaryMovePosition>移動先を選択</FCSelectMilitaryMovePosition>
+	<!-- EN: Select Deployment Position -->
+  <FCSelectDeploymentPosition>展開位置を選択</FCSelectDeploymentPosition>
+	<!-- EN: The position you selected is out of bounds for this map! -->
+  <FCSelectedPosOutOfBounds>選択した位置はこのマップの範囲外だ！</FCSelectedPosOutOfBounds>
+	<!-- EN: The position you selected is to close to the map edge! -->
+  <FCSelectedPosTooCloseToEdge>選択した位置はマップの端に近すぎる！</FCSelectedPosTooCloseToEdge>
+	<!-- EN: Military deployed -->
+  <FCDeploymentSuccessLabel>軍事力を展開した</FCDeploymentSuccessLabel>
+	<!-- EN: The military forces of {0} have been deployed to {1} -->
+  <FCDeploymentSuccessDesc>{0}の軍事力が{1}に展開された</FCDeploymentSuccessDesc>
+	<!-- EN: A squad is leaving, because it's available time ran out! -->
+  <FCMilitaryPawnsLeavingTimeOut>分隊の使用可能時間が切れたため、撤退する！</FCMilitaryPawnsLeavingTimeOut>
+
+	<!-- Battle Commands -->
+	<!-- EN: Attack -->
+  <FCCommandAttack>攻撃</FCCommandAttack>
+	<!-- EN: {0} are now charging the enemy. -->
+  <FCAttackSuccess>{0}が敵に突撃した。</FCAttackSuccess>
+	<!-- EN: Move -->
+  <FCCommandMove>移動</FCCommandMove>
+	<!-- EN: {0} are moving to the position and standing by. -->
+  <FCMoveSuccess>{0}が指定位置に移動して待機している。</FCMoveSuccess>
+	<!-- EN: Leave -->
+  <FCCommandLeave>撤退</FCCommandLeave>
+	<!-- EN: {0} are now leaving the map. {1} dead. -->
+  <FCLeaveSuccess>{0}がマップから撤退している。死者{1}名。</FCLeaveSuccess>
+
+	<!-- Fire Support -->
+	<!-- EN: Select Artillery Position -->
+  <FCFireSupportSelectPosition>砲撃位置を選択</FCFireSupportSelectPosition>
+	<!-- EN: {0} will be fired upon shortly on the marked position! -->
+  <FCFireSupportNameWillBeFiredOnPosition>マークされた位置に{0}が間もなく砲撃される！</FCFireSupportNameWillBeFiredOnPosition>
+	<!-- EN: You do not have enough silver to pay for the strike! -->
+  <FCFireSupportNoSilver>砲撃の費用を払うシルバーが足りない！</FCFireSupportNoSilver>
+
+	<!-- Deployment -->
+	<!-- EN: Deploy Secondary Squad - ${0} silver -->
+  <FCDeploySecondarySquad>第二分隊を展開 - {0}シルバー</FCDeploySecondarySquad>
+	<!-- EN: You lack the required amount of silver to use that firesupport option! -->
+  <FCNotEnoughSilverFireSupport>その火力支援を使用するのに必要なシルバーが足りない！</FCNotEnoughSilverFireSupport>
+	<!-- EN: That firesupport option is on cooldown for another {0} -->
+  <FCFireSupportCooldown>その火力支援はあと{0}クールダウン中だ</FCFireSupportCooldown>
+	<!-- EN: The settlement requires an artillery outpost to be built to use that firesupport option -->
+  <FCRequiresArtilleryOutpost>その火力支援を使用するには入植地に砲兵前哨基地を建設する必要がある</FCRequiresArtilleryOutpost>
+	<!-- EN: The settlement requires a higher military level to use that fire support! -->
+  <FCRequiresHigherMilLevel>その火力支援を使用するには入植地の軍事レベルをより高くする必要がある！</FCRequiresHigherMilLevel>
+	<!-- EN: No fire supports currently made. Make one -->
+  <FCNoFireSupportsMade>現在火力支援が作成されていない。作成してください</FCNoFireSupportsMade>
+	<!-- EN: The assault is beginning! -->
+  <FCAssaultBeginning>突撃開始！</FCAssaultBeginning>
+
+	<!-- Military Table -->
+	<!-- EN: Military -->
+  <FCMilitary>軍事</FCMilitary>
+	<!-- EN: Mil Level -->
+  <FCMilitaryLevel>軍事レベル</FCMilitaryLevel>
+	<!-- EN: Military Budget -->
+  <FCMilitaryTableMilitaryBudget>軍事予算</FCMilitaryTableMilitaryBudget>
+	<!-- EN: Military Available? -->
+  <FCMilitaryTableAvailable>軍事力は使用可能か？</FCMilitaryTableAvailable>
+	<!-- EN: Under Attack -->
+  <FCMilitaryTableUnderAttack>攻撃中</FCMilitaryTableUnderAttack>
+	<!-- EN: Fire Support -->
+  <FCMilitaryTableFireSupport>火力支援</FCMilitaryTableFireSupport>
+	<!-- EN: No valid militaries to use. -->
+  <FCNoValidMilitaries>使用可能な軍事力がない。</FCNoValidMilitaries>
+	<!-- EN: Available -->
+  <FCAvailable>使用可能</FCAvailable>
+	<!-- EN: Current Defender -->
+  <FCCurrentDefender>現在の防衛部隊</FCCurrentDefender>
+	<!-- EN: Mil -->
+  <FCShortMilitary>軍事</FCShortMilitary>
+	<!-- EN: Power -->
+  <FCPower>戦力</FCPower>
+	<!-- EN: The job chosen for this FloatMenuOption doesn't have any translation keys registered in AddButtonsToNonEmpireObjects.MilJobOptionStringsDic -->
+  <FCUnsupportedMilJobError>このFloatMenuOptionに選択されたジョブはAddButtonsToNonEmpireObjects.MilJobOptionStringsDicに翻訳キーが登録されていない</FCUnsupportedMilJobError>
+	<!-- EN: [Debug] Remove all -->
+  <FCDebugRemoveAllCommand>[デバッグ] すべて削除</FCDebugRemoveAllCommand>
+
+	<!-- Military Card UI -->
+	<!-- EN: Squad -->
+  <FCMilSquadPrefix>分隊</FCMilSquadPrefix>
+	<!-- EN: Fire Support -->
+  <FCMilFireSupportCooldownShort>火力支援</FCMilFireSupportCooldownShort>
+	<!-- EN: {0} settlements -->
+  <FCMilitarySettlementCount>{0}個の入植地</FCMilitarySettlementCount>
+	<!-- EN: No settlements with military components -->
+  <FCNoMilitarySettlements>軍事施設のある入植地がない</FCNoMilitarySettlements>
+	<!-- EN: UNDER ATTACK -->
+  <FCMilStatusUnderAttack>攻撃を受けている</FCMilStatusUnderAttack>
+	<!-- EN: Deployed -->
+  <FCMilStatusDeployed>展開中</FCMilStatusDeployed>
+	<!-- EN: Raiding -->
+  <FCMilStatusRaiding>略奪中</FCMilStatusRaiding>
+	<!-- EN: Enslaving -->
+  <FCMilStatusEnslaving>奴隷化中</FCMilStatusEnslaving>
+	<!-- EN: Capturing -->
+  <FCMilStatusCapturing>占領中</FCMilStatusCapturing>
+	<!-- EN: Defending -->
+  <FCMilStatusDefending>防衛中</FCMilStatusDefending>
+	<!-- EN: Defending {0} -->
+  <FCMilStatusDefendingTarget>{0}を防衛中</FCMilStatusDefendingTarget>
+	<!-- EN: Deployment Cooldown -->
+  <FCMilStatusCooldown>展開クールダウン</FCMilStatusCooldown>
+	<!-- EN: Busy -->
+  <FCMilStatusBusy>使用中</FCMilStatusBusy>
+	<!-- EN: Ready -->
+  <FCMilStatusReady>準備完了</FCMilStatusReady>
+	<!-- EN: No Squad -->
+  <FCMilStatusNoSquad>分隊なし</FCMilStatusNoSquad>
+	<!-- EN: Auto-Defend -->
+  <FCMilAutoDefend>自動防衛</FCMilAutoDefend>
+	<!-- EN: Assign a military squad to this settlement -->
+  <FCMilBtnSetSquadTip>この入植地に軍事分隊を割り当てる</FCMilBtnSetSquadTip>
+	<!-- EN: Deploy the assigned squad to a map location -->
+  <FCMilBtnDeployTip>割り当てられた分隊をマップ上の場所に展開する</FCMilBtnDeployTip>
+	<!-- EN: Reset and regenerate squad members -->
+  <FCMilBtnResetTip>分隊員をリセットして再生成する</FCMilBtnResetTip>
+	<!-- EN: Call in artillery fire support -->
+  <FCMilBtnFireSupportTip>砲兵火力支援を要請する</FCMilBtnFireSupportTip>
+	<!-- EN: Automatically send this settlement's forces to defend other settlements under attack -->
+  <FCMilBtnAutoDefendTip>攻撃を受けている他の入植地を防衛するために、この入植地の部隊を自動的に派遣する</FCMilBtnAutoDefendTip>
+	<!-- EN: This settlement's military level is too low to auto-defend. Upgrade the settlement to increase its military level. -->
+  <FCMilAutoDefendDisabled>この入植地の軍事レベルが低すぎて自動防衛できない。入植地をアップグレードして軍事レベルを上げよ。</FCMilAutoDefendDisabled>
+	<!-- EN: Atk {0} / Def {1}  •  ${2} -->
+  <FCMilBadge>攻撃 {0} / 防衛 {1}  •  {2}シルバー</FCMilBadge>
+
+</LanguageData>

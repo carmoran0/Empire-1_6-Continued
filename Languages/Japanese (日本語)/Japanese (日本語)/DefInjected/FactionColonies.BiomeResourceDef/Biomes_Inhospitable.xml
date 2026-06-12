@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Impassable -->
+  <Impassable.label>通行不可</Impassable.label>
+
+  <!-- EN: Lake -->
+  <Lake.label>湖</Lake.label>
+
+  <!-- EN: Ocean -->
+  <Ocean.label>海洋</Ocean.label>
+
+</LanguageData>

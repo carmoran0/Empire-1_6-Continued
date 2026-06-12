@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Drug Trade -->
+  <drugTrade_0.label>麻薬取引</drugTrade_0.label>
+  <!-- EN: One of your settlements is reporting a massive spike in illegal drug use. The leadership suspects that a producer has taken up residence nearby. They request your word on the matter. -->
+  <drugTrade_0.desc>あなたの入植地のひとつで、違法薬物の使用が急増しているという報告があります。指導部は生産者が近くに住み着いたと疑っており、この件についてあなたの指示を求めています。</drugTrade_0.desc>
+
+  <!-- EN: Drug Trade -->
+  <drugTrade_1-1.label>麻薬取引</drugTrade_1-1.label>
+  <!-- EN: Investigating drug trade... -->
+  <drugTrade_1-1.desc>麻薬取引を調査中……</drugTrade_1-1.desc>
+
+  <!-- EN: Drug Trade -->
+  <drugTrade_1-2.label>麻薬取引</drugTrade_1-2.label>
+  <!-- EN: Your settlement may be hooked on drugs, but they seem content with their reality. You doubt you'll hear any complaints anytime soon. -->
+  <drugTrade_1-2.desc>入植地の人々は薬物に依存しているかもしれませんが、現実に満足しているようです。しばらくは不満の声は聞こえてこないでしょう。</drugTrade_1-2.desc>
+
+  <!-- EN: Drug Trade -->
+  <drugTrade_2-1.label>麻薬取引</drugTrade_2-1.label>
+  <!-- EN: The authorities have returned with good news! They have found the drug production. The sneaky lads almost got away, but no one can match the strength of your empire! However, they point out that a coin or two could be turned from taking over the production instead... -->
+  <drugTrade_2-1.desc>当局が朗報を持って帰還しました！薬物の製造拠点を発見したのです。狡猾な連中はほぼ逃げおおせるところでしたが、あなたの帝国の力に敵うものはいません！しかし、製造を接収して利益を得る方法もあると指摘しています……</drugTrade_2-1.desc>
+
+  <!-- EN: Drug Trade -->
+  <drugTrade_2-2.label>麻薬取引</drugTrade_2-2.label>
+  <!-- EN: The authorities you directed to find the source of the drug production has turned up nothing. Locals are unhappy with the upheaval. The investigators are going to have to lay back for a short while. -->
+  <drugTrade_2-2.desc>薬物製造の出所を探るよう指示した当局は何も見つけられませんでした。住民は混乱に不満を抱いています。捜査員たちはしばらく活動を休止しなければならないでしょう。</drugTrade_2-2.desc>
+
+  <!-- EN: Drug Trade -->
+  <drugTrade_3-1.label>麻薬取引</drugTrade_3-1.label>
+  <!-- EN: The drug line has been incorporated into the settlement's official production. A random tithe of drugs will be delivered to you on a 5-day basis. -->
+  <drugTrade_3-1.desc>薬物の製造ラインが入植地の公式生産に組み込まれました。5日ごとにランダムな量の薬物がおさめられます。</drugTrade_3-1.desc>
+
+  <!-- EN: Drug Trade -->
+  <drugTrade_4-1.label>麻薬取引</drugTrade_4-1.label>
+  <!-- EN: You have received a new tithe of drugs. Continue production or shut down the facility? -->
+  <drugTrade_4-1.desc>新たな薬物の納入を受け取りました。生産を続けますか、それとも施設を閉鎖しますか？</drugTrade_4-1.desc>
+
+</LanguageData>

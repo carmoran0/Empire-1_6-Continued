@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: A Moonlit Ritual -->
+  <moonlitRitual_0.label>月明かりの儀式</moonlitRitual_0.label>
+  <!-- EN: One of your settlements reports seeing strange figures wander into the forest at night. They are described as wearing strange costumes. -->
+  <moonlitRitual_0.desc>あなたの入植地の一つから、夜に奇妙な人影が森へ入っていくのを目撃したという報告がありました。奇妙な衣装を着ていたとのことです。</moonlitRitual_0.desc>
+
+  <!-- EN: A Moonlit Ritual -->
+  <moonlitRitual_1-1.label>月明かりの儀式</moonlitRitual_1-1.label>
+  <!-- EN: Someone has been sent to investigate... -->
+  <moonlitRitual_1-1.desc>調査のために誰かが派遣されました……</moonlitRitual_1-1.desc>
+  <!-- EN: You receive news that an investigator followed an individual into the woods. They reported back seeing the group perform a series of almost ritualistic carnal acts. Not caring to stick around for it, he returned. -->
+  <moonlitRitual_1-1.optionDescription>調査員が一人の人物を追って森に入ったとの報告が届きました。集団がほぼ儀式的とも言える肉欲的な行為を行っているのを目撃したと報告しています。それ以上付き合う気にはなれず、彼は引き返しました。</moonlitRitual_1-1.optionDescription>
+
+  <!-- EN: A Moonlit Ritual -->
+  <moonlitRitual_2-1.label>月明かりの儀式</moonlitRitual_2-1.label>
+  <!-- EN: Investigating further... -->
+  <moonlitRitual_2-1.desc>さらに調査を続けています……</moonlitRitual_2-1.desc>
+  <!-- EN: The investigator reports back that the group returned again. They continued the same activities as the night prior- however, after not leaving, he observed that the group brought out an ornate chest with religious-looking symbols. He stepped closer for a better look, but after stepping on a dead leaf, the group heard him. He fled before they could find him. -->
+  <moonlitRitual_2-1.optionDescription>調査員から、集団が再び現れたとの報告がありました。前夜と同じ行為を続けていましたが、今度は立ち去らずに観察を続けたところ、集団が宗教的な紋様が刻まれた豪華な箱を取り出すのを目撃しました。もっとよく見ようと近づいたところ、枯れ葉を踏んでしまい気づかれてしまいました。見つかる前に何とか逃げ帰りました。</moonlitRitual_2-1.optionDescription>
+
+  <!-- EN: A Moonlit Ritual -->
+  <moonlitRitual_2-2.label>月明かりの儀式</moonlitRitual_2-2.label>
+  <!-- EN: You have decided to leave them be. -->
+  <moonlitRitual_2-2.desc>彼らをそのままにしておくことにしました。</moonlitRitual_2-2.desc>
+
+  <!-- EN: A Moonlit Ritual -->
+  <moonlitRitual_3-1.label>月明かりの儀式</moonlitRitual_3-1.label>
+  <!-- EN: You have ordered the investigation to continue... -->
+  <moonlitRitual_3-1.desc>調査を続けるよう命じました……</moonlitRitual_3-1.desc>
+
+  <!-- EN: A Moonlit Ritual -->
+  <moonlitRitual_3-2.label>月明かりの儀式</moonlitRitual_3-2.label>
+  <!-- EN: You have ordered the investigation to continue... -->
+  <moonlitRitual_3-2.desc>調査を続けるよう命じました……</moonlitRitual_3-2.desc>
+
+  <!-- EN: A Moonlit Ritual -->
+  <moonlitRitual_3-3.label>月明かりの儀式</moonlitRitual_3-3.label>
+  <!-- EN: This week's harvests seem to be unnaturally more plentiful than usual... -->
+  <moonlitRitual_3-3.desc>今週の収穫は不自然なほど例年より豊かなようです……</moonlitRitual_3-3.desc>
+
+  <!-- EN: A Moonlit Ritual -->
+  <moonlitRitual_3-4.label>月明かりの儀式</moonlitRitual_3-4.label>
+  <!-- EN: This week's harvests seem to be unnaturally less plentiful than usual... -->
+  <moonlitRitual_3-4.desc>今週の収穫は不自然なほど例年より乏しいようです……</moonlitRitual_3-4.desc>
+
+  <!-- EN: A Moonlit Ritual -->
+  <moonlitRitual_4-1.label>月明かりの儀式</moonlitRitual_4-1.label>
+  <!-- EN: After not reporting back, a search for the investigator was conducted. He was found dead. His body was stripped, his chest cavity split, and his skin carved with runic symbols. The group, whoever they were, were not seen again. Dread falls upon us all.\n\nCoincidentally, this week's harvests seem to have spoiled... -->
+  <moonlitRitual_4-1.desc>報告が途絶えたため、調査員の捜索が行われました。彼は死体で発見されました。衣服は剥がされ、胸部は裂かれ、肌にはルーン文字が刻まれていました。あの集団が何者であれ、二度と姿を見せることはありませんでした。恐怖が皆の心に影を落としています。\n\n偶然にも、今週の収穫は腐敗してしまったようです……</moonlitRitual_4-1.desc>
+
+  <!-- EN: A Moonlit Ritual -->
+  <moonlitRitual_4-2.label>月明かりの儀式</moonlitRitual_4-2.label>
+  <!-- EN: The investigator reported back early in the morning looking quite disheveled. However, his story says otherwise. They expected him this time and gave an invitation to join. As he explains it, they were performing a fertility ritual to their goddess for hopes of a good harvest. Regardless, he seems to have enjoyed himself! -->
+  <moonlitRitual_4-2.desc>調査員は早朝にかなり取り乱した様子で戻ってきました。しかし、彼の話は別の事情を物語っていました。今回は彼の来訪を予期していたらしく、参加への招待を受けたとのことです。彼の話によれば、彼らは豊作を願って女神への豊穣の儀式を行っていたとのこと。ともあれ、彼自身はかなり楽しんだようです！</moonlitRitual_4-2.desc>
+
+</LanguageData>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Let the fire burn itself out. -->
+  <forestFire_0_1.label>火が自然に消えるのを待つ。</forestFire_0_1.label>
+
+  <!-- EN: Organize firefighting crews to contain the blaze. -->
+  <forestFire_0_2.label>消火隊を編成して火を食い止める。</forestFire_0_2.label>
+
+  <!-- EN: Perform a controlled burn — cleared land can be farmed. -->
+  <forestFire_0_3.label>計画的な延焼を実施する――開墾した土地は農地にできる。</forestFire_0_3.label>
+
+</LanguageData>

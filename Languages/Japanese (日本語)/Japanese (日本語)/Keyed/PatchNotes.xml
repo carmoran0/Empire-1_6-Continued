@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+	<!-- EN: Patch Notes -->
+  <FCPatchNotesWindowTitle>パッチノート</FCPatchNotesWindowTitle>
+	<!-- EN: Auto-open patch notes:  -->
+  <FCPatchNoteAutoOpenThreshold>パッチノートを自動表示: </FCPatchNoteAutoOpenThreshold>
+</LanguageData>

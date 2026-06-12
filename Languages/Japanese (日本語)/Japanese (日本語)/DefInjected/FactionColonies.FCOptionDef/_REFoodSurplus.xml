@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Store the surplus for continued production. -->
+  <foodSurplus_0_1.label>余剰分を継続生産のために貯蔵する。</foodSurplus_0_1.label>
+
+  <!-- EN: Sell the excess harvest to traders. -->
+  <foodSurplus_0_2.label>余った収穫物を商人に売る。</foodSurplus_0_2.label>
+
+  <!-- EN: Host a grand feast to celebrate the bounty. -->
+  <foodSurplus_0_3.label>豊作を祝う盛大な宴を開く。</foodSurplus_0_3.label>
+
+</LanguageData>

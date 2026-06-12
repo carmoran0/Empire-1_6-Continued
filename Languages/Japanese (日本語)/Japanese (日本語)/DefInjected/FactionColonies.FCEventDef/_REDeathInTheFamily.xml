@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Death In The Family -->
+  <deathInTheFamily_0.label>一族の死</deathInTheFamily_0.label>
+  <!-- EN: A figure of high-importance and connection to your capital in a settlement has been assassinated. Some people on the streets are spreading that it was you who caused their death. How will you respond? -->
+  <deathInTheFamily_0.desc>入植地であなたの首都と深い繋がりを持つ重要人物が暗殺されました。街頭ではあなたが死の原因だという噂が広まっています。どう対応しますか？</deathInTheFamily_0.desc>
+
+  <!-- EN: Death In The Family -->
+  <deathInTheFamily_1-1.label>一族の死</deathInTheFamily_1-1.label>
+  <!-- EN: The settlements mourn in private. The grief weighs heavily on the people. -->
+  <deathInTheFamily_1-1.desc>入植地の人々は静かに哀悼しています。悲しみが民の心に重くのしかかっています。</deathInTheFamily_1-1.desc>
+
+  <!-- EN: Death In The Family (Memorial) -->
+  <deathInTheFamily_1-2.label>一族の死（追悼式）</deathInTheFamily_1-2.label>
+  <!-- EN: A public memorial is held, honoring the fallen figure's legacy. The gesture helps ease the grief and strengthens loyalty. -->
+  <deathInTheFamily_1-2.desc>公開の追悼式が行われ、亡くなった人物の遺産が称えられました。この行為は悲しみを和らげ、忠誠心を強化するのに役立ちます。</deathInTheFamily_1-2.desc>
+
+  <!-- EN: Death In The Family (Investigation Failed) -->
+  <deathInTheFamily_1-3f.label>一族の死（捜査失敗）</deathInTheFamily_1-3f.label>
+  <!-- EN: The investigation turns up nothing and only fuels the rumors that you were behind the assassination. The people grow restless. -->
+  <deathInTheFamily_1-3f.desc>捜査は何も明らかにできず、あなたが暗殺の黒幕だという噂をさらに煽る結果となりました。民の不満が高まっています。</deathInTheFamily_1-3f.desc>
+
+  <!-- EN: Death In The Family (Justice Found) -->
+  <deathInTheFamily_1-3s.label>一族の死（正義の裁き）</deathInTheFamily_1-3s.label>
+  <!-- EN: The investigation uncovers the assassin and brings them to justice. The people still grieve, but finding the killer eases the pain. -->
+  <deathInTheFamily_1-3s.desc>捜査によって暗殺者が特定され、裁きを受けさせることができました。民はまだ悲しんでいますが、真犯人の発見が痛みを和らげています。</deathInTheFamily_1-3s.desc>
+
+</LanguageData>

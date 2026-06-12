@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+	<!-- Xenotype/Race Selection -->
+	<!-- EN: Xenotype Selection -->
+  <FCXenotypeSelection>異種型の選択</FCXenotypeSelection>
+	<!-- EN: Race Selection -->
+  <FCRaceSelection>種族の選択</FCRaceSelection>
+	<!-- EN: Xenotype and Race Selection -->
+  <FCXenotypeRaceSelection>異種型と種族の選択</FCXenotypeRaceSelection>
+	<!-- EN: Allowed Races -->
+  <FCAllowedRaces>許可された種族</FCAllowedRaces>
+	<!-- EN: Cannot have less than one race in your faction -->
+  <FCCannotHaveLessThanOneRace>派閥には少なくとも1つの種族が必要です</FCCannotHaveLessThanOneRace>
+	<!-- EN: Allowed Xenotypes -->
+  <FCAllowedXenotypes>許可された異種型</FCAllowedXenotypes>
+	<!-- EN: Cannot have less than one xenotype in your faction -->
+  <FCCannotHaveLessThanOneXenotype>派閥には少なくとも1つの異種型が必要です</FCCannotHaveLessThanOneXenotype>
+	<!-- EN: Security guards will be provided for non-violent xenotypes -->
+  <FCSecurityGuardsIncluded>非戦闘系異種型には警備員が提供されます</FCSecurityGuardsIncluded>
+
+	<!-- Weight Errors -->
+	<!-- EN: All Xenotypes have 0 weight! -->
+  <FCXenotypeWeightError>すべての異種型の重みが0です！</FCXenotypeWeightError>
+	<!-- EN: If you close this window while all xenotypes have 0 weight, then they will all be reset to 1 weight. -->
+  <FCXenotypeWeightErrorDesc>すべての異種型の重みが0の状態でウィンドウを閉じると、すべての重みが1にリセットされます。</FCXenotypeWeightErrorDesc>
+	<!-- EN: All races have 0 weight! -->
+  <FCRaceWeightError>すべての種族の重みが0です！</FCRaceWeightError>
+	<!-- EN: If you close this window while all races have 0 weight, then they will all be reset to 1 weight. -->
+  <FCRaceWeightErrorDesc>すべての種族の重みが0の状態でウィンドウを閉じると、すべての重みが1にリセットされます。</FCRaceWeightErrorDesc>
+
+	<!-- Enable/Disable Options -->
+	<!-- EN: Enable All -->
+  <FCXenoRaceEnableAll>すべて有効化</FCXenoRaceEnableAll>
+	<!-- EN: Disable Non-Baseliner -->
+  <FCXenoDisableNonBaseliner>非ベースライナーを無効化</FCXenoDisableNonBaseliner>
+	<!-- EN: Disable Non-Human -->
+  <FCRaceDisableNonHuman>非人間を無効化</FCRaceDisableNonHuman>
+
+	<!-- Faction Tooltip -->
+	<!-- EN: Member Race Chances -->
+  <FCEmpireMemberRaceChances>メンバー種族の出現率</FCEmpireMemberRaceChances>
+
+	<!-- Warnings -->
+	<!-- EN: The Human race is disabled, but may still appear as a fallback if your selected races do not have valid pawn kind options. -->
+  <FCDisabledHumanWarning>人間種族は無効化されていますが、選択した種族に有効なポーン種別オプションがない場合、代替として出現することがあります。</FCDisabledHumanWarning>
+	<!-- EN: Xenotype is considered non-violent. -->
+  <FCXenoNonViolentIndicatorDesc>この異種型は非戦闘系とみなされます。</FCXenoNonViolentIndicatorDesc>
+	<!-- EN: Only non-violent xenotypes are selected. You will still see Baseliners if violence is required. -->
+  <FCOnlyNonViolentXenoWarning>非戦闘系の異種型のみが選択されています。戦闘が必要な場合はベースライナーが出現します。</FCOnlyNonViolentXenoWarning>
+
+	<!-- Animal Filter -->
+	<!-- EN: Allowed Animals -->
+  <FCAllowedAnimals>許可された動物</FCAllowedAnimals>
+	<!-- EN: Animal Selection -->
+  <FCAnimalSelection>動物の選択</FCAnimalSelection>
+	<!-- EN: Enable All -->
+  <FCAnimalEnableAll>すべて有効化</FCAnimalEnableAll>
+	<!-- EN: Disable All -->
+  <FCAnimalDisableAll>すべて無効化</FCAnimalDisableAll>
+	<!-- EN: Defaults -->
+  <FCAnimalDefaults>デフォルト</FCAnimalDefaults>
+	<!-- EN: No animals are allowed! Defaults will be restored on close. -->
+  <FCAnimalFilterNoneError>許可された動物がいません！閉じるとデフォルト設定が復元されます。</FCAnimalFilterNoneError>
+	<!-- EN: No combat-capable animals are allowed. Delivery caravans will have no guard animals. -->
+  <FCAnimalFilterNoCombatWarning>戦闘可能な動物が許可されていません。配送キャラバンには護衛動物がいません。</FCAnimalFilterNoCombatWarning>
+	<!-- EN: No pack animals are allowed! All pack animals will be re-enabled on close. -->
+  <FCAnimalFilterNoPackError>荷役動物が許可されていません！閉じるとすべての荷役動物が再度有効化されます。</FCAnimalFilterNoPackError>
+	<!-- EN: Combat -->
+  <FCAnimalTagCombat>戦闘</FCAnimalTagCombat>
+	<!-- EN: Pack -->
+  <FCAnimalTagPack>荷役</FCAnimalTagPack>
+	<!-- EN: Not a combat animal: -->
+  <FCAnimalNotCombatHeader>戦闘動物ではありません:</FCAnimalNotCombatHeader>
+	<!-- EN: Trainability too low (needs Intermediate or higher) -->
+  <FCAnimalNotCombatTrainability>訓練適性が低すぎます（中級以上が必要）</FCAnimalNotCombatTrainability>
+	<!-- EN: Combat power too low ({0}, needs 50 or more) -->
+  <FCAnimalNotCombatPowerLow>戦闘力が低すぎます（{0}、50以上が必要）</FCAnimalNotCombatPowerLow>
+	<!-- EN: All -->
+  <FCAnimalFilterShowAll>すべて</FCAnimalFilterShowAll>
+	<!-- EN: Combat -->
+  <FCAnimalFilterShowCombat>戦闘</FCAnimalFilterShowCombat>
+	<!-- EN: Pack -->
+  <FCAnimalFilterShowPack>荷役</FCAnimalFilterShowPack>
+
+</LanguageData>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Aggressive Counterattack -->
+  <aggressiveCounterattack.label>積極的反撃</aggressiveCounterattack.label>
+  <!-- EN: Settlements commit everything to repelling attackers. Higher chance of victory, but infrastructure suffers in the chaos. -->
+  <aggressiveCounterattack.desc>入植地は攻撃者の撃退に全力を注ぐ。勝率は上がるが、混乱の中でインフラが被害を受ける。</aggressiveCounterattack.desc>
+
+  <!-- EN: Bunker Down -->
+  <bunkerDown.label>籠城戦術</bunkerDown.label>
+  <!-- EN: Settlements prioritize fortifying infrastructure. Defenders fight cautiously to protect buildings. -->
+  <bunkerDown.desc>入植地はインフラの強化を優先する。守備兵は建物を守るために慎重に戦う。</bunkerDown.desc>
+
+  <!-- EN: Scorched Earth -->
+  <scorchedEarth.label>焦土作戦</scorchedEarth.label>
+  <!-- EN: Your forces fight with total disregard for collateral damage. Even victories leave the settlement scarred. -->
+  <scorchedEarth.desc>あなたの部隊は巻き添え被害を一切顧みずに戦う。勝利しても入植地に傷跡が残る。</scorchedEarth.desc>
+
+  <!-- EN: Total Mobilization -->
+  <totalMobilization.label>総動員</totalMobilization.label>
+  <!-- EN: Every able body is on the walls. Massive combat power, but morale suffers and defeat is catastrophic. -->
+  <totalMobilization.desc>動ける者は全員が防壁に立つ。莫大な戦闘力を発揮するが、士気が低下し敗北時の被害は壊滅的となる。</totalMobilization.desc>
+
+</LanguageData>

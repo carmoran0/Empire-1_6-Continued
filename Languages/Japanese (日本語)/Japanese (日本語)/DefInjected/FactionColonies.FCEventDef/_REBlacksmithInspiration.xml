@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Blacksmith Inspiration -->
+  <blacksmithInspiration_0.label>鍛冶職人の霊感</blacksmithInspiration_0.label>
+  <!-- EN: A blacksmith in a nearby settlement has received a great inspiration and is seeking patrons for what he claims will be a work of unparalleled quality! He plans to give it to his patron as a token of his loyalty. -->
+  <blacksmithInspiration_0.desc>近隣の入植地の鍛冶職人が大いなる霊感を受け、比類なき出来栄えになると豪語する作品のパトロンを探しています！忠誠の証として、作品をパトロンに贈る予定とのこと。</blacksmithInspiration_0.desc>
+
+  <!-- EN: Blacksmith Inspiration -->
+  <blacksmithInspiration_1-1.label>鍛冶職人の霊感</blacksmithInspiration_1-1.label>
+  <!-- EN: The blacksmith is working on your commission... -->
+  <blacksmithInspiration_1-1.desc>鍛冶職人があなたへの依頼品を製作中です……</blacksmithInspiration_1-1.desc>
+
+  <!-- EN: Blacksmith Inspiration (Disappointing) -->
+  <blacksmithInspiration_1-2f.label>鍛冶職人の霊感（期待外れ）</blacksmithInspiration_1-2f.label>
+  <!-- EN: The blacksmith's ambition outpaced his skill. The result is serviceable, but far from the masterwork promised. -->
+  <blacksmithInspiration_1-2f.desc>職人の野心は技術を上回っていました。仕上がりは実用に足るものの、約束されたマスターワークには程遠い出来です。</blacksmithInspiration_1-2f.desc>
+
+  <!-- EN: Blacksmith Inspiration (Masterwork) -->
+  <blacksmithInspiration_1-2s.label>鍛冶職人の霊感（傑作）</blacksmithInspiration_1-2s.label>
+  <!-- EN: The blacksmith's inspiration has produced a true masterwork! The result exceeds all expectations. -->
+  <blacksmithInspiration_1-2s.desc>職人の霊感が真の傑作を生み出しました！仕上がりはあらゆる期待を超えるものです。</blacksmithInspiration_1-2s.desc>
+
+  <!-- EN: Blacksmith Inspiration (Workshop Materials) -->
+  <blacksmithInspiration_1-3.label>鍛冶職人の霊感（作業場の素材）</blacksmithInspiration_1-3.label>
+  <!-- EN: The blacksmith works with materials diverted from your settlement's production lines. The diversion slows weapons output, but the blacksmith's work proceeds well. -->
+  <blacksmithInspiration_1-3.desc>職人はあなたの入植地の生産ラインから転用した素材を使って作業しています。転用により武器の生産は遅れますが、職人の仕事は順調に進んでいます。</blacksmithInspiration_1-3.desc>
+
+</LanguageData>

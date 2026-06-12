@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+	<!-- Event Window -->
+	<!-- EN: Current Ongoing Events -->
+  <FCCurrentOngoingEvents>現在進行中のイベント</FCCurrentOngoingEvents>
+	<!-- EN: Time Remaining -->
+  <FCTimeRemaining>残り時間</FCTimeRemaining>
+	<!-- EN: New Land -->
+  <FCNewLand>新しい土地</FCNewLand>
+	<!-- EN: This event is affecting the following settlements: -->
+  <FCEventAffectingSettlements>このイベントは以下の入植地に影響しています：</FCEventAffectingSettlements>
+	<!-- EN: Event -->
+  <FCEvent>イベント</FCEvent>
+	<!-- EN: No active events. -->
+  <FCNoActiveEvents>アクティブなイベントはありません。</FCNoActiveEvents>
+	<!-- EN: {0} active events -->
+  <FCActiveEventsCount>{0}件のアクティブなイベント</FCActiveEventsCount>
+	<!-- EN: {0} of {1} active events -->
+  <FCActiveEventsFiltered>{1}件中{0}件のアクティブなイベント</FCActiveEventsFiltered>
+	<!-- EN: All -->
+  <FCEventCatAll>すべて</FCEventCatAll>
+	<!-- EN: No events match the current filters. -->
+  <FCNoEventsMatchFilter>現在のフィルターに一致するイベントはありません。</FCNoEventsMatchFilter>
+	<!-- EN: Ends within {0} -->
+  <FCEndsWithin>{0}以内に終了</FCEndsWithin>
+	<!-- EN: {0} - {1} -->
+  <FCDurationRange>{0} - {1}</FCDurationRange>
+	<!-- EN: ({0}-{1} days) -->
+  <FCEffectPreviewDurationRange>({0}〜{1}日)</FCEffectPreviewDurationRange>
+	<!-- EN: Multiple ({0}) -->
+  <FCMultipleSettlements>複数 ({0})</FCMultipleSettlements>
+
+	<!-- Event Option Window -->
+	<!-- EN: Affecting: -->
+  <FCEventAffecting>影響対象：</FCEventAffecting>
+	<!-- EN: Free -->
+  <FCEventOptionFree>無料</FCEventOptionFree>
+	<!-- EN: Success: Guaranteed -->
+  <FCEventSuccessGuaranteed>成功：確実</FCEventSuccessGuaranteed>
+	<!-- EN: Success: Likely -->
+  <FCEventSuccessLikely>成功：高確率</FCEventSuccessLikely>
+	<!-- EN: Success: Uncertain -->
+  <FCEventSuccessUncertain>成功：不確実</FCEventSuccessUncertain>
+	<!-- EN: Success: Risky -->
+  <FCEventSuccessRisky>成功：リスクあり</FCEventSuccessRisky>
+	<!-- EN: reward worth ~{0} silver -->
+  <FCEffectPreviewReward>報酬：約{0}シルバー相当</FCEffectPreviewReward>
+	<!-- EN: ({0} days) -->
+  <FCEffectPreviewDuration>({0}日)</FCEffectPreviewDuration>
+
+	<!-- Building Events -->
+	<!-- EN: {0} is under construction at {1}. Estimated completion: {2}. -->
+  <FCBuildingEventDesc>{0}は{1}で建設中です。完成予定：{2}。</FCBuildingEventDesc>
+	<!-- EN: {0} has been constructed at {1}! -->
+  <FCBuildingEventCompletedMsg>{0}が{1}に建設されました！</FCBuildingEventCompletedMsg>
+
+	<!-- Pawn Events -->
+	<!-- EN: Your incompetence has led to the death of a pawn from your settlements! Unrest has grown in your subject settlements. -->
+  <FCDeathOfFactionPawn>あなたの失策により、入植地のポーンが死亡しました！配下の入植地で不満が高まっています。</FCDeathOfFactionPawn>
+	<!-- EN: Capturing one of your settlement's pawns has caused great unrest in your subject settlements! -->
+  <FCCaptureOfFactionPawn>入植地のポーンが捕虜になったことで、配下の入植地に大きな不満が生じました！</FCCaptureOfFactionPawn>
+	<!-- EN: Prisoner Has Died -->
+  <FCPrisonerHasDiedLetter>囚人が死亡しました</FCPrisonerHasDiedLetter>
+	<!-- EN: {0} at {1} has died from overworking -->
+  <FCPrisonerHasDied>{1}の{0}が過労で死亡しました</FCPrisonerHasDied>
+
+	<!-- Mercenary Events -->
+	<!-- EN: Mercenary Joined -->
+  <FCMercenaryJoined>傭兵が加入しました</FCMercenaryJoined>
+	<!-- EN: A mercenary, {0}, from your faction has joined your colony! -->
+  <FCMercenaryJoinedText>あなたの派閥の傭兵{0}がコロニーに加入しました！</FCMercenaryJoinedText>
+
+	<!-- Shuttle/Transport Events -->
+	<!-- EN: A shuttle is transporting injured colonists back to you after a successful settlement defence -->
+  <FCTransportingInjuredShuttle>入植地の防衛成功後、負傷した入植者をシャトルで輸送中です</FCTransportingInjuredShuttle>
+	<!-- EN: Drop pods are transporting injured colonists back to you after a successful settlement defence -->
+  <FCTransportingInjuredDropPod>入植地の防衛成功後、負傷した入植者をドロップポッドで輸送中です</FCTransportingInjuredDropPod>
+	<!-- EN: A caravan is transporting injured colonists back to you after a successful settlement defence -->
+  <FCTransportingInjuredCaravan>入植地の防衛成功後、負傷した入植者をキャラバンで輸送中です</FCTransportingInjuredCaravan>
+	<!-- EN: A shuttle is transporting injured colonists back to you after a failed settlement defence -->
+  <FCTransportingInjuredShuttleLost>入植地の防衛失敗後、負傷した入植者をシャトルで輸送中です</FCTransportingInjuredShuttleLost>
+	<!-- EN: Drop pods are transporting injured colonists back to you after a failed settlement defence -->
+  <FCTransportingInjuredDropPodLost>入植地の防衛失敗後、負傷した入植者をドロップポッドで輸送中です</FCTransportingInjuredDropPodLost>
+	<!-- EN: A caravan is transporting injured colonists back to you after a failed settlement defence -->
+  <FCTransportingInjuredCaravanLost>入植地の防衛失敗後、負傷した入植者をキャラバンで輸送中です</FCTransportingInjuredCaravanLost>
+	<!-- EN: A shuttle couldn't find a free landing spot and is waiting for one to be cleared. It contains: {0}. -->
+  <FCShuttleLandingBlockedWithItems>シャトルが着陸地点を確保できず、待機中です。積荷：{0}。</FCShuttleLandingBlockedWithItems>
+	<!-- EN: A shuttle couldn't find a free landing spot and is waiting for one to be cleared. -->
+  <FCShuttleLandingBlocked>シャトルが着陸地点を確保できず、待機中です。</FCShuttleLandingBlocked>
+	<!-- EN: A caravan is waiting with it's delivery until your map is clear of danger. -->
+  <FCCaravanDangerTooHigh>キャラバンが危険が去るまで配達を待機しています。</FCCaravanDangerTooHigh>
+	<!-- EN: A caravan is waiting with it's delivery until your map is clear of danger. They carry: {0}. -->
+  <FCCaravanDangerTooHighWithItems>キャラバンが危険が去るまで配達を待機しています。積荷：{0}。</FCCaravanDangerTooHighWithItems>
+
+	<!-- Shuttle Port -->
+	<!-- EN: Request a shuttle -->
+  <FCShuttlePortCallShuttleLabel>シャトルを要請する</FCShuttlePortCallShuttleLabel>
+	<!-- EN: Ask your settlement to send you a shuttle that can transport a caravan:\n {0} uses remaining (Costs {1}) -->
+  <FCShuttlePortCallShuttleDesc>入植地にキャラバンを輸送できるシャトルの派遣を要請します：\n 残り{0}回使用可能（コスト：{1}）</FCShuttlePortCallShuttleDesc>
+	<!-- EN: Target anything with free colonists to send the shuttle -->
+  <FCTargetAnythingWithColonists>シャトルを送る先として、空き入植者がいる対象を選択してください</FCTargetAnythingWithColonists>
+	<!-- EN: Request a shuttle for this caravan -->
+  <FCRequestShuttleToCaravan>このキャラバンにシャトルを要請する</FCRequestShuttleToCaravan>
+	<!-- EN: Request a shuttle for this settlement -->
+  <FCRequestShuttleToColony>この入植地にシャトルを要請する</FCRequestShuttleToColony>
+	<!-- EN: Request a shuttle for this map -->
+  <FCRequestShuttleToMap>このマップにシャトルを要請する</FCRequestShuttleToMap>
+	<!-- EN: Request a shuttle for a caravan -->
+  <FCShuttlePortCallShuttleForCaravanLabel>キャラバン用のシャトルを要請する</FCShuttlePortCallShuttleForCaravanLabel>
+	<!-- EN: Target any world object you want to send the shuttle to:\n {0} uses remaining (Costs: {1}) -->
+  <FCTargetAnyWorldObject>シャトルを送りたいワールドオブジェクトを選択してください：\n 残り{0}回使用可能（コスト：{1}）</FCTargetAnyWorldObject>
+	<!-- EN: Send the caravan here -->
+  <FCSendCaravanHere>ここにキャラバンを送る</FCSendCaravanHere>
+	<!-- EN: There are no caravans to send a shuttle to! -->
+  <FCNoCaravansToSendShuttleTo>シャトルを送るキャラバンがありません！</FCNoCaravansToSendShuttleTo>
+	<!-- EN: No shuttle uses remaining in this tax period! -->
+  <FCNoShuttleUsesRemaining>この課税期間のシャトル使用回数が残っていません！</FCNoShuttleUsesRemaining>
+	<!-- EN: Not enough shuttle uses remaining in this tax period! -->
+  <FCNotEnoughShuttleUsesRemaining>この課税期間のシャトル使用回数が不足しています！</FCNotEnoughShuttleUsesRemaining>
+
+	<!-- EN: Random Event -->
+  <FCRandomEventLetterLabel>ランダムイベント</FCRandomEventLetterLabel>
+
+</LanguageData>

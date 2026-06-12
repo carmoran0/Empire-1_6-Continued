@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+	<!-- Faction Customization -->
+	<!-- EN: Primary -->
+  <fcPrimaryColor>メイン</fcPrimaryColor>
+	<!-- EN: Secondary -->
+  <fcSecondaryColor>サブ</fcSecondaryColor>
+	<!-- EN: Choose Primary Color -->
+  <fcChoosePrimaryColor>メインカラーを選択</fcChoosePrimaryColor>
+	<!-- EN: Choose Secondary Color -->
+  <fcChooseSecondaryColor>サブカラーを選択</fcChooseSecondaryColor>
+	<!-- EN: Applied to armor and outer layers (e.g. flak vests, plate armor, dusters). When no secondary is set, applies to all apparel. -->
+  <fcPrimaryColorDesc>鎧や外装（フラックベスト、プレートアーマー、ダスターなど）に適用されます。サブカラーが未設定の場合は全ての衣服に適用されます。</fcPrimaryColorDesc>
+	<!-- EN: Applied to base clothing (e.g. shirts, pants), headgear, belts, and accessories. -->
+  <fcSecondaryColorDesc>下着類（シャツ、パンツなど）、頭部装備、ベルト、アクセサリーに適用されます。</fcSecondaryColorDesc>
+	<!-- EN: Set primary color first -->
+  <fcSetPrimaryFirst>先にメインカラーを設定してください</fcSetPrimaryFirst>
+	<!-- EN: Pawns will generate with random colors when no faction colors are set. -->
+  <fcColorsRandomInfo>派閥カラーが設定されていない場合、ポーンはランダムな色で生成されます。</fcColorsRandomInfo>
+	<!-- EN: Not set -->
+  <fcColorNotSet>未設定</fcColorNotSet>
+	<!-- EN: Colors -->
+  <fcColors>カラー</fcColors>
+	<!-- EN: Configure -->
+  <fcConfigure>設定</fcConfigure>
+	<!-- EN: Click to select -->
+  <fcClickToSelect>クリックして選択</fcClickToSelect>
+	<!-- EN: Insignia -->
+  <fcInsignia>紋章</fcInsignia>
+	<!-- EN: Active Ideologies -->
+  <fcColorPickerActiveIdeos>アクティブなイデオロギー</fcColorPickerActiveIdeos>
+	<!-- EN: Preset Colors -->
+  <fcColorPickerPresets>プリセットカラー</fcColorPickerPresets>
+	<!-- EN: Saved Colors -->
+  <fcColorPickerSaved>保存済みカラー</fcColorPickerSaved>
+	<!-- EN: Save Current -->
+  <fcColorPickerSaveCurrent>現在の色を保存</fcColorPickerSaveCurrent>
+	<!-- EN: Right-click to remove -->
+  <fcColorPickerRightClickRemove>右クリックで削除</fcColorPickerRightClickRemove>
+	<!-- EN: Customize Faction -->
+  <FCCustomizeFaction>派閥をカスタマイズ</FCCustomizeFaction>
+	<!-- EN: Faction Name -->
+  <FCFactionName>派閥名</FCFactionName>
+	<!-- EN: Faction Title -->
+  <FCFactionTitle>派閥の称号</FCFactionTitle>
+	<!-- EN: Faction Icon -->
+  <FCFactionIcon>派閥アイコン</FCFactionIcon>
+	<!-- EN: That faction can't run an empire on its own! -->
+  <FCInvalidFaction>その派閥は単独で帝国を運営できません！</FCInvalidFaction>
+	<!-- EN: Player Faction -->
+  <FCPlayerFaction>プレイヤー派閥</FCPlayerFaction>
+	<!-- EN: Bastion -->
+  <FCBastion>要塞</FCBastion>
+	<!-- EN: Founded on {0} -->
+  <FCFoundedOn>{0}に創設</FCFoundedOn>
+
+	<!-- Faction Stats -->
+	<!-- EN: Faction Happiness -->
+  <FCFactionHappiness>派閥の幸福度</FCFactionHappiness>
+	<!-- EN: Faction Loyalty -->
+  <FCFactionLoyalty>派閥の忠誠心</FCFactionLoyalty>
+	<!-- EN: Faction Unrest -->
+  <FCFactionUnrest>派閥の不満</FCFactionUnrest>
+	<!-- EN: Faction Prosperity -->
+  <FCFactionProsperity>派閥の繁栄度</FCFactionProsperity>
+	<!-- EN: The measure of the faction's overall happiness. A high happiness means that any internal conflict within the settlement will lean heavily to your favor. -->
+  <FCFactionHappinessDesc>派閥全体の幸福度を示します。幸福度が高いほど、入植地内の内部紛争があなたに有利に傾きます。</FCFactionHappinessDesc>
+	<!-- EN: The measure of the faction's overall loyalty. The loyalty of a settlement determines how willing the settlement is to listen to you. A high loyalty will reduce the chance of defection. -->
+  <FCFactionLoyaltyDesc>派閥全体の忠誠心を示します。入植地の忠誠心は、その入植地があなたの言葉にどれだけ従うかを決定します。忠誠心が高いほど離反の確率が下がります。</FCFactionLoyaltyDesc>
+	<!-- EN: The measure of the faction's overall unrest. The higher unrest grows, the more likely dangerous events internal in your faction will spark. Let it grow too high, and a faction-wide revolt may grow. -->
+  <FCFactionUnrestDesc>派閥全体の不満度を示します。不満が高まるほど、派閥内部で危険なイベントが発生しやすくなります。あまりにも高くなると、派閥全体の反乱に発展する恐れがあります。</FCFactionUnrestDesc>
+	<!-- EN: The measure of the faction's overall prosperity. The prosperity of a town directly correlates with the production of resources. 50% prosperity = 50% production. If prosperity is damaged, it will slowly accumulate over time. -->
+  <FCFactionProsperityDesc>派閥全体の繁栄度を示します。町の繁栄度は資源の生産量と直接連動しています。繁栄度50%＝生産量50%。繁栄度が低下した場合、時間とともに徐々に回復します。</FCFactionProsperityDesc>
+
+	<!-- Faction Levels -->
+	<!-- EN: Faction Level: {0} -->
+  <FCLevel>派閥レベル：{0}</FCLevel>
+	<!-- EN: Faction Level Up -->
+  <FCFactionLevelUp>派閥レベルアップ</FCFactionLevelUp>
+	<!-- EN: Your faction {0} has leveled up to {1}! -->
+  <FCFactionLevelUpDesc>あなたの派閥{0}がレベル{1}にアップしました！</FCFactionLevelUpDesc>
+	<!-- EN: reached max level -->
+  <FCReachedMaxLevel>最大レベルに達しました</FCReachedMaxLevel>
+
+	<!-- Policies -->
+	<!-- EN: Policies/Traits -->
+  <FCPolicies-Traits>政策／特性</FCPolicies-Traits>
+	<!-- EN: Faction Policies and Traits -->
+  <FCFactionPoliciesAndTraits>派閥の政策と特性</FCFactionPoliciesAndTraits>
+	<!-- EN: Tax Law -->
+  <FCTaxLaw>税法</FCTaxLaw>
+	<!-- EN: Social Policy -->
+  <FCSocialPolicy>社会政策</FCSocialPolicy>
+	<!-- EN: Military Policy -->
+  <FCMilitaryPolicy>軍事政策</FCMilitaryPolicy>
+	<!-- EN: Policy Selection -->
+  <FCPolicySelection>政策選択</FCPolicySelection>
+	<!-- EN: Select Policies -->
+  <FCSelectPolicies>政策を選択</FCSelectPolicies>
+	<!-- EN: That policy has already been enacted -->
+  <FCPolicyAlreadyEnacted>その政策はすでに制定されています</FCPolicyAlreadyEnacted>
+	<!-- EN: There is already a policy of that type being enacted -->
+  <FCAlreadyPolicyTypeBeingEnacted>同種の政策がすでに制定中です</FCAlreadyPolicyTypeBeingEnacted>
+	<!-- EN: There is already a policy being enacted in that slot -->
+  <FCAlreadyPolicyInSlot>そのスロットにはすでに政策が制定中です</FCAlreadyPolicyInSlot>
+	<!-- EN: Enact -->
+  <FCEnact>制定</FCEnact>
+	<!-- EN: Enacted -->
+  <FCEnacted>制定済み</FCEnacted>
+	<!-- EN: Repeal -->
+  <FCRepeal>廃止</FCRepeal>
+	<!-- EN: will be enacted in -->
+  <FCWillBeEnactedIn>制定まで</FCWillBeEnactedIn>
+	<!-- EN: Enact Policy -->
+  <FCEnactPolicy>政策を制定する</FCEnactPolicy>
+	<!-- EN: has been enacted at -->
+  <FCHasBeenEnactedAt>で制定されました</FCHasBeenEnactedAt>
+	<!-- EN: has been enacted in your faction -->
+  <FCEnactedInYourFaction>あなたの派閥で制定されました</FCEnactedInYourFaction>
+
+	<!-- Traits -->
+	<!-- EN: Faction Traits -->
+  <FCFactionTraits>派閥の特性</FCFactionTraits>
+	<!-- EN: Add Trait -->
+  <FCAddTrait>特性を追加</FCAddTrait>
+	<!-- EN: Trait Selection -->
+  <FCTraitSelection>特性選択</FCTraitSelection>
+	<!-- EN: Select Traits -->
+  <FCSelectTraits>特性を選択</FCSelectTraits>
+	<!-- EN: Trait Slots -->
+  <FCTraitSlots>特性スロット</FCTraitSlots>
+	<!-- EN: Available Traits -->
+  <FCAvailableTraits>利用可能な特性</FCAvailableTraits>
+	<!-- EN: {0} -->
+  <FCTraitSelectedPreview>{0}</FCTraitSelectedPreview>
+	<!-- EN: All available trait slots are filled! -->
+  <FCNoOpenTraitSlots>利用可能な特性スロットはすべて埋まっています！</FCNoOpenTraitSlots>
+	<!-- EN: All trait slots have been assigned. -->
+  <FCAllTraitSlotsFilled>すべての特性スロットが割り当てられました。</FCAllTraitSlotsFilled>
+	<!-- EN: Select {0} more trait(s) from the list above. -->
+  <FCSelectTraitsPrompt>上のリストからさらに{0}つの特性を選択してください。</FCSelectTraitsPrompt>
+	<!-- EN: Press Confirm to assign the selected traits. This cannot be undone! -->
+  <FCTraitSelectionReady>確認を押して選択した特性を割り当ててください。この操作は元に戻せません！</FCTraitSelectionReady>
+	<!-- EN: Hover over a trait to see its details. -->
+  <FCHoverTraitForDetails>特性にカーソルを合わせると詳細が表示されます。</FCHoverTraitForDetails>
+	<!-- EN: Selected ({0}/{1}) -->
+  <FCSelectedPolicies>選択済み ({0}/{1})</FCSelectedPolicies>
+	<!-- EN: Available Policies -->
+  <FCAvailablePolicies>利用可能な政策</FCAvailablePolicies>
+	<!-- EN: Conflicts with: {0} -->
+  <FCConflictsWith>競合：{0}</FCConflictsWith>
+	<!-- EN: Traits -->
+  <FCTraits>特性</FCTraits>
+	<!-- EN: Select {0} policies to be added! But be warned, your choice is irreversible! -->
+  <FCSelectTraits0>{0}つの政策を選択してください！ただし、選択は取り消せません！</FCSelectTraits0>
+	<!-- EN: Remember, your choice is irreversible after you exit this window! -->
+  <FCSelectTraits2>このウィンドウを閉じると選択を変更できないことを忘れないでください！</FCSelectTraits2>
+	<!-- EN: You cannot have conflicting faction traits! -->
+  <FCConflictingTraits>競合する派閥特性は選択できません！</FCConflictingTraits>
+	<!-- EN: You have to unselect one of your current traits to select another! -->
+  <FCUnselectTrait>別の特性を選択するには、現在の特性を1つ解除する必要があります！</FCUnselectTrait>
+	<!-- EN: You have already chosen your traits. You cannot edit them any longer! -->
+  <FCTraitsChosen>すでに特性を選択済みです。これ以上編集することはできません！</FCTraitsChosen>
+	<!-- EN: Select a new trait -->
+  <FCSelectANewTrait>新しい特性を選択</FCSelectANewTrait>
+	<!-- EN: Locked until level {0} -->
+  <FCTraitLockedUntilLevel>レベル{0}まで解除不可</FCTraitLockedUntilLevel>
+	<!-- EN: Are you sure you wish to select {0}? You will not be able to reverse this decision -->
+  <FCConfirmTrait>{0}を選択してよろしいですか？この決定は取り消せません</FCConfirmTrait>
+	<!-- EN: Your faction's starting traits are not selected. Go to the faction customization tab to select them! -->
+  <FCSelectYourTraits>派閥の初期特性が選択されていません。派閥カスタマイズタブで選択してください！</FCSelectYourTraits>
+
+	<!-- Edicts -->
+	<!-- EN: Edicts -->
+  <FCEdicts>勅令</FCEdicts>
+	<!-- EN: Edict -->
+  <FCEdict>勅令</FCEdict>
+	<!-- EN: Toggle faction-wide edicts. One edict per category may be active at a time. Active edicts have an ongoing silver cost. -->
+  <FCEdictsDesc>派閥全体の勅令を切り替えます。各カテゴリにつき同時に1つの勅令のみ有効にできます。有効な勅令にはシルバーの維持費がかかります。</FCEdictsDesc>
+	<!-- EN: Upkeep: {0} silver/cycle -->
+  <FCEdictUpkeep>維持費：{0}シルバー/サイクル</FCEdictUpkeep>
+	<!-- EN: Cannot afford edict upkeep. All edicts have been revoked. -->
+  <FCEdictUpkeepUnpaid>勅令の維持費を支払えません。すべての勅令が廃止されました。</FCEdictUpkeepUnpaid>
+	<!-- EN: Edict enacted: {0} -->
+  <FCEdictEnacted>勅令発布：{0}</FCEdictEnacted>
+	<!-- EN: Edict revoked: {0} -->
+  <FCEdictRevoked>勅令廃止：{0}</FCEdictRevoked>
+	<!-- EN: None -->
+  <FCEdictNone>なし</FCEdictNone>
+	<!-- EN: Enacting... ({0} days remaining) -->
+  <FCEdictActivating>発布中…（残り{0}日）</FCEdictActivating>
+	<!-- EN: Total Edict Upkeep: {0} silver/cycle -->
+  <FCEdictTotalUpkeep>勅令維持費合計：{0}シルバー/サイクル</FCEdictTotalUpkeep>
+	<!-- EN: This edict category is not yet unlocked. -->
+  <FCEdictCategoryLocked>この勅令カテゴリはまだ解除されていません。</FCEdictCategoryLocked>
+	<!-- EN: Requires faction level {0}. -->
+  <FCEdictLevelRequired>派閥レベル{0}が必要です。</FCEdictLevelRequired>
+	<!-- EN: Social -->
+  <FCEdictCategorySocial>社会</FCEdictCategorySocial>
+	<!-- EN: Tax -->
+  <FCEdictCategoryTax>税</FCEdictCategoryTax>
+	<!-- EN: Military -->
+  <FCEdictCategoryMilitary>軍事</FCEdictCategoryMilitary>
+	<!-- EN: Doctrine -->
+  <FCEdictCategoryDoctrine>教義</FCEdictCategoryDoctrine>
+	<!-- EN: Active -->
+  <FCEdictActive>有効</FCEdictActive>
+	<!-- EN: Revoke -->
+  <FCEdictRevoke>廃止</FCEdictRevoke>
+	<!-- EN: Locked until faction level {0} -->
+  <FCEdictLockedUntilLevel>派閥レベル{0}まで解除不可</FCEdictLockedUntilLevel>
+	<!-- EN: Replace {0} with {1}? The new edict will take {2} days to fully activate. -->
+  <FCEdictSwapConfirmation>{0}を{1}に差し替えますか？新しい勅令が完全に有効になるまで{2}日かかります。</FCEdictSwapConfirmation>
+	<!-- EN: Revoke the {0} edict? -->
+  <FCEdictRevokeConfirmation>{0}の勅令を廃止しますか？</FCEdictRevokeConfirmation>
+	<!-- EN: {0} is incompatible with your active policy: {1} -->
+  <FCEdictIncompatible>{0}は有効な政策{1}と互換性がありません</FCEdictIncompatible>
+	<!-- EN: {0} requires: {1} -->
+  <FCEdictRequiresPolicy>{0}には{1}が必要です</FCEdictRequiresPolicy>
+	<!-- EN: {0} requires one of: {1} -->
+  <FCEdictRequiresPolicyAny>{0}には次のいずれかが必要です：{1}</FCEdictRequiresPolicyAny>
+	<!-- EN: {0} was automatically revoked because its prerequisite {1} was removed. -->
+  <FCEdictRevokedDependency>{0}は前提条件{1}が削除されたため自動的に廃止されました。</FCEdictRevokedDependency>
+	<!-- EN: Requires: {0} -->
+  <FCPolicyRequires>必要条件：{0}</FCPolicyRequires>
+
+	<!-- Research -->
+	<!-- EN: Researching -->
+  <FCResearching>研究中</FCResearching>
+	<!-- EN: {0} points of research have been used to research {1}. You have {2} points remaining. -->
+  <FCResearchExpended>{1}の研究に{0}ポイントが使用されました。残り{2}ポイントです。</FCResearchExpended>
+	<!-- EN: Research Expended -->
+  <FCResearchPointsExpended>研究ポイントを消費しました</FCResearchPointsExpended>
+	<!-- EN: No research has been used today. You have {0} points remaining. -->
+  <FCNoResearchExpended>本日は研究ポイントを使用していません。残り{0}ポイントです。</FCNoResearchExpended>
+	<!-- EN: {0} points have been added to the research pool! -->
+  <FCPointsAddedToResearchPool>{0}ポイントが研究プールに追加されました！</FCPointsAddedToResearchPool>
+	<!-- EN: Research points generated by your faction has been wasted as you have no research selected
+	 -->
+  <FCResearchGeneratedWaste>研究が選択されていないため、派閥が生成した研究ポイントが無駄になっています
+	</FCResearchGeneratedWaste>
+	<!-- EN: Activate Research -->
+  <FCActivateResearch>研究を有効化</FCActivateResearch>
+	<!-- EN: Send Research Items -->
+  <FCSendResearchItems>研究アイテムを送る</FCSendResearchItems>
+	<!-- EN: Faction Research -->
+  <FCFactionResearch>派閥研究</FCFactionResearch>
+	<!-- EN: Check Tech Level -->
+  <FCResearchLevel>技術レベルを確認</FCResearchLevel>
+	<!-- EN: Your current tech level is {0}. To reach the next tech level you must research {1} -->
+  <FCCurrentResearchLevel>現在の技術レベルは{0}です。次の技術レベルに到達するには{1}を研究する必要があります</FCCurrentResearchLevel>
+	<!-- EN: Ship Basics -->
+  <FCShipBasics>宇宙船の基礎</FCShipBasics>
+	<!-- EN: Fabrication -->
+  <FCFabrication>製造</FCFabrication>
+	<!-- EN: Electricity -->
+  <FCElectricity>電力</FCElectricity>
+	<!-- EN: Smithing -->
+  <FCSmithing>鍛冶</FCSmithing>
+
+	<!-- Relations -->
+	<!-- EN: Relation Improved! -->
+  <FCRelationImproved>関係が改善しました！</FCRelationImproved>
+	<!-- EN: Your communications with {0} has led to an improvement in relations of {1}! -->
+  <FCRelationImprovedText>{0}との交渉により、関係が{1}改善しました！</FCRelationImprovedText>
+	<!-- EN: Failed Relations -->
+  <FCRelationNotImproved>関係改善に失敗しました</FCRelationNotImproved>
+	<!-- EN: Your communications with {0} have failed to improve relations. -->
+  <FCFailedToImproveRelationship>{0}との交渉は関係改善に至りませんでした。</FCFailedToImproveRelationship>
+	<!-- EN: {0} days are left until the ability to improve relations is refreshed -->
+  <FCXDaysToSendDiplomat>関係改善の再試行まで残り{0}日です</FCXDaysToSendDiplomat>
+	<!-- EN: Attempt to Increase Relations -->
+  <FCIncreaseRelations>関係を強化する</FCIncreaseRelations>
+	<!-- EN: You cannot improve relations with factions of that type -->
+  <FCCannotImproveRelationsWithType>そのタイプの派閥とは関係を改善できません</FCCannotImproveRelationsWithType>
+
+	<!-- Capital -->
+	<!-- EN: Could not find map of capital -->
+  <FCCouldNotFindMapOfCapital>首都のマップが見つかりませんでした</FCCouldNotFindMapOfCapital>
+	<!-- EN: Empire capital is already established at {0}. Disable the capital seat there first if you want to move it. -->
+  <FCCapitalAlreadyEstablished>帝国の首都はすでに{0}に設置されています。移動する場合は先にそちらの首都施設を無効にしてください。</FCCapitalAlreadyEstablished>
+	<!-- EN: Unable to set faction capital on this map. Please go to your capital map and use the Set Capital button or build a Capital Seat. -->
+  <FCUnableToSetCapitalHere>このマップに派閥の首都を設定できません。首都マップに移動して「首都を設定」ボタンを使用するか、首都施設を建設してください。</FCUnableToSetCapitalHere>
+	<!-- EN: Empire Capital Relocated -->
+  <FCCapitalRelocatedLabel>帝国首都が移転しました</FCCapitalRelocatedLabel>
+	<!-- EN: The seat of your Empire's capital has updated to your new location. -->
+  <FCCapitalRelocatedDesc>帝国の首都が新しい場所に更新されました。</FCCapitalRelocatedDesc>
+
+	<!-- EN: Caravan Types -->
+  <FCCaravanTypes>キャラバンの種類</FCCaravanTypes>
+	<!-- EN: Select which types of trade caravans your empire will send. -->
+  <FCCaravanTypesDesc>帝国が派遣する交易キャラバンの種類を選択してください。</FCCaravanTypesDesc>
+	<!-- EN: At least one caravan type must be enabled. -->
+  <FCCaravanNoneError>少なくとも1種類のキャラバンを有効にする必要があります。</FCCaravanNoneError>
+	<!-- EN: Caravan specializing in {0} goods, drawn from empire-wide production. -->
+  <FCCaravanResourceTooltip>{0}の物資を専門とするキャラバン。帝国全体の生産から供給されます。</FCCaravanResourceTooltip>
+	<!-- EN: {0} caravans are not available at your current tech level. -->
+  <FCCaravanResourceTechLocked>{0}キャラバンは現在の技術レベルでは利用できません。</FCCaravanResourceTechLocked>
+	<!-- EN: Exotic Goods -->
+  <FCCaravanExotic>珍品</FCCaravanExotic>
+	<!-- EN: Rare and high-value trade goods: artifacts, implants, and exotic materials. -->
+  <FCCaravanExoticTooltip>希少かつ高価な交易品：アーティファクト、インプラント、珍しい素材など。</FCCaravanExoticTooltip>
+	<!-- EN: Requires faction level 4 or the Mercantile policy. -->
+  <FCCaravanExoticLocked>派閥レベル4または商業政策が必要です。</FCCaravanExoticLocked>
+	<!-- EN: Slave Trader -->
+  <FCCaravanSlaver>奴隷商人</FCCaravanSlaver>
+	<!-- EN: Deals in slaves and illicit goods. -->
+  <FCCaravanSlaverTooltip>奴隷と違法品を取り扱います。</FCCaravanSlaverTooltip>
+	<!-- EN: Blocked by Pacifist or Egalitarian policy. -->
+  <FCCaravanSlaverBlocked>平和主義または平等主義政策によって制限されています。</FCCaravanSlaverBlocked>
+
+</LanguageData>

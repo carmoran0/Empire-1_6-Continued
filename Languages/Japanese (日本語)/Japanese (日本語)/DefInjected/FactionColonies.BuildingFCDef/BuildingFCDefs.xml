@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Under Construction -->
+  <Construction.label>建設中</Construction.label>
+  <!-- EN: A building is being constructed here... -->
+  <Construction.desc>ここで建物が建設されています...</Construction.desc>
+
+  <!-- EN: Empty Building Slot -->
+  <Empty.label>空き建物スロット</Empty.label>
+  <!-- EN: Click here to construct a building -->
+  <Empty.desc>クリックして建物を建設する</Empty.desc>
+
+</LanguageData>

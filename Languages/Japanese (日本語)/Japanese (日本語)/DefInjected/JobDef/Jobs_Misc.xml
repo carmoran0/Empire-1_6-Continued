@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  
+  <!-- EN: following TargetA. -->
+  <FCFollowCloseAndCarry.reportString>TargetAを追跡中。</FCFollowCloseAndCarry.reportString>
+
+  <!-- EN: dropping off something. -->
+  <FCGotoAndDrop.reportString>荷物を置いている。</FCGotoAndDrop.reportString>
+  
+</LanguageData>

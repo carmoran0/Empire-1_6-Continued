@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Struck Rich Ore Vein -->
+  <struckRichOreVein_0.label>豊かな鉱脈の発見</struckRichOreVein_0.label>
+  <!-- EN: Some of your settlements have managed to strike veins of rich ore in their mines! How should they proceed? -->
+  <struckRichOreVein_0.desc>いくつかの入植地が鉱山で豊かな鉱脈を掘り当てた！どのように進めるべきか？</struckRichOreVein_0.desc>
+
+  <!-- EN: Rich Ore Vein -->
+  <struckRichOreVein_1-1.label>豊かな鉱脈</struckRichOreVein_1-1.label>
+  <!-- EN: The miners extract ore at a steady pace. -->
+  <struckRichOreVein_1-1.desc>採掘者たちは着実なペースで鉱石を採掘する。</struckRichOreVein_1-1.desc>
+
+  <!-- EN: Rich Ore Vein (Rush Extraction) -->
+  <struckRichOreVein_1-2.label>豊かな鉱脈（急速採掘）</struckRichOreVein_1-2.label>
+  <!-- EN: The miners are pushed hard to extract as much ore as possible, but the overwork takes its toll. -->
+  <struckRichOreVein_1-2.desc>採掘者たちはできる限り多くの鉱石を採掘するよう駆り立てられるが、過労の代償は免れない。</struckRichOreVein_1-2.desc>
+
+  <!-- EN: Rich Ore Vein (Rights Sold) -->
+  <struckRichOreVein_1-3.label>豊かな鉱脈（採掘権売却）</struckRichOreVein_1-3.label>
+  <!-- EN: The mining rights are sold to outside interests for immediate profit. -->
+  <struckRichOreVein_1-3.desc>即時の利益のために採掘権が外部に売却される。</struckRichOreVein_1-3.desc>
+
+</LanguageData>

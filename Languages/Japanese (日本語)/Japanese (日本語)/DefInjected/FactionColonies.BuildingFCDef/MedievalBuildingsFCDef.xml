@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Adventurer's Guild -->
+  <adventurersGuild.label>冒険者ギルド</adventurersGuild.label>
+  <!-- EN: A place for traveling adventurers to meet up and spend a night. -->
+  <adventurersGuild.desc>旅の冒険者たちが集まり、一夜を過ごすための場所。</adventurersGuild.desc>
+
+  <!-- EN: Apparel Sweatshop -->
+  <apparelSweatshop.label>衣料品搾取工場</apparelSweatshop.label>
+  <!-- EN: A place to work slaves and colonists alike! -->
+  <apparelSweatshop.desc>奴隷も入植者も等しく働かせる場所！</apparelSweatshop.desc>
+
+  <!-- EN: Jailhouse -->
+  <jailhouse.label>牢屋</jailhouse.label>
+  <!-- EN: A place to store criminal scum. -->
+  <jailhouse.desc>犯罪者どもを閉じ込めておく場所。</jailhouse.desc>
+
+  <!-- EN: Logging Camp -->
+  <loggingCamp.label>伐採キャンプ</loggingCamp.label>
+  <!-- EN: A camp dedicated to the logging industry. Includes a lumber mill and everything! -->
+  <loggingCamp.desc>伐採業に特化したキャンプ。製材所など必要な設備を完備！</loggingCamp.desc>
+
+  <!-- EN: Mills -->
+  <Mills.label>製粉所</Mills.label>
+  <!-- EN: Mills! Wind or water, these are useful for a number of things! -->
+  <Mills.desc>製粉所！風力でも水力でも、様々な用途に役立つ！</Mills.desc>
+
+  <!-- EN: Plague Camp -->
+  <plagueCamp.label>疫病収容所</plagueCamp.label>
+  <!-- EN: A containment camp to keep the sick and the dying. -->
+  <plagueCamp.desc>病人や瀕死の者を隔離しておくための収容施設。</plagueCamp.desc>
+
+  <!-- EN: Public Market -->
+  <publicMarket.label>公開市場</publicMarket.label>
+  <!-- EN: A public market to exchange goods. -->
+  <publicMarket.desc>物品を交換するための公開市場。</publicMarket.desc>
+
+  <!-- EN: Redlight District -->
+  <RedlightDistrict.label>歓楽街</RedlightDistrict.label>
+  <!-- EN: A place for Merchant and common people to spend a night with questionable people. -->
+  <RedlightDistrict.desc>商人や庶民が怪しい人物とともに夜を過ごす場所。</RedlightDistrict.desc>
+
+  <!-- EN: Servant Housing -->
+  <ServantHousing.label>使用人宿舎</ServantHousing.label>
+  <!-- EN: Servants are a delight to have and more places to house them means you can hire more! -->
+  <ServantHousing.desc>使用人がいると何かと助かる。住居を増やせば、より多く雇えるようになる！</ServantHousing.desc>
+
+  <!-- EN: Slave Plantation -->
+  <slavePlantation.label>奴隷農園</slavePlantation.label>
+  <!-- EN: Slaves work the fields here. -->
+  <slavePlantation.desc>奴隷たちがここで農作業に従事する。</slavePlantation.desc>
+
+  <!-- EN: Smithy -->
+  <Smithy.label>鍛冶屋</Smithy.label>
+  <!-- EN: A sturdy forge and sturdier anvil. Perfect for shaping metal into weapons and tools alike. -->
+  <Smithy.desc>頑丈な炉と更に頑丈な鉄床。武器や道具を金属から打ち出すのに最適。</Smithy.desc>
+
+  <!-- EN: Subterranean Mine -->
+  <UndergroundMine.label>地下採掘場</UndergroundMine.label>
+  <!-- EN: Dig down into the planet's surface in search of those really valuable materials. Don't forget to build supports! -->
+  <UndergroundMine.desc>貴重な素材を求めて惑星の地下深くへ掘り進む。坑道の支柱を忘れずに！</UndergroundMine.desc>
+
+  <!-- EN: Wilderness Guild -->
+  <wildernessGuild.label>荒野ギルド</wildernessGuild.label>
+  <!-- EN: A guild dedicated to taming the wilderness. -->
+  <wildernessGuild.desc>荒野を開拓・制圧することに特化したギルド。</wildernessGuild.desc>
+
+</LanguageData>

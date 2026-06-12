@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+	<!-- EN: {0} {1} production -->
+  <FCRTDproductionAdditive>{0} {1} 生産</FCRTDproductionAdditive>
+	<!-- EN: {0} {1} production -->
+  <FCRTDproductionMultiplier>{0} {1} 生産</FCRTDproductionMultiplier>
+
+	<!-- EN: Resource Bonuses -->
+  <FCTraitDesc_ResourceBonusLabel>資源ボーナス</FCTraitDesc_ResourceBonusLabel>
+
+	<!-- EN: {0} Military Level -->
+  <FCTraitDesc_MilitaryLevel>{0} 軍事レベル</FCTraitDesc_MilitaryLevel>
+	<!-- EN: {0} Military Combat Efficiency -->
+  <FCTraitDesc_MilitaryCombatEfficiency>{0} 軍事戦闘効率</FCTraitDesc_MilitaryCombatEfficiency>
+	<!-- EN: {0} Base Tax Percentage -->
+  <FCTraitDesc_taxBasePercentage>{0} 基本税率</FCTraitDesc_taxBasePercentage>
+	<!-- EN: {0} Tithe Modifier -->
+  <FCTraitDesc_taxBaseRandomModifier>{0} 十分の一税修正値</FCTraitDesc_taxBaseRandomModifier>
+	<!-- EN: {0} Base Prosperity Gained -->
+  <FCTraitDesc_prosperityGainedBase>{0} 基本繁栄度増加</FCTraitDesc_prosperityGainedBase>
+	<!-- EN: {0} Base Prosperity Lost -->
+  <FCTraitDesc_prosperityLostBase>{0} 基本繁栄度減少</FCTraitDesc_prosperityLostBase>
+	<!-- EN: {0} Base Worker Production -->
+  <FCTraitDesc_workerProductionBase>{0} 基本労働者生産量</FCTraitDesc_workerProductionBase>
+	<!-- EN: {0} Worker Production -->
+  <FCTraitDesc_workerProductionMultiplier>{0} 労働者生産量</FCTraitDesc_workerProductionMultiplier>
+	<!-- EN: {0} Worker Cost -->
+  <FCTraitDesc_workerBaseCost>{0} 労働者コスト</FCTraitDesc_workerBaseCost>
+	<!-- EN: {0} Worker Cap -->
+  <FCTraitDesc_workerBaseMax>{0} 労働者上限</FCTraitDesc_workerBaseMax>
+	<!-- EN: {0} Overmax Worker Cap -->
+  <FCTraitDesc_workerBaseOverMax>{0} 超過労働者上限</FCTraitDesc_workerBaseOverMax>
+
+	<!-- EN: {0} Base Happiness Lost -->
+  <FCTraitDesc_happinessLostBase>{0} 基本幸福度減少</FCTraitDesc_happinessLostBase>
+	<!-- EN: {0} Base Happiness Gained -->
+  <FCTraitDesc_happinessGainedBase>{0} 基本幸福度増加</FCTraitDesc_happinessGainedBase>
+	<!-- EN: {0} Happiness Lost -->
+  <FCTraitDesc_happinessLostMultiplier>{0} 幸福度減少</FCTraitDesc_happinessLostMultiplier>
+	<!-- EN: {0} Happiness Gained -->
+  <FCTraitDesc_happinessGainedMultiplier>{0} 幸福度増加</FCTraitDesc_happinessGainedMultiplier>
+
+	<!-- EN: {0} Base Loyalty Lost -->
+  <FCTraitDesc_loyaltyLostBase>{0} 基本忠誠心減少</FCTraitDesc_loyaltyLostBase>
+	<!-- EN: {0} Base Loyalty Gained -->
+  <FCTraitDesc_loyaltyGainedBase>{0} 基本忠誠心増加</FCTraitDesc_loyaltyGainedBase>
+	<!-- EN: {0} Loyalty Lost -->
+  <FCTraitDesc_loyaltyLostMultiplier>{0} 忠誠心減少</FCTraitDesc_loyaltyLostMultiplier>
+	<!-- EN: {0} Loyalty Gained -->
+  <FCTraitDesc_loyaltyGainedMultiplier>{0} 忠誠心増加</FCTraitDesc_loyaltyGainedMultiplier>
+
+	<!-- EN: {0} Base Unrest Lost -->
+  <FCTraitDesc_unrestLostBase>{0} 基本不満減少</FCTraitDesc_unrestLostBase>
+	<!-- EN: {0} Base Unrest Gained -->
+  <FCTraitDesc_unrestGainedBase>{0} 基本不満増加</FCTraitDesc_unrestGainedBase>
+	<!-- EN: {0} Unrest Lost -->
+  <FCTraitDesc_unrestLostMultiplier>{0} 不満減少</FCTraitDesc_unrestLostMultiplier>
+	<!-- EN: {0} Unrest Gained -->
+  <FCTraitDesc_unrestGainedMultiplier>{0} 不満増加</FCTraitDesc_unrestGainedMultiplier>
+
+	<!-- EN: {0} Base Settlement Cost -->
+  <FCTraitDesc_createSettlementBaseCost>{0} 基本入植地コスト</FCTraitDesc_createSettlementBaseCost>
+	<!-- EN: {0} Settlement Cost -->
+  <FCTraitDesc_createSettlementMultiplier>{0} 入植地コスト</FCTraitDesc_createSettlementMultiplier>
+	<!-- EN: {0} Build Time -->
+  <FCTraitDesc_buildTimeMultiplier>{0} 建設時間</FCTraitDesc_buildTimeMultiplier>
+
+	<!-- EN: {0} Military Level (Defending) -->
+  <FCTraitDesc_militaryLevelBonusDefending>{0} 軍事レベル（防衛時）</FCTraitDesc_militaryLevelBonusDefending>
+	<!-- EN: {0} Combat Efficiency (Attacking) -->
+  <FCTraitDesc_militaryEfficiencyBonusAttacking>{0} 戦闘効率（攻撃時）</FCTraitDesc_militaryEfficiencyBonusAttacking>
+	<!-- EN: {0}h Dead Pawn Cooldown Per Death -->
+  <FCTraitDesc_deadPawnCooldownOffset>死亡ごとに{0}時間のポーン死亡クールダウン</FCTraitDesc_deadPawnCooldownOffset>
+	<!-- EN: {0} Mercenary Heal Rate -->
+  <FCTraitDesc_mercHealRateMultiplier>{0} 傭兵回復速度</FCTraitDesc_mercHealRateMultiplier>
+	<!-- EN: {0}h Raid Cooldown -->
+  <FCTraitDesc_raidCooldownOffset>{0}時間の略奪クールダウン</FCTraitDesc_raidCooldownOffset>
+	<!-- EN: {0} Battle Prosperity Loss -->
+  <FCTraitDesc_battleProsperityLossMultiplier>{0} 戦闘時繁栄度減少</FCTraitDesc_battleProsperityLossMultiplier>
+	<!-- EN: {0} Battle Loyalty Loss -->
+  <FCTraitDesc_battleLoyaltyLossMultiplier>{0} 戦闘時忠誠心減少</FCTraitDesc_battleLoyaltyLossMultiplier>
+	<!-- EN: {0} Battle Happiness Loss -->
+  <FCTraitDesc_battleHappinessLossMultiplier>{0} 戦闘時幸福度減少</FCTraitDesc_battleHappinessLossMultiplier>
+	<!-- EN: {0} Building Destruction Risk -->
+  <FCTraitDesc_BuildingDestructionChance>{0} 建物破壊リスク</FCTraitDesc_BuildingDestructionChance>
+	<!-- EN: {0} Combat Efficiency (Defending) -->
+  <FCTraitDesc_militaryEfficiencyBonusDefending>{0} 戦闘効率（防衛時）</FCTraitDesc_militaryEfficiencyBonusDefending>
+	<!-- EN: {0} Flat Tax Bonus -->
+  <FCTraitDesc_taxBonusFlat>{0} 固定税ボーナス</FCTraitDesc_taxBonusFlat>
+	<!-- EN: {0} Tithe Value -->
+  <FCTraitDesc_titheValueMultiplier>{0} 十分の一税の価値</FCTraitDesc_titheValueMultiplier>
+	<!-- EN: {0} Loot Value -->
+  <FCTraitDesc_lootMultiplier>{0} 略奪品の価値</FCTraitDesc_lootMultiplier>
+	<!-- EN: {0} Settlement Cost -->
+  <FCTraitDesc_settlementCostMultiplier>{0} 入植地コスト</FCTraitDesc_settlementCostMultiplier>
+	<!-- EN: {0} Research Contribution -->
+  <FCTraitDesc_researchContributionMultiplier>{0} 研究貢献度</FCTraitDesc_researchContributionMultiplier>
+	<!-- EN: {0} Extra Workers Softcap -->
+  <FCTraitDesc_extraWorkersSoftcap>{0} 追加労働者ソフト上限</FCTraitDesc_extraWorkersSoftcap>
+	<!-- EN: {0} Over-Max Workers Penalty -->
+  <FCTraitDesc_overMaxWorkersAdjustment>{0} 超過労働者ペナルティ</FCTraitDesc_overMaxWorkersAdjustment>
+
+	<!-- EN: Upkeep: ${0} -->
+  <FCBuildingUpkeep>維持費: ${0}</FCBuildingUpkeep>
+	<!-- EN: Income: ${0} -->
+  <FCBuildingIncome>収入: ${0}</FCBuildingIncome>
+</LanguageData>

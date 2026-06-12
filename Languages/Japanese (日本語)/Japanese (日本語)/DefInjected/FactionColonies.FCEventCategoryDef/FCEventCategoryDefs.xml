@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: Construction -->
+  <EC_Construction.label>建設</EC_Construction.label>
+
+  <!-- EN: Economy -->
+  <EC_Economy.label>経済</EC_Economy.label>
+
+  <!-- EN: Military -->
+  <EC_Military.label>軍事</EC_Military.label>
+
+  <!-- EN: Other -->
+  <EC_Other.label>その他</EC_Other.label>
+
+  <!-- EN: Policy -->
+  <EC_Policy.label>政策</EC_Policy.label>
+
+  <!-- EN: Settlement -->
+  <EC_Settlement.label>入植地</EC_Settlement.label>
+
+  <!-- EN: Social -->
+  <EC_Social.label>社会</EC_Social.label>
+
+</LanguageData>

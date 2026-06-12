@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+	<!-- Settlement Creation -->
+	<!-- EN: Found A New Settlement -->
+  <FCSettleANewColony>新しい入植地を設立</FCSettleANewColony>
+	<!-- EN: Found New Settlement -->
+  <FCCreateNewColony>新規入植地を設立</FCCreateNewColony>
+	<!-- EN: Select a tile to found the settlement -->
+  <FCSelectTile>入植地を設立するタイルを選択してください</FCSelectTile>
+	<!-- EN: You can't build a settlement here! -->
+  <FCSelectedInvalidTile>ここには入植地を建設できません！</FCSelectedInvalidTile>
+	<!-- EN: Settle -->
+  <FCSettle>入植</FCSettle>
+	<!-- EN: A caravan is already on its way -->
+  <FCCaravanOnWay>キャラバンはすでに向かっています</FCCaravanOnWay>
+	<!-- EN: A caravan has been sent to the location! They will arrive in -->
+  <FCCaravanSentToLocation>キャラバンが目的地に向かいました！到着まで</FCCaravanSentToLocation>
+	<!-- EN: Construction crews have been sent to the location! Their work will complete in -->
+  <FCConstructionToLocation>建設クルーが目的地に向かいました！作業完了まで</FCConstructionToLocation>
+	<!-- EN: {0} Construction -->
+  <FCColonyConstruction>{0} 建設中</FCColonyConstruction>
+	<!-- EN: You cannot found a {0} on impassable mountains. -->
+  <FCImpassableMountains>通行不能な山岳地帯には{0}を設立できません。</FCImpassableMountains>
+	<!-- EN: You cannot found a {0} in this biome. -->
+  <FCNotAllowedBiome>このバイオームには{0}を設立できません。</FCNotAllowedBiome>
+	<!-- EN: Invalid planet layer. -->
+  <FCInvalidPlanetLayer>無効な惑星レイヤーです。</FCInvalidPlanetLayer>
+	<!-- EN: This orbital tile is occupied. -->
+  <FCOrbitalTileOccupied>この軌道タイルはすでに占有されています。</FCOrbitalTileOccupied>
+	<!-- EN: Settlement Formed -->
+  <FCSettlementFormed>入植地が設立されました</FCSettlementFormed>
+	<!-- EN: The settlement -->
+  <FCTheSettlement>入植地</FCTheSettlement>
+	<!-- EN:  has been formed -->
+  <FCHasBeenFormed>が設立されました</FCHasBeenFormed>
+	<!-- EN: Choose Settlement Type -->
+  <FCPickSettlementType>入植地の種類を選択</FCPickSettlementType>
+	<!-- EN: Requires research: {0} -->
+  <FCRequiresResearch>必要な研究：{0}</FCRequiresResearch>
+	<!-- EN: Requires tech level: {0} -->
+  <FCRequiresTechLevel>必要な技術レベル：{0}</FCRequiresTechLevel>
+	<!-- EN: Resources: -->
+  <FCSettlementResources>資源：</FCSettlementResources>
+	<!-- EN: A caravan is traveling to establish a new {0} in the {1}. Estimated arrival: {2}. -->
+  <FCSettleEventDesc>{1}に新しい{0}を設立するためキャラバンが移動中です。到着予定：{2}。</FCSettleEventDesc>
+	<!-- EN: {0} has been established as a new {1} in the {2}. -->
+  <FCSettleEventCompletedDesc>{2}に{0}が新しい{1}として設立されました。</FCSettleEventCompletedDesc>
+	<!-- EN: Player Empire -->
+  <FCPlayerColony>プレイヤー帝国</FCPlayerColony>
+	<!-- EN: Set Capital -->
+  <FCSetCapital>首都を設定</FCSetCapital>
+	<!-- EN: {0} has been set as the faction capital -->
+  <FCSetAsFactionCapital>{0}が派閥の首都に設定されました</FCSetAsFactionCapital>
+
+	<!-- Settlement Upgrading -->
+	<!-- EN: This settlement is already being upgraded! -->
+  <FCAlreadyUpgradeSettlement>この入植地はすでにアップグレード中です！</FCAlreadyUpgradeSettlement>
+	<!-- EN: The settlement is now being upgraded... -->
+  <FCStartUpgradeSettlement>入植地のアップグレードを開始しました...</FCStartUpgradeSettlement>
+	<!-- EN: Upgrade Settlement -->
+  <FCUpgradeSettlement>入植地をアップグレード</FCUpgradeSettlement>
+	<!-- EN: Upgrade -->
+  <FCUpgrade>アップグレード</FCUpgrade>
+	<!-- EN: Upgrading... -->
+  <FCSettlementUpgradeInProgress>アップグレード中...</FCSettlementUpgradeInProgress>
+	<!-- EN: can be upgraded for -->
+  <FCCanBeUpgraded>でアップグレード可能</FCCanBeUpgraded>
+	<!-- EN: Upgrading this settlement will increase the max worker count before the cost of workers begins to rise by 3 workers. The military level of this settlement will also increase by 1. -->
+  <FCUpgradeColonyDesc>この入植地をアップグレードすると、労働者コストが上昇し始めるまでの最大労働者数が3人増加します。また、この入植地の軍事レベルも1上昇します。</FCUpgradeColonyDesc>
+	<!-- EN: has been upgraded to level -->
+  <FCHasBeenUpgraded>がレベルにアップグレードされました</FCHasBeenUpgraded>
+	<!-- EN: {0} is being upgraded from level {1} to level {2}.\n\n{3} -->
+  <FCUpgradeEventDesc>{0}がレベル{1}からレベル{2}にアップグレードされています。\n\n{3}</FCUpgradeEventDesc>
+	<!-- EN: {0} has been upgraded to level {1}!\n\n{2} -->
+  <FCUpgradeEventCompletedDesc>{0}がレベル{1}にアップグレードされました！\n\n{2}</FCUpgradeEventCompletedDesc>
+	<!-- EN: is already max level -->
+  <FCAlreadyMaxLevel>すでに最大レベルです</FCAlreadyMaxLevel>
+	<!-- EN: The current map does not have enough silver to pay for the settlement upgrade. -->
+  <FCNotEnoughSilverUpgrade>現在のマップには入植地のアップグレードに必要なシルバーが不足しています。</FCNotEnoughSilverUpgrade>
+	<!-- EN: This settlement cannot be upgraded past max level -->
+  <FCCannotBeUpgradedPastMax>この入植地は最大レベルを超えてアップグレードできません</FCCannotBeUpgradedPastMax>
+	<!-- EN: Upgrading: {0} remaining -->
+  <FCUpgradeBadgeInProgress>アップグレード中：残り{0}</FCUpgradeBadgeInProgress>
+	<!-- EN: Click to upgrade (cost: {0} silver) -->
+  <FCUpgradeBadgeAvailable>クリックしてアップグレード（コスト：{0}シルバー）</FCUpgradeBadgeAvailable>
+
+	<!-- Settlement Window -->
+	<!-- EN: Go To Location -->
+  <FCGoToLocation>場所へ移動</FCGoToLocation>
+	<!-- EN: Located in the -->
+  <FCLocated>位置：</FCLocated>
+	<!-- EN: land of a -->
+  <FCLandOf>の土地</FCLandOf>
+	<!-- EN: See settlement information -->
+  <FCOpenSettlementWindowDefaultLabel>入植地情報を表示</FCOpenSettlementWindowDefaultLabel>
+	<!-- EN: Opens the settlement window -->
+  <FCOpenSettlementWindowDefaultDesc>入植地ウィンドウを開きます</FCOpenSettlementWindowDefaultDesc>
+	<!-- EN: Build Roads -->
+  <FCBuildRoads>道路を建設</FCBuildRoads>
+	<!-- EN: Your Empire settlements have constructed new {0} segments connecting your territories. -->
+  <FCRoadSegmentsBuilt>帝国の入植地が領土を結ぶ新しい{0}区間の道路を建設しました。</FCRoadSegmentsBuilt>
+
+	<!-- Settlement Stats -->
+	<!-- EN: Settlement Military Level -->
+  <FCSettlementMilitaryLevel>入植地の軍事レベル</FCSettlementMilitaryLevel>
+	<!-- EN: Settlement Happiness -->
+  <FCSettlementHappiness>入植地の幸福度</FCSettlementHappiness>
+	<!-- EN: Settlement Loyalty -->
+  <FCSettlementLoyalty>入植地の忠誠心</FCSettlementLoyalty>
+	<!-- EN: Settlement Unrest -->
+  <FCSettlementUnrest>入植地の不満</FCSettlementUnrest>
+	<!-- EN: Settlement Prosperity -->
+  <FCSettlementProsperity>入植地の繁栄度</FCSettlementProsperity>
+	<!-- EN: happiness -->
+  <FCHappiness>幸福度</FCHappiness>
+	<!-- EN: loyalty -->
+  <FCLoyality>忠誠心</FCLoyality>
+	<!-- EN: unrest -->
+  <FCUnrest>不満</FCUnrest>
+	<!-- EN: prosperity -->
+  <FCProsperity>繁栄度</FCProsperity>
+	<!-- EN: Base Recovery -->
+  <FCBaseRecovery>基本回復</FCBaseRecovery>
+	<!-- EN: Target: {0}% -->
+  <FCProsperityTarget>目標：{0}%</FCProsperityTarget>
+	<!-- EN: Drift toward target -->
+  <FCProsperityDrift>目標値に向かって推移</FCProsperityDrift>
+	<!-- EN: Happiness ({0}) + Loyalty ({1}) + Stability ({2}) / 3 -->
+  <FCProsperityTargetBreakdown>幸福度（{0}）+ 忠誠心（{1}）+ 安定度（{2}）÷ 3</FCProsperityTargetBreakdown>
+	<!-- EN: Base Gain -->
+  <FCBaseGain>基本増加</FCBaseGain>
+	<!-- EN: Base Loss -->
+  <FCBaseLoss>基本減少</FCBaseLoss>
+	<!-- EN: Gaining {0} {1} per day -->
+  <FCSettlementStatGain>1日あたり{0} {1}増加中</FCSettlementStatGain>
+	<!-- EN: Losing {0} {1} per day -->
+  <FCSettlementStatLoss>1日あたり{0} {1}減少中</FCSettlementStatLoss>
+
+	<!-- Settlement Stat Descriptions -->
+	<!-- EN: The military level directly affects the settlement's ability to defend itself and attack external threats. -->
+  <FCSettlementMilitaryLevelDesc>軍事レベルは入植地の自衛能力および外部の脅威への攻撃能力に直接影響します。</FCSettlementMilitaryLevelDesc>
+	<!-- EN: The measure of the Settlement's overall happiness.
+
+A high happiness means that any internal conflict within the settlement will lean heavily to your favor.
+	 -->
+  <FCSettlementHappinessDesc>入植地全体の幸福度を示します。
+
+幸福度が高いと、入植地内部の紛争があなたに有利に傾きやすくなります。
+	 </FCSettlementHappinessDesc>
+	<!-- EN: The measure of the Settlement's overall loyalty.
+
+The loyalty of a settlement determines how willing the settlement is to listen to you. A high loyalty will reduce the chance of defection.
+	 -->
+  <FCSettlementLoyaltyDesc>入植地全体の忠誠心を示します。
+
+入植地の忠誠心は、入植地があなたの指示に従う意志を決定します。忠誠心が高いと離反の可能性が減少します。
+	 </FCSettlementLoyaltyDesc>
+	<!-- EN: The measure of the Settlement's overall unrest.
+
+The higher unrest grows, the more likely dangerous events internal in your Settlement will spark. Let it grow too high, and a Settlement-wide revolt may grow.
+	 -->
+  <FCSettlementUnrestDesc>入植地全体の不満度を示します。
+
+不満が高まるほど、入植地内部で危険なイベントが発生しやすくなります。放置すると入植地全体での反乱が起きる可能性があります。
+	 </FCSettlementUnrestDesc>
+	<!-- EN: The measure of the Settlement's overall prosperity.
+
+The prosperity of a settlement directly correlates with the production of resources (e.g. 50% prosperity = 50% production). Prosperity drifts toward a target determined by the settlement's happiness, loyalty, and unrest.
+	 -->
+  <FCSettlementProsperityDesc>入植地全体の繁栄度を示します。
+
+繁栄度は資源の生産量に直接相関します（例：繁栄度50%＝生産量50%）。繁栄度は入植地の幸福度・忠誠心・不満度によって決まる目標値に向かって推移します。
+	 </FCSettlementProsperityDesc>
+
+	<!-- Settlement Table -->
+	<!-- EN: Settlement Manager -->
+  <FCSettlementManager>入植地管理</FCSettlementManager>
+	<!-- EN: Name -->
+  <FCSettlementTableName>名前</FCSettlementTableName>
+	<!-- EN: Level -->
+  <FCSettlementTableLevel>レベル</FCSettlementTableLevel>
+	<!-- EN: Military Level -->
+  <FCSettlementTableMilLevel>軍事レベル</FCSettlementTableMilLevel>
+	<!-- EN: Profit -->
+  <FCSettlementTableProfit>利益</FCSettlementTableProfit>
+	<!-- EN: Free Workers -->
+  <FCSettlementTableWorkers>空き労働者</FCSettlementTableWorkers>
+	<!-- EN: Happiness -->
+  <FCSettlementTableHappiness>幸福度</FCSettlementTableHappiness>
+	<!-- EN: Loyalty -->
+  <FCSettlementTableLoyalty>忠誠心</FCSettlementTableLoyalty>
+	<!-- EN: Unrest -->
+  <FCSettlementTableUnrest>不満</FCSettlementTableUnrest>
+	<!-- EN: Prosperity -->
+  <FCSettlementTableProsperity>繁栄度</FCSettlementTableProsperity>
+	<!-- EN: Founding Date -->
+  <FCSettlementTableFounding>設立日</FCSettlementTableFounding>
+	<!-- EN: No settlements. -->
+  <FCNoSettlements>入植地なし</FCNoSettlements>
+	<!-- EN: {0} settlements -->
+  <FCSettlementCount>{0}件の入植地</FCSettlementCount>
+	<!-- EN: Sort: {0} -->
+  <FCSortBy>並び替え：{0}</FCSortBy>
+	<!-- EN: Settlement Level -->
+  <FCColonyLevel>入植地レベル</FCColonyLevel>
+	<!-- EN: settlement -->
+  <FCHamlet>入植地</FCHamlet>
+
+	<!-- Settlement Delete -->
+	<!-- EN: Delete Settlement -->
+  <FCDeleteSettlement>入植地を削除</FCDeleteSettlement>
+	<!-- EN: Remove settlement {0}? -->
+  <FCDeleteSettlementConfirm>入植地{0}を削除しますか？</FCDeleteSettlementConfirm>
+	<!-- EN: Are you sure? -->
+  <FCAreYouSureRemove>本当によろしいですか？</FCAreYouSureRemove>
+	<!-- EN: The settlement {0} has been removed. -->
+  <FCSettlementRemoved>入植地{0}が削除されました。</FCSettlementRemoved>
+
+	<!-- Settlement Customization -->
+	<!-- EN: Customize Settlement -->
+  <FCCustomizeSettlement>入植地をカスタマイズ</FCCustomizeSettlement>
+	<!-- EN: Full name: -->
+  <FCSettlementFullName>正式名称：</FCSettlementFullName>
+	<!-- EN: Short name: -->
+  <FCSettlementShortName>略称：</FCSettlementShortName>
+	<!-- EN: The faction of this settlement has no name or something went terribly wrong. -->
+  <FCUnsupportedSettlementFaction>この入植地の派閥に名前がないか、重大なエラーが発生しました。</FCUnsupportedSettlementFaction>
+
+	<!-- Settlement Special Actions -->
+	<!-- EN: Special Actions -->
+  <FCSpecialActions>特別アクション</FCSpecialActions>
+	<!-- EN: Buy Loyalty -->
+  <FCBuyLoyalty>忠誠心を購入</FCBuyLoyalty>
+	<!-- EN: Send Silver to Settlement -->
+  <FCSendSilverToColony>入植地にシルバーを送る</FCSendSilverToColony>
+	<!-- EN: Sending {0} silver -->
+  <FCSendingXSilver>{0}シルバーを送付中</FCSendingXSilver>
+	<!-- EN: Settlement will gain {0} loyalty -->
+  <FCSettlementGainsXLoyalty>入植地の忠誠心が{0}増加します</FCSettlementGainsXLoyalty>
+
+	<!-- Construction Status -->
+	<!-- EN: Active Construction: {0} -->
+  <FCNumUnderConstruction>建設中：{0}</FCNumUnderConstruction>
+	<!-- EN: Active Construction -->
+  <FCActiveConstruction>建設中</FCActiveConstruction>
+	<!-- EN: Close Constructions List -->
+  <FCCloseConstructionBox>建設リストを閉じる</FCCloseConstructionBox>
+	<!-- EN: Open Constructions List -->
+  <FCOpenConstructionBox>建設リストを開く</FCOpenConstructionBox>
+	<!-- EN: Settlement Upgrade -->
+  <FCSettlementupgrading>入植地アップグレード</FCSettlementupgrading>
+	<!-- EN: Finishes in: {0} -->
+  <FCCompletiontimer>完了まで：{0}</FCCompletiontimer>
+
+	<!-- Biome Descriptions -->
+	<!-- EN: Endless sheets of ice unbroken by nothing but small, sparse wildlife. No food grows except within heated rooms. Only the most tenacious of life survives here. -->
+  <FCDescSeaIce>わずかな野生動物以外、何も遮るもののない果てしない氷の平原。食料は加熱された室内でしか育ちません。最も逞しい生命だけがここで生き延びることができます。</FCDescSeaIce>
+	<!-- EN: Bleak, unending frost blankets the land, interrupted only by outcroppings of stone and ruins. The only source of food is the hardy wildlife which calls this place its home. -->
+  <FCDescIceSheet>岩の露頭と廃墟だけが点在する、陰鬱で果てしない霜の大地。唯一の食料源は、この地を故郷とする逞しい野生動物です。</FCDescIceSheet>
+	<!-- EN: The hinterland houses a variety of rugged flora and fauna eking out an existance on the moss-covered landscape. When the summer comes, the land blooms into life, if only briefly. -->
+  <FCDescTundra>苔に覆われた大地に、様々な逞しい動植物が根付いています。夏が来ると、わずかな間だけ大地に命が溢れます。</FCDescTundra>
+	<!-- EN: The rugged beauty of this land is matched only by its inhospitability. Marshes dot the landscape, as do frequent packs of migrating herbivores and the predators that hunt them. -->
+  <FCDescColdBog>この土地の荒々しい美しさは、その過酷さにも劣りません。湿地が点在し、移動する草食動物の群れとそれを追う捕食者が頻繁に現れます。</FCDescColdBog>
+	<!-- EN: While typically less cold than the hinterland of a tundra, a boreal forest's harsh winter weather is only matched by its warm summers, where greenery briefly blooms and food becomes plentiful. -->
+  <FCDescBorealForest>ツンドラの奥地ほど寒くはないものの、北方林の厳しい冬は、緑が一時的に芽吹き食料が豊富になる温かな夏と好対照をなします。</FCDescBorealForest>
+	<!-- EN: Trees choke the sky, ensuring little light reaches the floor. Yet under the canopy, there exists a dazzling, but deadly, array of flora and fauna. The beauty of this biome is matched only by the dangers within. -->
+  <FCDescTropicalRainforest>木々が空を覆い、地面にはほとんど光が届きません。しかしその樹冠の下には、目を見張るような、しかし危険な動植物が溢れています。このバイオームの美しさは内包する危険に匹敵します。</FCDescTropicalRainforest>
+	<!-- EN: Abundant forests and streams split the land. Animals roam the thick forests and both food and shelter are aplenty. -->
+  <FCDescTemperateForest>豊かな森と小川が大地を分けています。動物が深い森を闊歩し、食料も住処も十分にあります。</FCDescTemperateForest>
+	<!-- EN: The land is covered by bogs and marshes, and what isn't, is covered by a variety of vegetation. Available building space is at a premium here. -->
+  <FCDescTemperateSwamp>大地は湿地や沼地に覆われ、それ以外の場所も様々な植生が茂っています。建設に使える場所は非常に限られています。</FCDescTemperateSwamp>
+	<!-- EN: The land is strangled by thick vegetation as trees reach for the sky, ensuring little light reaches the treacherous grounds. Disease is rampant and frequent. -->
+  <FCDescTropicalSwamp>木々が空へと伸び、濃い植生が大地を覆い、危険な地面にはほとんど光が届きません。疾病が蔓延し、頻繁に発生します。</FCDescTropicalSwamp>
+	<!-- EN: While not a true desert, growing soil is at a premium thanks to the relentless heat. Most of the land is open, with secluded groves breaking the otherwise empty skyline. -->
+  <FCDescAridShrubland>真の砂漠ではないものの、容赦ない暑さのため耕作可能な土地は貴重です。大部分は開けた土地で、人里離れた木立が空の地平線を点々と彩ります。</FCDescAridShrubland>
+	<!-- EN: Arable soil is a rarity, as the majority of the land here is covered in sand, some too treacherous to build on. Still, life clings to existance here, and the sands harbour a vibrant array of life. -->
+  <FCDescDesert>耕作可能な土地は稀少で、大部分は砂に覆われ、建設が危険な場所もあります。それでも生命はここにしがみつき、砂の中には活気ある多様な命が宿っています。</FCDescDesert>
+	<!-- EN: The sun has baked this land into a wasteland. There is almost no soil that can support proper vegetation, and that which there is, is poor in quality. -->
+  <FCDescExtremeDesert>太陽がこの大地を荒野と化しました。まともな植生を支えられる土壌はほぼ存在せず、あるとしても質が低いものばかりです。</FCDescExtremeDesert>
+	<!-- EN: Little is widely known about the surrounding land, but the settlement manages to survive and prosper in their present conditions. -->
+  <FCDescUnknown>周辺の土地についてはほとんど知られていませんが、入植地は現在の状況でなんとか生き延び、発展しています。</FCDescUnknown>
+	<!-- EN: The vast emptiness of space stretches in all directions, broken only by the distant twinkle of stars and the occasional passing asteroid. Solar panels gleam in the eternal sunlight, while life support systems hum quietly in the artificial environment. The station floats in the void, a beacon of civilization in the cosmic wilderness. -->
+  <FCDescOrbitalSpace>広大な宇宙の虚空がすべての方向に広がり、遠くの星のきらめきと時折通り過ぎる小惑星だけがその静寂を破ります。ソーラーパネルが永遠の陽光に輝き、生命維持システムが人工環境の中で静かに稼働しています。ステーションは虚空の中を漂い、宇宙の荒野における文明の灯台となっています。</FCDescOrbitalSpace>
+
+	<!-- Town Level Descriptions -->
+	<!-- EN: The settlement itself is simply a small cluster of buildings grouped around a central structure. -->
+  <FCTownLevel1>入植地は、中央の建物を囲む小さな建物の集まりに過ぎません。</FCTownLevel1>
+	<!-- EN: The settlement is dominated by a few large structures, but it is still quite small. A number of sandbags and barricades ring the outside. -->
+  <FCTownLevel2>入植地にはいくつかの大きな建物がありますが、まだかなり小さいです。外周に砂嚢とバリケードが設置されています。</FCTownLevel2>
+	<!-- EN: The settlement has a good number of structures — largely production oriented — as well as dedicated storehouses, and busy workers scurry between them. A modest wall protects the settlement. -->
+  <FCTownLevel3>入植地には多くの建物（主に生産指向）と専用の倉庫があり、忙しい労働者がその間を行き来しています。簡素な壁が入植地を守っています。</FCTownLevel3>
+	<!-- EN: The settlement is reasonably large, and well organised, with a number of industrial buildings clustered together to maximize efficiency. A thick wall and internal defenses protect the settlement from attack. -->
+  <FCTownLevel4>入植地はかなり大きく整然としており、効率を最大化するために産業建物が集まっています。厚い壁と内部防衛施設が攻撃から入植地を守っています。</FCTownLevel4>
+	<!-- EN: Clearly labelled buildings mark the industrial heart of this bustling beacon of civilization, as well as various other utilities. Multiple walls ring the settlement, with plentiful interior defenses in carefully planned chokepoints. -->
+  <FCTownLevel5>明確に標識された建物がこの賑やかな文明の要所の産業の中心を示し、様々なユーティリティも充実しています。複数の壁が入植地を囲み、入念に設計された要所には豊富な内部防衛施設があります。</FCTownLevel5>
+
+	<!-- Orbital Town Level Descriptions -->
+	<!-- EN: The station is little more than a pressurized habitat module with a handful of docking ports, its hull still gleaming from recent construction. -->
+  <FCTownLevel_Orbital_1>ステーションは、数基のドッキングポートを持つ加圧済み居住モジュールに過ぎず、建設されたばかりの船体がまだ輝いています。</FCTownLevel_Orbital_1>
+	<!-- EN: A cluster of interconnected modules forms the station core, with basic airlocks and cargo bays serving a small but growing crew. -->
+  <FCTownLevel_Orbital_2>相互接続されたモジュールの集合体がステーションの中核を形成し、基本的なエアロックと貨物室が小規模ながら成長中の乗組員に使用されています。</FCTownLevel_Orbital_2>
+	<!-- EN: The station has expanded into a respectable orbital platform, with dedicated production modules, rotating crew quarters, and an array of solar collectors stretching outward. -->
+  <FCTownLevel_Orbital_3>ステーションは立派な軌道プラットフォームへと拡張され、専用の生産モジュール、交代制の乗組員区画、そして外側に伸びるソーラーコレクターの配列を備えています。</FCTownLevel_Orbital_3>
+	<!-- EN: A substantial orbital installation bristles with sensor arrays and docking spires. Multiple pressurized decks house specialized facilities, and point-defense turrets sweep the surrounding void. -->
+  <FCTownLevel_Orbital_4>大型の軌道施設にはセンサーアレイとドッキングスパイアが林立しています。複数の加圧デッキには専門施設が設置され、ポイントディフェンスタレットが周囲の虚空を監視しています。</FCTownLevel_Orbital_4>
+	<!-- EN: The station dominates the local orbital space; a sprawling complex of interconnected rings and spars, humming with industry. Layered shielding and weapons platforms ensure nothing approaches unchallenged. -->
+  <FCTownLevel_Orbital_5>ステーションは周辺の軌道空間を支配しており、相互接続されたリングと支柱の広大な複合体が産業の音を響かせています。多層シールドと兵器プラットフォームが、いかなるものの接近も許しません。</FCTownLevel_Orbital_5>
+
+	<!-- Orbital Settlement Locations -->
+	<!-- EN: Orbiting in deep space -->
+  <FCOrbitalLocation1>深宇宙を周回中</FCOrbitalLocation1>
+	<!-- EN: Stationed in low orbit -->
+  <FCOrbitalLocation2>低軌道に配置</FCOrbitalLocation2>
+	<!-- EN: Floating in the emptiness of space -->
+  <FCOrbitalLocation3>宇宙の虚空を漂う</FCOrbitalLocation3>
+	<!-- EN: Anchored in orbit -->
+  <FCOrbitalLocation4>軌道上に固定</FCOrbitalLocation4>
+	<!-- EN: Positioned in low orbit -->
+  <FCOrbitalLocation5>低軌道に位置</FCOrbitalLocation5>
+	<!-- EN: Suspended above the surface -->
+  <FCOrbitalLocation6>地表上空に浮遊</FCOrbitalLocation6>
+	<!-- EN: Deployed in orbital space -->
+  <FCOrbitalLocation7>軌道空間に展開</FCOrbitalLocation7>
+
+	<!-- Orbital Settlement Name Keywords -->
+	<!-- EN: Space Station -->
+  <FCOrbitalKeyword1>宇宙ステーション</FCOrbitalKeyword1>
+	<!-- EN: Station -->
+  <FCOrbitalKeyword2>ステーション</FCOrbitalKeyword2>
+	<!-- EN: Satellite -->
+  <FCOrbitalKeyword3>衛星</FCOrbitalKeyword3>
+	<!-- EN: Solar Base -->
+  <FCOrbitalKeyword4>太陽基地</FCOrbitalKeyword4>
+	<!-- EN: Orbital Hub -->
+  <FCOrbitalKeyword5>軌道ハブ</FCOrbitalKeyword5>
+	<!-- EN: Space Platform -->
+  <FCOrbitalKeyword6>宇宙プラットフォーム</FCOrbitalKeyword6>
+	<!-- EN: Cosmic Station -->
+  <FCOrbitalKeyword7>宇宙基地</FCOrbitalKeyword7>
+	<!-- EN: Stellar Base -->
+  <FCOrbitalKeyword8>恒星基地</FCOrbitalKeyword8>
+	<!-- EN: Void Station -->
+  <FCOrbitalKeyword9>虚空ステーション</FCOrbitalKeyword9>
+	<!-- EN: Astral Platform -->
+  <FCOrbitalKeyword10>星界プラットフォーム</FCOrbitalKeyword10>
+
+	<!-- Building Environment Restrictions -->
+	<!-- EN: That building cannot be built on this settlement's biome! -->
+  <FCBuildingInvalidEnvironment>その建物はこの入植地のバイオームでは建設できません！</FCBuildingInvalidEnvironment>
+	<!-- EN: {0} has been removed due to the settlement type transition at {1}. -->
+  <FCBuildingRemovedByTypeTransition>{1}での入植地タイプの変更により、{0}が撤去されました。</FCBuildingRemovedByTypeTransition>
+	<!-- EN: Cannot settle adjacent to an existing faction base. -->
+  <FCFactionBaseAdjacent>既存の派閥拠点に隣接した場所には入植できません。</FCFactionBaseAdjacent>
+	<!-- EN: This tile is on the wrong planet layer for this settlement type. -->
+  <FCTileWrongPlanetLayer>このタイルはこの入植地タイプに適した惑星レイヤーではありません。</FCTileWrongPlanetLayer>
+
+</LanguageData>

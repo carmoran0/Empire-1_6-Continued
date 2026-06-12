@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+
+  <!-- EN: I don't care what people do in the forest. Leave them be. -->
+  <moonlitRitual_0_1.label>森で何をしようと構わない。放っておけ。</moonlitRitual_0_1.label>
+
+  <!-- EN: Send someone to follow them. I want to know what's happening. -->
+  <moonlitRitual_0_2.label>誰かを送り込んで尾行させろ。何が起きているか知りたい。</moonlitRitual_0_2.label>
+
+  <!-- EN: How disgusting. Shut it down! -->
+  <moonlitRitual_1-1_1.label>なんと不快な。即刻止めさせろ！</moonlitRitual_1-1_1.label>
+
+  <!-- EN: A romp in the woods? Who cares? -->
+  <moonlitRitual_1-1_2.label>森での戯れ？誰が気にするんだ？</moonlitRitual_1-1_2.label>
+
+  <!-- EN: Investigate further. -->
+  <moonlitRitual_1-1_3.label>さらに調査せよ。</moonlitRitual_1-1_3.label>
+
+  <!-- EN: Whatever it is, I think it's time to just let it go. -->
+  <moonlitRitual_2-1_1.label>何であれ、もう手を引く頃合いだろう。</moonlitRitual_2-1_1.label>
+
+  <!-- EN: Go back again. I need to know if this some sort of cult. -->
+  <moonlitRitual_2-1_2.label>再び調べに行け。カルトのようなものかどうか確かめねばならん。</moonlitRitual_2-1_2.label>
+
+</LanguageData>
