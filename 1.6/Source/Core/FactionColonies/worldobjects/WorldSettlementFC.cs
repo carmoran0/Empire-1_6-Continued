@@ -164,6 +164,14 @@ namespace FactionColonies
         /// </summary>
         private List<PermanentStatModifier> permanentModifiers = new List<PermanentStatModifier>();
 
+        /// <summary>
+        /// Temporary, self-decaying penalties that drip a morale loss over several days.
+        /// Each contributes its <see cref="DecayingStatPenalty.CurrentValue"/> to a loss stat
+        /// (happinessLostBase/loyaltyLostBase/unrestGainedBase) and is ticked down once per day in
+        /// FactionFC.UpdateSettlementStats. Use AddDecayingPenalty/TickDecayingPenalties to modify.
+        /// </summary>
+        private List<DecayingStatPenalty> decayingPenalties = new List<DecayingStatPenalty>();
+
         private Dictionary<FCStatDef, double> cachedStatValues = new Dictionary<FCStatDef, double>();
         private Dictionary<FCStatDef, string> cachedStatDescs = new Dictionary<FCStatDef, string>();
 
@@ -844,6 +852,8 @@ namespace FactionColonies
             //Stat modifiers — transient list not serialized; rebuilt from buildings/settlement type on load
             //Permanent modifiers ARE serialized — they survive event expiry
             Scribe_Collections.Look(ref permanentModifiers, "permanentModifiers", LookMode.Deep);
+            //Decaying penalties — not permanent, but they track their own expiry, so we need to serialize them here
+            Scribe_Collections.Look(ref decayingPenalties, "decayingPenalties", LookMode.Deep);
 
             //Biome_info
             Scribe_Values.Look(ref biome, "biome");
@@ -860,6 +870,7 @@ namespace FactionColonies
 
             // We never want permanentModifiers to be null. So just always check it here.
             if (permanentModifiers is null) permanentModifiers = new List<PermanentStatModifier>();
+            if (decayingPenalties is null) decayingPenalties = new List<DecayingStatPenalty>();
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
@@ -1935,6 +1946,56 @@ namespace FactionColonies
         }
 
         /// <summary>
+        /// Schedules a self-decaying penalty that delivers <paramref name="total"/> severity to a loss
+        /// stat (happinessLostBase/loyaltyLostBase/unrestGainedBase) spread over <paramref name="days"/>
+        /// days. Entries with the same stat + sourceLabel are merged (severity summed, window reset) so a
+        /// massacre doesn't flood the list. Visible in the settlement's morale tooltip while active.
+        /// </summary>
+        public void AddDecayingPenalty(FCStatDef lossStat, double total, int days, string sourceId, string label)
+        {
+            if (lossStat is null || total <= 0 || days <= 0) return;
+
+            foreach (DecayingStatPenalty existing in decayingPenalties)
+            {
+                if (existing.stat == lossStat && existing.sourceLabel == label)
+                {
+                    existing.MergePenalty(total, days);
+                    InvalidateStatCache();
+                    return;
+                }
+            }
+
+            decayingPenalties.Add(new DecayingStatPenalty
+            {
+                stat = lossStat,
+                remaining = total,
+                daysTotal = days,
+                daysElapsed = 0,
+                sourceId = sourceId,
+                sourceLabel = label ?? sourceId
+            });
+            InvalidateStatCache();
+        }
+
+        /// <summary>
+        /// Advances every decaying penalty by one day and prunes finished ones. Called once per day from
+        /// FactionFC.UpdateSettlementStats AFTER the Update* calls have already applied this day's slice,
+        /// so the next day reads the decremented value.
+        /// </summary>
+        public void TickDecayingPenalties()
+        {
+            if (decayingPenalties.Count == 0) return;
+            for (int i = decayingPenalties.Count - 1; i >= 0; i--)
+            {
+                DecayingStatPenalty penalty = decayingPenalties[i];
+                penalty.DecrementDay();
+                if (penalty.Finished)
+                    decayingPenalties.RemoveAt(i);
+            }
+            InvalidateStatCache();
+        }
+
+        /// <summary>
         /// The settlement-level stat modifier list (unwrapped from tagged entries).
         /// </summary>
         public List<FCStatModifier> StatModifiers
@@ -1994,6 +2055,13 @@ namespace FactionColonies
                 }
             }
 
+            // Decaying penalties only ever target Additive loss stats, contributing their per-day slice.
+            foreach (DecayingStatPenalty penalty in decayingPenalties)
+            {
+                if (penalty.stat == stat)
+                    value += penalty.CurrentValue;
+            }
+
             cachedStatValues[stat] = value;
             return value;
         }
@@ -2040,6 +2108,14 @@ namespace FactionColonies
                         desc += TextUtil.ColorizeAdditiveBonus(perm.value, invert: invert, hardinvert: hardinvert) + " - " + perm.sourceLabel + " (permanent)\n";
                     else
                         desc += TextUtil.ColorizeMultiplierBonus(perm.value, invert: invert) + " - " + perm.sourceLabel + " (permanent)\n";
+                }
+
+                // Decaying penalties (pawn/caravan-loss drips) — always Additive; show the per-day slice + days left
+                foreach (DecayingStatPenalty penalty in decayingPenalties)
+                {
+                    if (penalty.stat != stat) continue;
+                    desc += TextUtil.ColorizeAdditiveBonus(penalty.CurrentValue, invert: invert, hardinvert: hardinvert)
+                        + " - " + penalty.sourceLabel + " (" + "FCDecayingPenaltyDaysLeft".Translate(penalty.DaysLeft) + ")\n";
                 }
 
                 // IStatModifierProvider comps

@@ -79,6 +79,13 @@ namespace FactionColonies
         /// </summary>
         public List<WorldSettlementFC> settlements = new List<WorldSettlementFC>();
 
+        /// <summary>
+        /// Maps an Empire trade-caravan Lord (by loadID) to the settlement it counts as "home", computed
+        /// once when the caravan spawns (see LordPatches). Used to route a slaughtered caravan's penalty
+        /// to the right settlement. Cleaned up when the lord ends; pruned daily as a backstop.
+        /// </summary>
+        public Dictionary<int, WorldSettlementFC> caravanHomeSettlements = new Dictionary<int, WorldSettlementFC>();
+
         /* Timing & Scheduling */
         public int timeStart = Find.TickManager.TicksGame;
         public int uiTimeUpdate;
@@ -318,6 +325,8 @@ namespace FactionColonies
 
             Scribe_Collections.Look(ref settlementCaravansList, "settlementCaravansList", LookMode.Value);
             Scribe_Collections.Look(ref enabledCaravanTypes, "enabledCaravanTypes", LookMode.Value);
+            Scribe_Collections.Look(ref caravanHomeSettlements, "caravanHomeSettlements", LookMode.Value, LookMode.Reference);
+            if (caravanHomeSettlements is null) caravanHomeSettlements = new Dictionary<int, WorldSettlementFC>();
 
             //New Production types
             Scribe_Collections.Look(ref resourcePools, "resourcePools", LookMode.Deep);
@@ -824,6 +833,7 @@ namespace FactionColonies
             SyncGoodwillWithAverages();
             RelationsUtilFC.ResetPlayerColonyRelations();
             UpdateDailyResourcePools();
+            PruneCaravanHomeSettlements();
             MakeRandomEvent();
         }
 
@@ -1542,6 +1552,8 @@ namespace FactionColonies
                 settlement.UpdateLoyalty();
                 settlement.UpdateUnrest();
                 settlement.UpdateProsperity();
+                // Advance decaying pawn/caravan-loss penalties AFTER this day's slice has been applied above.
+                settlement.TickDecayingPenalties();
             }
         }
 
@@ -2093,6 +2105,69 @@ namespace FactionColonies
             {
                 settlement.GainUnrest(amount);
             }
+        }
+
+        /// <summary>
+        /// True when the Empire is too unhappy/disloyal/restless to bother sending trade caravans.
+        /// Gates both the Mercantile policy and organic trader-caravan incidents.
+        /// </summary>
+        public bool ShouldSuppressCaravans()
+        {
+            if (!settlements.Any()) return false;
+            return averageHappiness < EmpireDeathPenaltyUtil.THRESHOLD_LOW
+                || averageLoyalty < EmpireDeathPenaltyUtil.THRESHOLD_LOW
+                || averageUnrest > EmpireDeathPenaltyUtil.THRESHOLD_HIGH_UNREST;
+        }
+
+        /* Caravan -> home-settlement tagging (populated by LordPatches at spawn). */
+
+        public void RegisterCaravanHome(int lordLoadID, WorldSettlementFC home)
+        {
+            if (home is null) return;
+            caravanHomeSettlements[lordLoadID] = home;
+        }
+
+        public WorldSettlementFC TryGetCaravanHome(int lordLoadID)
+        {
+            return caravanHomeSettlements.TryGetValue(lordLoadID, out WorldSettlementFC home) ? home : null;
+        }
+
+        public void UnregisterCaravanHome(int lordLoadID)
+        {
+            caravanHomeSettlements.Remove(lordLoadID);
+        }
+
+        /// <summary>
+        /// Backstop cleanup for caravan-home entries whose Lord no longer exists on any map (the normal
+        /// path is the LordManager.RemoveLord postfix). Cheap — the dictionary holds at most a few caravans.
+        /// </summary>
+        private void PruneCaravanHomeSettlements()
+        {
+            if (caravanHomeSettlements.Count == 0) return;
+            List<int> toRemove = null;
+            foreach (KeyValuePair<int, WorldSettlementFC> kvp in caravanHomeSettlements)
+            {
+                if (kvp.Value is null || !LordStillExists(kvp.Key))
+                {
+                    if (toRemove is null) toRemove = new List<int>();
+                    toRemove.Add(kvp.Key);
+                }
+            }
+            if (toRemove is null) return;
+            foreach (int id in toRemove)
+                caravanHomeSettlements.Remove(id);
+        }
+
+        private static bool LordStillExists(int loadID)
+        {
+            List<Map> maps = Find.Maps;
+            for (int i = 0; i < maps.Count; i++)
+            {
+                List<Verse.AI.Group.Lord> lords = maps[i].lordManager.lords;
+                for (int j = 0; j < lords.Count; j++)
+                    if (lords[j].loadID == loadID) return true;
+            }
+            return false;
         }
 
         public bool SendDiplomaticEnvoy(Faction faction)

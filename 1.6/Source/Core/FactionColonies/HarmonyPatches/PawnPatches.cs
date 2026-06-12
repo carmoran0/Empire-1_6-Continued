@@ -1,6 +1,7 @@
 ﻿using FactionColonies.util;
 using HarmonyLib;
 using Verse;
+using Verse.AI.Group;
 using RimWorld;
 
 namespace FactionColonies
@@ -8,11 +9,16 @@ namespace FactionColonies
     [HarmonyPatch(typeof(Pawn), "Kill")]
     class MercenaryDied
     {
-        static bool Prefix(Pawn __instance)
+        static bool Prefix(Pawn __instance, DamageInfo? dinfo)
         {
             if (__instance.IsMercenary())
             {
                 if (__instance.Faction != FindFC.EmpireFaction) __instance.SetFaction(FindFC.EmpireFaction);
+
+                // Schedule the gradual happiness/unrest penalty on the merc's home settlement. Uses a
+                // map-independent lookup so auto-resolved/off-map deaths are penalized too.
+                EmpireDeathPenaltyUtil.HandleMercDeath(__instance, dinfo);
+
                 var mfc = FindFC.Military;
                 if (mfc is null) return true;
                 MercenarySquadFC squad = mfc.ReturnSquadFromUnit(__instance);
@@ -21,16 +27,6 @@ namespace FactionColonies
                     Mercenary merc = mfc.ReturnMercenaryFromUnit(__instance, squad);
                     if (merc != null)
                     {
-                        if (squad.settlement != null)
-                        {
-                            const double basePenalty = 1.0;
-                            double offset = FindFC.FactionComp?
-                                .GetStatValue(FCStatDefOf.mercenaryDeathHappinessPenalty, squad.settlement) ?? 0;
-                            double total = basePenalty + offset;
-                            if (total < 0) total = 0;
-                            squad.settlement.GainHappiness(-total);
-                        }
-
                         // Fire death event so submods can react. Auto-replacement was removed by
                         // the strict-manual outfit refactor; the merc's slot is left as an empty
                         // placeholder (pawn = null) and the player must explicitly use
@@ -66,7 +62,26 @@ namespace FactionColonies
                 return true;
             }
 
+            // Non-merc Empire trade-caravan pawn: penalize its tagged home settlement (the lord is still
+            // attached at Kill-prefix time — base.Kill severs it before Notify_MemberDied) and check for a
+            // pack-animal wipe.
+            if (__instance.Faction == FindFC.EmpireFaction)
+            {
+                Lord lord = __instance.GetLord();
+                if (lord?.LordJob is LordJob_TradeWithColony)
+                {
+                    EmpireDeathPenaltyUtil.HandleCaravanPawnDeath(__instance, dinfo, lord);
+                }
+            }
+
             return true;
+        }
+
+        // Clears the per-Kill dedup marker after the whole Pawn.Kill (incl. Faction.Notify_MemberDied)
+        // has run, so the next death starts clean and we don't pin a dead pawn reference.
+        static void Postfix(Pawn __instance)
+        {
+            EmpireDeathPenaltyUtil.ClearHandledByKillPrefix();
         }
 
         /// <summary>Turns a dead sub-pawn wrapper into a "Missing" placeholder: severs a mech's Overseer
