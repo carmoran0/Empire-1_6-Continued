@@ -429,4 +429,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_28</defName>
+		<label>Migration Fixes</label>
+		<description>Fixes a couple issues with the Empire v1.3 -&gt; v1.5 migration codepaths.</description>
+		<releaseDate>2026-06-12</releaseDate>
+		<patchNoteType>Patch</patchNoteType>
+		<patchNoteLines>
+		<li>Fixes a couple of issues with the 1.3 -&gt; 1.5 migration codepaths</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
