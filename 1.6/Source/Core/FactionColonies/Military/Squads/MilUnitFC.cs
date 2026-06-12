@@ -42,11 +42,11 @@ namespace FactionColonies
         public List<SavedImplant> implants = new List<SavedImplant>();
         public bool HasWeapon => weapons.Any(w => w.thing != null);
 
-        // Psycast/ability design (Abilities tab). psylinkLevel gates which abilities are pickable
-        // and is applied the "neuroformer way" at spawn; abilities carry their owning ability-system
+        // Psycast design (Psycasts tab). psylinkLevel gates which psycasts are pickable
+        // and is applied the "neuroformer way" at spawn; psycasts carry their owning psycast-system
         // provider's Key so they apply through the right system (base game / VPE) on load.
         public int psylinkLevel;
-        public List<SavedAbility> abilities = new List<SavedAbility>();
+        public List<SavedPsycast> psycasts = new List<SavedPsycast>();
 
         // Mechanitor design (Mechs tab, Biotech only). isMechanitor auto-applies a mechlink at spawn
         // (see ApplyMechanitorToPawn); mechs lists the mechanoids bonded to the unit at deploy time,
@@ -240,9 +240,9 @@ namespace FactionColonies
             Scribe_Collections.Look(ref implants, "implants", LookMode.Deep);
             Scribe_Collections.Look(ref statModifiers, "statModifiers", LookMode.Deep);
 
-            // Psycast/ability design
+            // Psycast design
             Scribe_Values.Look(ref psylinkLevel, "psylinkLevel", 0);
-            Scribe_Collections.Look(ref abilities, "abilities", LookMode.Deep);
+            Scribe_Collections.Look(ref psycasts, "psycasts", LookMode.Deep);
 
             // Mechanitor design
             Scribe_Values.Look(ref isMechanitor, "isMechanitor", false);
@@ -264,7 +264,7 @@ namespace FactionColonies
                 if (apparel == null) apparel = new List<SavedThing>();
                 if (inventory == null) inventory = new List<SavedThing>();
                 if (implants == null) implants = new List<SavedImplant>();
-                if (abilities == null) abilities = new List<SavedAbility>();
+                if (psycasts == null) psycasts = new List<SavedPsycast>();
                 if (mechs == null) mechs = new List<SavedMech>();
                 if (mechGroupWorkModes == null) mechGroupWorkModes = new List<MechWorkModeDef>();
                 if (animals == null) animals = new List<SavedAnimal>();
@@ -338,7 +338,7 @@ namespace FactionColonies
                 if (previewPawn != null)
                 {
                     ApplyImplantsToPawn(previewPawn, this);
-                    ApplyAbilitiesToPawn(previewPawn, this);
+                    ApplyPsycastsToPawn(previewPawn, this);
                     ApplyMechanitorToPawn(previewPawn, this);
                 }
             }
@@ -459,19 +459,19 @@ namespace FactionColonies
         }
 
         /* Applies this unit's psylink level + chosen psycasts to the target pawn, dispatching to the
-         * ability-system provider each ability was designed under (base game / VPE). Psylink is granted
+         * psycast-system provider each psycast was designed under (base game / VPE). Psylink is granted
          * the "neuroformer way" (a PsychicAmplifier hediff), which is what lets VPE's own Harmony patches
          * pick up the level and attach its psycast tracker. Each entry is wrapped so an absent provider
          * (e.g. template made with VPE, loaded without it) or an invalid def is skipped, not fatal.
          * Used by the preview pawn and the real spawned pawn. */
-        public static void ApplyAbilitiesToPawn(Pawn target, MilUnitFC source)
+        public static void ApplyPsycastsToPawn(Pawn target, MilUnitFC source)
         {
             if (target?.health is null || target.Dead || target.Destroyed) return;
             if (source is null) return;
 
             if (source.psylinkLevel > 0)
             {
-                IAbilitySystemProvider active = AbilitySystemRegistry.Active;
+                IPsycastSystemProvider active = PsycastSystemRegistry.Active;
                 if (active is object)
                 {
                     try { active.ApplyPsylink(target, source.psylinkLevel); }
@@ -482,15 +482,15 @@ namespace FactionColonies
                 }
             }
 
-            if (source.abilities is null) return;
-            foreach (SavedAbility a in source.abilities)
+            if (source.psycasts is null) return;
+            foreach (SavedPsycast a in source.psycasts)
             {
-                IAbilitySystemProvider provider = AbilitySystemRegistry.ByKey(a.systemKey);
+                IPsycastSystemProvider provider = PsycastSystemRegistry.ByKey(a.systemKey);
                 if (provider is null) continue; // originating system not loaded — skip silently
-                try { provider.GrantAbility(target, a); }
+                try { provider.GrantPsycast(target, a); }
                 catch (Exception ex)
                 {
-                    LogUtil.Warning($"Failed to grant ability {a.abilityDef} ({a.systemKey}) to {target.LabelShortCap}: {ex.Message}");
+                    LogUtil.Warning($"Failed to grant psycast {a.psycastDef} ({a.systemKey}) to {target.LabelShortCap}: {ex.Message}");
                 }
             }
         }
@@ -644,14 +644,14 @@ namespace FactionColonies
         }
 
         /* Brings a live pawn's psylink + psycasts in line with the desired loadout WITHOUT regenerating
-         * the pawn (identity preserved). Delegated to the active ability system, which reconciles in the
+         * the pawn (identity preserved). Delegated to the active psycast system, which reconciles in the
          * way that suits it: base game adjusts the psylink level granularly (keeping existing random
          * psycasts, adding/stripping only the delta), while VPE wipes and re-applies its deterministic
          * set. Used by the squad-upgrade paths when psycasts change (see LoadoutUpgradeUtil.PsycastsChanged). */
-        public static void ReconcileAbilitiesOnPawn(Pawn target, MilUnitFC desired)
+        public static void ReconcilePsycastsOnPawn(Pawn target, MilUnitFC desired)
         {
             if (target?.health is null || target.Dead || target.Destroyed) return;
-            AbilitySystemRegistry.Active?.ReconcilePsycasts(target, desired);
+            PsycastSystemRegistry.Active?.ReconcilePsycasts(target, desired);
         }
 
         // --- Equipment Mutation Methods ---
@@ -706,7 +706,7 @@ namespace FactionColonies
             apparel.Clear();
             inventory.Clear();
             implants.Clear();
-            abilities.Clear();
+            psycasts.Clear();
             psylinkLevel = 0;
             mechs.Clear();
             isMechanitor = false;
@@ -1103,11 +1103,11 @@ namespace FactionColonies
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
         }
 
-        // --- Abilities / Psycasts ---
+        // --- Psycasts ---
 
         public void SetPsylinkLevel(int level)
         {
-            int max = AbilitySystemRegistry.Active?.MaxPsylinkLevel ?? 6;
+            int max = PsycastSystemRegistry.Active?.MaxPsylinkLevel ?? 6;
             int clamped = Mathf.Clamp(level, 0, max);
             if (clamped == psylinkLevel) return;
             psylinkLevel = clamped;
@@ -1116,13 +1116,13 @@ namespace FactionColonies
             // budget for this level); the base game stores no selections, so this is a no-op there.
             if (psylinkLevel <= 0)
             {
-                abilities.Clear();
+                psycasts.Clear();
             }
             else
             {
-                IAbilitySystemProvider active = AbilitySystemRegistry.Active;
+                IPsycastSystemProvider active = PsycastSystemRegistry.Active;
                 if (active != null)
-                    abilities = active.ClampSelectionsToBudget(abilities, psylinkLevel);
+                    psycasts = active.ClampSelectionsToBudget(psycasts, psylinkLevel);
             }
             MarkIdentityDirty(); // psylink hediff changes pawn identity
             ChangeTick();
@@ -1135,17 +1135,17 @@ namespace FactionColonies
         /// write back the full chosen set — psycasts, meditation foci, stat upgrades — when its window
         /// closes. Empty entries (no defName and no kind) are dropped.
         /// </summary>
-        public void SetAbilitiesForSystem(string systemKey, IEnumerable<SavedAbility> entries)
+        public void SetPsycastsForSystem(string systemKey, IEnumerable<SavedPsycast> entries)
         {
             if (string.IsNullOrEmpty(systemKey)) return;
-            abilities.RemoveAll(a => a.systemKey == systemKey);
+            psycasts.RemoveAll(a => a.systemKey == systemKey);
             if (entries is object)
             {
-                foreach (SavedAbility e in entries)
+                foreach (SavedPsycast e in entries)
                 {
                     if (e.systemKey != systemKey) continue;
                     if (e.IsInvalid()) continue;
-                    abilities.Add(e);
+                    psycasts.Add(e);
                 }
             }
             MarkIdentityDirty();
@@ -1334,11 +1334,11 @@ namespace FactionColonies
             foreach (SavedImplant im in implants)
                 totalCost += ImplantCost(im);
 
-            // Psylink-level cost is owned by the active ability system (base game charges per level;
+            // Psylink-level cost is owned by the active psycast system (base game charges per level;
             // VPE returns 0 and balances via per-psycast cost instead).
-            totalCost += AbilitySystemRegistry.Active?.PsylinkCost(psylinkLevel) ?? 0;
-            foreach (SavedAbility a in abilities)
-                totalCost += AbilityCost(a);
+            totalCost += PsycastSystemRegistry.Active?.PsylinkCost(psylinkLevel) ?? 0;
+            foreach (SavedPsycast a in psycasts)
+                totalCost += PsycastCost(a);
 
             // Companion animals: each row's market value times its count. The mount (if any) reuses the
             // same multiplier. The spawned animal/mount pawns are never re-counted by squad cost/power
@@ -1365,13 +1365,13 @@ namespace FactionColonies
             equipmentTotalCost = Math.Ceiling(totalCost);
         }
 
-        /* Cost of a chosen ability, resolved from its owning provider's display entry (which already
+        /* Cost of a chosen psycast, resolved from its owning provider's display entry (which already
          * folds in FCSettings.militaryPsycastCostMultiplier). Zero if the system isn't loaded. */
-        public static double AbilityCost(SavedAbility ability)
+        public static double PsycastCost(SavedPsycast psycast)
         {
-            IAbilitySystemProvider provider = AbilitySystemRegistry.ByKey(ability.systemKey);
-            AbilityPickEntry entry;
-            if (provider is object && provider.TryGetDisplay(ability, out entry))
+            IPsycastSystemProvider provider = PsycastSystemRegistry.ByKey(psycast.systemKey);
+            PsycastPickEntry entry;
+            if (provider is object && provider.TryGetDisplay(psycast, out entry))
                 return entry.cost;
             return 0;
         }
@@ -1464,7 +1464,7 @@ namespace FactionColonies
             copy.inventory = new List<SavedThing>(inventory ?? new List<SavedThing>());
             copy.implants = new List<SavedImplant>(implants ?? new List<SavedImplant>());
             copy.psylinkLevel = psylinkLevel;
-            copy.abilities = new List<SavedAbility>(abilities ?? new List<SavedAbility>());
+            copy.psycasts = new List<SavedPsycast>(psycasts ?? new List<SavedPsycast>());
             copy.isMechanitor = isMechanitor;
             copy.mechs = new List<SavedMech>(mechs ?? new List<SavedMech>());
             copy.mechGroupWorkModes = new List<MechWorkModeDef>(mechGroupWorkModes ?? new List<MechWorkModeDef>());

@@ -278,7 +278,7 @@ namespace FactionColonies
                     if (implantsChanged)
                         MilUnitFC.ReconcileImplantsOnPawn(merc.pawn, target, prior);
                     if (psycastsChanged)
-                        MilUnitFC.ReconcileAbilitiesOnPawn(merc.pawn, target);
+                        MilUnitFC.ReconcilePsycastsOnPawn(merc.pawn, target);
                     // A reused pawn was generated under its prior loadout, so it may lack the mechlink
                     // when the target newly makes it a mechanitor — apply it (idempotent) before mechs
                     // get reconciled below so pawn.mechanitor exists for bonding.

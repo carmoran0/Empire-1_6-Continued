@@ -10,10 +10,10 @@ namespace FactionColonies
     /// Base-game (Royalty) psycast provider. Mirrors vanilla exactly: there is no selection UI — the
     /// player only sets a psylink level, and the base game grants one <em>random</em> psycast per level
     /// when the pawn gains psylink (<see cref="Hediff_Psylink.TryGiveAbilityOfLevel"/>). Stores no
-    /// abilities, so <see cref="SupportsExplicitSelection"/> is false and the ability-grant/display
+    /// psycasts, so <see cref="SupportsExplicitSelection"/> is false and the psycast-grant/display
     /// methods are no-ops.
     /// </summary>
-    public class VanillaAbilityProvider : IAbilitySystemProvider
+    public class VanillaPsycastProvider : IPsycastSystemProvider
     {
         public const string ProviderKey = "Vanilla";
 
@@ -24,10 +24,10 @@ namespace FactionColonies
         public int MaxPsylinkLevel => 6;
         public bool SupportsExplicitSelection => false;
 
-        // No custom editor / no stored abilities.
+        // No custom editor / no stored psycasts.
         public void OpenEditor(MilUnitFC unit, Action onClosed) { }
 
-        public bool TryGetDisplay(SavedAbility entry, out AbilityPickEntry display)
+        public bool TryGetDisplay(SavedPsycast entry, out PsycastPickEntry display)
         {
             display = null;
             return false;
@@ -56,11 +56,11 @@ namespace FactionColonies
                 pawn.ChangePsylinkLevel(target - current, false);
         }
 
-        // Base game stores no chosen abilities; psycasts are the random grants from ApplyPsylink.
-        public void GrantAbility(Pawn pawn, SavedAbility entry) { }
+        // Base game stores no chosen psycasts; psycasts are the random grants from ApplyPsylink.
+        public void GrantPsycast(Pawn pawn, SavedPsycast entry) { }
 
         // No point economy and no stored selections — nothing to trim or summarize.
-        public List<SavedAbility> ClampSelectionsToBudget(List<SavedAbility> selections, int psylinkLevel) => selections;
+        public List<SavedPsycast> ClampSelectionsToBudget(List<SavedPsycast> selections, int psylinkLevel) => selections;
 
         public bool TryGetPointBudget(MilUnitFC unit, out int spent, out int budget)
         {

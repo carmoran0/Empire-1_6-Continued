@@ -5,7 +5,7 @@ using Verse;
 namespace FactionColonies
 {
     /* The sub-tabs of a unit's loadout editor (shared by DesignUnitsWindow and Dialog_PawnLoadout).
-     * Abilities and Mechs are conditional (ability-system present / Biotech active); the tab strip
+     * Psycasts and Mechs are conditional (psycast-system present / Biotech active); the tab strip
      * builds a present-tabs list rather than indexing this enum directly, so any subset collapses
      * correctly regardless of declaration order. */
     public enum LoadoutTab
@@ -14,7 +14,7 @@ namespace FactionColonies
         Inventory,
         Implants,
         Animals,
-        Abilities,
+        Psycasts,
         Mechs
     }
 
@@ -25,7 +25,7 @@ namespace FactionColonies
         public const float TabHeight = 28f;
 
         public static LoadoutTab Draw(Rect boundingBox, LoadoutTab selected, out Rect contentRect,
-            bool includeAbilities = true, bool includeMechs = false, bool includeAnimals = true)
+            bool includePsycasts = true, bool includeMechs = false, bool includeAnimals = true)
         {
             // Build the list of present tabs in display order, with a parallel label list. Conditional
             // tabs are appended only when enabled, so a hidden tab never shifts another tab's index.
@@ -46,10 +46,10 @@ namespace FactionColonies
                 present.Add(LoadoutTab.Animals);
                 labels.Add("fcTabAnimals".Translate());
             }
-            if (includeAbilities)
+            if (includePsycasts)
             {
-                present.Add(LoadoutTab.Abilities);
-                labels.Add("fcTabAbilities".Translate());
+                present.Add(LoadoutTab.Psycasts);
+                labels.Add("fcTabPsycasts".Translate());
             }
             if (includeMechs)
             {

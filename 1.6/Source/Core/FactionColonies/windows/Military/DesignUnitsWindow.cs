@@ -22,7 +22,7 @@ namespace FactionColonies
         private Vector2 inventoryListScrollPos;
         private Vector2 implantListScrollPos;
         private Vector2 animalListScrollPos;
-        private Vector2 abilityListScrollPos;
+        private Vector2 psycastListScrollPos;
         private Vector2 mechListScrollPos;
         private LoadoutTab activeTab = LoadoutTab.Apparel;
 
@@ -437,12 +437,12 @@ namespace FactionColonies
         private void DrawLoadoutPanel(Rect rect, MilUnitFC unit)
         {
             Rect content;
-            // Only show the Abilities tab when an ability system is actually available
+            // Only show the Psycasts tab when a psycast system is actually available
             // (Royalty, VPE, or another provider) — otherwise it's an empty, useless tab.
-            bool showAbilities = AbilitySystemRegistry.Active != null;
+            bool showPsycasts = PsycastSystemRegistry.Active != null;
             // Mechs tab requires Biotech (mechanitors/mechlinks).
             bool showMechs = ModsConfig.BiotechActive;
-            activeTab = LoadoutTabStrip.Draw(rect, activeTab, out content, includeAbilities: showAbilities, includeMechs: showMechs);
+            activeTab = LoadoutTabStrip.Draw(rect, activeTab, out content, includePsycasts: showPsycasts, includeMechs: showMechs);
             content = content.ContractedBy(4f);
 
             if (activeTab == LoadoutTab.Apparel)
@@ -483,9 +483,9 @@ namespace FactionColonies
                     getDisplayUnit = () => unit,
                 });
             }
-            else if (activeTab == LoadoutTab.Abilities)
+            else if (activeTab == LoadoutTab.Psycasts)
             {
-                AbilityListWidget.Draw(content, unit, ref abilityListScrollPos, new AbilityListWidget.Options
+                PsycastListWidget.Draw(content, unit, ref psycastListScrollPos, new PsycastListWidget.Options
                 {
                     canEdit = true,
                     showHeaderButtons = true,

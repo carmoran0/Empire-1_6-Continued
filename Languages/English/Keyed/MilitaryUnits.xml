@@ -70,7 +70,7 @@
 	<fcTabApparel>Apparel</fcTabApparel>
 	<fcTabInventory>Inventory</fcTabInventory>
 	<fcTabImplants>Implants</fcTabImplants>
-	<fcTabAbilities>Abilities</fcTabAbilities>
+	<fcTabPsycasts>Psycasts</fcTabPsycasts>
 	<fcTabMechs>Mechs</fcTabMechs>
 
 	<!-- Inventory -->
@@ -86,21 +86,21 @@
 	<fcPickImplant>Select Implant</fcPickImplant>
 	<fcInstallSelfImplant>Install {0}</fcInstallSelfImplant>
 
-	<!-- Abilities / Psycasts -->
-	<fcEditAbilities>Edit Psycasts</fcEditAbilities>
+	<!-- Psycasts -->
+	<fcEditPsycasts>Edit Psycasts</fcEditPsycasts>
 	<fcPsylinkLevel>Psylink level</fcPsylinkLevel>
-	<fcAbilitiesNoSystem>No psycast system is available. Install Royalty or Vanilla Psycasts Expanded to assign abilities.</fcAbilitiesNoSystem>
-	<fcAbilitiesNeedPsylink>Raise the unit's psylink level above 0 to choose psycasts.</fcAbilitiesNeedPsylink>
-	<fcAbilitiesRandomNote>Psycasts are granted randomly at this psylink level when the unit is recruited.</fcAbilitiesRandomNote>
+	<fcPsycastsNoSystem>No psycast system is available. Install Royalty or Vanilla Psycasts Expanded to assign psycasts.</fcPsycastsNoSystem>
+	<fcPsycastsNeedPsylink>Raise the unit's psylink level above 0 to choose psycasts.</fcPsycastsNeedPsylink>
+	<fcPsycastsRandomNote>Psycasts are granted randomly at this psylink level when the unit is recruited.</fcPsycastsRandomNote>
 	<fcVPEEditorTitle>Psycasts</fcVPEEditorTitle>
-	<fcVPEEditorHint>Spend points on paths and abilities, meditation foci, or psycaster stats. Your selections are saved to the unit design and applied to every mercenary built from it.</fcVPEEditorHint>
+	<fcVPEEditorHint>Spend points on paths and psycasts, meditation foci, or psycaster stats. Your selections are saved to the unit design and applied to every mercenary built from it.</fcVPEEditorHint>
 	<fcVPEEditorUnavailable>Could not prepare a preview psycaster for this unit.</fcVPEEditorUnavailable>
 	<fcVPEStatPointsSpent>Stat points spent: {0}</fcVPEStatPointsSpent>
 	<fcVPEPointsAvailable>Available points: {0} / {1}</fcVPEPointsAvailable>
-	<fcAbilityPointsSummary>Points: {0} / {1}</fcAbilityPointsSummary>
-	<fcClearAbilities>Clear</fcClearAbilities>
-	<fcApplyAbilities>Apply</fcApplyAbilities>
-	<fcCancelAbilities>Cancel</fcCancelAbilities>
+	<fcPsycastPointsSummary>Points: {0} / {1}</fcPsycastPointsSummary>
+	<fcClearPsycasts>Clear</fcClearPsycasts>
+	<fcApplyPsycasts>Apply</fcApplyPsycasts>
+	<fcCancelPsycasts>Cancel</fcCancelPsycasts>
 
 	<!-- Mechs / Mechanitor (Biotech) -->
 	<fcMakeMechanitor>Make this unit a mechanitor</fcMakeMechanitor>

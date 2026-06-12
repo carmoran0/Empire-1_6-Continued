@@ -16,7 +16,7 @@ namespace FactionColonies
      * MechControlGroups stat): each group is a highlighted header strip with its own work-mode chooser
      * and Add Mech button (adds straight into that group), with the group's mechs listed below it and a
      * gradient separator between groups. Each mech row has a group selector to move it. Mirrors
-     * ImplantListWidget/AbilityListWidget: reads displayUnit, routes mutations via getEditTarget. */
+     * ImplantListWidget/PsycastListWidget: reads displayUnit, routes mutations via getEditTarget. */
     public static class MechListWidget
     {
         public struct Options

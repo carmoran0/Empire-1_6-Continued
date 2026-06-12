@@ -6,14 +6,14 @@ using Verse;
 
 namespace FactionColonies
 {
-    /* Shared abilities/psycasts panel for the unit designer's Abilities tab. A psylink-level stepper at
-     * the top gates how powerful the unit's psycasts are. Below it the panel adapts to the active ability
+    /* Shared psycasts/psycasts panel for the unit designer's Psycasts tab. A psylink-level stepper at
+     * the top gates how powerful the unit's psycasts are. Below it the panel adapts to the active psycast
      * system:
      *   - VPE (SupportsExplicitSelection): an "Edit Psycasts" button opens VPE's own picker window, and a
      *     read-only list shows the chosen psycasts with cost.
      *   - Base game (Royalty): no picker — a note explains psycasts are granted randomly at this psylink
      *     level when the unit deploys (vanilla behavior). */
-    public static class AbilityListWidget
+    public static class PsycastListWidget
     {
         public struct Options
         {
@@ -33,14 +33,14 @@ namespace FactionColonies
             GameFont fontBefore = Text.Font;
             TextAnchor anchorBefore = Text.Anchor;
 
-            IAbilitySystemProvider active = AbilitySystemRegistry.Active;
+            IPsycastSystemProvider active = PsycastSystemRegistry.Active;
 
-            // No ability system available — explain and bail.
+            // No psycast system available — explain and bail.
             if (active is null)
             {
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(rect, "fcAbilitiesNoSystem".Translate());
+                Widgets.Label(rect, "fcPsycastsNoSystem".Translate());
                 Text.Font = fontBefore;
                 Text.Anchor = anchorBefore;
                 return;
@@ -80,10 +80,10 @@ namespace FactionColonies
                 {
                     float btnW = 130f;
                     Rect editBtnRect = new Rect(headerRect.xMax - btnW, headerRect.y, btnW, headerHeight);
-                    bool canEditAbilities = curLevel > 0;
-                    if (canEditAbilities)
+                    bool canEditPsycasts = curLevel > 0;
+                    if (canEditPsycasts)
                     {
-                        if (Widgets.ButtonText(editBtnRect, "fcEditAbilities".Translate()))
+                        if (Widgets.ButtonText(editBtnRect, "fcEditPsycasts".Translate()))
                         {
                             MilUnitFC t = opts.getEditTarget?.Invoke();
                             if (t != null) active.OpenEditor(t, delegate { t.ChangeTick(); });
@@ -92,9 +92,9 @@ namespace FactionColonies
                     else
                     {
                         GUI.color = Color.gray;
-                        Widgets.ButtonText(editBtnRect, "fcEditAbilities".Translate(), active: false);
+                        Widgets.ButtonText(editBtnRect, "fcEditPsycasts".Translate(), active: false);
                         GUI.color = Color.white;
-                        TooltipHandler.TipRegion(editBtnRect, "fcAbilitiesNeedPsylink".Translate());
+                        TooltipHandler.TipRegion(editBtnRect, "fcPsycastsNeedPsylink".Translate());
                     }
                 }
             }
@@ -106,7 +106,7 @@ namespace FactionColonies
             {
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.UpperLeft;
-                Widgets.Label(bodyRect.ContractedBy(4f), "fcAbilitiesRandomNote".Translate());
+                Widgets.Label(bodyRect.ContractedBy(4f), "fcPsycastsRandomNote".Translate());
                 Text.Font = fontBefore;
                 Text.Anchor = anchorBefore;
                 return;
@@ -119,7 +119,7 @@ namespace FactionColonies
                 Rect summaryRect = new Rect(bodyRect.x, bodyRect.y, bodyRect.width, 18f);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleLeft;
-                Widgets.Label(summaryRect, "fcAbilityPointsSummary".Translate(spent, budget));
+                Widgets.Label(summaryRect, "fcPsycastPointsSummary".Translate(spent, budget));
                 bodyRect.yMin += 20f;
             }
 
@@ -131,25 +131,25 @@ namespace FactionColonies
                 bodyRect.height -= 30f;
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                if (Widgets.ButtonText(clearRect, "fcClearAbilities".Translate()))
+                if (Widgets.ButtonText(clearRect, "fcClearPsycasts".Translate()))
                 {
                     MilUnitFC t = opts.getEditTarget?.Invoke();
-                    if (t != null) t.SetAbilitiesForSystem(active.Key, new List<SavedAbility>());
+                    if (t != null) t.SetPsycastsForSystem(active.Key, new List<SavedPsycast>());
                 }
             }
 
             // Display picks in their stored order — i.e. the order they were chosen — so the list reads
             // the same way trimming removes them (most recent last).
-            var items = displayUnit?.abilities;
+            var items = displayUnit?.psycasts;
             int count = items?.Count ?? 0;
             float viewHeight = count * rowHeight;
             Rect scrollViewRect = ScrollUtil.BeginScrollView(bodyRect, ref scrollPos, viewHeight);
 
             for (int i = 0; i < count; i++)
             {
-                SavedAbility item = items[i];
-                IAbilitySystemProvider provider = AbilitySystemRegistry.ByKey(item.systemKey);
-                AbilityPickEntry entry = null;
+                SavedPsycast item = items[i];
+                IPsycastSystemProvider provider = PsycastSystemRegistry.ByKey(item.systemKey);
+                PsycastPickEntry entry = null;
                 bool resolved = provider is object && provider.TryGetDisplay(item, out entry);
                 Rect row = new Rect(scrollViewRect.x, scrollViewRect.y + i * rowHeight, scrollViewRect.width, rowHeight);
                 if (i % 2 == 0) Widgets.DrawHighlight(row);
@@ -164,7 +164,7 @@ namespace FactionColonies
                 double cost = resolved ? entry.cost : 0;
                 Widgets.Label(costRect, "$" + cost.ToString("F0"));
 
-                string fallback = item.abilityDef.NullOrEmpty() ? (item.kind ?? "?") : item.abilityDef;
+                string fallback = item.psycastDef.NullOrEmpty() ? (item.kind ?? "?") : item.psycastDef;
                 string label = resolved ? entry.label : (fallback + " (?)");
                 Rect labelRect = new Rect(iconRect.xMax + 6f, row.y, costRect.x - iconRect.xMax - 10f, rowHeight);
                 Text.Font = GameFont.Tiny;

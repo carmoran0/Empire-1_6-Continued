@@ -49,7 +49,7 @@ namespace FactionColonies.VPE
         // (psycast, focus, or a single stat purchase) is appended in order, so trimming on a psylink
         // decrease removes the most recent picks regardless of kind. Initialized from the unit's saved
         // selections and only written back to the unit on Apply (Cancel/X discards it).
-        private readonly List<SavedAbility> selections = new List<SavedAbility>();
+        private readonly List<SavedPsycast> selections = new List<SavedPsycast>();
 
         // Budget/spent are OUR authoritative numbers, derived from the psylink level and the live session
         // pawn state — never from VPE's mutable hediff.points (which desyncs across generate/replay).
@@ -95,7 +95,7 @@ namespace FactionColonies.VPE
                 .ToList();
 
             // Working copy of the unit's saved picks, in stored order. Edited locally; persisted only on Apply.
-            selections.AddRange(unit.abilities.Where(a => a.systemKey == VPEAbilityProvider.ProviderKey));
+            selections.AddRange(unit.psycasts.Where(a => a.systemKey == VPEPsycastProvider.ProviderKey));
 
             SetupSessionPawn();
         }
@@ -113,7 +113,7 @@ namespace FactionColonies.VPE
                 if (sessionPawn.Faction is null && empire != null)
                     sessionPawn.SetFaction(empire);
 
-                new VPEAbilityProvider().ApplyPsylink(sessionPawn, unit.psylinkLevel);
+                new VPEPsycastProvider().ApplyPsylink(sessionPawn, unit.psylinkLevel);
 
                 hediff = sessionPawn.Psycasts();
                 compAbilities = sessionPawn.GetComp<CompAbilities>();
@@ -121,9 +121,9 @@ namespace FactionColonies.VPE
 
                 // Replay the working selection list onto the session pawn so the tree shows them as
                 // owned. We do NOT touch VPE's point counter — our own Budget/Spent are authoritative.
-                foreach (SavedAbility saved in selections.Where(a => a.systemKey == VPEAbilityProvider.ProviderKey))
+                foreach (SavedPsycast saved in selections.Where(a => a.systemKey == VPEPsycastProvider.ProviderKey))
                 {
-                    if (saved.kind == VPEAbilityProvider.KindStatUpgrade)
+                    if (saved.kind == VPEPsycastProvider.KindStatUpgrade)
                     {
                         int n = saved.count > 0 ? saved.count : 1;
                         hediff.ImproveStats(n);
@@ -131,15 +131,15 @@ namespace FactionColonies.VPE
                         continue;
                     }
 
-                    if (saved.kind == VPEAbilityProvider.KindMeditationFocus)
+                    if (saved.kind == VPEPsycastProvider.KindMeditationFocus)
                     {
-                        MeditationFocusDef focus = DefDatabase<MeditationFocusDef>.GetNamedSilentFail(saved.abilityDef);
+                        MeditationFocusDef focus = DefDatabase<MeditationFocusDef>.GetNamedSilentFail(saved.psycastDef);
                         if (focus is null || hediff.unlockedMeditationFoci.Contains(focus)) continue;
                         hediff.UnlockMeditationFocus(focus);
                         continue;
                     }
 
-                    AbilityDef def = DefDatabase<AbilityDef>.GetNamedSilentFail(saved.abilityDef);
+                    AbilityDef def = DefDatabase<AbilityDef>.GetNamedSilentFail(saved.psycastDef);
                     if (def is null || compAbilities.HasAbility(def)) continue;
                     AbilityExtension_Psycast psycast = def.Psycast();
                     if (psycast != null && psycast.path != null && !hediff.unlockedPaths.Contains(psycast.path))
@@ -201,7 +201,7 @@ namespace FactionColonies.VPE
                 {
                     hediff.ImproveStats(num);
                     sessionStatPoints += num;
-                    selections.Add(new SavedAbility(VPEAbilityProvider.ProviderKey, "", VPEAbilityProvider.KindStatUpgrade, num));
+                    selections.Add(new SavedPsycast(VPEPsycastProvider.ProviderKey, "", VPEPsycastProvider.KindStatUpgrade, num));
                 }
                 else
                 {
@@ -261,13 +261,13 @@ namespace FactionColonies.VPE
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleCenter;
             const float btnW = 120f, btnH = 30f, btnGap = 8f;
-            if (Widgets.ButtonText(new Rect(bottomBar.x, bottomBar.y, btnW, btnH), "fcClearAbilities".Translate()))
+            if (Widgets.ButtonText(new Rect(bottomBar.x, bottomBar.y, btnW, btnH), "fcClearPsycasts".Translate()))
                 ClearSelections();
             Rect applyRect = new Rect(bottomBar.xMax - btnW, bottomBar.y, btnW, btnH);
-            if (Widgets.ButtonText(applyRect, "fcApplyAbilities".Translate()))
+            if (Widgets.ButtonText(applyRect, "fcApplyPsycasts".Translate()))
                 ApplyAndClose();
             Rect cancelRect = new Rect(applyRect.x - btnGap - btnW, bottomBar.y, btnW, btnH);
-            if (Widgets.ButtonText(cancelRect, "fcCancelAbilities".Translate()))
+            if (Widgets.ButtonText(cancelRect, "fcCancelPsycasts".Translate()))
                 Close();
 
             Text.Font = fontBefore;
@@ -286,7 +286,7 @@ namespace FactionColonies.VPE
         /* Writes the working selections back to the unit, then closes. The only path that persists edits. */
         private void ApplyAndClose()
         {
-            unit.SetAbilitiesForSystem(VPEAbilityProvider.ProviderKey, selections);
+            unit.SetPsycastsForSystem(VPEPsycastProvider.ProviderKey, selections);
             Close();
         }
 
@@ -385,7 +385,7 @@ namespace FactionColonies.VPE
             if (unlockable && Widgets.ButtonInvisible(inRect))
             {
                 compAbilities.GiveAbility(ability);
-                selections.Add(new SavedAbility(VPEAbilityProvider.ProviderKey, ability.defName));
+                selections.Add(new SavedPsycast(VPEPsycastProvider.ProviderKey, ability.defName));
             }
         }
 
@@ -411,7 +411,7 @@ namespace FactionColonies.VPE
                 if (Widgets.ButtonText(new Rect(inRect.xMax - 13f, inRect.yMax - 13f, 12f, 12f), "▲"))
                 {
                     hediff.UnlockMeditationFocus(def);
-                    selections.Add(new SavedAbility(VPEAbilityProvider.ProviderKey, def.defName, VPEAbilityProvider.KindMeditationFocus, 1));
+                    selections.Add(new SavedPsycast(VPEPsycastProvider.ProviderKey, def.defName, VPEPsycastProvider.KindMeditationFocus, 1));
                 }
             }
         }

@@ -965,7 +965,7 @@ namespace FactionColonies
             if (implantsChanged)
                 MilUnitFC.ReconcileImplantsOnPawn(merc.pawn, target, prior);
             if (psycastsChanged)
-                MilUnitFC.ReconcileAbilitiesOnPawn(merc.pawn, target);
+                MilUnitFC.ReconcilePsycastsOnPawn(merc.pawn, target);
             if (mechanitorChanged)
                 MilUnitFC.ApplyMechanitorToPawn(merc.pawn, target);
             squad.Equipment.ReconcileAnimal(merc, target);

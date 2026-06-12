@@ -34,7 +34,7 @@ namespace FactionColonies
         private Vector2 inventoryScroll;
         private Vector2 implantScroll;
         private Vector2 animalScroll;
-        private Vector2 abilityScroll;
+        private Vector2 psycastScroll;
         private Vector2 mechScroll;
         private LoadoutTab activeTab = LoadoutTab.Apparel;
 
@@ -280,12 +280,12 @@ namespace FactionColonies
         private void DrawLoadoutPanel(Rect rect)
         {
             Rect content;
-            // Show the Abilities tab only when an ability system is available (Royalty / VPE / other),
+            // Show the Psycasts tab only when a psycast system is available (Royalty / VPE / other),
             // matching the unit designer. Edits buffer into workingLoadout like every other tab; the
             // live pawn is reconciled later by the squad inspection's per-pawn Upgrade.
-            bool showAbilities = AbilitySystemRegistry.Active != null;
+            bool showPsycasts = PsycastSystemRegistry.Active != null;
             bool showMechs = ModsConfig.BiotechActive;
-            activeTab = LoadoutTabStrip.Draw(rect, activeTab, out content, includeAbilities: showAbilities, includeMechs: showMechs);
+            activeTab = LoadoutTabStrip.Draw(rect, activeTab, out content, includePsycasts: showPsycasts, includeMechs: showMechs);
             content = content.ContractedBy(4f);
 
             if (activeTab == LoadoutTab.Apparel)
@@ -326,9 +326,9 @@ namespace FactionColonies
                     getDisplayUnit = () => DisplayLoadout,
                 });
             }
-            else if (activeTab == LoadoutTab.Abilities)
+            else if (activeTab == LoadoutTab.Psycasts)
             {
-                AbilityListWidget.Draw(content, DisplayLoadout, ref abilityScroll, new AbilityListWidget.Options
+                PsycastListWidget.Draw(content, DisplayLoadout, ref psycastScroll, new PsycastListWidget.Options
                 {
                     canEdit = true,
                     showHeaderButtons = true,

@@ -69,9 +69,9 @@ Values in between dampen the effect of military efficiency on the auto combat.</
 	<!-- Compatibility tab -->
 	<FCSettingsCompatNone>No supported compatibility patches are active.</FCSettingsCompatNone>
 	<FCSettingsCompatVPE>Vanilla Psycasts Expanded</FCSettingsCompatVPE>
-	<FCSettingsCompatVPEDesc>With VPE active, psylink levels themselves are free. Instead, each point spent in the psycast editor (abilities, meditation foci, stat upgrades) adds to a unit's cost. Tune those per-point costs here.</FCSettingsCompatVPEDesc>
-	<FCSettingVPEBaseAbilityCost>Psycast Base Cost</FCSettingVPEBaseAbilityCost>
-	<FCSettingVPEBaseAbilityCostTip>Flat silver cost of each chosen psycast, before adding the per-level amount below.</FCSettingVPEBaseAbilityCostTip>
+	<FCSettingsCompatVPEDesc>With VPE active, psylink levels themselves are free. Instead, each point spent in the psycast editor (psycasts, meditation foci, stat upgrades) adds to a unit's cost. Tune those per-point costs here.</FCSettingsCompatVPEDesc>
+	<FCSettingVPEBasePsycastCost>Psycast Base Cost</FCSettingVPEBasePsycastCost>
+	<FCSettingVPEBasePsycastCostTip>Flat silver cost of each chosen psycast, before adding the per-level amount below.</FCSettingVPEBasePsycastCostTip>
 	<FCSettingVPEPerLevelCost>Psycast Per-Level Cost</FCSettingVPEPerLevelCost>
 	<FCSettingVPEPerLevelCostTip>Additional silver cost per psycast tier (level). A tier-3 psycast costs the base plus three times this amount.</FCSettingVPEPerLevelCostTip>
 	<FCSettingVPEFocusCost>Meditation Focus Cost</FCSettingVPEFocusCost>

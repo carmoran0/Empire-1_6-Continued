@@ -31,11 +31,11 @@ namespace FactionColonies
                 foreach (SavedThing inv in unit.inventory) total += inv.MarketValue;
             if (unit.implants != null)
                 foreach (SavedImplant im in unit.implants) total += MilUnitFC.ImplantCost(im);
-            // Psycasts: psylink-level cost (owned by the active ability system) + any explicitly-chosen
-            // abilities. Base game charges per psylink level; VPE charges per chosen psycast instead.
-            total += AbilitySystemRegistry.Active?.PsylinkCost(unit.psylinkLevel) ?? 0;
-            if (unit.abilities != null)
-                foreach (SavedAbility a in unit.abilities) total += MilUnitFC.AbilityCost(a);
+            // Psycasts: psylink-level cost (owned by the active psycast system) + any explicitly-chosen
+            // psycasts. Base game charges per psylink level; VPE charges per chosen psycast instead.
+            total += PsycastSystemRegistry.Active?.PsylinkCost(unit.psylinkLevel) ?? 0;
+            if (unit.psycasts != null)
+                foreach (SavedPsycast a in unit.psycasts) total += MilUnitFC.PsycastCost(a);
             // Companion animals + mount: market value times count, mirroring the design-side cost in
             // MilUnitFC.UpdateEquipmentTotalCost so the upgrade diff is non-zero when animals/mount change.
             if (unit.animals != null)
@@ -151,7 +151,7 @@ namespace FactionColonies
 
         /// <summary>True when the psylink level or chosen-psycast set differs between
         /// <paramref name="target"/> and <paramref name="current"/>. Like <see cref="ImplantsChanged"/>,
-        /// the upgrade paths run an in-place psycast reconcile (<see cref="MilUnitFC.ReconcileAbilitiesOnPawn"/>)
+        /// the upgrade paths run an in-place psycast reconcile (<see cref="MilUnitFC.ReconcilePsycastsOnPawn"/>)
         /// when this is true — no pawn regeneration, identity preserved.</summary>
         public static bool PsycastsChanged(MilUnitFC target, MilUnitFC current)
         {
@@ -160,17 +160,17 @@ namespace FactionColonies
             return !PsycastsEquivalent(target, current);
         }
 
-        /* Equal when both the psylink level and the (order-independent) chosen-ability set match.
-         * Base-game units store no abilities, so for them this reduces to a psylink-level comparison. */
+        /* Equal when both the psylink level and the (order-independent) chosen-psycast set match.
+         * Base-game units store no psycasts, so for them this reduces to a psylink-level comparison. */
         public static bool PsycastsEquivalent(MilUnitFC a, MilUnitFC b)
         {
             int al = a?.psylinkLevel ?? 0;
             int bl = b?.psylinkLevel ?? 0;
             if (al != bl) return false;
-            return AbilitiesEquivalent(a?.abilities, b?.abilities);
+            return PsycastsEquivalent(a?.psycasts, b?.psycasts);
         }
 
-        private static bool AbilitiesEquivalent(List<SavedAbility> a, List<SavedAbility> b)
+        private static bool PsycastsEquivalent(List<SavedPsycast> a, List<SavedPsycast> b)
         {
             int an = a?.Count ?? 0;
             int bn = b?.Count ?? 0;
@@ -178,8 +178,8 @@ namespace FactionColonies
             if (an == 0) return true;
             // Key on every meaningful field so a changed focus or stat-point count (not just a
             // changed psycast) registers as a difference and offers an upgrade.
-            List<string> sa = a.Select(x => x.systemKey + "|" + x.kind + "|" + x.abilityDef + "|" + x.count).OrderBy(s => s).ToList();
-            List<string> sb = b.Select(x => x.systemKey + "|" + x.kind + "|" + x.abilityDef + "|" + x.count).OrderBy(s => s).ToList();
+            List<string> sa = a.Select(x => x.systemKey + "|" + x.kind + "|" + x.psycastDef + "|" + x.count).OrderBy(s => s).ToList();
+            List<string> sb = b.Select(x => x.systemKey + "|" + x.kind + "|" + x.psycastDef + "|" + x.count).OrderBy(s => s).ToList();
             for (int i = 0; i < an; i++)
                 if (sa[i] != sb[i]) return false;
             return true;

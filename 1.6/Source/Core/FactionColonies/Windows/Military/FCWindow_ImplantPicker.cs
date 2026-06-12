@@ -207,7 +207,7 @@ namespace FactionColonies
          * would reject everything. Instead we replicate the rest of CanBeUsedBy minus that colonist gate
          * (body part present, userMustHaveHediff, psychic sensitivity, leveled-upgrade limits), so a leveled
          * implant keeps appearing until it hits its cap and a higher-tier variant takes over. The mechlink
-         * and psylink are excluded — those are owned by the Mechs and Abilities tabs. */
+         * and psylink are excluded — those are owned by the Mechs and Psycasts tabs. */
         private static void AddSelfInstallOptions(Pawn pawn, List<Option> result)
         {
             foreach (ThingDef thing in DefDatabase<ThingDef>.AllDefsListForReading)

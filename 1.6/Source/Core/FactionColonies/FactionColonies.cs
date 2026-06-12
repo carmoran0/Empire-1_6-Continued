@@ -1189,7 +1189,7 @@ namespace FactionColonies
                 ls.Label("FCSettingsCompatVPEDesc".Translate());
                 ls.Gap(6f);
 
-                ls.Label("FCSettingVPEBaseAbilityCost".Translate() + ": " + vpePsycastBaseCost.ToString(), -1f, "FCSettingVPEBaseAbilityCostTip".Translate());
+                ls.Label("FCSettingVPEBasePsycastCost".Translate() + ": " + vpePsycastBaseCost.ToString(), -1f, "FCSettingVPEBasePsycastCostTip".Translate());
                 vpePsycastBaseCost = (int)ls.Slider(vpePsycastBaseCost, 0f, 2000f);
 
                 ls.Label("FCSettingVPEPerLevelCost".Translate() + ": " + vpePsycastPerLevelCost.ToString(), -1f, "FCSettingVPEPerLevelCostTip".Translate());

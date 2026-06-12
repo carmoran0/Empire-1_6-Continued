@@ -429,7 +429,7 @@ namespace FactionColonies
             if (loadout != null)
             {
                 MilUnitFC.ApplyImplantsToPawn(newPawn, loadout);
-                MilUnitFC.ApplyAbilitiesToPawn(newPawn, loadout);
+                MilUnitFC.ApplyPsycastsToPawn(newPawn, loadout);
                 MilUnitFC.ApplyMechanitorToPawn(newPawn, loadout);
             }
 

@@ -6,11 +6,11 @@ using Verse;
 namespace FactionColonies
 {
     /// <summary>
-    /// A single pickable ability surfaced by an <see cref="IAbilitySystemProvider"/>. Pure display
-    /// data for the picker UI and the chosen-ability list row; the actual grant is done by the
-    /// provider via <see cref="IAbilitySystemProvider.GrantAbility"/>.
+    /// A single pickable psycast surfaced by an <see cref="IPsycastSystemProvider"/>. Pure display
+    /// data for the picker UI and the chosen-psycast list row; the actual grant is done by the
+    /// provider via <see cref="IPsycastSystemProvider.GrantPsycast"/>.
     /// </summary>
-    public class AbilityPickEntry
+    public class PsycastPickEntry
     {
         public string defName;
         public string label;
@@ -21,19 +21,19 @@ namespace FactionColonies
     }
 
     /// <summary>
-    /// Pluggable ability system for the unit designer's Abilities tab. The base game and Vanilla
+    /// Pluggable psycast system for the unit designer's Psycasts tab. The base game and Vanilla
     /// Psycasts Expanded are distinct, non-overlapping systems (different AbilityDef types, different
     /// learning models), so each is wrapped in a provider. Exactly one provider is "active" at a
-    /// time (see <see cref="AbilitySystemRegistry.Active"/>); saved abilities carry their provider's
+    /// time (see <see cref="PsycastSystemRegistry.Active"/>); saved psycasts carry their provider's
     /// <see cref="Key"/> so they apply through the right system even on load.
     ///
-    /// Register implementations via <see cref="AbilitySystemRegistry.Register"/>. Providers are
+    /// Register implementations via <see cref="PsycastSystemRegistry.Register"/>. Providers are
     /// app-lifetime singletons (not per-game), so registration happens from a
     /// <c>[StaticConstructorOnStartup]</c>, not from world-component load.
     /// </summary>
-    public interface IAbilitySystemProvider
+    public interface IPsycastSystemProvider
     {
-        /// <summary>Stable identifier persisted on every <c>SavedAbility</c> this provider produces.</summary>
+        /// <summary>Stable identifier persisted on every <c>SavedPsycast</c> this provider produces.</summary>
         string Key { get; }
 
         /// <summary>Human-readable name (for empty-state text / tooltips).</summary>
@@ -50,25 +50,25 @@ namespace FactionColonies
 
         /// <summary>
         /// When true (VPE), the player explicitly chooses psycasts: the tab shows an "Edit Psycasts"
-        /// button (<see cref="OpenEditor"/>) and a read-only list of the chosen abilities. When
+        /// button (<see cref="OpenEditor"/>) and a read-only list of the chosen psycasts. When
         /// false (base game), psycasts are granted randomly at spawn from the psylink level — no
-        /// picker, no stored abilities — exactly as base RimWorld does.
+        /// picker, no stored psycasts — exactly as base RimWorld does.
         /// </summary>
         bool SupportsExplicitSelection { get; }
 
         /// <summary>
         /// Opens the provider-owned editor (only when <see cref="SupportsExplicitSelection"/>). The
-        /// editor writes the chosen abilities back into <paramref name="unit"/>.abilities; it should
+        /// editor writes the chosen psycasts back into <paramref name="unit"/>.psycasts; it should
         /// invoke <paramref name="onClosed"/> when done so the tab can refresh cost/preview.
         /// </summary>
         void OpenEditor(MilUnitFC unit, Action onClosed);
 
         /// <summary>
         /// Resolves a saved entry's display data (label/icon/cost) for list rendering. The entry is
-        /// opaque to the core — the provider interprets its <c>kind</c>/<c>abilityDef</c>/<c>count</c>
+        /// opaque to the core — the provider interprets its <c>kind</c>/<c>psycastDef</c>/<c>count</c>
         /// (e.g. VPE distinguishes psycasts, meditation foci, and stat upgrades).
         /// </summary>
-        bool TryGetDisplay(SavedAbility entry, out AbilityPickEntry display);
+        bool TryGetDisplay(SavedPsycast entry, out PsycastPickEntry display);
 
         /// <summary>Grants psylink of the given level to a freshly generated pawn (the neuroformer way).</summary>
         void ApplyPsylink(Pawn pawn, int level);
@@ -82,9 +82,9 @@ namespace FactionColonies
 
         /// <summary>
         /// Forces the end-state of one saved entry onto a freshly generated pawn. The provider owns
-        /// interpretation of the entry's <c>kind</c> (ability, meditation focus, stat upgrade, ...).
+        /// interpretation of the entry's <c>kind</c> (psycast, meditation focus, stat upgrade, ...).
         /// </summary>
-        void GrantAbility(Pawn pawn, SavedAbility entry);
+        void GrantPsycast(Pawn pawn, SavedPsycast entry);
 
         /// <summary>
         /// Returns the subset of <paramref name="selections"/> (in order) that fits this system's point
@@ -92,7 +92,7 @@ namespace FactionColonies
         /// game stores no selections and returns the list unchanged; VPE trims from the end to its point
         /// budget. May mutate/return a new list; callers should assign the result back.
         /// </summary>
-        List<SavedAbility> ClampSelectionsToBudget(List<SavedAbility> selections, int psylinkLevel);
+        List<SavedPsycast> ClampSelectionsToBudget(List<SavedPsycast> selections, int psylinkLevel);
 
         /// <summary>
         /// Point-economy summary for the unit's current selections, for display ("spent / budget").

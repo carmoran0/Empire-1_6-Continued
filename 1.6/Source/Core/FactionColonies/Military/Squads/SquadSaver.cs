@@ -270,7 +270,7 @@ namespace FactionColonies
         public List<SavedThing> inventory;
         public List<SavedImplant> implants;
         public int psylinkLevel;
-        public List<SavedAbility> abilities;
+        public List<SavedPsycast> psycasts;
         public bool isMechanitor;
         public List<SavedMech> mechs;
         public List<MechWorkModeDef> mechGroupWorkModes;
@@ -293,7 +293,7 @@ namespace FactionColonies
             inventory = new List<SavedThing>(unit.inventory ?? new List<SavedThing>());
             implants = new List<SavedImplant>(unit.implants ?? new List<SavedImplant>());
             psylinkLevel = unit.psylinkLevel;
-            abilities = new List<SavedAbility>(unit.abilities ?? new List<SavedAbility>());
+            psycasts = new List<SavedPsycast>(unit.psycasts ?? new List<SavedPsycast>());
             isMechanitor = unit.isMechanitor;
             mechs = new List<SavedMech>(unit.mechs ?? new List<SavedMech>());
             mechGroupWorkModes = new List<MechWorkModeDef>(unit.mechGroupWorkModes ?? new List<MechWorkModeDef>());
@@ -323,7 +323,7 @@ namespace FactionColonies
             MilUnitFC unit = MilTemplateFactory.CreateUnit(false);
             unit.name = name;
             // Drop companion rows whose kind failed to resolve (mod removed); mount loads as null and
-            // is simply unassigned. Mirrors the mechs/abilities filtering below.
+            // is simply unassigned. Mirrors the mechs/psycasts filtering below.
             unit.animals = animals?.Where(a => a.kind != null).ToList() ?? new List<SavedAnimal>();
             unit.mount = mount;
             unit.pawnKind = resolvedKind;
@@ -335,9 +335,9 @@ namespace FactionColonies
             unit.inventory = inventory?.Where(i => i.thing != null).ToList() ?? new List<SavedThing>();
             unit.implants = implants?.Where(im => im.IsValid).ToList() ?? new List<SavedImplant>();
             unit.psylinkLevel = psylinkLevel;
-            // Keep def-backed entries (ability/focus) and aggregate entries that carry a kind
+            // Keep def-backed entries (psycast/focus) and aggregate entries that carry a kind
             // (e.g. stat upgrades, which have no defName).
-            unit.abilities = abilities?.Where(a => a.IsValid()).ToList() ?? new List<SavedAbility>();
+            unit.psycasts = psycasts?.Where(a => a.IsValid()).ToList() ?? new List<SavedPsycast>();
             unit.isMechanitor = isMechanitor;
             unit.mechs = mechs?.Where(m => m.kind != null).ToList() ?? new List<SavedMech>();
             unit.mechGroupWorkModes = mechGroupWorkModes != null
@@ -390,7 +390,7 @@ namespace FactionColonies
             Scribe_Collections.Look(ref inventory, "inventory", LookMode.Deep);
             Scribe_Collections.Look(ref implants, "implants", LookMode.Deep);
             Scribe_Values.Look(ref psylinkLevel, "psylinkLevel", 0);
-            Scribe_Collections.Look(ref abilities, "abilities", LookMode.Deep);
+            Scribe_Collections.Look(ref psycasts, "psycasts", LookMode.Deep);
             Scribe_Values.Look(ref isMechanitor, "isMechanitor", false);
             Scribe_Collections.Look(ref mechs, "mechs", LookMode.Deep);
             Scribe_Collections.Look(ref mechGroupWorkModes, "mechGroupWorkModes", LookMode.Def);
@@ -699,7 +699,7 @@ namespace FactionColonies
      * occurrence index) so the concrete BodyPartRecord can be re-resolved against any pawn of
      * the unit's body via recipe.Worker.GetPartsToApplyOn (deterministic ordering). bodyPart is
      * null and bodyPartIndex is 0 for whole-body / non-targeted implants (recipe.targetsBodyPart
-     * == false). Future ability/psycast picking would live in a parallel list, not on this struct. */
+     * == false). Future psycast picking would live in a parallel list, not on this struct. */
     public struct SavedImplant : IExposable
     {
         public RecipeDef recipe;             // surgery install path (null for self-install items)
@@ -736,40 +736,40 @@ namespace FactionColonies
         }
     }
 
-    /* A point-purchase chosen for a unit design within an ability system. Stored by strings rather
-     * than Def references so the core assembly never has to reference a foreign ability-def type
+    /* A point-purchase chosen for a unit design within a psycast system. Stored by strings rather
+     * than Def references so the core assembly never has to reference a foreign psycast-def type
      * (e.g. VEF.Abilities.AbilityDef): a template designed with VPE loads cleanly even when VPE is
-     * absent — the entry simply resolves to no provider via AbilitySystemRegistry.ByKey and is
-     * skipped. systemKey is the owning IAbilitySystemProvider.Key ("Vanilla" / "VPE").
+     * absent — the entry simply resolves to no provider via PsycastSystemRegistry.ByKey and is
+     * skipped. systemKey is the owning IPsycastSystemProvider.Key ("Vanilla" / "VPE").
      *
      * The core treats the remaining fields opaquely — only the owning provider interprets them:
-     *   - kind: provider-defined entry type (null/"" == an ability/psycast, for back-compat with
+     *   - kind: provider-defined entry type (null/"" == a psycast, for back-compat with
      *     older saves). VPE also uses "MeditationFocus" and "StatUpgrade".
-     *   - abilityDef: the defName for def-backed entries (ability or meditation focus); empty for
+     *   - psycastDef: the defName for def-backed entries (psycast or meditation focus); empty for
      *     aggregate entries like stat upgrades.
      *   - count: multiplicity for aggregate entries (e.g. number of psycaster-stat points); 0 is
-     *     treated as 1. Paths (VPE) are re-derived from the ability at apply time. */
-    public struct SavedAbility : IExposable
+     *     treated as 1. Paths (VPE) are re-derived from the psycast at apply time. */
+    public struct SavedPsycast : IExposable
     {
         public string systemKey;
-        public string abilityDef;
+        public string psycastDef;
         public string kind;
         public int count;
 
-        public SavedAbility(string systemKey, string abilityDef)
-            : this(systemKey, abilityDef, null, 1) { }
+        public SavedPsycast(string systemKey, string psycastDef)
+            : this(systemKey, psycastDef, null, 1) { }
 
-        public SavedAbility(string systemKey, string abilityDef, string kind, int count)
+        public SavedPsycast(string systemKey, string psycastDef, string kind, int count)
         {
             this.systemKey = systemKey;
-            this.abilityDef = abilityDef;
+            this.psycastDef = psycastDef;
             this.kind = kind;
             this.count = count;
         }
 
         public bool IsInvalid()
         {
-            return abilityDef.NullOrEmpty() && kind.NullOrEmpty();
+            return psycastDef.NullOrEmpty() && kind.NullOrEmpty();
         }
         public bool IsValid()
         {
@@ -779,7 +779,7 @@ namespace FactionColonies
         public void ExposeData()
         {
             Scribe_Values.Look(ref systemKey, "systemKey");
-            Scribe_Values.Look(ref abilityDef, "abilityDef");
+            Scribe_Values.Look(ref psycastDef, "psycastDef");
             Scribe_Values.Look(ref kind, "kind");
             Scribe_Values.Look(ref count, "count", 0);
         }
@@ -789,7 +789,7 @@ namespace FactionColonies
      * and how many of it to bond to the mechanitor at deploy time. Stored as (kind, count) so a
      * single row can represent multiple identical mechs. A kind that fails to resolve (mod removed,
      * Biotech absent) loads as null and is filtered out in SavedUnitFC.CreateMilUnit — the same
-     * graceful-degradation contract as SavedImplant/SavedAbility. */
+     * graceful-degradation contract as SavedImplant/SavedPsycast. */
     public struct SavedMech : IExposable
     {
         public PawnKindDef kind;

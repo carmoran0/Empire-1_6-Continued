@@ -11,17 +11,17 @@ using AbilityDef = VEF.Abilities.AbilityDef;
 namespace FactionColonies.VPE
 {
     /// <summary>
-    /// Vanilla Psycasts Expanded provider for the unit designer's Abilities tab. VPE uses its own
+    /// Vanilla Psycasts Expanded provider for the unit designer's Psycasts tab. VPE uses its own
     /// ability framework (<c>VEF.Abilities.AbilityDef</c>, a separate DefDatabase from base game) and a
     /// path/points learning model, so it brings its own editor (<see cref="FCWindow_VPEPsycastEditor"/>)
     /// rather than the generic picker. Psylink is granted the "neuroformer way" (base <c>PsychicAmplifier</c>
     /// hediff); VPE's own Harmony patches attach its psycast tracker and sync level/points.
     /// </summary>
-    public class VPEAbilityProvider : IAbilitySystemProvider
+    public class VPEPsycastProvider : IPsycastSystemProvider
     {
         public const string ProviderKey = "VPE";
 
-        // SavedAbility.kind values this provider understands (null/"" == a psycast ability).
+        // SavedPsycast.kind values this provider understands (null/"" == a psycast).
         // VPE psylink points can be spent on three things; each maps to one of these entry kinds.
         public const string KindMeditationFocus = "MeditationFocus";
         public const string KindStatUpgrade = "StatUpgrade";
@@ -39,15 +39,15 @@ namespace FactionColonies.VPE
             Find.WindowStack.Add(new FCWindow_VPEPsycastEditor(unit, onClosed));
         }
 
-        public bool TryGetDisplay(SavedAbility entry, out AbilityPickEntry display)
+        public bool TryGetDisplay(SavedPsycast entry, out PsycastPickEntry display)
         {
             display = null;
 
             if (entry.kind == KindMeditationFocus)
             {
-                MeditationFocusDef focus = DefDatabase<MeditationFocusDef>.GetNamedSilentFail(entry.abilityDef);
+                MeditationFocusDef focus = DefDatabase<MeditationFocusDef>.GetNamedSilentFail(entry.psycastDef);
                 if (focus is null) return false;
-                display = new AbilityPickEntry
+                display = new PsycastPickEntry
                 {
                     defName = focus.defName,
                     label = focus.LabelCap,
@@ -62,7 +62,7 @@ namespace FactionColonies.VPE
             if (entry.kind == KindStatUpgrade)
             {
                 int n = entry.count > 0 ? entry.count : 1;
-                display = new AbilityPickEntry
+                display = new PsycastPickEntry
                 {
                     defName = "",
                     label = "VPE.PsycasterStats".Translate() + (n > 1 ? " x" + n : ""),
@@ -74,18 +74,18 @@ namespace FactionColonies.VPE
                 return true;
             }
 
-            // Default: a psycast ability.
-            AbilityDef def = DefDatabase<AbilityDef>.GetNamedSilentFail(entry.abilityDef);
+            // Default: a psycast.
+            AbilityDef def = DefDatabase<AbilityDef>.GetNamedSilentFail(entry.psycastDef);
             if (def is null) return false;
             display = ToEntry(def);
             return true;
         }
 
-        internal static AbilityPickEntry ToEntry(AbilityDef def)
+        internal static PsycastPickEntry ToEntry(AbilityDef def)
         {
             AbilityExtension_Psycast psycast = def.Psycast();
             int level = psycast != null ? psycast.level : 0;
-            return new AbilityPickEntry
+            return new PsycastPickEntry
             {
                 defName = def.defName,
                 label = def.LabelCap,
@@ -126,7 +126,7 @@ namespace FactionColonies.VPE
         /// </summary>
         public double PsylinkCost(int level) => 0;
 
-        public void GrantAbility(Pawn pawn, SavedAbility entry)
+        public void GrantPsycast(Pawn pawn, SavedPsycast entry)
         {
             if (pawn is null) return;
 
@@ -143,7 +143,7 @@ namespace FactionColonies.VPE
             // Meditation focus: unlock the chosen focus on the pawn's psycast tracker.
             if (entry.kind == KindMeditationFocus)
             {
-                MeditationFocusDef focus = DefDatabase<MeditationFocusDef>.GetNamedSilentFail(entry.abilityDef);
+                MeditationFocusDef focus = DefDatabase<MeditationFocusDef>.GetNamedSilentFail(entry.psycastDef);
                 if (focus is null) return;
                 Hediff_PsycastAbilities fociTracker = pawn.Psycasts();
                 if (fociTracker != null && !fociTracker.unlockedMeditationFoci.Contains(focus))
@@ -151,8 +151,8 @@ namespace FactionColonies.VPE
                 return;
             }
 
-            // Default: a psycast ability.
-            AbilityDef def = DefDatabase<AbilityDef>.GetNamedSilentFail(entry.abilityDef);
+            // Default: a psycast.
+            AbilityDef def = DefDatabase<AbilityDef>.GetNamedSilentFail(entry.psycastDef);
             if (def is null) return;
 
             CompAbilities comp = pawn.GetComp<CompAbilities>();
@@ -170,7 +170,7 @@ namespace FactionColonies.VPE
             comp.GiveAbility(def);
         }
 
-        public List<SavedAbility> ClampSelectionsToBudget(List<SavedAbility> selections, int psylinkLevel)
+        public List<SavedPsycast> ClampSelectionsToBudget(List<SavedPsycast> selections, int psylinkLevel)
             => VPEPointMath.Trim(selections, psylinkLevel);
 
         public bool TryGetPointBudget(MilUnitFC unit, out int spent, out int budget)
@@ -179,7 +179,7 @@ namespace FactionColonies.VPE
             budget = 0;
             if (unit is null) return false;
             budget = VPEPointMath.Budget(unit.psylinkLevel);
-            spent = VPEPointMath.SpentPoints(unit.abilities);
+            spent = VPEPointMath.SpentPoints(unit.psycasts);
             return true;
         }
 
@@ -195,11 +195,11 @@ namespace FactionColonies.VPE
 
             if (desired is null || desired.psylinkLevel <= 0) return;
             ApplyPsylink(pawn, desired.psylinkLevel);
-            if (desired.abilities is null) return;
-            foreach (SavedAbility a in desired.abilities)
+            if (desired.psycasts is null) return;
+            foreach (SavedPsycast a in desired.psycasts)
             {
                 if (a.systemKey == ProviderKey)
-                    GrantAbility(pawn, a);
+                    GrantPsycast(pawn, a);
             }
         }
 

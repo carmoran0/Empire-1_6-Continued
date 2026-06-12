@@ -20,26 +20,26 @@ namespace FactionColonies.VPE
     {
         public static int Budget(int psylinkLevel) => psylinkLevel <= 0 ? 0 : psylinkLevel + 1;
 
-        public static int SpentPoints(IEnumerable<SavedAbility> selections)
+        public static int SpentPoints(IEnumerable<SavedPsycast> selections)
         {
             if (selections is null) return 0;
             int spent = 0;
             HashSet<PsycasterPathDef> paths = new HashSet<PsycasterPathDef>();
-            foreach (SavedAbility s in selections)
+            foreach (SavedPsycast s in selections)
             {
-                if (s.systemKey != VPEAbilityProvider.ProviderKey) continue;
+                if (s.systemKey != VPEPsycastProvider.ProviderKey) continue;
 
-                if (s.kind == VPEAbilityProvider.KindStatUpgrade)
+                if (s.kind == VPEPsycastProvider.KindStatUpgrade)
                 {
                     spent += s.count > 0 ? s.count : 1;
                 }
-                else if (s.kind == VPEAbilityProvider.KindMeditationFocus)
+                else if (s.kind == VPEPsycastProvider.KindMeditationFocus)
                 {
                     spent += 1;
                 }
                 else
                 {
-                    PsycasterPathDef path = PathOf(s.abilityDef);
+                    PsycasterPathDef path = PathOf(s.psycastDef);
                     if (path != null && paths.Add(path)) spent += 1; // first ability of a path pays the path
                     spent += 1; // the ability itself
                 }
@@ -53,30 +53,30 @@ namespace FactionColonies.VPE
         /// is dropped. A stat-upgrade entry may be partially kept (its <c>count</c> reduced) to consume
         /// the last remaining points.
         /// </summary>
-        public static List<SavedAbility> Trim(List<SavedAbility> selections, int psylinkLevel)
+        public static List<SavedPsycast> Trim(List<SavedPsycast> selections, int psylinkLevel)
         {
-            List<SavedAbility> result = new List<SavedAbility>();
+            List<SavedPsycast> result = new List<SavedPsycast>();
             if (selections is null) return result;
 
             int budget = Budget(psylinkLevel);
             int spent = 0;
             HashSet<PsycasterPathDef> paths = new HashSet<PsycasterPathDef>();
 
-            foreach (SavedAbility s in selections)
+            foreach (SavedPsycast s in selections)
             {
-                if (s.systemKey != VPEAbilityProvider.ProviderKey)
+                if (s.systemKey != VPEPsycastProvider.ProviderKey)
                 {
                     result.Add(s); // foreign entries (none in practice) pass through untouched
                     continue;
                 }
 
-                if (s.kind == VPEAbilityProvider.KindStatUpgrade)
+                if (s.kind == VPEPsycastProvider.KindStatUpgrade)
                 {
                     int want = s.count > 0 ? s.count : 1;
                     int room = budget - spent;
                     if (room <= 0) break;
                     int take = want <= room ? want : room;
-                    SavedAbility kept = s;
+                    SavedPsycast kept = s;
                     kept.count = take;
                     result.Add(kept);
                     spent += take;
@@ -86,9 +86,9 @@ namespace FactionColonies.VPE
 
                 int cost = 1;
                 PsycasterPathDef pathToAdd = null;
-                if (s.kind != VPEAbilityProvider.KindMeditationFocus)
+                if (s.kind != VPEPsycastProvider.KindMeditationFocus)
                 {
-                    PsycasterPathDef path = PathOf(s.abilityDef);
+                    PsycasterPathDef path = PathOf(s.psycastDef);
                     if (path != null && !paths.Contains(path)) { cost += 1; pathToAdd = path; }
                 }
 
@@ -101,10 +101,10 @@ namespace FactionColonies.VPE
             return result;
         }
 
-        private static PsycasterPathDef PathOf(string abilityDefName)
+        private static PsycasterPathDef PathOf(string psycastDefName)
         {
-            if (string.IsNullOrEmpty(abilityDefName)) return null;
-            AbilityDef def = DefDatabase<AbilityDef>.GetNamedSilentFail(abilityDefName);
+            if (string.IsNullOrEmpty(psycastDefName)) return null;
+            AbilityDef def = DefDatabase<AbilityDef>.GetNamedSilentFail(psycastDefName);
             if (def is null) return null;
             AbilityExtension_Psycast psycast = def.Psycast();
             return psycast != null ? psycast.path : null;
