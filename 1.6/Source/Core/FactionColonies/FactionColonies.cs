@@ -158,7 +158,8 @@ namespace FactionColonies
         public static int vpeStatPointCost = DEFAULT_VPE_STAT_POINT_COST;
         public static float mercenaryHealRatePerHour = 1f;
         // HP repaired per hourly heal tick for off-map mechs (alternate to the merc heal path,
-        // which doesn't apply to mechanoids). Fed straight to MechRepairUtility.RepairTick.
+        // which doesn't apply to mechanoids). Drives the number of 1-HP MechRepairUtility.RepairTick
+        // calls made per tick.
         public static float militaryMechRepairRate = 4f;
 
         public static float maxThreatMultiplier = DEFAULT_MAX_THREAT_MULTIPLIER;

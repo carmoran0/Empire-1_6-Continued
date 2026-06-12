@@ -249,10 +249,13 @@ namespace FactionColonies
                 {
                     if (isMech)
                     {
-                        // Mechs don't starve or get tended — repair them directly. RepairTick heals
-                        // delta HP per call (not ticks), so use the tunable per-hour rate, not interval.
-                        if (MechRepairUtility.CanRepair(pawn))
-                            MechRepairUtility.RepairTick(pawn, (int)Math.Round(FCSettings.militaryMechRepairRate));
+                        // Mechs don't starve or get tended — repair them directly. The base game's
+                        // RepairTick(pawn) heals 1 HP per call (the delta overload is [Obsolete] as of
+                        // 1.6.4850), so loop it militaryMechRepairRate times to heal that many HP per
+                        // hourly tick. CanRepair ends the loop early once nothing's left to repair.
+                        int repairs = (int)Math.Round(FCSettings.militaryMechRepairRate);
+                        for (int i = 0; i < repairs && MechRepairUtility.CanRepair(pawn); i++)
+                            MechRepairUtility.RepairTick(pawn);
                     }
                     else
                     {
