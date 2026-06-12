@@ -155,6 +155,9 @@ namespace FactionColonies
             {
                 if (!(recipe.Worker is Recipe_InstallImplant)) continue;
                 if (recipe.addsHediff == null) continue;
+                // The death acidifier is auto-applied to all mercs (see
+                // MercenaryPawnFactory.TryApplyDeathAcidifier), so it isn't manually selectable here.
+                if (recipe == FCRecipeDefOf.InstallDeathAcidifier) continue;
                 if (!recipe.AvailableNow) continue;
 
                 List<BodyPartRecord> parts = new List<BodyPartRecord>(recipe.Worker.GetPartsToApplyOn(pawn, recipe));

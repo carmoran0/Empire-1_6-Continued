@@ -50,9 +50,6 @@ namespace FactionColonies
                         // to replace it; just null the pawn. Neither animals nor mechs are free-replaced.
                         NullDeadSubPawn(mfc.FindSubPawnWrapper(__instance));
                     }
-
-                    // Anti-exploit: sweep gear this squad dropped/left behind so it can't be looted.
-                    if (FCSettings.antiExploit) squad.Equipment.RemoveDroppedEquipment();
                 }
                 else
                 {
@@ -63,13 +60,9 @@ namespace FactionColonies
                     else LogUtil.Warning("Mercenary Errored out. Did not find squad.");
                 }
 
-                // Anti-exploit: destroy the dying merc's own gear. When disabled, the gear (and the
-                // corpse, via MercenaryAnimalDied) is left intact for the player to loot.
-                if (FCSettings.antiExploit)
-                {
-                    __instance.equipment?.DestroyAllEquipment();
-                    __instance.apparel?.DestroyAll();
-                }
+                // The merc's worn weapons and apparel now dissolve on death via the vanilla death
+                // acidifier implant (see MercenaryPawnFactory.TryApplyDeathAcidifier). The corpse and any
+                // gear dropped during the fight are left for the player, matching vanilla behaviour.
                 return true;
             }
 
@@ -108,27 +101,6 @@ namespace FactionColonies
                 if (p != null && !p.Dead && !p.Destroyed && p.Faction != newFaction)
                     p.SetFaction(newFaction);
             }
-        }
-    }
-
-    [HarmonyPatch(typeof(DeathActionWorker_Simple), "PawnDied")]
-    class MercenaryAnimalDied
-    {
-        static bool Prefix(Corpse corpse)
-        {
-            if (FindFC.Military?.IsMercenaryPawn(corpse.InnerPawn) == true)
-            {
-                //corpse.InnerPawn.SetFaction(FactionColonies.getPlayerColonyFaction());
-                // Anti-exploit: destroy the merc corpse (taking implants/gear with it). When disabled,
-                // let the corpse persist normally so the player can loot/butcher/harvest it.
-                if (FCSettings.antiExploit)
-                {
-                    corpse.Destroy();
-                    return false;
-                }
-            }
-
-            return true;
         }
     }
 

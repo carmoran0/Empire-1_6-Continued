@@ -433,9 +433,36 @@ namespace FactionColonies
                 MilUnitFC.ApplyMechanitorToPawn(newPawn, loadout);
             }
 
+            // Anti-exploit: implant a death acidifier so the merc's gear dissolves on death (vanilla
+            // mechanic). Replaces Empire's old bespoke corpse/gear destruction. Humanlike mercs only.
+            TryApplyDeathAcidifier(newPawn);
+
             merc.squad = squad;
             merc.settlement = squad?.settlement;
             merc.pawn = newPawn;
+        }
+
+        /// <summary>
+        /// Implants a vanilla death acidifier on humanlike mercs (gated by <see cref="FCSettings.antiExploit"/>),
+        /// so their weapons and apparel dissolve on death instead of being lootable. No-op for animals/mechs,
+        /// when anti-exploit is off, if the def is missing, or if the pawn already has the hediff (e.g. a
+        /// legacy unit design installed it).
+        /// </summary>
+        private static void TryApplyDeathAcidifier(Pawn pawn)
+        {
+            if (!FCSettings.antiExploit) return;
+            if (pawn?.health is null || pawn.RaceProps is null || !pawn.RaceProps.Humanlike) return;
+
+            RecipeDef recipe = FCRecipeDefOf.InstallDeathAcidifier;
+            if (recipe?.Worker is null) return;
+
+            // Install through the game's own surgery worker (Recipe_InstallImplant.ApplyOnPawn with a
+            // null bill doer), exactly as MilUnitFC.ApplyImplantsToPawn does. GetPartsToApplyOn resolves
+            // the recipe's fixed part (Torso) and returns nothing if the pawn already has the acidifier,
+            // so a legacy unit design that already installed it is a no-op.
+            BodyPartRecord part = recipe.Worker.GetPartsToApplyOn(pawn, recipe).FirstOrFallback();
+            if (part is null) return;
+            recipe.Worker.ApplyOnPawn(pawn, part, null, null, null);
         }
     }
 }
