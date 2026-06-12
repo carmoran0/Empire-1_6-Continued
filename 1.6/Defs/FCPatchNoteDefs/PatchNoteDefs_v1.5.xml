@@ -395,4 +395,18 @@
 		<li>Pecha</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_26</defName>
+		<label>Japanese Translation Update</label>
+		<description>Updates the Japanese translation, courtesy of PhenylPropion.</description>
+		<releaseDate>2026-06-12</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Updates Japanese translation</li>
+		</patchNoteLines>
+		<authors>
+		<li>PhenylPropion</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
