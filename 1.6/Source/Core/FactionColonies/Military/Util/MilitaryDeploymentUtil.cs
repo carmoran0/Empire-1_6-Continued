@@ -84,6 +84,17 @@ namespace FactionColonies
             }
 
             equippedPawns.ForEach(pawn => pawn.ApplyIdeologyRitualWounds());
+
+            // Apply the squad's combat-efficiency hediff to the deployed pawns, mirroring the
+            // manual-battle pipeline (BattlefieldContext). The hediff is stripped automatically
+            // on every map-exit path by the StripCombatEfficiencyOnDeSpawn patch on Pawn.DeSpawn,
+            // so no explicit recall cleanup is needed.
+            double efficiency = MilitaryForce.CreateMilitaryForceFromSquad(squad)?.militaryEfficiency ?? 1.0;
+            foreach (Pawn pawn in equippedPawns)
+            {
+                MilitaryEfficiencyUtil.ApplyCombatEfficiencyHediff(pawn, efficiency);
+            }
+
             // Start the deployment from a clean order. MilitaryOrder is persistent squad state, so
             // a leftover order from a PRIOR deployment (e.g. RecoverWoundedAndLeave from a dismiss)
             // would otherwise make this new lord execute it the moment it's ready — the squad would
@@ -99,7 +110,17 @@ namespace FactionColonies
             Find.LetterStack.ReceiveLetter("FCDeploymentSuccessLabel".Translate(), deploymentDesc, LetterDefOf.NeutralEvent, new LookTargets(equippedPawns));
             FindFC.MilitaryManager?.CreateDeployOp(squad, currentMap.Tile);
 
-            LordMaker.MakeNewLord(FindFC.EmpireFaction, new LordJob_DeployMilitary(dropPosition, squad), currentMap, equippedPawns);
+            // Mounts (Giddy Up 2): map each mounted merc to its mount animal so the deploy lord can mount
+            // them once they spawn. Only mount-typed sub-pawns; companion animals deploy and fight on foot.
+            Dictionary<Pawn, Pawn> mounts = new Dictionary<Pawn, Pawn>();
+            foreach (Mercenary sub in squad.AllSubPawns())
+            {
+                if (sub.subPawnType != Mercenary.SubPawnType.Mount || sub.pawn is null) continue;
+                if (sub.handler?.pawn is object && !mounts.ContainsKey(sub.handler.pawn))
+                    mounts.Add(sub.handler.pawn, sub.pawn);
+            }
+
+            LordMaker.MakeNewLord(FindFC.EmpireFaction, new LordJob_DeployMilitary(dropPosition, squad, mounts), currentMap, equippedPawns);
         }
 
         /// <summary>

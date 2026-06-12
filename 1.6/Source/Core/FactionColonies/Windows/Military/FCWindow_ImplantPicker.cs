@@ -20,10 +20,13 @@ namespace FactionColonies
     {
         private struct Option
         {
-            public RecipeDef recipe;
+            public RecipeDef recipe;             // surgery install (null for self-install)
+            public ThingDef selfInstallThing;    // self-install item (null for surgery)
             public BodyPartDef bodyPartDef;
             public int bodyPartIndex;
             public string label;
+
+            public ThingDef IconThing => selfInstallThing ?? MilUnitFC.ImplantIconThing(recipe);
         }
 
         private readonly Func<MilUnitFC> getDisplayUnit;
@@ -63,6 +66,8 @@ namespace FactionColonies
             RebuildIfStale();
 
             Rect searchRect = new Rect(0, 40f, inRect.width, SearchBarHeight);
+            Text.Font = GameFont.Small;
+            Text.Anchor = TextAnchor.UpperLeft;
             searchTerm = Widgets.TextField(searchRect, searchTerm);
 
             Rect listOut = new Rect(0, searchRect.yMax + margin, inRect.width, inRect.height - searchRect.yMax - margin - 40f);
@@ -81,18 +86,22 @@ namespace FactionColonies
                 Rect row = new Rect(scrollView.x, scrollView.y + i * RowHeight, scrollView.width, RowHeight);
                 if (i % 2 == 0) Widgets.DrawHighlight(row);
 
+                ThingDef iconThing = opt.IconThing;
                 Rect iconRect = new Rect(row.x + margin, row.y, RowHeight, RowHeight);
-                if (opt.recipe.UIIconThing != null)
-                    Widgets.ThingIcon(iconRect, opt.recipe.UIIconThing);
+                if (iconThing != null)
+                    Widgets.ThingIcon(iconRect, iconThing);
 
                 Rect infoRect = new Rect(iconRect.xMax, row.y + 2f, RowHeight - 4f, RowHeight - 4f);
-                if (opt.recipe.UIIconThing != null)
-                    Widgets.InfoCardButton(infoRect, opt.recipe.UIIconThing);
+                if (iconThing != null)
+                    Widgets.InfoCardButton(infoRect, iconThing);
 
+                float optCost = opt.recipe is object
+                    ? MilUnitFC.ImplantCost(opt.recipe)
+                    : (opt.selfInstallThing?.BaseMarketValue ?? 0f);
                 Rect costRect = new Rect(row.xMax - margin - 65f, row.y, 60f, RowHeight);
                 Text.Font = GameFont.Tiny;
                 Text.Anchor = TextAnchor.MiddleRight;
-                Widgets.Label(costRect, "$" + MilUnitFC.ImplantCost(opt.recipe).ToString("F0"));
+                Widgets.Label(costRect, "$" + optCost.ToString("F0"));
 
                 Rect labelRect = new Rect(infoRect.xMax + margin, row.y, costRect.x - infoRect.xMax - 2 * margin, RowHeight);
                 Text.Font = GameFont.Small;
@@ -104,7 +113,10 @@ namespace FactionColonies
                     MilUnitFC target = getEditTarget?.Invoke();
                     if (target != null)
                     {
-                        target.AddImplant(opt.recipe, opt.bodyPartDef, opt.bodyPartIndex);
+                        if (opt.recipe is object)
+                            target.AddImplant(opt.recipe, opt.bodyPartDef, opt.bodyPartIndex);
+                        else if (opt.selfInstallThing is object)
+                            target.AddImplant(opt.selfInstallThing, opt.bodyPartDef, opt.bodyPartIndex);
                         builtForVersion = int.MinValue; // force rebuild against the updated preview
                     }
                 }
@@ -112,6 +124,10 @@ namespace FactionColonies
 
             ScrollUtil.EndScrollView();
 
+            // Reset font explicitly: when the list is empty the row loop (which would have left it
+            // at Small) never ran, so the Close button would otherwise inherit the title's Medium font.
+            Text.Font = GameFont.Small;
+            Text.Anchor = TextAnchor.MiddleCenter;
             Rect closeRect = new Rect(inRect.width - 120f, inRect.height - 35f, 120f, 30f);
             if (Widgets.ButtonText(closeRect, "FCDialogPawnLoadoutClose".Translate()))
                 Close();
@@ -139,6 +155,9 @@ namespace FactionColonies
             {
                 if (!(recipe.Worker is Recipe_InstallImplant)) continue;
                 if (recipe.addsHediff == null) continue;
+                // The death acidifier is auto-applied to all mercs (see
+                // MercenaryPawnFactory.TryApplyDeathAcidifier), so it isn't manually selectable here.
+                if (recipe == FCRecipeDefOf.InstallDeathAcidifier) continue;
                 if (!recipe.AvailableNow) continue;
 
                 List<BodyPartRecord> parts = new List<BodyPartRecord>(recipe.Worker.GetPartsToApplyOn(pawn, recipe));
@@ -175,8 +194,76 @@ namespace FactionColonies
                 }
             }
 
+            AddSelfInstallOptions(pawn, result);
+
             result.Sort((a, b) => string.Compare(a.label, b.label, StringComparison.OrdinalIgnoreCase));
             return result;
+        }
+
+        /* Adds self-install implants (CompUseEffect_InstallImplant items such as control sublinks) that
+         * are currently installable on the pawn. We can't call the base game's CompUseEffect_InstallImplant
+         * .CanBeUsedBy directly: its first check rejects any pawn that isn't a free player colonist
+         * ("InstallImplantNotAllowedForNonColonists"), and our preview pawn is an Empire-faction NPC — so it
+         * would reject everything. Instead we replicate the rest of CanBeUsedBy minus that colonist gate
+         * (body part present, userMustHaveHediff, psychic sensitivity, leveled-upgrade limits), so a leveled
+         * implant keeps appearing until it hits its cap and a higher-tier variant takes over. The mechlink
+         * and psylink are excluded — those are owned by the Mechs and Psycasts tabs. */
+        private static void AddSelfInstallOptions(Pawn pawn, List<Option> result)
+        {
+            foreach (ThingDef thing in DefDatabase<ThingDef>.AllDefsListForReading)
+            {
+                CompProperties_UseEffectInstallImplant inst = thing.GetCompProperties<CompProperties_UseEffectInstallImplant>();
+                if (inst?.hediffDef is null || inst.bodyPart is null) continue;
+
+                // Owned by other tabs.
+                if (inst.hediffDef == HediffDefOf.MechlinkImplant) continue;
+                if (inst.hediffDef == HediffDefOf.PsychicAmplifier) continue;
+
+                // Must be craftable with the research the player has unlocked.
+                if (!SelfInstallResearchDone(thing)) continue;
+
+                // Item may require the pawn to already have a hediff (e.g. control sublink needs a mechlink).
+                CompProperties_Usable usable = thing.GetCompProperties<CompProperties_Usable>();
+                if (usable?.userMustHaveHediff != null && !pawn.health.hediffSet.HasHediff(usable.userMustHaveHediff))
+                    continue;
+
+                if (inst.requiresPsychicallySensitive && pawn.psychicEntropy != null && !pawn.psychicEntropy.IsPsychicallySensitive)
+                    continue;
+
+                BodyPartRecord part = pawn.RaceProps.body.GetPartsWithDef(inst.bodyPart).FirstOrFallback();
+                if (part is null) continue;
+
+                // Leveled-install limits, mirroring CanBeUsedBy against the current preview state.
+                Hediff existing = pawn.health.hediffSet.GetFirstHediffOfDef(inst.hediffDef);
+                if (inst.requiresExistingHediff && existing is null) continue;
+                if (existing is object)
+                {
+                    if (!inst.canUpgrade) continue;
+                    Hediff_Level lvl = existing as Hediff_Level;
+                    if (lvl != null)
+                    {
+                        if (lvl.level >= lvl.def.maxSeverity) continue;
+                        if (inst.maxSeverity <= lvl.level) continue;
+                        if (inst.minSeverity > lvl.level) continue;
+                    }
+                }
+
+                Option o = new Option();
+                o.selfInstallThing = thing;
+                o.bodyPartDef = part.def;
+                o.bodyPartIndex = MilUnitFC.BodyPartOccurrenceIndex(pawn, part);
+                o.label = "fcInstallSelfImplant".Translate(thing.LabelCap) + " (" + part.Label + ")";
+                result.Add(o);
+            }
+        }
+
+        private static bool SelfInstallResearchDone(ThingDef thing)
+        {
+            RecipeMakerProperties rm = thing.recipeMaker;
+            if (rm is null) return false; // not craftable — not normally obtainable
+            if (rm.researchPrerequisite != null && !rm.researchPrerequisite.IsFinished) return false;
+            if (rm.researchPrerequisites != null && rm.researchPrerequisites.Any(r => !r.IsFinished)) return false;
+            return true;
         }
     }
 }

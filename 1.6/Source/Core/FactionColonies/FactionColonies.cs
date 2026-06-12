@@ -82,6 +82,12 @@ namespace FactionColonies
         public const float DEFAULT_MAX_THREAT_MULTIPLIER = 3.0f;
         public const float DEFAULT_DEFENDER_ADVANTAGE = 1.15f;
         public const float DEFAULT_EFFICIENCY_DAMPING = 0.5f;
+        public const bool DEFAULT_ANTI_EXPLOIT = true;
+        // Vanilla Psycasts Expanded per-point silver costs (compat tab; scaled by militaryPsycastCostMultiplier).
+        public const int DEFAULT_VPE_PSYCAST_BASE_COST = 300;
+        public const int DEFAULT_VPE_PSYCAST_PER_LEVEL_COST = 300;
+        public const int DEFAULT_VPE_FOCUS_COST = 300;
+        public const int DEFAULT_VPE_STAT_POINT_COST = 250;
         /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* 
          *           ~  DEFAULTS END ~
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
@@ -107,6 +113,7 @@ namespace FactionColonies
         public static bool medievalTechOnly = DEFAULT_MEDIEVAL_TECH_ONLY;
         public static bool mirrorPlayerTechLevel = DEFAULT_MIRROR_PLAYER_TECH_LEVEL;
         public static bool disableHostileMilitaryActions = DEFAULT_DISABLE_HOSTILE_MILITARY_ACTIONS;
+        public static bool antiExploit = DEFAULT_ANTI_EXPLOIT;
         public static bool disableRandomEvents = DEFAULT_DISABLE_RANDOM_EVENTS;
         public static bool disableEventsWithOptions = DEFAULT_DISABLE_EVENTS_WITH_OPTIONS;
         public static float eventOptionDelaySeconds = DEFAULT_EVENT_OPTION_DELAY_SECONDS;
@@ -138,7 +145,22 @@ namespace FactionColonies
         public static int productionResearchBase = 100;
         public static double militaryAnimalCostMultiplier = 1.5;
         public static double militaryRaceCostMultiplier = 0.075;
+        public static double militaryPsylinkCostMultiplier = 1.0;
+        public static double militaryPsycastCostMultiplier = 1.0;
+        // Mechanitor merc costs (Biotech). Per-mech market-value multiplier + a flat surcharge for the
+        // mechlink itself. Default mechlink cost ~ the in-game Mechlink item market value (1000).
+        public static double militaryMechCostMultiplier = 1.0;
+        public static double militaryMechlinkCost = 1000.0;
+        // Vanilla Psycasts Expanded point-purchase costs (configured in the Compatibility settings tab).
+        public static int vpePsycastBaseCost = DEFAULT_VPE_PSYCAST_BASE_COST;
+        public static int vpePsycastPerLevelCost = DEFAULT_VPE_PSYCAST_PER_LEVEL_COST;
+        public static int vpeFocusCost = DEFAULT_VPE_FOCUS_COST;
+        public static int vpeStatPointCost = DEFAULT_VPE_STAT_POINT_COST;
         public static float mercenaryHealRatePerHour = 1f;
+        // HP repaired per hourly heal tick for off-map mechs (alternate to the merc heal path,
+        // which doesn't apply to mechanoids). Drives the number of 1-HP MechRepairUtility.RepairTick
+        // calls made per tick.
+        public static float militaryMechRepairRate = 4f;
 
         public static float maxThreatMultiplier = DEFAULT_MAX_THREAT_MULTIPLIER;
         public static float defenderAdvantage = DEFAULT_DEFENDER_ADVANTAGE;
@@ -154,6 +176,13 @@ namespace FactionColonies
         public static float squadHireCostMultiplier = DEFAULT_SQUAD_HIRE_COST_MULTIPLIER;
         public static float squadUpgradeCostMultiplier = DEFAULT_SQUAD_UPGRADE_COST_MULTIPLIER;
         public static int maxSquadSize = DEFAULT_MAX_SQUAD_SIZE;
+
+        /* Max companion animals a single merc design can carry (MilUnitFC.AddAnimal hard-blocks past
+         * this). Slider runs 1..MAX_ANIMAL_SUBPAWNS_SLIDER; lowering it never shrinks existing designs. */
+        public const int DEFAULT_MAX_ANIMAL_SUBPAWNS = 10;
+        public const int MIN_ANIMAL_SUBPAWNS = 1;
+        public const int MAX_ANIMAL_SUBPAWNS_SLIDER = 25;
+        public static int maxAnimalSubpawns = DEFAULT_MAX_ANIMAL_SUBPAWNS;
 
         /* Gene valuation weights. Used by GeneValuationUtil to score a xenotype's genes
          * into a cost multiplier applied to a mercenary's base race cost. Weights are
@@ -309,6 +338,7 @@ namespace FactionColonies
             Scribe_Values.Look(ref medievalTechOnly, "medievalTechOnly", DEFAULT_MEDIEVAL_TECH_ONLY);
             Scribe_Values.Look(ref mirrorPlayerTechLevel, "mirrorPlayerTechLevel", DEFAULT_MIRROR_PLAYER_TECH_LEVEL);
             Scribe_Values.Look(ref disableHostileMilitaryActions, "disableHostileMilitaryActions", DEFAULT_DISABLE_HOSTILE_MILITARY_ACTIONS);
+            Scribe_Values.Look(ref antiExploit, "antiExploit", DEFAULT_ANTI_EXPLOIT);
             Scribe_Values.Look(ref disableRandomEvents, "disableRandomEvents", DEFAULT_DISABLE_RANDOM_EVENTS);
             Scribe_Values.Look(ref disableEventsWithOptions, "disableEventsWithOptions", DEFAULT_DISABLE_EVENTS_WITH_OPTIONS);
             Scribe_Values.Look(ref eventOptionDelaySeconds, "eventOptionDelaySeconds", DEFAULT_EVENT_OPTION_DELAY_SECONDS);
@@ -347,9 +377,19 @@ namespace FactionColonies
             }
             Scribe_Values.Look(ref battleArchiveUnlimited, "battleArchiveUnlimited", DEFAULT_BATTLE_ARCHIVE_UNLIMITED);
             Scribe_Values.Look(ref mercenaryHealRatePerHour, "mercenaryHealRatePerHour", 1f);
+            Scribe_Values.Look(ref militaryMechRepairRate, "militaryMechRepairRate", 4f);
+            Scribe_Values.Look(ref militaryPsylinkCostMultiplier, "militaryPsylinkCostMultiplier", 1.0);
+            Scribe_Values.Look(ref militaryPsycastCostMultiplier, "militaryPsycastCostMultiplier", 1.0);
+            Scribe_Values.Look(ref militaryMechCostMultiplier, "militaryMechCostMultiplier", 1.0);
+            Scribe_Values.Look(ref militaryMechlinkCost, "militaryMechlinkCost", 1000.0);
+            Scribe_Values.Look(ref vpePsycastBaseCost, "vpePsycastBaseCost", DEFAULT_VPE_PSYCAST_BASE_COST);
+            Scribe_Values.Look(ref vpePsycastPerLevelCost, "vpePsycastPerLevelCost", DEFAULT_VPE_PSYCAST_PER_LEVEL_COST);
+            Scribe_Values.Look(ref vpeFocusCost, "vpeFocusCost", DEFAULT_VPE_FOCUS_COST);
+            Scribe_Values.Look(ref vpeStatPointCost, "vpeStatPointCost", DEFAULT_VPE_STAT_POINT_COST);
             Scribe_Values.Look(ref squadHireCostMultiplier, "squadHireCostMultiplier", DEFAULT_SQUAD_HIRE_COST_MULTIPLIER);
             Scribe_Values.Look(ref squadUpgradeCostMultiplier, "squadUpgradeCostMultiplier", DEFAULT_SQUAD_UPGRADE_COST_MULTIPLIER);
             Scribe_Values.Look(ref maxSquadSize, "maxSquadSize", DEFAULT_MAX_SQUAD_SIZE);
+            Scribe_Values.Look(ref maxAnimalSubpawns, "maxAnimalSubpawns", DEFAULT_MAX_ANIMAL_SUBPAWNS);
             Scribe_Values.Look(ref geneValueWeightMvf,       "geneValueWeightMvf",       DEFAULT_GENE_W_MVF);
             Scribe_Values.Look(ref geneValueWeightMet,       "geneValueWeightMet",       DEFAULT_GENE_W_MET);
             Scribe_Values.Look(ref geneValueWeightArc,       "geneValueWeightArc",       DEFAULT_GENE_W_ARC);
@@ -364,6 +404,11 @@ namespace FactionColonies
             {
                 LogUtil.Warning($"Loaded suspicious maxSquadSize={maxSquadSize}; resetting to {DEFAULT_MAX_SQUAD_SIZE}.");
                 maxSquadSize = DEFAULT_MAX_SQUAD_SIZE;
+            }
+            if (Scribe.mode == LoadSaveMode.LoadingVars && maxAnimalSubpawns < MIN_ANIMAL_SUBPAWNS)
+            {
+                LogUtil.Warning($"Loaded suspicious maxAnimalSubpawns={maxAnimalSubpawns}; resetting to {DEFAULT_MAX_ANIMAL_SUBPAWNS}.");
+                maxAnimalSubpawns = DEFAULT_MAX_ANIMAL_SUBPAWNS;
             }
             Scribe_Collections.Look(ref lastSeenVersions, "lastSeenVersions", LookMode.Value, LookMode.Value);
             if (lastSeenVersions is null) lastSeenVersions = new Dictionary<string, string>();
@@ -514,6 +559,7 @@ namespace FactionColonies
         private Vector2 scrollVectorEvents = new Vector2();
         private Vector2 scrollVectorMilitary = new Vector2();
         private Vector2 scrollVectorRoadBuilder = new Vector2();
+        private Vector2 scrollVectorCompat = new Vector2();
 
         /* Per-tab content heights, measured from the previous frame's Listing_Standard and
          * fed back into the scroll view so the scrollbar matches the real content length. */
@@ -521,6 +567,7 @@ namespace FactionColonies
         private float contentHeightEvents;
         private float contentHeightMilitary;
         private float contentHeightRoadBuilder;
+        private float contentHeightCompat;
 
         /// <summary>
         /// Creates an option for the list of ForcedTaxDeliveryOptions. Shuttles may not be used if royality is inactive
@@ -584,6 +631,7 @@ namespace FactionColonies
             settingsTabs.Add(new TabRecord("FCSettingsTabEvents".Translate(), delegate { settingsTab = 1; }, settingsTab == 1));
             settingsTabs.Add(new TabRecord("FCSettingsTabMilitary".Translate(), delegate { settingsTab = 2; }, settingsTab == 2));
             settingsTabs.Add(new TabRecord("FCSettingsTabRoadBuilder".Translate(), delegate { settingsTab = 3; }, settingsTab == 3));
+            settingsTabs.Add(new TabRecord("FCSettingsTabCompat".Translate(), delegate { settingsTab = 4; }, settingsTab == 4));
 
             Rect contentRect = new Rect(inRect.x, inRect.y + 40f, inRect.width, inRect.height - 40f);
             Widgets.DrawMenuSection(contentRect);
@@ -598,6 +646,7 @@ namespace FactionColonies
                 case 1: DoEventsTab(innerRect); break;
                 case 2: DoMilitaryTab(innerRect); break;
                 case 3: DoRoadBuilderTab(innerRect); break;
+                case 4: DoCompatTab(innerRect); break;
             }
         }
 
@@ -756,10 +805,13 @@ namespace FactionColonies
                 crushingDefeatPenaltyMultiplier = DEFAULT_CRUSHING_DEFEAT_PENALTY_MULTIPLIER;
                 overwhelmingVictoryRewardMultiplier = DEFAULT_OVERWHELMING_VICTORY_REWARD_MULTIPLIER;
                 respectLethalDamageThreshold = DEFAULT_RESPECT_LETHAL_DAMAGE_THRESHOLD;
+                antiExploit = DEFAULT_ANTI_EXPLOIT;
                 mercenaryHealRatePerHour = 1f;
+                militaryMechRepairRate = 4f;
                 squadHireCostMultiplier = DEFAULT_SQUAD_HIRE_COST_MULTIPLIER;
                 squadUpgradeCostMultiplier = DEFAULT_SQUAD_UPGRADE_COST_MULTIPLIER;
                 maxSquadSize = DEFAULT_MAX_SQUAD_SIZE;
+                maxAnimalSubpawns = DEFAULT_MAX_ANIMAL_SUBPAWNS;
                 squadDeploymentCostPercentage = DEFAULT_SQUAD_DEPLOYMENT_COST_PERCENTAGE;
                 deploymentBillLifespan_days = DEFAULT_DEPLOYMENT_BILL_LIFESPAN_DAYS;
                 geneValueWeightMvf       = DEFAULT_GENE_W_MVF;
@@ -884,6 +936,7 @@ namespace FactionColonies
             ls.Begin(listRect);
 
             ls.CheckboxLabeled("FCSettingDisableHostileMilActions".Translate(), ref disableHostileMilitaryActions);
+            ls.CheckboxLabeled("FCSettingAntiExploit".Translate(), ref antiExploit, "FCSettingAntiExploitTip".Translate());
             if (ls.ButtonText("FCSettingBattleMode".Translate() + battleMode)) Find.WindowStack.Add(new FloatMenu(BattleModeOptions));
 
             ls.Gap(10f);
@@ -909,9 +962,31 @@ namespace FactionColonies
             ls.Label("FCSettingMercHealRate".Translate() + ": " + mercenaryHealRatePerHour.ToString("0.00") + "x", -1f, "FCSettingMercHealRateTip".Translate());
             mercenaryHealRatePerHour = ls.Slider(mercenaryHealRatePerHour, 0.1f, 100f);
 
+            ls.Label("FCSettingMechRepairRate".Translate() + ": " + militaryMechRepairRate.ToString("0") + " HP", -1f, "FCSettingMechRepairRateTip".Translate());
+            militaryMechRepairRate = ls.Slider(militaryMechRepairRate, 0f, 50f);
+
+            // Vanilla psylink cost (base-game psycasts). Hidden when VPE is active — VPE makes psylink
+            // levels free and charges per chosen psycast instead (see the Compatibility tab).
+            if (!ModsConfig.IsActive("VanillaExpanded.VPsycastsE"))
+            {
+                ls.Label("FCSettingPsylinkCostMult".Translate() + ": " + militaryPsylinkCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingPsylinkCostMultTip".Translate());
+                militaryPsylinkCostMultiplier = ls.Slider((float)militaryPsylinkCostMultiplier, 0f, 5f);
+            }
+
+            // Mechanitor merc costs (Biotech only).
+            if (ModsConfig.BiotechActive)
+            {
+                ls.Label("FCSettingMechCostMult".Translate() + ": " + militaryMechCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingMechCostMultTip".Translate());
+                militaryMechCostMultiplier = ls.Slider((float)militaryMechCostMultiplier, 0f, 5f);
+
+                ls.Label("FCSettingMechlinkCost".Translate() + ": " + militaryMechlinkCost.ToString("0"), -1f, "FCSettingMechlinkCostTip".Translate());
+                militaryMechlinkCost = ls.Slider((float)militaryMechlinkCost, 0f, 5000f);
+            }
+
             DrawSectionResetButton(ls, delegate
             {
                 disableHostileMilitaryActions = DEFAULT_DISABLE_HOSTILE_MILITARY_ACTIONS;
+                antiExploit = DEFAULT_ANTI_EXPLOIT;
                 battleMode = DEFAULT_BATTLE_MODE;
                 minDaysTillMilitaryAction = DEFAULT_MIN_DAYS_TIL_MILITARY_ACTION;
                 maxDaysTillMilitaryAction = DEFAULT_MAX_DAYS_TIL_MILITARY_ACTION;
@@ -921,6 +996,10 @@ namespace FactionColonies
                 maxConcurrentBattleMaps = 0;
                 efficiencyDamping = DEFAULT_EFFICIENCY_DAMPING;
                 mercenaryHealRatePerHour = 1f;
+                militaryMechRepairRate = 4f;
+                militaryPsylinkCostMultiplier = 1.0;
+                militaryMechCostMultiplier = 1.0;
+                militaryMechlinkCost = 1000.0;
             });
 
             ls.Gap(12f);
@@ -963,6 +1042,9 @@ namespace FactionColonies
 
             ls.Label("FCSettingMaxSquadSize".Translate() + ": " + maxSquadSize.ToString(), -1f, "FCSettingMaxSquadSizeTip".Translate());
             maxSquadSize = (int)ls.Slider(maxSquadSize, 1f, 60f);
+
+            ls.Label("FCSettingMaxAnimalSubpawns".Translate() + ": " + maxAnimalSubpawns.ToString(), -1f, "FCSettingMaxAnimalSubpawnsTip".Translate());
+            maxAnimalSubpawns = (int)ls.Slider(maxAnimalSubpawns, MIN_ANIMAL_SUBPAWNS, MAX_ANIMAL_SUBPAWNS_SLIDER);
 
             ls.Label("FCSettingSquadHireCostMultiplier".Translate() + ": " + squadHireCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingSquadHireCostMultiplierTip".Translate());
             squadHireCostMultiplier = ls.Slider(squadHireCostMultiplier, 0.0f, 5.0f);
@@ -1013,6 +1095,7 @@ namespace FactionColonies
             DrawSectionResetButton(ls, delegate
             {
                 maxSquadSize = DEFAULT_MAX_SQUAD_SIZE;
+                maxAnimalSubpawns = DEFAULT_MAX_ANIMAL_SUBPAWNS;
                 squadHireCostMultiplier = DEFAULT_SQUAD_HIRE_COST_MULTIPLIER;
                 squadUpgradeCostMultiplier = DEFAULT_SQUAD_UPGRADE_COST_MULTIPLIER;
                 squadDeploymentCostPercentage = DEFAULT_SQUAD_DEPLOYMENT_COST_PERCENTAGE;
@@ -1084,6 +1167,63 @@ namespace FactionColonies
             ScrollUtil.EndScrollView();
         }
 
+        /* Settings for compatibility patches. Each supported mod gets its own section, shown only
+         * when that mod is loaded. The fields live in core (FCSettings) so they persist regardless,
+         * but a section is hidden unless its mod is active. */
+        private void DoCompatTab(Rect rect)
+        {
+            Rect viewRect = ScrollUtil.BeginScrollView(rect, ref scrollVectorCompat, contentHeightCompat);
+            Rect listRect = new Rect(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
+            Listing_Standard ls = new Listing_Standard();
+            ls.Begin(listRect);
+
+            bool any = false;
+
+            /* -- Vanilla Psycasts Expanded -- */
+            if (ModsConfig.IsActive("VanillaExpanded.VPsycastsE"))
+            {
+                any = true;
+                Text.Font = GameFont.Medium;
+                ls.Label("FCSettingsCompatVPE".Translate());
+                Text.Font = GameFont.Small;
+                ls.GapLine();
+                ls.Label("FCSettingsCompatVPEDesc".Translate());
+                ls.Gap(6f);
+
+                ls.Label("FCSettingVPEBasePsycastCost".Translate() + ": " + vpePsycastBaseCost.ToString(), -1f, "FCSettingVPEBasePsycastCostTip".Translate());
+                vpePsycastBaseCost = (int)ls.Slider(vpePsycastBaseCost, 0f, 2000f);
+
+                ls.Label("FCSettingVPEPerLevelCost".Translate() + ": " + vpePsycastPerLevelCost.ToString(), -1f, "FCSettingVPEPerLevelCostTip".Translate());
+                vpePsycastPerLevelCost = (int)ls.Slider(vpePsycastPerLevelCost, 0f, 2000f);
+
+                ls.Label("FCSettingVPEFocusCost".Translate() + ": " + vpeFocusCost.ToString(), -1f, "FCSettingVPEFocusCostTip".Translate());
+                vpeFocusCost = (int)ls.Slider(vpeFocusCost, 0f, 2000f);
+
+                ls.Label("FCSettingVPEStatPointCost".Translate() + ": " + vpeStatPointCost.ToString(), -1f, "FCSettingVPEStatPointCostTip".Translate());
+                vpeStatPointCost = (int)ls.Slider(vpeStatPointCost, 0f, 2000f);
+
+                ls.Label("FCSettingPsycastCostMult".Translate() + ": " + militaryPsycastCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingPsycastCostMultTip".Translate());
+                militaryPsycastCostMultiplier = ls.Slider((float)militaryPsycastCostMultiplier, 0f, 5f);
+
+                DrawSectionResetButton(ls, delegate
+                {
+                    vpePsycastBaseCost = DEFAULT_VPE_PSYCAST_BASE_COST;
+                    vpePsycastPerLevelCost = DEFAULT_VPE_PSYCAST_PER_LEVEL_COST;
+                    vpeFocusCost = DEFAULT_VPE_FOCUS_COST;
+                    vpeStatPointCost = DEFAULT_VPE_STAT_POINT_COST;
+                    militaryPsycastCostMultiplier = 1.0;
+                });
+            }
+
+            if (!any)
+                ls.Label("FCSettingsCompatNone".Translate());
+
+            contentHeightCompat = ls.CurHeight + 12f;
+            ls.End();
+
+            ScrollUtil.EndScrollView();
+        }
+
         /// <summary>
         /// Draws a compact, left-aligned "Reset Section to Defaults" button into the given
         /// listing and invokes <paramref name="resetAction"/> when clicked.
@@ -1115,6 +1255,8 @@ namespace FactionColonies
             {
                 LogUtil.MessageForce($"v{modVersion}");
             }
+
+            FactionCompat.CheckForMods();
         }
 
         public override string SettingsCategory()

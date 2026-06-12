@@ -102,8 +102,8 @@ namespace FactionColonies
             if (squad?.mercenaries != null)
                 foreach (Mercenary m in squad.mercenaries)
                     if (m?.pawn == pawn) return m;
-            if (squad?.animals != null)
-                foreach (Mercenary m in squad.animals)
+            if (squad != null)
+                foreach (Mercenary m in squad.AllSubPawns())
                     if (m?.pawn == pawn) return m;
             return null;
         }
@@ -183,9 +183,9 @@ namespace FactionColonies
                     if (m?.pawn is object && !m.pawn.Dead) candidates.Add(m.pawn);
                 }
             }
-            if (squad?.animals != null)
+            if (squad != null)
             {
-                foreach (Mercenary m in squad.animals)
+                foreach (Mercenary m in squad.AllSubPawns())
                 {
                     if (m?.pawn is object && !m.pawn.Dead) candidates.Add(m.pawn);
                 }

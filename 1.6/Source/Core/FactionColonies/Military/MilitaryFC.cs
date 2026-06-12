@@ -47,7 +47,23 @@ namespace FactionColonies
             if (fireSupportId > nextMilitaryFireSupportId) nextMilitaryFireSupportId = fireSupportId;
         }
 
-        public bool IsMercenaryPawn(Pawn pawn) => mercenaryPawnSet.Contains(pawn);
+        /// <summary>True if <paramref name="pawn"/> is a squad pawn — a mercenary slot pawn OR one of their
+        /// bonded sub-pawns (mech / companion animal). Fast O(1) via the cache; on a cache miss it falls
+        /// back to the authoritative ownership scan and self-heals the cache, so a lagging cache (e.g. a
+        /// freshly bonded mech not yet followed by a RebuildMercenaryPawnSet) can never make a consumer —
+        /// the death patch, the PassToWorld guard, the faction cascade — treat a live squad pawn as a
+        /// stranger (which is what let battle-end cleanup wrongly destroy mechs).</summary>
+        public bool IsMercenaryPawn(Pawn pawn)
+        {
+            if (pawn is null) return false;
+            if (mercenaryPawnSet.Contains(pawn)) return true;
+            if (FindMercByPawn(pawn) is object || FindSubPawnWrapper(pawn) is object)
+            {
+                mercenaryPawnSet.Add(pawn); // self-heal: keep repeat lookups O(1)
+                return true;
+            }
+            return false;
+        }
 
         public void RebuildMercenaryPawnSet()
         {
@@ -59,13 +75,10 @@ namespace FactionColonies
                     if (merc?.pawn != null)
                         mercenaryPawnSet.Add(merc.pawn);
                 }
-                if (squad.animals != null)
+                foreach (Mercenary sub in squad.AllSubPawns())
                 {
-                    foreach (Mercenary animal in squad.animals)
-                    {
-                        if (animal?.pawn != null)
-                            mercenaryPawnSet.Add(animal.pawn);
-                    }
+                    if (sub?.pawn != null)
+                        mercenaryPawnSet.Add(sub.pawn);
                 }
             }
         }
@@ -231,27 +244,42 @@ namespace FactionColonies
                 if (pawn.Map != null) continue;
 
                 WorldSettlementFC settlement = merc.settlement ?? merc.squad?.getSettlement;
+                bool isMech = pawn.RaceProps != null && pawn.RaceProps.IsMechanoid;
                 try
                 {
-                    // Vanilla HealthTickInterval gates its heal branch on !food.Starving. Off-map
-                    // mercs don't tick their needs, so the food need is frozen at whatever value
-                    // it had at despawn — possibly Starving. Top it up; mercs at base are
-                    // abstracted as eating in the mess hall.
-                    Need_Food food = pawn.needs?.food;
-                    if (food != null) food.CurLevel = food.MaxLevel;
+                    if (isMech)
+                    {
+                        // Mechs don't starve or get tended — repair them directly. The base game's
+                        // RepairTick(pawn) heals 1 HP per call (the delta overload is [Obsolete] as of
+                        // 1.6.4850), so loop it militaryMechRepairRate times to heal that many HP per
+                        // hourly tick. CanRepair ends the loop early once nothing's left to repair.
+                        int repairs = (int)Math.Round(FCSettings.militaryMechRepairRate);
+                        for (int i = 0; i < repairs && MechRepairUtility.CanRepair(pawn); i++)
+                            MechRepairUtility.RepairTick(pawn);
+                    }
+                    else
+                    {
+                        // Vanilla HealthTickInterval gates its heal branch on !food.Starving. Off-map
+                        // mercs/animals don't tick their needs, so the food need is frozen at whatever
+                        // value it had at despawn — possibly Starving. Top it up; pawns at base are
+                        // abstracted as eating in the mess hall.
+                        Need_Food food = pawn.needs?.food;
+                        if (food != null) food.CurLevel = food.MaxLevel;
 
-                    if (pawn.health.HasHediffsNeedingTend())
-                        MercTendingUtil.TendOnce(merc, settlement);
+                        if (pawn.health.HasHediffsNeedingTend())
+                            MercTendingUtil.TendOnce(merc, settlement);
 
-                    pawn.health.HealthTickInterval(interval);
+                        pawn.health.HealthTickInterval(interval);
+                    }
                 }
                 catch (Exception e)
                 {
                     LogUtil.Error($"Exception in mercenary heal tick for {pawn.LabelShortCap}: {e}");
                 }
 
-                // Vanilla cleanup pruned dead hediffs during the tick; if no injuries remain, drop tracking.
-                if (pawn.Dead || pawn.Destroyed || !HasInjuries(pawn))
+                // Vanilla cleanup pruned dead hediffs during the tick; if nothing remains to heal/repair, drop tracking.
+                bool stillNeeds = isMech ? MechRepairUtility.CanRepair(pawn) : HasInjuries(pawn);
+                if (pawn.Dead || pawn.Destroyed || !stillNeeds)
                 {
                     if (toRemove is null) toRemove = new List<Pawn>();
                     toRemove.Add(pawn);
@@ -261,68 +289,6 @@ namespace FactionColonies
             {
                 foreach (Pawn p in toRemove) injuredMercsByPawn.Remove(p);
             }
-        }
-
-        /// <summary>
-        /// Swap any injured / downed / dead animal in an undeployed squad with a freshly
-        /// generated pawn of the same <see cref="PawnKindDef"/>. Animals are not part of
-        /// the merc healing pipeline (see <see cref="SquadHealingEstimator"/>), so without
-        /// this pass an animal wounded in battle would sit injured forever. Replacement is
-        /// free; animals are treated as disposable companions for now. The handler bond
-        /// (<see cref="Mercenary.handler"/> / <see cref="Mercenary.animal"/>) is preserved
-        /// since only the <see cref="Mercenary.pawn"/> field is swapped.
-        /// </summary>
-        public void TickAnimalReplacement()
-        {
-            bool anyReplaced = false;
-            foreach (MercenarySquadFC squad in mercenarySquads)
-            {
-                if (squad?.animals is null || squad.animals.Count == 0) continue;
-                if (squad.Deployment.IsPhysicallyDeployed()) continue; // never swap a pawn mid-battle
-
-                for (int i = 0; i < squad.animals.Count; i++)
-                {
-                    Mercenary animalMerc = squad.animals[i];
-                    if (animalMerc is null || animalMerc.IsEmptySlot) continue;
-                    Pawn oldPawn = animalMerc.pawn;
-                    if (oldPawn is null) continue;
-                    if (!NeedsAnimalReplacement(oldPawn)) continue;
-
-                    PawnKindDef race = oldPawn.kindDef;
-                    if (race is null)
-                    {
-                        LogUtil.Warning($"Animal merc in squad {squad.DisplayName} has null kindDef; skipping replacement.");
-                        continue;
-                    }
-
-                    try
-                    {
-                        MercenaryPawnFactory.CreateNewAnimal(squad, ref animalMerc, race);
-                    }
-                    catch (Exception e)
-                    {
-                        LogUtil.Error($"Exception replacing animal in squad {squad.DisplayName}: {e}");
-                        continue;
-                    }
-
-                    if (mercenaryPawnSet != null) mercenaryPawnSet.Remove(oldPawn);
-                    if (injuredMercsByPawn != null) injuredMercsByPawn.Remove(oldPawn);
-                    anyReplaced = true;
-                }
-            }
-            if (anyReplaced) RebuildMercenaryPawnSet();
-        }
-
-        private static bool NeedsAnimalReplacement(Pawn pawn)
-        {
-            if (pawn.Dead || pawn.Destroyed || pawn.Downed) return true;
-            List<Hediff> hediffs = pawn.health?.hediffSet?.hediffs;
-            if (hediffs is null) return false;
-            for (int i = 0; i < hediffs.Count; i++)
-            {
-                if (hediffs[i] is Hediff_Injury inj && !inj.IsPermanent()) return true;
-            }
-            return false;
         }
 
         /// <summary>
@@ -354,6 +320,17 @@ namespace FactionColonies
                 if (merc?.pawn is null || merc.pawn.Dead || merc.pawn.Destroyed) continue;
                 if (HasInjuries(merc.pawn))
                     injuredMercsByPawn[merc.pawn] = merc;
+            }
+
+            // Sub-pawns heal through the same pass: animals via injuries, mechs via MechRepairUtility.
+            foreach (Mercenary sub in squad.AllSubPawns())
+            {
+                if (sub?.pawn is null || sub.pawn.Dead || sub.pawn.Destroyed) continue;
+                bool needs = sub.pawn.RaceProps != null && sub.pawn.RaceProps.IsMechanoid
+                    ? MechRepairUtility.CanRepair(sub.pawn)
+                    : HasInjuries(sub.pawn);
+                if (needs)
+                    injuredMercsByPawn[sub.pawn] = sub;
             }
         }
 
@@ -388,13 +365,10 @@ namespace FactionColonies
                     if (merc?.pawn?.Map != null && merc.pawn == unit)
                         return squad;
                 }
-                if (squad.animals != null)
+                foreach (var sub in squad.AllSubPawns())
                 {
-                    foreach (var animal in squad.animals)
-                    {
-                        if (animal?.pawn?.Map != null && animal.pawn == unit)
-                            return squad;
-                    }
+                    if (sub?.pawn?.Map != null && sub.pawn == unit)
+                        return squad;
                 }
             }
 
@@ -407,11 +381,35 @@ namespace FactionColonies
             return squad.mercenaries.FirstOrDefault(merc => merc.pawn == unit);
         }
 
+        /// <summary>Finds the sub-pawn (animal/mech) wrapper holding <paramref name="unit"/>, scanning
+        /// every squad regardless of map state (a mech can die off-map). Returns null if not a sub-pawn.</summary>
+        public Mercenary FindSubPawnWrapper(Pawn unit)
+        {
+            if (unit is null) return null;
+            foreach (var squad in mercenarySquads)
+                foreach (var sub in squad.AllSubPawns())
+                    if (sub?.pawn == unit) return sub;
+            return null;
+        }
+
+        /// <summary>Finds the top-level <see cref="Mercenary"/> (squad slot) whose live pawn is
+        /// <paramref name="unit"/>, or null if <paramref name="unit"/> isn't a slot merc (e.g. it's a
+        /// sub-pawn). Used to cascade a merc's faction change down to its sub-pawns.</summary>
+        public Mercenary FindMercByPawn(Pawn unit)
+        {
+            if (unit is null) return null;
+            foreach (var squad in mercenarySquads)
+            {
+                if (squad?.mercenaries is null) continue;
+                foreach (var merc in squad.mercenaries)
+                    if (merc?.pawn == unit) return merc;
+            }
+            return null;
+        }
+
         public IEnumerable<Mercenary> AllMercenaries =>
             mercenarySquads.SelectMany(squad =>
-                squad.animals?.Count > 0
-                    ? squad.mercenaries.Concat(squad.animals)
-                    : squad.mercenaries);
+                ((IEnumerable<Mercenary>)squad.mercenaries).Concat(squad.AllSubPawns()));
 
         public IEnumerable<MercenarySquadFC> DeployedSquads =>
             mercenarySquads.Where(squad => squad.Deployment.IsPhysicallyDeployed());

@@ -33,6 +33,9 @@ namespace FactionColonies
         private Vector2 apparelScroll;
         private Vector2 inventoryScroll;
         private Vector2 implantScroll;
+        private Vector2 animalScroll;
+        private Vector2 psycastScroll;
+        private Vector2 mechScroll;
         private LoadoutTab activeTab = LoadoutTab.Apparel;
 
         /* Buffered edits. null = "inherits from squad template" (same semantics as
@@ -224,19 +227,28 @@ namespace FactionColonies
             else
                 Widgets.DrawMenuSection(portraitRect);
 
+            // The companion-animal slot is repurposed as a Mount slot when Giddy Up 2 is active;
+            // otherwise it's hidden (companions are edited only in the Animals tab) and the weapon slot
+            // sits centered on its own.
+            bool showMount = FactionCompat.GiddyUp2Active;
             float slotsY = portraitRect.yMax + gap + 18f;
-            float slotsTotalW = slotSize * 2 + 16f;
+            float slotsTotalW = showMount ? slotSize * 2 + 16f : slotSize;
             float slotsX = rect.x + (rect.width - slotsTotalW) / 2f;
-            Rect animalSlot = new Rect(slotsX, slotsY, slotSize, slotSize);
-            Rect weaponSlot = new Rect(slotsX + slotSize + 16f, slotsY, slotSize, slotSize);
+            Rect mountSlot = new Rect(slotsX, slotsY, slotSize, slotSize);
+            Rect weaponSlot = showMount
+                ? new Rect(slotsX + slotSize + 16f, slotsY, slotSize, slotSize)
+                : new Rect(slotsX, slotsY, slotSize, slotSize);
 
             GameFont fontBefore = Text.Font;
             TextAnchor anchorBefore = Text.Anchor;
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.UpperCenter;
-            Widgets.Label(new Rect(animalSlot.x - 15f, animalSlot.y - 18f, animalSlot.width + 30f, 18f), "fcLabelAnimal".Translate());
+            if (showMount)
+            {
+                Widgets.Label(new Rect(mountSlot.x - 15f, mountSlot.y - 18f, mountSlot.width + 30f, 18f), "fcLabelMount".Translate());
+                Widgets.DrawMenuSection(mountSlot);
+            }
             Widgets.Label(new Rect(weaponSlot.x - 15f, weaponSlot.y - 18f, weaponSlot.width + 30f, 18f), "fcLabelWeapon".Translate());
-            Widgets.DrawMenuSection(animalSlot);
             Widgets.DrawMenuSection(weaponSlot);
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;
@@ -246,16 +258,16 @@ namespace FactionColonies
             // Use non-interactive draws so ButtonInvisible below handles all clicks.
             if (current?.HasWeapon == true)
                 Widgets.DrawTextureFitted(weaponSlot, current.weapons[0].thing.uiIcon, 1f);
-            if (current?.animal != null)
-                Widgets.DrawTextureFitted(animalSlot, current.animal.race.uiIcon, 1f);
+            if (showMount && current?.mount != null)
+                Widgets.DrawTextureFitted(mountSlot, current.mount.race.uiIcon, 1f);
 
             if (Widgets.ButtonInvisible(weaponSlot))
             {
                 OpenWeaponPicker();
             }
-            if (Widgets.ButtonInvisible(animalSlot))
+            if (showMount && Widgets.ButtonInvisible(mountSlot))
             {
-                OpenAnimalPicker();
+                OpenMountPicker();
             }
         }
 
@@ -268,7 +280,12 @@ namespace FactionColonies
         private void DrawLoadoutPanel(Rect rect)
         {
             Rect content;
-            activeTab = LoadoutTabStrip.Draw(rect, activeTab, out content);
+            // Show the Psycasts tab only when a psycast system is available (Royalty / VPE / other),
+            // matching the unit designer. Edits buffer into workingLoadout like every other tab; the
+            // live pawn is reconciled later by the squad inspection's per-pawn Upgrade.
+            bool showPsycasts = PsycastSystemRegistry.Active != null;
+            bool showMechs = ModsConfig.BiotechActive;
+            activeTab = LoadoutTabStrip.Draw(rect, activeTab, out content, includePsycasts: showPsycasts, includeMechs: showMechs);
             content = content.ContractedBy(4f);
 
             if (activeTab == LoadoutTab.Apparel)
@@ -289,9 +306,39 @@ namespace FactionColonies
                     getEditTarget = EnsureWorkingLoadout,
                 });
             }
-            else
+            else if (activeTab == LoadoutTab.Implants)
             {
                 ImplantListWidget.Draw(content, DisplayLoadout, ref implantScroll, new ImplantListWidget.Options
+                {
+                    canEdit = true,
+                    showHeaderButtons = true,
+                    getEditTarget = EnsureWorkingLoadout,
+                    getDisplayUnit = () => DisplayLoadout,
+                });
+            }
+            else if (activeTab == LoadoutTab.Animals)
+            {
+                AnimalListWidget.Draw(content, DisplayLoadout, ref animalScroll, new AnimalListWidget.Options
+                {
+                    canEdit = true,
+                    showHeaderButtons = true,
+                    getEditTarget = EnsureWorkingLoadout,
+                    getDisplayUnit = () => DisplayLoadout,
+                });
+            }
+            else if (activeTab == LoadoutTab.Psycasts)
+            {
+                PsycastListWidget.Draw(content, DisplayLoadout, ref psycastScroll, new PsycastListWidget.Options
+                {
+                    canEdit = true,
+                    showHeaderButtons = true,
+                    getEditTarget = EnsureWorkingLoadout,
+                    getDisplayUnit = () => DisplayLoadout,
+                });
+            }
+            else
+            {
+                MechListWidget.Draw(content, DisplayLoadout, ref mechScroll, new MechListWidget.Options
                 {
                     canEdit = true,
                     showHeaderButtons = true,
@@ -323,10 +370,10 @@ namespace FactionColonies
             SavedThing? currentWeapon = source?.HasWeapon == true ? source.weapons[0] : (SavedThing?)null;
             Find.WindowStack.Add(new FCWindow_ItemStuffPicker(
                 weaponDefs,
-                onConfirm: (item, stuff) =>
+                onConfirm: (item, stuff, quality) =>
                 {
                     MilUnitFC target = EnsureWorkingLoadout();
-                    if (target != null) target.SetWeapon(item, stuff);
+                    if (target != null) target.SetWeapon(item, stuff, quality);
                 },
                 onUnequip: () =>
                 {
@@ -335,28 +382,27 @@ namespace FactionColonies
                 },
                 titleKey: "fcPickWeapon",
                 initialItem: currentWeapon?.thing,
-                initialStuff: currentWeapon?.stuff
+                initialStuff: currentWeapon?.stuff,
+                initialQuality: currentWeapon?.quality
             ));
         }
 
-        private void OpenAnimalPicker()
+        private void OpenMountPicker()
         {
             MilUnitFC source = DisplayLoadout;
-            Find.WindowStack.Add(new FCWindow_AnimalPicker(
-                initialAnimal: source?.animal,
+            Find.WindowStack.Add(new FCWindow_MountPicker(
+                initialMount: source?.mount,
                 onConfirm: picked =>
                 {
                     MilUnitFC target = EnsureWorkingLoadout();
                     if (target is null) return;
-                    target.animal = picked;
-                    target.ChangeTick();
+                    target.SetMount(picked);
                 },
                 onUnequip: () =>
                 {
                     MilUnitFC target = EnsureWorkingLoadout();
                     if (target is null) return;
-                    target.animal = null;
-                    target.ChangeTick();
+                    target.SetMount(null);
                 }
             ));
         }

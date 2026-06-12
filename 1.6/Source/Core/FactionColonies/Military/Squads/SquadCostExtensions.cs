@@ -71,7 +71,23 @@ namespace FactionColonies
                 if (blueprint is null || blueprint.isBlank) continue;
                 total += (int)Math.Round(blueprint.getTotalCost * FCSettings.squadHireCostMultiplier);
             }
+            // Folded-in: every Missing sub-pawn of a live merc is restored by the same Fill action.
+            foreach (Mercenary sub in squad.MissingSubPawns())
+                total += SubPawnReplaceCost(sub);
             return total;
+        }
+
+        /// <summary>Silver to recreate one dead sub-pawn (animal or mech), mirroring the design's
+        /// per-unit cost: market value * the matching cost multiplier * <see cref="FCSettings.squadHireCostMultiplier"/>.
+        /// The flat mechlink surcharge is excluded — the link persists on the (still-present) mechanitor.</summary>
+        public static int SubPawnReplaceCost(Mercenary sub)
+        {
+            if (sub?.subPawnKind?.race is null) return 0;
+            double mult = sub.subPawnType == Mercenary.SubPawnType.Mech
+                ? FCSettings.militaryMechCostMultiplier
+                : FCSettings.militaryAnimalCostMultiplier;
+            double raw = Math.Floor(sub.subPawnKind.race.BaseMarketValue * mult);
+            return (int)Math.Round(raw * FCSettings.squadHireCostMultiplier);
         }
     }
 }

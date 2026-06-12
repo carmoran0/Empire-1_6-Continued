@@ -70,6 +70,8 @@
 	<fcTabApparel>Apparel</fcTabApparel>
 	<fcTabInventory>Inventory</fcTabInventory>
 	<fcTabImplants>Implants</fcTabImplants>
+	<fcTabPsycasts>Psycasts</fcTabPsycasts>
+	<fcTabMechs>Mechs</fcTabMechs>
 
 	<!-- Inventory -->
 	<fcAddInventoryItem>+ Add Item</fcAddInventoryItem>
@@ -82,6 +84,46 @@
 	<!-- Implants -->
 	<fcAddImplant>+ Add Implant</fcAddImplant>
 	<fcPickImplant>Select Implant</fcPickImplant>
+	<fcInstallSelfImplant>Install {0}</fcInstallSelfImplant>
+
+	<!-- Psycasts -->
+	<fcEditPsycasts>Edit Psycasts</fcEditPsycasts>
+	<fcPsylinkLevel>Psylink level</fcPsylinkLevel>
+	<fcPsycastsNoSystem>No psycast system is available. Install Royalty or Vanilla Psycasts Expanded to assign psycasts.</fcPsycastsNoSystem>
+	<fcPsycastsNeedPsylink>Raise the unit's psylink level above 0 to choose psycasts.</fcPsycastsNeedPsylink>
+	<fcPsycastsRandomNote>Psycasts are granted randomly at this psylink level when the unit is recruited.</fcPsycastsRandomNote>
+	<fcVPEEditorTitle>Psycasts</fcVPEEditorTitle>
+	<fcVPEEditorHint>Spend points on paths and psycasts, meditation foci, or psycaster stats. Your selections are saved to the unit design and applied to every mercenary built from it.</fcVPEEditorHint>
+	<fcVPEEditorUnavailable>Could not prepare a preview psycaster for this unit.</fcVPEEditorUnavailable>
+	<fcVPEStatPointsSpent>Stat points spent: {0}</fcVPEStatPointsSpent>
+	<fcVPEPointsAvailable>Available points: {0} / {1}</fcVPEPointsAvailable>
+	<fcPsycastPointsSummary>Points: {0} / {1}</fcPsycastPointsSummary>
+	<fcClearPsycasts>Clear</fcClearPsycasts>
+	<fcApplyPsycasts>Apply</fcApplyPsycasts>
+	<fcCancelPsycasts>Cancel</fcCancelPsycasts>
+
+	<!-- Mechs / Mechanitor (Biotech) -->
+	<fcMakeMechanitor>Make this unit a mechanitor</fcMakeMechanitor>
+	<fcMechsHint>Enable "Make this unit a mechanitor" to give it a mechlink and assign controllable mechs. The mechs deploy alongside the unit in battle.</fcMechsHint>
+	<fcMechsNoBiotech>Mechanitors require the Biotech DLC.</fcMechsNoBiotech>
+	<fcMechBandwidth>Bandwidth: {0} / {1}</fcMechBandwidth>
+	<fcMechBandwidthExceeded>That would exceed the mechanitor's bandwidth.</fcMechBandwidthExceeded>
+	<fcMechWorkMode>Work mode</fcMechWorkMode>
+	<fcMechGroup>Group {0}</fcMechGroup>
+	<fcAddMech>+ Add Mech</fcAddMech>
+	<fcPickMech>Select Mech</fcPickMech>
+	<fcNoMechsAvailable>No researched mechs available</fcNoMechsAvailable>
+	<fcMechNotResearched>You haven't researched how to build {0} yet.</fcMechNotResearched>
+
+	<!-- Companion animals (Animals tab) + Mount (Giddy Up 2) -->
+	<fcTabAnimals>Animals</fcTabAnimals>
+	<fcAddAnimal>+ Add Animal</fcAddAnimal>
+	<fcAnimalCount>Animals: {0} / {1}</fcAnimalCount>
+	<fcAnimalCapReached>This unit already has the maximum of {0} companion animals.</fcAnimalCapReached>
+	<fcNoAnimalsAssigned>No companion animals assigned</fcNoAnimalsAssigned>
+	<fcLabelMount>Mount</fcLabelMount>
+	<fcPickMount>Select Mount</fcPickMount>
+	<fcNoMountsAvailable>No mountable animals available</fcNoMountsAvailable>
 
 	<!-- Unit Race/PawnKind Errors -->
 	<FCChangeUnitRaceNoRaces>No available races</FCChangeUnitRaceNoRaces>

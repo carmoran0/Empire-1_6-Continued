@@ -1,7 +1,6 @@
 using CombatExtended;
 using HarmonyLib;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Verse;
@@ -30,31 +29,6 @@ namespace FactionColonies.CE
     /// </summary>
     public class CombatExtendedBridge : ICombatExtendedBridge
     {
-        private const int Default_Ammo_Count = 6;
-        public void EquipWeaponWithAmmo(Pawn pawn, ThingWithComps weapon)
-        {
-            if (pawn == null || weapon == null) return;
-
-            try
-            {
-                var compInventory = pawn.TryGetComp<CompInventory>();
-                if (compInventory == null) return;
-
-                var loadoutProps = new LoadoutPropertiesExtension();
-
-                // These are private methods in CE — Traverse is required
-                Traverse.Create(loadoutProps).Method("LoadWeaponWithRandAmmo", weapon).GetValue();
-                Traverse.Create(loadoutProps).Method("TryGenerateAmmoFor",
-                    new object[] { weapon, compInventory, Default_Ammo_Count }).GetValue();
-
-                compInventory.UpdateInventory();
-            }
-            catch (Exception e)
-            {
-                LogUtil.Error($"Failed to equip CE ammo for {pawn.LabelShort}: {e.Message}");
-            }
-        }
-
         public void UpdateInventory(Pawn pawn)
         {
             if (pawn == null) return;
@@ -130,51 +104,6 @@ FindFC.EmpireFaction?.leader,
             // CE ammo — only allow if it belongs to a mortar ammo set
             var ammoSets = ceAmmo.AmmoSetDefs;
             return ammoSets != null && ammoSets.Any(set => set.isMortarAmmoSet);
-        }
-
-        public IReadOnlyList<ThingDef> GetAmmoOptionsForWeapon(ThingDef weaponDef)
-        {
-            if (weaponDef == null) return Array.Empty<ThingDef>();
-            var ammoSet = weaponDef.GetCompProperties<CompProperties_AmmoUser>()?.ammoSet;
-            if (ammoSet?.ammoTypes == null || ammoSet.ammoTypes.Count == 0)
-                return Array.Empty<ThingDef>();
-            return ammoSet.ammoTypes.Select(link => (ThingDef)link.ammo).ToList();
-        }
-
-        public void EquipWeaponWithSpecificAmmo(Pawn pawn, ThingWithComps weapon, ThingDef preferredAmmo)
-        {
-            if (pawn == null || weapon == null || preferredAmmo == null) return;
-
-            try
-            {
-                var compInventory = pawn.TryGetComp<CompInventory>();
-                if (compInventory == null) return;
-
-                // Confirm the preferred ammo is compatible with this weapon
-                if (!GetAmmoOptionsForWeapon(weapon.def).Contains(preferredAmmo))
-                {
-                    EquipWeaponWithAmmo(pawn, weapon);
-                    return;
-                }
-
-                // ResetAmmoCount sets CurrentAmmo on the weapon's CompAmmoUser.
-                // TryGenerateAmmoFor then reads CurrentAmmo to decide what type to
-                // generate — so this produces 3 × MagSize rounds of the chosen ammo,
-                // exactly the same quantity as the normal random-ammo loadout path.
-                weapon.TryGetComp<CompAmmoUser>()?.ResetAmmoCount(preferredAmmo as AmmoDef);
-
-                var loadoutProps = new LoadoutPropertiesExtension();
-                Traverse.Create(loadoutProps)
-                    .Method("TryGenerateAmmoFor", new object[] { weapon, compInventory, Default_Ammo_Count })
-                    .GetValue();
-
-                compInventory.UpdateInventory();
-            }
-            catch (Exception e)
-            {
-                LogUtil.Error($"Failed to equip specific CE ammo for {pawn.LabelShort}: {e.Message}");
-                EquipWeaponWithAmmo(pawn, weapon);
-            }
         }
 
         /// <summary>

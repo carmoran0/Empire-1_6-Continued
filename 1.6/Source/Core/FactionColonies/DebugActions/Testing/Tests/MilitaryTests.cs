@@ -77,7 +77,6 @@ namespace FactionColonies
             // Squad with mercenaries=null. The estimator iterates safely without throwing.
             var squad = new MercenarySquadFC();
             squad.mercenaries = null;
-            squad.animals = null;
             TestAssert.AreEqual(0, SquadHealingEstimator.TicksToFullEffectiveness(squad));
         }
 
@@ -92,7 +91,6 @@ namespace FactionColonies
                 new Mercenary(),
                 new Mercenary()
             };
-            squad.animals = new System.Collections.Generic.List<Mercenary>();
             TestAssert.AreEqual(0, SquadHealingEstimator.TicksToFullEffectiveness(squad));
         }
     }

@@ -311,9 +311,12 @@ namespace FactionColonies
             {
                 UIUtil.DrawPawnPortrait(pawnRect, preview);
             }
-            else if (unit.animal != null)
+            else
             {
-                Widgets.ButtonImage(pawnRect, unit.animal.race.uiIcon);
+                // Fallback icon when there's no preview pawn: prefer the mount, else the first companion.
+                PawnKindDef animalIcon = unit.mount ?? unit.animals.FirstOrDefault().kind;
+                if (animalIcon != null)
+                    Widgets.ButtonImage(pawnRect, animalIcon.race.uiIcon);
             }
             x = pawnRect.xMax + 4f;
 

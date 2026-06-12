@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using RimWorld;
+using Verse;
 
 namespace FactionColonies
 {
@@ -28,7 +30,30 @@ namespace FactionColonies
             if (unit.inventory != null)
                 foreach (SavedThing inv in unit.inventory) total += inv.MarketValue;
             if (unit.implants != null)
-                foreach (SavedImplant im in unit.implants) total += MilUnitFC.ImplantCost(im.recipe);
+                foreach (SavedImplant im in unit.implants) total += MilUnitFC.ImplantCost(im);
+            // Psycasts: psylink-level cost (owned by the active psycast system) + any explicitly-chosen
+            // psycasts. Base game charges per psylink level; VPE charges per chosen psycast instead.
+            total += PsycastSystemRegistry.Active?.PsylinkCost(unit.psylinkLevel) ?? 0;
+            if (unit.psycasts != null)
+                foreach (SavedPsycast a in unit.psycasts) total += MilUnitFC.PsycastCost(a);
+            // Companion animals + mount: market value times count, mirroring the design-side cost in
+            // MilUnitFC.UpdateEquipmentTotalCost so the upgrade diff is non-zero when animals/mount change.
+            if (unit.animals != null)
+                foreach (SavedAnimal a in unit.animals)
+                    if (a.kind?.race != null)
+                        total += Math.Floor(a.kind.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier) * Math.Max(1, a.count);
+            if (unit.mount?.race != null)
+                total += Math.Floor(unit.mount.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier);
+            // Mechanitor: flat mechlink surcharge + each bonded mech's market value. Matches the
+            // design-side cost in MilUnitFC.UpdateEquipmentTotalCost so the upgrade diff stays in sync.
+            if (ModsConfig.BiotechActive && unit.IsMechanitorDesign)
+            {
+                total += FCSettings.militaryMechlinkCost;
+                if (unit.mechs != null)
+                    foreach (SavedMech m in unit.mechs)
+                        if (m.kind?.race != null)
+                            total += Math.Floor(m.kind.race.BaseMarketValue * FCSettings.militaryMechCostMultiplier) * Math.Max(1, m.count);
+            }
             return total;
         }
 
@@ -52,18 +77,112 @@ namespace FactionColonies
         }
 
         /// <summary>True when <paramref name="target"/> differs from <paramref name="current"/>
-        /// in any applied way (animal, apparel set/stuff/quality/color, weapon). A null target
-        /// means "nothing assigned" -> false; a null current with a real target -> true.</summary>
+        /// in any applied way (companion animals, mount, apparel set/stuff/quality/color, weapon). A
+        /// null target means "nothing assigned" -> false; a null current with a real target -> true.</summary>
         public static bool LoadoutsDiffer(MilUnitFC target, MilUnitFC current)
         {
             if (target is null) return false;
             if (current is null) return true;
-            if (target.animal != current.animal) return true;
+            if (target.mount != current.mount) return true;
+            if (!AnimalsEquivalent(target.animals, current.animals)) return true;
             if (!ApparelEquivalent(target.apparel, current.apparel)) return true;
             if (!WeaponsEquivalent(target.weapons, current.weapons)) return true;
             if (!InventoryEquivalent(target.inventory, current.inventory)) return true;
             if (!ImplantsEquivalent(target.implants, current.implants)) return true;
+            if (!PsycastsEquivalent(target, current)) return true;
+            if (MechanitorChanged(target, current)) return true;
             return false;
+        }
+
+        /// <summary>True when the mechanitor flag or the assigned-mech set differs between
+        /// <paramref name="target"/> and <paramref name="current"/>. The upgrade paths run an
+        /// in-place mech reconcile (<see cref="SquadEquipmentTracker.ReconcileMechs"/>) when this is
+        /// true — destroying and rebuilding the merc's bonded mechs.</summary>
+        public static bool MechanitorChanged(MilUnitFC target, MilUnitFC current)
+        {
+            if (target is null) return false;
+            if (current is null) return target.IsMechanitorDesign;
+            if (target.isMechanitor != current.isMechanitor) return true;
+            if (!GroupWorkModesEquivalent(target.mechGroupWorkModes, current.mechGroupWorkModes)) return true;
+            return !MechsEquivalent(target.mechs, current.mechs);
+        }
+
+        /* Order-independent equality over companion-animal rows (kind + count). */
+        public static bool AnimalsEquivalent(List<SavedAnimal> a, List<SavedAnimal> b)
+        {
+            int an = a == null ? 0 : a.Count(x => x.kind != null);
+            int bn = b == null ? 0 : b.Count(x => x.kind != null);
+            if (an != bn) return false;
+            if (an == 0) return true;
+            List<string> sa = a.Where(x => x.kind != null).Select(x => x.kind.defName + "|" + Math.Max(1, x.count)).OrderBy(s => s).ToList();
+            List<string> sb = b.Where(x => x.kind != null).Select(x => x.kind.defName + "|" + Math.Max(1, x.count)).OrderBy(s => s).ToList();
+            for (int i = 0; i < an; i++)
+                if (sa[i] != sb[i]) return false;
+            return true;
+        }
+
+        /* Order-independent equality over mech rows (kind + count + group). */
+        public static bool MechsEquivalent(List<SavedMech> a, List<SavedMech> b)
+        {
+            int an = a == null ? 0 : a.Count(x => x.kind != null);
+            int bn = b == null ? 0 : b.Count(x => x.kind != null);
+            if (an != bn) return false;
+            if (an == 0) return true;
+            List<string> sa = a.Where(x => x.kind != null).Select(x => x.kind.defName + "|" + Math.Max(1, x.count) + "|" + x.group).OrderBy(s => s).ToList();
+            List<string> sb = b.Where(x => x.kind != null).Select(x => x.kind.defName + "|" + Math.Max(1, x.count) + "|" + x.group).OrderBy(s => s).ToList();
+            for (int i = 0; i < an; i++)
+                if (sa[i] != sb[i]) return false;
+            return true;
+        }
+
+        /* Per-group work mode equality. Trailing entries that resolve to the default (Escort/null)
+         * don't count as a difference, so a longer-but-equivalent list still matches. */
+        private static bool GroupWorkModesEquivalent(List<MechWorkModeDef> a, List<MechWorkModeDef> b)
+        {
+            int n = Math.Max(a?.Count ?? 0, b?.Count ?? 0);
+            for (int i = 0; i < n; i++)
+            {
+                MechWorkModeDef ma = (a != null && i < a.Count) ? a[i] : null;
+                MechWorkModeDef mb = (b != null && i < b.Count) ? b[i] : null;
+                if (ma != mb) return false;
+            }
+            return true;
+        }
+
+        /// <summary>True when the psylink level or chosen-psycast set differs between
+        /// <paramref name="target"/> and <paramref name="current"/>. Like <see cref="ImplantsChanged"/>,
+        /// the upgrade paths run an in-place psycast reconcile (<see cref="MilUnitFC.ReconcilePsycastsOnPawn"/>)
+        /// when this is true — no pawn regeneration, identity preserved.</summary>
+        public static bool PsycastsChanged(MilUnitFC target, MilUnitFC current)
+        {
+            if (target is null) return false;
+            if (current is null) return true;
+            return !PsycastsEquivalent(target, current);
+        }
+
+        /* Equal when both the psylink level and the (order-independent) chosen-psycast set match.
+         * Base-game units store no psycasts, so for them this reduces to a psylink-level comparison. */
+        public static bool PsycastsEquivalent(MilUnitFC a, MilUnitFC b)
+        {
+            int al = a?.psylinkLevel ?? 0;
+            int bl = b?.psylinkLevel ?? 0;
+            if (al != bl) return false;
+            return PsycastsEquivalent(a?.psycasts, b?.psycasts);
+        }
+
+        private static bool PsycastsEquivalent(List<SavedPsycast> a, List<SavedPsycast> b)
+        {
+            int an = a?.Count ?? 0;
+            int bn = b?.Count ?? 0;
+            if (an != bn) return false;
+            if (an == 0) return true;
+            // Key on every meaningful field so a changed focus or stat-point count (not just a
+            // changed psycast) registers as a difference and offers an upgrade.
+            List<string> sa = a.Select(x => x.systemKey + "|" + x.kind + "|" + x.psycastDef + "|" + x.count).OrderBy(s => s).ToList();
+            List<string> sb = b.Select(x => x.systemKey + "|" + x.kind + "|" + x.psycastDef + "|" + x.count).OrderBy(s => s).ToList();
+            for (int i = 0; i < an; i++)
+                if (sa[i] != sb[i]) return false;
+            return true;
         }
 
         /// <summary>True when the implant set differs between <paramref name="target"/> and
@@ -95,24 +214,26 @@ namespace FactionColonies
             return true;
         }
 
-        /* Order-independent equality over implants (recipe + body part + occurrence index). */
+        /* Order-independent equality over implants (install source + body part + occurrence index).
+         * Covers both surgery (recipe) and self-install (selfInstallThing) entries — a leveled
+         * self-install implant appears once per level, so count matters and is captured by the key. */
         public static bool ImplantsEquivalent(List<SavedImplant> a, List<SavedImplant> b)
         {
-            int an = a == null ? 0 : a.Count(x => x.recipe != null);
-            int bn = b == null ? 0 : b.Count(x => x.recipe != null);
+            int an = a == null ? 0 : a.Count(x => x.IsValid);
+            int bn = b == null ? 0 : b.Count(x => x.IsValid);
             if (an != bn) return false;
             if (an == 0) return true;
-            List<SavedImplant> sa = a.Where(x => x.recipe != null)
-                .OrderBy(x => x.recipe.defName).ThenBy(x => x.bodyPart?.defName ?? "").ThenBy(x => x.bodyPartIndex).ToList();
-            List<SavedImplant> sb = b.Where(x => x.recipe != null)
-                .OrderBy(x => x.recipe.defName).ThenBy(x => x.bodyPart?.defName ?? "").ThenBy(x => x.bodyPartIndex).ToList();
+            List<string> sa = a.Where(x => x.IsValid).Select(ImplantKey).OrderBy(s => s).ToList();
+            List<string> sb = b.Where(x => x.IsValid).Select(ImplantKey).OrderBy(s => s).ToList();
             for (int i = 0; i < an; i++)
-            {
-                if (sa[i].recipe != sb[i].recipe) return false;
-                if (sa[i].bodyPart != sb[i].bodyPart) return false;
-                if (sa[i].bodyPartIndex != sb[i].bodyPartIndex) return false;
-            }
+                if (sa[i] != sb[i]) return false;
             return true;
+        }
+
+        private static string ImplantKey(SavedImplant im)
+        {
+            string src = im.recipe?.defName ?? im.selfInstallThing?.defName ?? "";
+            return src + "|" + (im.bodyPart?.defName ?? "") + "|" + im.bodyPartIndex;
         }
 
         public static bool ApparelEquivalent(List<SavedThing> a, List<SavedThing> b)

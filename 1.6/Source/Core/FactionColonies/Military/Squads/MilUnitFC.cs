@@ -15,7 +15,15 @@ namespace FactionColonies
         public bool isBlank;
         public double equipmentTotalCost;
         public int tickChanged = -1;
-        public PawnKindDef animal;
+
+        // Companion animals (Animals tab). Each row is a (kind, count) stack; the total is capped by
+        // FCSettings.maxAnimalSubpawns at add time. Companions fight on foot alongside the merc.
+        public List<SavedAnimal> animals = new List<SavedAnimal>();
+
+        // Rideable mount (gear-panel slot, Giddy Up 2 only). When GU2 is active and this is set, the
+        // merc spawns already mounted in manual battles / on deployment. Inert when GU2 is absent.
+        public PawnKindDef mount;
+
         public PawnKindDef pawnKind;
         public XenotypeDef xenotype;
         public string customXenotypeName;
@@ -33,6 +41,25 @@ namespace FactionColonies
         public List<SavedThing> inventory = new List<SavedThing>();
         public List<SavedImplant> implants = new List<SavedImplant>();
         public bool HasWeapon => weapons.Any(w => w.thing != null);
+
+        // Psycast design (Psycasts tab). psylinkLevel gates which psycasts are pickable
+        // and is applied the "neuroformer way" at spawn; psycasts carry their owning psycast-system
+        // provider's Key so they apply through the right system (base game / VPE) on load.
+        public int psylinkLevel;
+        public List<SavedPsycast> psycasts = new List<SavedPsycast>();
+
+        // Mechanitor design (Mechs tab, Biotech only). isMechanitor auto-applies a mechlink at spawn
+        // (see ApplyMechanitorToPawn); mechs lists the mechanoids bonded to the unit at deploy time,
+        // each tagged with a control-group index. mechGroupWorkModes holds the work mode per control
+        // group (index = group); all mechs in a group share that mode.
+        public bool isMechanitor;
+        public List<SavedMech> mechs = new List<SavedMech>();
+        public List<MechWorkModeDef> mechGroupWorkModes = new List<MechWorkModeDef>();
+
+        /// <summary>True when this unit is a mechanitor design — flagged as one or carrying
+        /// at least one assigned mech. Gates the mechlink apply, the mech spawn block, and cost.</summary>
+        public bool IsMechanitorDesign =>
+            ModsConfig.BiotechActive && (isMechanitor || (mechs != null && mechs.Count > 0));
 
         // Forced gender for spawned pawns (null = any).
         public Gender? forcedGender;
@@ -188,7 +215,17 @@ namespace FactionColonies
             Scribe_Values.Look(ref equipmentTotalCost, "equipmentTotalCost", -1);
             Scribe_Values.Look(ref tickChanged, "tickChanged");
             Scribe_Defs.Look(ref pawnKind, "PawnKind");
-            Scribe_Defs.Look(ref animal, "animal");
+            Scribe_Collections.Look(ref animals, "animals", LookMode.Deep);
+            Scribe_Defs.Look(ref mount, "mount");
+            // Migrate pre-multi-animal saves: the old single companion lived under "animal".
+            // It was a companion (not a mount), so it migrates into the companions list.
+            PawnKindDef legacyAnimal = null;
+            Scribe_Defs.Look(ref legacyAnimal, "animal");
+            if (Scribe.mode == LoadSaveMode.LoadingVars && legacyAnimal != null)
+            {
+                if (animals == null) animals = new List<SavedAnimal>();
+                if (animals.Count == 0) animals.Add(new SavedAnimal(legacyAnimal, 1));
+            }
             Scribe_Defs.Look(ref xenotype, "xenotype");
             Scribe_Values.Look(ref customXenotypeName, "customXenotypeName");
 
@@ -202,6 +239,15 @@ namespace FactionColonies
             Scribe_Collections.Look(ref inventory, "inventory", LookMode.Deep);
             Scribe_Collections.Look(ref implants, "implants", LookMode.Deep);
             Scribe_Collections.Look(ref statModifiers, "statModifiers", LookMode.Deep);
+
+            // Psycast design
+            Scribe_Values.Look(ref psylinkLevel, "psylinkLevel", 0);
+            Scribe_Collections.Look(ref psycasts, "psycasts", LookMode.Deep);
+
+            // Mechanitor design
+            Scribe_Values.Look(ref isMechanitor, "isMechanitor", false);
+            Scribe_Collections.Look(ref mechs, "mechs", LookMode.Deep);
+            Scribe_Collections.Look(ref mechGroupWorkModes, "mechGroupWorkModes", LookMode.Def);
 
             // forcedGender nullable — save only if set
             bool hasGender = forcedGender.HasValue;
@@ -218,6 +264,10 @@ namespace FactionColonies
                 if (apparel == null) apparel = new List<SavedThing>();
                 if (inventory == null) inventory = new List<SavedThing>();
                 if (implants == null) implants = new List<SavedImplant>();
+                if (psycasts == null) psycasts = new List<SavedPsycast>();
+                if (mechs == null) mechs = new List<SavedMech>();
+                if (mechGroupWorkModes == null) mechGroupWorkModes = new List<MechWorkModeDef>();
+                if (animals == null) animals = new List<SavedAnimal>();
                 if (statModifiers == null) statModifiers = new List<PermanentStatModifier>();
                 // Mutual exclusivity: prefer XenotypeDef if both are set
                 if (xenotype != null && customXenotypeName != null)
@@ -286,7 +336,11 @@ namespace FactionColonies
                 // generation time (not in RefreshPreviewEquipment, which runs on equipment-only
                 // changes and would otherwise double-install).
                 if (previewPawn != null)
+                {
                     ApplyImplantsToPawn(previewPawn, this);
+                    ApplyPsycastsToPawn(previewPawn, this);
+                    ApplyMechanitorToPawn(previewPawn, this);
+                }
             }
             catch (Exception ex)
             {
@@ -349,12 +403,14 @@ namespace FactionColonies
             }
         }
 
-        /* Installs this unit's chosen implants on the target pawn, reusing the base game's own
-         * surgery validation/application (Recipe_InstallImplant.ApplyOnPawn with a null billDoer
-         * skips the fail/tale path and adds the hediff). The concrete BodyPartRecord is resolved
-         * from the stored (recipe, index) against the target's body via GetPartsToApplyOn, whose
-         * ordering is deterministic. Invalid entries (part missing / slot taken / incompatible on
-         * this body) are silently skipped. Used by the preview pawn and the real spawned pawn. */
+        /* Installs this unit's chosen implants on the target pawn. Surgery implants reuse the base
+         * game's own validation/application (Recipe_InstallImplant.ApplyOnPawn with a null billDoer
+         * skips the fail/tale path and adds the hediff); the concrete BodyPartRecord is resolved from
+         * the stored (recipe, index) against the target's body via GetPartsToApplyOn. Self-install
+         * implants (control sublinks etc., CompUseEffect_InstallImplant items) replicate that comp's
+         * leveled DoEffect — add the hediff, or upgrade an existing leveled one. Entries are applied in
+         * list order, so a leveled implant added N times reaches level N. Invalid entries are silently
+         * skipped. Used by the preview pawn and the real spawned pawn. */
         public static void ApplyImplantsToPawn(Pawn target, MilUnitFC source)
         {
             if (target is null || source?.implants is null) return;
@@ -362,17 +418,110 @@ namespace FactionColonies
 
             foreach (SavedImplant im in source.implants)
             {
-                if (im.recipe is null) continue;
                 try
                 {
-                    BodyPartRecord part;
-                    if (TryResolveImplant(target, im, out part))
-                        im.recipe.Worker.ApplyOnPawn(target, part, null, null, null);
+                    if (im.recipe is object)
+                    {
+                        BodyPartRecord part;
+                        if (TryResolveImplant(target, im, out part))
+                            im.recipe.Worker.ApplyOnPawn(target, part, null, null, null);
+                    }
+                    else if (im.selfInstallThing is object)
+                    {
+                        ApplySelfInstallImplant(target, im.selfInstallThing);
+                    }
                 }
                 catch (Exception ex)
                 {
-                    LogUtil.Warning($"Failed to apply implant {im.recipe?.defName} to {target.LabelShortCap}: {ex.Message}");
+                    string label = im.recipe?.defName ?? im.selfInstallThing?.defName;
+                    LogUtil.Warning($"Failed to apply implant {label} to {target.LabelShortCap}: {ex.Message}");
                 }
+            }
+        }
+
+        /* Installs a self-install implant by invoking the item's own
+         * CompUseEffect_InstallImplant.DoEffect — the same add/leveled-upgrade path the base game uses
+         * when a pawn uses the item — so our behavior stays in lockstep with it. A throwaway (unspawned)
+         * item instance is enough: the comp only reads its Props and mutates the pawn. (DoEffect has no
+         * colonist/faction gate, unlike CanBeUsedBy, so it works on Empire's NPC pawns.) */
+        private static void ApplySelfInstallImplant(Pawn target, ThingDef thing)
+        {
+            ThingWithComps item = ThingMaker.MakeThing(thing) as ThingWithComps;
+            CompUseEffect_InstallImplant comp = item?.TryGetComp<CompUseEffect_InstallImplant>();
+            if (comp is null)
+            {
+                if (item is object && !item.Destroyed) item.Destroy();
+                return;
+            }
+            try { comp.DoEffect(target); }
+            catch (Exception ex) { LogUtil.Error("ApplySelfInstallImplant: error in CompUseEffect_InstallImplant: " + ex); }
+            finally { if (!item.Destroyed) item.Destroy(); }
+        }
+
+        /* Applies this unit's psylink level + chosen psycasts to the target pawn, dispatching to the
+         * psycast-system provider each psycast was designed under (base game / VPE). Psylink is granted
+         * the "neuroformer way" (a PsychicAmplifier hediff), which is what lets VPE's own Harmony patches
+         * pick up the level and attach its psycast tracker. Each entry is wrapped so an absent provider
+         * (e.g. template made with VPE, loaded without it) or an invalid def is skipped, not fatal.
+         * Used by the preview pawn and the real spawned pawn. */
+        public static void ApplyPsycastsToPawn(Pawn target, MilUnitFC source)
+        {
+            if (target?.health is null || target.Dead || target.Destroyed) return;
+            if (source is null) return;
+
+            if (source.psylinkLevel > 0)
+            {
+                IPsycastSystemProvider active = PsycastSystemRegistry.Active;
+                if (active is object)
+                {
+                    try { active.ApplyPsylink(target, source.psylinkLevel); }
+                    catch (Exception ex)
+                    {
+                        LogUtil.Warning($"Failed to apply psylink {source.psylinkLevel} to {target.LabelShortCap}: {ex.Message}");
+                    }
+                }
+            }
+
+            if (source.psycasts is null) return;
+            foreach (SavedPsycast a in source.psycasts)
+            {
+                IPsycastSystemProvider provider = PsycastSystemRegistry.ByKey(a.systemKey);
+                if (provider is null) continue; // originating system not loaded — skip silently
+                try { provider.GrantPsycast(target, a); }
+                catch (Exception ex)
+                {
+                    LogUtil.Warning($"Failed to grant psycast {a.psycastDef} ({a.systemKey}) to {target.LabelShortCap}: {ex.Message}");
+                }
+            }
+        }
+
+        /* Makes the target pawn a mechanitor for a mechanitor design: installs the mechlink
+         * (MechlinkImplant hediff) and refreshes the pawn's dynamic components so pawn.mechanitor
+         * exists. The bonded mechs themselves are NOT created here (no mechs exist at preview/generate
+         * time): SquadEquipmentTracker creates and bonds them at outfit time, once this pawn already
+         * has a mechanitor tracker. No-op when Biotech is absent, the unit isn't a mechanitor design,
+         * or the pawn can't be a mechanitor (non-humanlike). Used by the preview pawn and the real
+         * spawned pawn. */
+        public static void ApplyMechanitorToPawn(Pawn target, MilUnitFC source)
+        {
+            if (!ModsConfig.BiotechActive) return;
+            if (target?.health is null || target.Dead || target.Destroyed) return;
+            if (source is null || !source.IsMechanitorDesign) return;
+            if (target.RaceProps is null || !target.RaceProps.Humanlike) return;
+
+            try
+            {
+                if (!target.health.hediffSet.HasHediff(HediffDefOf.MechlinkImplant))
+                    target.health.AddHediff(HediffDefOf.MechlinkImplant);
+                // Empire is an allied NPC faction, not the player, so MechanitorUtility.ShouldBeMechanitor
+                // is false for these pawns — PawnComponentsUtility.AddAndRemoveDynamicComponents would
+                // refuse to create the tracker (and would even null an existing one). Create it directly.
+                if (target.mechanitor is null)
+                    target.mechanitor = new Pawn_MechanitorTracker(target);
+            }
+            catch (Exception ex)
+            {
+                LogUtil.Warning($"Failed to apply mechlink to {target.LabelShortCap}: {ex.Message}");
             }
         }
 
@@ -453,25 +602,31 @@ namespace FactionColonies
 
             foreach (SavedImplant im in implants)
             {
-                if (im.recipe?.addsHediff is null) continue;
+                // The hediff to remove: surgery implants add recipe.addsHediff; self-install items
+                // add their comp's hediffDef (a leveled hediff removed whole, so a re-apply rebuilds
+                // its level from scratch).
+                HediffDef addsHediff = im.recipe?.addsHediff
+                    ?? im.selfInstallThing?.GetCompProperties<CompProperties_UseEffectInstallImplant>()?.hediffDef;
+                if (addsHediff is null) continue;
                 try
                 {
                     Hediff found = null;
                     List<Hediff> hediffs = target.health.hediffSet.hediffs;
                     for (int i = 0; i < hediffs.Count; i++)
                     {
-                        if (hediffs[i].def == im.recipe.addsHediff) { found = hediffs[i]; break; }
+                        if (hediffs[i].def == addsHediff) { found = hediffs[i]; break; }
                     }
                     if (found is null) continue;
 
-                    if (found.Part != null)
+                    if (found.Part != null && im.recipe is object)
                         target.health.RestorePart(found.Part);
                     else
                         target.health.RemoveHediff(found);
                 }
                 catch (Exception ex)
                 {
-                    LogUtil.Warning($"Failed to remove implant {im.recipe?.defName} from {target.LabelShortCap}: {ex.Message}");
+                    string label = im.recipe?.defName ?? im.selfInstallThing?.defName;
+                    LogUtil.Warning($"Failed to remove implant {label} from {target.LabelShortCap}: {ex.Message}");
                 }
             }
         }
@@ -488,6 +643,17 @@ namespace FactionColonies
             if (desired != null) ApplyImplantsToPawn(target, desired);
         }
 
+        /* Brings a live pawn's psylink + psycasts in line with the desired loadout WITHOUT regenerating
+         * the pawn (identity preserved). Delegated to the active psycast system, which reconciles in the
+         * way that suits it: base game adjusts the psylink level granularly (keeping existing random
+         * psycasts, adding/stripping only the delta), while VPE wipes and re-applies its deterministic
+         * set. Used by the squad-upgrade paths when psycasts change (see LoadoutUpgradeUtil.PsycastsChanged). */
+        public static void ReconcilePsycastsOnPawn(Pawn target, MilUnitFC desired)
+        {
+            if (target?.health is null || target.Dead || target.Destroyed) return;
+            PsycastSystemRegistry.Active?.ReconcilePsycasts(target, desired);
+        }
+
         // --- Equipment Mutation Methods ---
 
         public void ChangeTick()
@@ -497,10 +663,10 @@ namespace FactionColonies
             costDirty = true;
         }
 
-        public void SetWeapon(ThingDef def, ThingDef stuff)
+        public void SetWeapon(ThingDef def, ThingDef stuff, QualityCategory? quality = null)
         {
             weapons.Clear();
-            weapons.Add(new SavedThing(def, stuff));
+            weapons.Add(new SavedThing(def, stuff, quality));
             pawnEquipmentDirty = true;
             ChangeTick();
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
@@ -514,13 +680,13 @@ namespace FactionColonies
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
         }
 
-        public void SetApparel(ThingDef def, ThingDef stuff)
+        public void SetApparel(ThingDef def, ThingDef stuff, QualityCategory? quality = null)
         {
             // Remove conflicting apparel using RimWorld's static check
             BodyDef body = pawnKind?.race?.race?.body ?? BodyDefOf.Human;
             apparel.RemoveAll(existing =>
                 !ApparelUtility.CanWearTogether(existing.thing, def, body));
-            apparel.Add(new SavedThing(def, stuff));
+            apparel.Add(new SavedThing(def, stuff, quality));
             pawnEquipmentDirty = true;
             ChangeTick();
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
@@ -540,8 +706,12 @@ namespace FactionColonies
             apparel.Clear();
             inventory.Clear();
             implants.Clear();
+            psycasts.Clear();
+            psylinkLevel = 0;
+            mechs.Clear();
+            isMechanitor = false;
             pawnEquipmentDirty = true;
-            pawnIdentityDirty = true; // implants cleared — preview pawn must regenerate
+            pawnIdentityDirty = true; // implants/psylink/mechlink cleared — preview pawn must regenerate
             ChangeTick();
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
         }
@@ -551,7 +721,7 @@ namespace FactionColonies
         /* Adds (or tops up) a carried inventory entry. Hard-blocks the add when it would push
          * total carried mass over the unit's 70% carry cap (see CarryCapacity) — the player can
          * never overload a designed unit. Returns false (with a message) when rejected. */
-        public bool AddInventory(ThingDef def, ThingDef stuff, int count)
+        public bool AddInventory(ThingDef def, ThingDef stuff, int count, QualityCategory? quality = null)
         {
             if (def is null || count <= 0) return false;
 
@@ -562,11 +732,11 @@ namespace FactionColonies
                 return false;
             }
 
-            // Merge with an existing matching row (same thing + stuff, no specified quality).
+            // Merge with an existing matching row (same thing + stuff + quality).
             for (int i = 0; i < inventory.Count; i++)
             {
                 SavedThing existing = inventory[i];
-                if (existing.thing == def && existing.stuff == stuff && !existing.quality.HasValue)
+                if (existing.thing == def && existing.stuff == stuff && existing.quality == quality)
                 {
                     existing.count = Mathf.Max(1, existing.count) + count;
                     inventory[i] = existing;
@@ -577,7 +747,7 @@ namespace FactionColonies
                 }
             }
 
-            inventory.Add(new SavedThing(def, stuff, count));
+            inventory.Add(new SavedThing(def, stuff, count, quality));
             pawnEquipmentDirty = true;
             ChangeTick();
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
@@ -657,10 +827,327 @@ namespace FactionColonies
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
         }
 
+        /// <summary>Adds a self-install implant (e.g. a control sublink) — a CompUseEffect_InstallImplant
+        /// item rather than a surgery recipe. Added once per "install"; a leveled implant added N times
+        /// reaches level N at apply time.</summary>
+        public void AddImplant(ThingDef selfInstallThing, BodyPartDef bodyPart, int bodyPartIndex)
+        {
+            if (selfInstallThing is null) return;
+            implants.Add(new SavedImplant(selfInstallThing, bodyPart, bodyPartIndex));
+            MarkIdentityDirty();
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
         public void RemoveImplant(int index)
         {
             if (index < 0 || index >= implants.Count) return;
             implants.RemoveAt(index);
+            MarkIdentityDirty();
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
+        // --- Mechanitor / mechs (Biotech) ---
+
+        /// <summary>Number of control groups this design has available — the preview pawn's
+        /// MechControlGroups stat (mechlink grants 2; control-sublink implants add more). At least 1
+        /// while the unit is a mechanitor; 0 otherwise.</summary>
+        public int MechGroupCount
+        {
+            get
+            {
+                if (!ModsConfig.BiotechActive) return 0;
+                Pawn p = PreviewPawn;
+                if (p?.mechanitor is null) return 0;
+                return Mathf.Max(1, (int)p.GetStatValue(StatDefOf.MechControlGroups));
+            }
+        }
+
+        /// <summary>Work mode for a given control group, defaulting to Escort
+        /// (follow + fight near the mechanitor) when none was chosen.</summary>
+        public MechWorkModeDef GetGroupWorkMode(int group)
+        {
+            if (mechGroupWorkModes != null && group >= 0 && group < mechGroupWorkModes.Count
+                && mechGroupWorkModes[group] != null)
+                return mechGroupWorkModes[group];
+            return MechWorkModeDefOf.Escort;
+        }
+
+        public void SetGroupWorkMode(int group, MechWorkModeDef mode)
+        {
+            if (group < 0) return;
+            if (mechGroupWorkModes is null) mechGroupWorkModes = new List<MechWorkModeDef>();
+            while (mechGroupWorkModes.Count <= group) mechGroupWorkModes.Add(MechWorkModeDefOf.Escort);
+            mechGroupWorkModes[group] = mode;
+            ChangeTick();
+        }
+
+        /// <summary>Moves a mech row to a different control group, merging with an existing same-kind
+        /// row already in that group.</summary>
+        public void SetMechGroup(int index, int group)
+        {
+            if (index < 0 || index >= mechs.Count || group < 0) return;
+            SavedMech row = mechs[index];
+            if (row.group == group) return;
+
+            // Merge into an existing same-kind row in the destination group.
+            for (int i = 0; i < mechs.Count; i++)
+            {
+                if (i == index) continue;
+                if (mechs[i].kind == row.kind && mechs[i].group == group)
+                {
+                    SavedMech dest = mechs[i];
+                    dest.count = Mathf.Max(1, dest.count) + Mathf.Max(1, row.count);
+                    mechs[i] = dest;
+                    mechs.RemoveAt(index);
+                    ChangeTick();
+                    return;
+                }
+            }
+
+            row.group = group;
+            mechs[index] = row;
+            ChangeTick();
+        }
+
+        /// <summary>Total mech bandwidth this design has to spend. Read from the preview pawn's
+        /// MechBandwidth stat (which only exists once the mechlink is applied), so control-sublink
+        /// implants and bandwidth-pack apparel already on the unit are folded in automatically.</summary>
+        public float TotalMechBandwidth
+        {
+            get
+            {
+                if (!ModsConfig.BiotechActive) return 0f;
+                Pawn p = PreviewPawn;
+                return p?.mechanitor != null ? p.GetStatValue(StatDefOf.MechBandwidth) : 0f;
+            }
+        }
+
+        /// <summary>Bandwidth consumed by the currently-assigned mechs (Σ BandwidthCost × count).</summary>
+        public float UsedMechBandwidth
+        {
+            get
+            {
+                float used = 0f;
+                if (mechs is null) return used;
+                foreach (SavedMech m in mechs)
+                    if (m.kind?.race != null)
+                        used += m.kind.race.GetStatValueAbstract(StatDefOf.BandwidthCost) * Mathf.Max(1, m.count);
+                return used;
+            }
+        }
+
+        /// <summary>Toggles the mechanitor flag. Turning it off clears the assigned mechs. Identity
+        /// changes (the mechlink hediff), so the preview pawn must regenerate.</summary>
+        public void SetMechanitor(bool on)
+        {
+            if (!ModsConfig.BiotechActive) return;
+            isMechanitor = on;
+            if (!on) mechs.Clear();
+            MarkIdentityDirty();
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
+        /// <summary>Adds (or tops up) a mech assignment in the given control group. Hard-blocks the add
+        /// when it would push used bandwidth over the unit's total (bandwidth is counted across all
+        /// groups). Returns false (with a message) when rejected.</summary>
+        public bool AddMech(PawnKindDef kind, int group = 0, int count = 1)
+        {
+            if (!ModsConfig.BiotechActive || kind?.race is null || count <= 0) return false;
+            if (group < 0) group = 0;
+
+            // Only mechs the player has researched can be assigned.
+            if (!FactionCache.IsMechResearchUnlocked(kind))
+            {
+                Messages.Message("fcMechNotResearched".Translate(kind.LabelCap), MessageTypeDefOf.RejectInput, false);
+                return false;
+            }
+
+            // Flag as a mechanitor first so TotalMechBandwidth's preview pawn carries the mechlink
+            // (and thus a real MechBandwidth stat) when we read it for the budget check below.
+            if (!isMechanitor)
+            {
+                isMechanitor = true;
+                MarkIdentityDirty();
+            }
+
+            float addedBandwidth = kind.race.GetStatValueAbstract(StatDefOf.BandwidthCost) * count;
+            if (UsedMechBandwidth + addedBandwidth > TotalMechBandwidth + 0.0001f)
+            {
+                Messages.Message("fcMechBandwidthExceeded".Translate(), MessageTypeDefOf.RejectInput, false);
+                return false;
+            }
+
+            // Merge with an existing row of the same kind AND group.
+            for (int i = 0; i < mechs.Count; i++)
+            {
+                if (mechs[i].kind == kind && mechs[i].group == group)
+                {
+                    SavedMech existing = mechs[i];
+                    existing.count = Mathf.Max(1, existing.count) + count;
+                    mechs[i] = existing;
+                    MarkIdentityDirty();
+                    ChangeTick();
+                    MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+                    return true;
+                }
+            }
+
+            mechs.Add(new SavedMech(kind, count, group));
+            MarkIdentityDirty();
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+            return true;
+        }
+
+        public void RemoveMech(int index)
+        {
+            if (index < 0 || index >= mechs.Count) return;
+            mechs.RemoveAt(index);
+            MarkIdentityDirty();
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
+        /// <summary>Reduces a mech row's count by one, removing the row when it reaches zero.</summary>
+        public void DecrementMech(int index)
+        {
+            if (index < 0 || index >= mechs.Count) return;
+            SavedMech row = mechs[index];
+            if (row.count <= 1) { RemoveMech(index); return; }
+            row.count -= 1;
+            mechs[index] = row;
+            MarkIdentityDirty();
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
+        // --- Companion animals (Animals tab) ---
+
+        /// <summary>Total companion animals across all stack rows (sum of counts).</summary>
+        public int TotalAnimalCount
+        {
+            get
+            {
+                if (animals == null) return 0;
+                int total = 0;
+                foreach (SavedAnimal a in animals) total += Mathf.Max(1, a.count);
+                return total;
+            }
+        }
+
+        /// <summary>Adds (or tops up) a companion-animal stack. Hard-blocks the add when it would push
+        /// the total over FCSettings.maxAnimalSubpawns. Returns false (with a message) when rejected.
+        /// Unlike mechs, animals don't change the unit's own identity, so no MarkIdentityDirty.</summary>
+        public bool AddAnimal(PawnKindDef kind, int count = 1)
+        {
+            if (kind?.race == null || count <= 0) return false;
+            if (animals == null) animals = new List<SavedAnimal>();
+
+            if (TotalAnimalCount + count > FCSettings.maxAnimalSubpawns)
+            {
+                Messages.Message("fcAnimalCapReached".Translate(FCSettings.maxAnimalSubpawns), MessageTypeDefOf.RejectInput, false);
+                return false;
+            }
+
+            // Merge with an existing row of the same kind.
+            for (int i = 0; i < animals.Count; i++)
+            {
+                if (animals[i].kind == kind)
+                {
+                    SavedAnimal existing = animals[i];
+                    existing.count = Mathf.Max(1, existing.count) + count;
+                    animals[i] = existing;
+                    ChangeTick();
+                    MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+                    return true;
+                }
+            }
+
+            animals.Add(new SavedAnimal(kind, count));
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+            return true;
+        }
+
+        public void RemoveAnimal(int index)
+        {
+            if (animals == null || index < 0 || index >= animals.Count) return;
+            animals.RemoveAt(index);
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
+        /// <summary>Reduces a companion row's count by one, removing the row when it reaches zero.</summary>
+        public void DecrementAnimal(int index)
+        {
+            if (animals == null || index < 0 || index >= animals.Count) return;
+            SavedAnimal row = animals[index];
+            if (row.count <= 1) { RemoveAnimal(index); return; }
+            row.count -= 1;
+            animals[index] = row;
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
+        // --- Mount (Giddy Up 2) ---
+
+        /// <summary>Sets (or clears, when kind is null) the rideable mount. Only meaningful when Giddy
+        /// Up 2 is active; otherwise the field is inert and never spawns.</summary>
+        public void SetMount(PawnKindDef kind)
+        {
+            mount = kind;
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
+        // --- Psycasts ---
+
+        public void SetPsylinkLevel(int level)
+        {
+            int max = PsycastSystemRegistry.Active?.MaxPsylinkLevel ?? 6;
+            int clamped = Mathf.Clamp(level, 0, max);
+            if (clamped == psylinkLevel) return;
+            psylinkLevel = clamped;
+            // Trim chosen selections that no longer fit the (possibly lowered) psylink level. The active
+            // system owns the budget rule (VPE trims its ordered selections from the end to the point
+            // budget for this level); the base game stores no selections, so this is a no-op there.
+            if (psylinkLevel <= 0)
+            {
+                psycasts.Clear();
+            }
+            else
+            {
+                IPsycastSystemProvider active = PsycastSystemRegistry.Active;
+                if (active != null)
+                    psycasts = active.ClampSelectionsToBudget(psycasts, psylinkLevel);
+            }
+            MarkIdentityDirty(); // psylink hediff changes pawn identity
+            ChangeTick();
+            MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
+        }
+
+        /// <summary>
+        /// Replaces all entries belonging to <paramref name="systemKey"/> with the given set,
+        /// preserving entries from other systems. Used by a provider's custom editor (e.g. VPE) to
+        /// write back the full chosen set — psycasts, meditation foci, stat upgrades — when its window
+        /// closes. Empty entries (no defName and no kind) are dropped.
+        /// </summary>
+        public void SetPsycastsForSystem(string systemKey, IEnumerable<SavedPsycast> entries)
+        {
+            if (string.IsNullOrEmpty(systemKey)) return;
+            psycasts.RemoveAll(a => a.systemKey == systemKey);
+            if (entries is object)
+            {
+                foreach (SavedPsycast e in entries)
+                {
+                    if (e.systemKey != systemKey) continue;
+                    if (e.IsInvalid()) continue;
+                    psycasts.Add(e);
+                }
+            }
             MarkIdentityDirty();
             ChangeTick();
             MilSquadFC.UpdateEquipmentTotalCostOfSquadsContaining(this);
@@ -685,19 +1172,33 @@ namespace FactionColonies
             List<SavedImplant> kept = new List<SavedImplant>();
             foreach (SavedImplant im in snapshot)
             {
-                if (im.recipe is null) continue;
                 try
                 {
-                    BodyPartRecord part;
-                    if (!TryResolveImplant(testPawn, im, out part)) continue;
+                    if (im.recipe is object)
+                    {
+                        BodyPartRecord part;
+                        if (!TryResolveImplant(testPawn, im, out part)) continue;
 
-                    // Install on the test pawn so later implants validate against a cumulative body.
-                    im.recipe.Worker.ApplyOnPawn(testPawn, part, null, null, null);
-                    kept.Add(im);
+                        // Install on the test pawn so later implants validate against a cumulative body.
+                        im.recipe.Worker.ApplyOnPawn(testPawn, part, null, null, null);
+                        kept.Add(im);
+                    }
+                    else if (im.selfInstallThing is object)
+                    {
+                        // Self-install implants only need their target body part to still exist (the
+                        // brain, for control sublinks). Apply cumulatively so leveled implants stack.
+                        CompProperties_UseEffectInstallImplant inst =
+                            im.selfInstallThing.GetCompProperties<CompProperties_UseEffectInstallImplant>();
+                        if (inst?.bodyPart is null) continue;
+                        if (!testPawn.RaceProps.body.GetPartsWithDef(inst.bodyPart).Any()) continue;
+                        ApplySelfInstallImplant(testPawn, im.selfInstallThing);
+                        kept.Add(im);
+                    }
                 }
                 catch (Exception ex)
                 {
-                    LogUtil.Warning($"RevalidateImplants: dropping implant {im.recipe?.defName}: {ex.Message}");
+                    string label = im.recipe?.defName ?? im.selfInstallThing?.defName;
+                    LogUtil.Warning($"RevalidateImplants: dropping implant {label}: {ex.Message}");
                 }
             }
 
@@ -831,12 +1332,48 @@ namespace FactionColonies
                 totalCost += inv.MarketValue;
 
             foreach (SavedImplant im in implants)
-                totalCost += ImplantCost(im.recipe);
+                totalCost += ImplantCost(im);
 
-            if (animal != null)
-                totalCost += Math.Floor(animal.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier);
+            // Psylink-level cost is owned by the active psycast system (base game charges per level;
+            // VPE returns 0 and balances via per-psycast cost instead).
+            totalCost += PsycastSystemRegistry.Active?.PsylinkCost(psylinkLevel) ?? 0;
+            foreach (SavedPsycast a in psycasts)
+                totalCost += PsycastCost(a);
+
+            // Companion animals: each row's market value times its count. The mount (if any) reuses the
+            // same multiplier. The spawned animal/mount pawns are never re-counted by squad cost/power
+            // math, so their entire cost lives here on the design (mirrors the mech cost path below).
+            if (animals != null)
+                foreach (SavedAnimal a in animals)
+                    if (a.kind?.race != null)
+                        totalCost += Math.Floor(a.kind.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier) * Mathf.Max(1, a.count);
+            if (mount?.race != null)
+                totalCost += Math.Floor(mount.race.BaseMarketValue * FCSettings.militaryAnimalCostMultiplier);
+
+            // Mechanitor cost: a flat surcharge for the mechlink itself, plus each bonded mech's
+            // market value. Mirrors the animal cost path — the spawned mech pawns are never re-counted
+            // by squad cost/power math, so their entire cost lives here on the design.
+            if (ModsConfig.BiotechActive && IsMechanitorDesign)
+            {
+                totalCost += FCSettings.militaryMechlinkCost;
+                if (mechs != null)
+                    foreach (SavedMech m in mechs)
+                        if (m.kind?.race != null)
+                            totalCost += Math.Floor(m.kind.race.BaseMarketValue * FCSettings.militaryMechCostMultiplier) * Mathf.Max(1, m.count);
+            }
 
             equipmentTotalCost = Math.Ceiling(totalCost);
+        }
+
+        /* Cost of a chosen psycast, resolved from its owning provider's display entry (which already
+         * folds in FCSettings.militaryPsycastCostMultiplier). Zero if the system isn't loaded. */
+        public static double PsycastCost(SavedPsycast psycast)
+        {
+            IPsycastSystemProvider provider = PsycastSystemRegistry.ByKey(psycast.systemKey);
+            PsycastPickEntry entry;
+            if (provider is object && provider.TryGetDisplay(psycast, out entry))
+                return entry.cost;
+            return 0;
         }
 
         /* Approximate cost of an implant from its install recipe: the market value of the fixed
@@ -856,6 +1393,37 @@ namespace FactionColonies
             if (cost <= 0f && recipe.ProducedThingDef != null)
                 cost += recipe.ProducedThingDef.BaseMarketValue;
             return cost;
+        }
+
+        /// <summary>Cost of a saved implant — the install recipe's ingredient value for surgery
+        /// implants, or the item's market value for self-install implants (control sublinks etc.).</summary>
+        public static float ImplantCost(SavedImplant im)
+        {
+            if (im.recipe is object) return ImplantCost(im.recipe);
+            if (im.selfInstallThing is object) return im.selfInstallThing.BaseMarketValue;
+            return 0f;
+        }
+
+        /// <summary>The ThingDef to use for an implant's icon and info card. Surgery install recipes
+        /// usually have no UIIconThing (they install a hediff, they don't produce a thing), so fall back
+        /// to the recipe's fixed ingredient — the implant item itself (e.g. the bionic part).</summary>
+        public static ThingDef ImplantIconThing(RecipeDef recipe)
+        {
+            if (recipe is null) return null;
+            if (recipe.UIIconThing != null) return recipe.UIIconThing;
+            if (recipe.ingredients != null)
+            {
+                foreach (IngredientCount ing in recipe.ingredients)
+                    if (ing.IsFixedIngredient && ing.FixedIngredient != null)
+                        return ing.FixedIngredient;
+            }
+            return null;
+        }
+
+        public static ThingDef ImplantIconThing(SavedImplant im)
+        {
+            if (im.selfInstallThing is object) return im.selfInstallThing;
+            return ImplantIconThing(im.recipe);
         }
 
         // --- Subclass-Aware Export/Import ---
@@ -888,12 +1456,18 @@ namespace FactionColonies
             copy.pawnKind = pawnKind;
             copy.xenotype = xenotype;
             copy.customXenotypeName = customXenotypeName;
-            copy.animal = animal;
+            copy.animals = new List<SavedAnimal>(animals ?? new List<SavedAnimal>());
+            copy.mount = mount;
             copy.forcedGender = forcedGender;
             copy.weapons = new List<SavedThing>(weapons ?? new List<SavedThing>());
             copy.apparel = new List<SavedThing>(apparel ?? new List<SavedThing>());
             copy.inventory = new List<SavedThing>(inventory ?? new List<SavedThing>());
             copy.implants = new List<SavedImplant>(implants ?? new List<SavedImplant>());
+            copy.psylinkLevel = psylinkLevel;
+            copy.psycasts = new List<SavedPsycast>(psycasts ?? new List<SavedPsycast>());
+            copy.isMechanitor = isMechanitor;
+            copy.mechs = new List<SavedMech>(mechs ?? new List<SavedMech>());
+            copy.mechGroupWorkModes = new List<MechWorkModeDef>(mechGroupWorkModes ?? new List<MechWorkModeDef>());
             copy.statModifiers = statModifiers?.Select(m => m.Clone()).ToList() ?? new List<PermanentStatModifier>();
             CopyExtraFieldsTo(copy);
             copy.ChangeTick();

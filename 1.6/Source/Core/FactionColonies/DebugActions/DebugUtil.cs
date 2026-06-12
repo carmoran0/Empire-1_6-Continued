@@ -461,7 +461,7 @@ namespace FactionColonies
                     squad.Deployment.Map?.lordManager.RemoveLord(squad.Deployment.Lord);
                 }
 
-                foreach (Mercenary merc in squad.mercenaries.Concat(squad.animals).ToList())
+                foreach (Mercenary merc in squad.mercenaries.Concat(squad.AllSubPawns()).ToList())
                 {
                     if (merc?.pawn != null && !merc.pawn.Destroyed)
                         merc.pawn.Destroy();
@@ -1107,7 +1107,7 @@ namespace FactionColonies
             {
                 int healed = 0;
                 IEnumerable<Mercenary> all = (squad.mercenaries ?? Enumerable.Empty<Mercenary>())
-                    .Concat(squad.animals ?? Enumerable.Empty<Mercenary>());
+                    .Concat(squad.AllSubPawns());
                 foreach (Mercenary merc in all)
                 {
                     // Skip empty slots and dead/destroyed pawns — there is no revival system,

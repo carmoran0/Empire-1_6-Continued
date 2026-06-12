@@ -29,9 +29,41 @@ namespace FactionColonies
         public MercenarySquadFC squad;
         public WorldSettlementFC settlement;
         public Mercenary handler;
-        public Mercenary animal;
+        /* Instance sub-pawns deep-owned by this merc. animals holds the merc's companion animals AND
+         * its single rideable mount (distinguished by subPawnType: Animal vs Mount); mechs holds the
+         * bonded mechanoids of a mechanitor merc. A wrapper with subPawnType != None and pawn == null
+         * is "assigned but absent" (dead, awaiting paid replacement). See handler for the owning-merc
+         * back-reference. */
+        public List<Mercenary> animals = new List<Mercenary>();
+        public List<Mercenary> mechs = new List<Mercenary>();
         public Pawn pawn;
         public int loadID;
+
+        /// <summary>Discriminates a sub-pawn wrapper. None for top-level mercs. Mount is a companion
+        /// animal the merc rides (Giddy Up 2); it lives in the animals list like a companion but is
+        /// ridden instead of fighting on foot.</summary>
+        public enum SubPawnType { None, Animal, Mech, Mount }
+        /* Persisted sub-pawn identity. Lets a placeholder wrapper (pawn == null after death)
+         * be recreated without reading a live pawn. */
+        public SubPawnType subPawnType = SubPawnType.None;
+        public PawnKindDef subPawnKind;          // animal/mount race OR mech kind
+        public int subPawnMechGroup;             // mech control group (animals/mounts: 0)
+        public MechWorkModeDef subPawnWorkMode;  // mech work mode (animals/mounts: null)
+
+        /// <summary>A sub-pawn that needs paid replacement: it's assigned but its pawn is gone —
+        /// never created, dead, or destroyed. Distinct from a downed/injured sub-pawn, which heals.
+        /// Always false for a top-level merc (handled by the empty-slot path instead).</summary>
+        public bool IsMissingSubPawn =>
+            subPawnType != SubPawnType.None && (pawn is null || pawn.Dead || pawn.Destroyed);
+
+        /// <summary>Live and placeholder sub-pawn wrappers owned by this merc (animals first, then mechs).</summary>
+        public IEnumerable<Mercenary> SubPawns()
+        {
+            if (animals != null)
+                foreach (Mercenary a in animals) if (a is object) yield return a;
+            if (mechs != null)
+                foreach (Mercenary m in mechs) if (m is object) yield return m;
+        }
 
         /// <summary>Source tag for design modifiers copied from the loadout template.</summary>
         public const string DesignModifierSource = "__design";
@@ -131,7 +163,14 @@ namespace FactionColonies
             Scribe_References.Look(ref squad, "squad");
             Scribe_References.Look(ref settlement, "settlement");
             Scribe_References.Look(ref handler, "handler");
-            Scribe_References.Look(ref animal, "animal");
+            // Sub-pawns are now deep-owned by the merc (was a Scribe_References "animal" pointer
+            // into the squad's animal list; that legacy data is migrated by MercenarySquadFC).
+            Scribe_Collections.Look(ref animals, "animals", LookMode.Deep);
+            Scribe_Collections.Look(ref mechs, "mechs", LookMode.Deep);
+            Scribe_Values.Look(ref subPawnType, "subPawnType", SubPawnType.None);
+            Scribe_Defs.Look(ref subPawnKind, "subPawnKind");
+            Scribe_Values.Look(ref subPawnMechGroup, "subPawnMechGroup", 0);
+            Scribe_Defs.Look(ref subPawnWorkMode, "subPawnWorkMode");
 
             if (isExternallyOwned)
             {
@@ -169,6 +208,18 @@ namespace FactionColonies
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
                 if (statModifiers is null) statModifiers = new List<PermanentStatModifier>();
+                if (animals is null) animals = new List<Mercenary>();
+                if (mechs is null) mechs = new List<Mercenary>();
+
+                /* Identity backfill for legacy sub-pawns (saved before subPawnType existed). The only
+                 * sub-pawn type that ever shipped is the companion animal, so any pre-existing wrapper
+                 * with a handler is an animal; capture its kind so it can survive a future death as a
+                 * placeholder. (Mechanitor handling never went live, so there are no legacy mechs.) */
+                if (subPawnType == SubPawnType.None && handler is object)
+                {
+                    subPawnType = SubPawnType.Animal;
+                    if (subPawnKind is null && pawn is object) subPawnKind = pawn.kindDef;
+                }
                 /* currentLoadout migration. Three save shapes:
                  *   1. Pre-refactor saves: only loadout (ref) populated.
                  *   2. Intermediate-refactor saves: loadout + ownedLoadout, no currentLoadout.

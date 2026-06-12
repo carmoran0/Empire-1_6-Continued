@@ -251,12 +251,7 @@ namespace FactionColonies
                 squad.Equipment.StripPawn(m);
                 if (m.pawn != null && !m.pawn.Destroyed) m.pawn.Destroy();
                 m.pawn = null;
-                if (m.animal != null)
-                {
-                    if (m.animal.pawn != null && !m.animal.pawn.Destroyed) m.animal.pawn.Destroy();
-                    squad.animals?.Remove(m.animal);   // drop the orphan instead of leaking it
-                    m.animal = null;
-                }
+                squad.Equipment.ClearSubPawns(m);      // destroy + drop this merc's animals + bonded mechs
             }
 
             // Slot pass: re-equip claims, fresh-hire fresh slots. The slot order in
@@ -274,11 +269,21 @@ namespace FactionColonies
                     merc = dec.claim;
                     MilUnitFC prior = merc.currentLoadout;
                     bool implantsChanged = LoadoutUpgradeUtil.ImplantsChanged(target, prior);
+                    bool psycastsChanged = LoadoutUpgradeUtil.PsycastsChanged(target, prior);
+                    bool mechanitorChanged = LoadoutUpgradeUtil.MechanitorChanged(target, prior);
                     squad.Equipment.StripPawn(merc);
                     squad.Equipment.EquipPawn(merc, target);
-                    // Implants are surgical — reconcile them in place (no regeneration) when changed.
+                    // Implants are surgical and psycasts are provider-managed — reconcile each in place
+                    // (no regeneration) when changed.
                     if (implantsChanged)
                         MilUnitFC.ReconcileImplantsOnPawn(merc.pawn, target, prior);
+                    if (psycastsChanged)
+                        MilUnitFC.ReconcilePsycastsOnPawn(merc.pawn, target);
+                    // A reused pawn was generated under its prior loadout, so it may lack the mechlink
+                    // when the target newly makes it a mechanitor — apply it (idempotent) before mechs
+                    // get reconciled below so pawn.mechanitor exists for bonding.
+                    if (mechanitorChanged)
+                        MilUnitFC.ApplyMechanitorToPawn(merc.pawn, target);
                     /* Re-sync the pool pointer to the live template slot (repairs a stale
                        'loadout' after a SwapTemplate). ownedLoadout is deliberately left
                        intact — a bulk upgrade APPLIES personalization, it doesn't discard it. */
@@ -303,6 +308,7 @@ namespace FactionColonies
                 }
 
                 squad.Equipment.ReconcileAnimal(merc, target);
+                squad.Equipment.ReconcileMechs(merc, target);
 
                 rebuilt.Add(merc);
             }

@@ -794,7 +794,6 @@ namespace FactionColonies
             if (ticksGame % MercenaryHealTickInterval == 0)
             {
                 military?.TickMercenaryHealing(MercenaryHealTickInterval);
-                military?.TickAnimalReplacement();
             }
 
             // Daily tick

@@ -48,6 +48,13 @@ namespace FactionColonies.util
                 canCraft = false;
             }
 
+            // Honor research gating declared directly on the ThingDef (BuildableDef.researchPrerequisites),
+            // not just on recipeMaker. Items like VFE-Pirates warcaskets are foundry-built (null recipeMaker)
+            // and gate access via the def's own researchPrerequisites, so they would otherwise slip through.
+            if (!thing.IsResearchFinished)
+            {
+                canCraft = false;
+            }
 
             return canCraft;
         }

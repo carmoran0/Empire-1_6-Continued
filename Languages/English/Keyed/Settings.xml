@@ -10,12 +10,15 @@
 	<FCSettingWorkerCost>Cost Per Worker</FCSettingWorkerCost>
 	<FCSettingMaxSettlementLevel>Max Settlement Level</FCSettingMaxSettlementLevel>
 	<FCSettingDisableHostileMilActions>Disable Hostile Military Actions</FCSettingDisableHostileMilActions>
+	<FCSettingAntiExploit>Anti-Exploit (mercenary gear)</FCSettingAntiExploit>
+	<FCSettingAntiExploitTip>When enabled (default), mercenary weapons and apparel are biocoded to their wielder, and humanlike mercenaries receive a death acidifier implant that dissolves their worn gear when they die, so you can't farm free gear from your own squads.</FCSettingAntiExploitTip>
 	<FCSettingDisableRandomEvents>Disable Random Events</FCSettingDisableRandomEvents>
 	<FCSettingConfigureEvents>Enable or disable individual events below. Disabled events will not fire in any save.</FCSettingConfigureEvents>
 	<FCSettingsTabGeneral>General</FCSettingsTabGeneral>
 	<FCSettingsTabEvents>Events</FCSettingsTabEvents>
 	<FCSettingsTabMilitary>Military</FCSettingsTabMilitary>
 	<FCSettingsTabRoadBuilder>Road Builder</FCSettingsTabRoadBuilder>
+	<FCSettingsTabCompat>Compatibility</FCSettingsTabCompat>
 	<FCSettingRoadBuilderDesc>The Road Builder automatically connects your Empire settlements with roads using a Minimum Spanning Tree algorithm, which is recalculated on the following events:
  - each time a settlement is founded or lost
  - when you research a new level of roads
@@ -52,6 +55,29 @@ At 1, military efficiency fully affects each round of auto combat. Military forc
 Values in between dampen the effect of military efficiency on the auto combat.</FCSettingEfficiencyDampingTooltip>
 	<FCSettingMercHealRate>Mercenary Heal Rate Multiplier</FCSettingMercHealRate>
 	<FCSettingMercHealRateTip>Multiplier on the healing rate for off-map mercenaries. At 1.0 (default), an Empire merc heals at roughly the same per-day rate as a vanilla pawn in a basic bed being tended with industrial medicine by an unskilled doctor. Higher values heal faster; lower values heal slower.</FCSettingMercHealRateTip>
+	<FCSettingMechRepairRate>Mech Repair Rate</FCSettingMechRepairRate>
+	<FCSettingMechRepairRateTip>Hit points repaired per hourly heal tick for off-map bonded mechs. Mechs use a separate repair path from mercenaries and animals. At 0, mechs do not auto-repair and must be paid-replaced once damaged enough.</FCSettingMechRepairRateTip>
+	<FCSettingPsylinkCostMult>Unit Psylink Cost Multiplier</FCSettingPsylinkCostMult>
+	<FCSettingPsylinkCostMultTip>Multiplier on the silver cost added to a unit design per psylink level. At 1.0 (default), each level costs roughly the value of one psylink neuroformer.</FCSettingPsylinkCostMultTip>
+	<FCSettingMechCostMult>Unit Mech Cost Multiplier</FCSettingMechCostMult>
+	<FCSettingMechCostMultTip>Multiplier on the silver cost added to a mechanitor unit design per assigned mech. At 1.0 (default), each mech costs roughly its market value.</FCSettingMechCostMultTip>
+	<FCSettingMechlinkCost>Unit Mechlink Cost</FCSettingMechlinkCost>
+	<FCSettingMechlinkCostTip>Flat silver cost added to a unit design for making it a mechanitor (the mechlink itself), on top of per-mech costs. Default 1000 ~ the value of a mechlink.</FCSettingMechlinkCostTip>
+	<FCSettingPsycastCostMult>Overall Cost Multiplier</FCSettingPsycastCostMult>
+	<FCSettingPsycastCostMultTip>Multiplier applied to all per-point costs related to psycasting. Set to 0 to make everything free.</FCSettingPsycastCostMultTip>
+
+	<!-- Compatibility tab -->
+	<FCSettingsCompatNone>No supported compatibility patches are active.</FCSettingsCompatNone>
+	<FCSettingsCompatVPE>Vanilla Psycasts Expanded</FCSettingsCompatVPE>
+	<FCSettingsCompatVPEDesc>With VPE active, psylink levels themselves are free. Instead, each point spent in the psycast editor (psycasts, meditation foci, stat upgrades) adds to a unit's cost. Tune those per-point costs here.</FCSettingsCompatVPEDesc>
+	<FCSettingVPEBasePsycastCost>Psycast Base Cost</FCSettingVPEBasePsycastCost>
+	<FCSettingVPEBasePsycastCostTip>Flat silver cost of each chosen psycast, before adding the per-level amount below.</FCSettingVPEBasePsycastCostTip>
+	<FCSettingVPEPerLevelCost>Psycast Per-Level Cost</FCSettingVPEPerLevelCost>
+	<FCSettingVPEPerLevelCostTip>Additional silver cost per psycast tier (level). A tier-3 psycast costs the base plus three times this amount.</FCSettingVPEPerLevelCostTip>
+	<FCSettingVPEFocusCost>Meditation Focus Cost</FCSettingVPEFocusCost>
+	<FCSettingVPEFocusCostTip>Silver cost of each unlocked meditation focus type.</FCSettingVPEFocusCostTip>
+	<FCSettingVPEStatPointCost>Stat Point Cost</FCSettingVPEStatPointCost>
+	<FCSettingVPEStatPointCostTip>Silver cost of each psycaster stat point spent.</FCSettingVPEStatPointCostTip>
 	<FCEmpireMercHealRateStatExplanation>Empire mercenary at base recovering</FCEmpireMercHealRateStatExplanation>
 
 	<!-- Auto-resolve casualties + Crushing Defeat -->
@@ -73,6 +99,8 @@ Values in between dampen the effect of military efficiency on the auto combat.</
 	<FCSettingSquadsHeader>Squads</FCSettingSquadsHeader>
 	<FCSettingMaxSquadSize>Max Squad Size</FCSettingMaxSquadSize>
 	<FCSettingMaxSquadSizeTip>Hard cap on mercenaries per squad. Existing templates retain their existing slot count when this is changed; only newly-created templates and new hires use the new value. Per-settlement bonuses (from buildings/policies) still stack on top.</FCSettingMaxSquadSizeTip>
+	<FCSettingMaxAnimalSubpawns>Max Companion Animals</FCSettingMaxAnimalSubpawns>
+	<FCSettingMaxAnimalSubpawnsTip>Maximum companion animals a single mercenary design can carry. Adding past this is blocked; lowering it never removes animals from existing designs. With Giddy Up 2, a merc's separate mount does not count toward this limit.</FCSettingMaxAnimalSubpawnsTip>
 	<FCSettingSquadHireCostMultiplier>Squad Hire Cost Multiplier</FCSettingSquadHireCostMultiplier>
 	<FCSettingSquadHireCostMultiplierTip>Multiplier applied to a template's full equipment cost when the player hires a fresh squad. 1.0 = sticker price; 0.0 = free; higher values make hiring more expensive.</FCSettingSquadHireCostMultiplierTip>
 	<FCSettingSquadUpgradeCostMultiplier>Squad Upgrade Cost Multiplier</FCSettingSquadUpgradeCostMultiplier>

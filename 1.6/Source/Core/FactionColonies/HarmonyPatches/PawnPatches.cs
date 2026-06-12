@@ -1,6 +1,7 @@
 ﻿using FactionColonies.util;
 using HarmonyLib;
 using Verse;
+using RimWorld;
 
 namespace FactionColonies
 {
@@ -42,37 +43,64 @@ namespace FactionColonies
                         merc.pawn = null;
                         FindFC.Military?.RebuildMercenaryPawnSet();
                     }
-
-                    squad.Equipment.RemoveDroppedEquipment();
+                    else
+                    {
+                        // Not a top-level merc — it's a sub-pawn (animal or mech). Leave the wrapper
+                        // in place as a "Missing" placeholder (identity preserved) so the player pays
+                        // to replace it; just null the pawn. Neither animals nor mechs are free-replaced.
+                        NullDeadSubPawn(mfc.FindSubPawnWrapper(__instance));
+                    }
                 }
                 else
                 {
-                    LogUtil.Warning("Mercenary Errored out. Did not find squad.");
+                    // ReturnSquadFromUnit only matches on-map pawns; a sub-pawn can die off-map.
+                    // Fall back to a global, map-independent sub-pawn lookup before warning.
+                    Mercenary sub = mfc.FindSubPawnWrapper(__instance);
+                    if (sub != null) NullDeadSubPawn(sub);
+                    else LogUtil.Warning("Mercenary Errored out. Did not find squad.");
                 }
 
-                __instance.equipment?.DestroyAllEquipment();
-                __instance.apparel?.DestroyAll();
-                //__instance.Destroy();
+                // The merc's worn weapons and apparel now dissolve on death via the vanilla death
+                // acidifier implant (see MercenaryPawnFactory.TryApplyDeathAcidifier). The corpse and any
+                // gear dropped during the fight are left for the player, matching vanilla behaviour.
                 return true;
             }
 
             return true;
         }
+
+        /// <summary>Turns a dead sub-pawn wrapper into a "Missing" placeholder: severs a mech's Overseer
+        /// bond (so the mechanitor doesn't keep a relation to the unsaved mech) and nulls the pawn.</summary>
+        static void NullDeadSubPawn(Mercenary sub)
+        {
+            if (sub is null) return;
+            if (sub.subPawnType == Mercenary.SubPawnType.Mech && sub.handler?.pawn != null && sub.pawn != null)
+                MercenaryPawnFactory.UnbondMech(sub.handler.pawn, sub.pawn);
+            sub.pawn = null;
+            FindFC.Military?.RebuildMercenaryPawnSet();
+        }
     }
 
-    [HarmonyPatch(typeof(DeathActionWorker_Simple), "PawnDied")]
-    class MercenaryAnimalDied
+    // Whenever a mercenary changes faction (drafted to the player, undrafted back to the Empire,
+    // forced back to Empire on death/recall, etc.), carry all of its sub-pawns along. Vanilla has no
+    // drafting for animals/mechs, but they must share the merc's faction so player control, mechanitor
+    // bonds, and AI all behave. Sub-pawns have no sub-pawns of their own, so this never recurses.
+    [HarmonyPatch(typeof(Pawn), nameof(Pawn.SetFaction))]
+    class MercSubPawnsFollowFaction
     {
-        static bool Prefix(Corpse corpse)
+        static void Postfix(Pawn __instance, Faction newFaction)
         {
-            if (FindFC.Military?.IsMercenaryPawn(corpse.InnerPawn) == true)
+            if (newFaction is null) return;
+            MilitaryFC mfc = FindFC.Military;
+            if (mfc is null || !mfc.IsMercenaryPawn(__instance)) return;
+            Mercenary merc = mfc.FindMercByPawn(__instance);
+            if (merc is null) return; // not a top-level slot merc (e.g. a sub-pawn) — nothing to cascade
+            foreach (Mercenary sub in merc.SubPawns())
             {
-                //corpse.InnerPawn.SetFaction(FactionColonies.getPlayerColonyFaction());
-                corpse.Destroy();
-                return false;
+                Pawn p = sub?.pawn;
+                if (p != null && !p.Dead && !p.Destroyed && p.Faction != newFaction)
+                    p.SetFaction(newFaction);
             }
-
-            return true;
         }
     }
 

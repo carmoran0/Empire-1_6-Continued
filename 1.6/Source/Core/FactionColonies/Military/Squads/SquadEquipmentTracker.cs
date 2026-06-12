@@ -49,7 +49,6 @@ namespace FactionColonies
             squad.outfit = outfit;
             UsedWeaponList = new List<ThingWithComps>();
             UsedApparelList = new List<Apparel>();
-            squad.animals = new List<Mercenary>();
             foreach (MilUnitFC loadout in outfit.Units)
             {
                 try
@@ -110,14 +109,14 @@ namespace FactionColonies
                     if (loadout != null)
                     {
                         EquipPawn(squad.mercenaries[count], loadout);
-                        if (loadout.animal != null)
-                        {
-                            Mercenary animal = new Mercenary(true);
-                            MercenaryPawnFactory.CreateNewAnimal(squad, ref animal, loadout.animal);
-                            animal.handler = squad.mercenaries[count];
-                            squad.mercenaries[count].animal = animal;
-                            squad.animals.Add(animal);
-                        }
+                        // Fresh outfit pass: clear any sub-pawns a reused merc still carries.
+                        ClearSubPawns(squad.mercenaries[count]);
+                        // Companion animals (+ mount, when Giddy Up 2 is active).
+                        SpawnAnimalsFor(squad.mercenaries[count], loadout);
+
+                        // Mechanitor: spawn and bond the unit's assigned mechs to this merc (which already
+                        // had the mechlink applied in CreateNewPawn, so pawn.mechanitor exists).
+                        SpawnMechsFor(squad.mercenaries[count], loadout);
 
                         squad.mercenaries[count].loadout = loadout;
                         // Sync currentLoadout with what we just equipped — clear any prior
@@ -157,13 +156,16 @@ namespace FactionColonies
                         Color resolved = factionComp?.ResolveApparelColor(apparelDef) ?? Color.white;
                         thing.SetColor(resolved, reportFailure: false);
                         merc.pawn.apparel.Wear(ap);
+                        // Anti-exploit: biocode worn apparel to the merc so looted gear is unusable.
+                        // No-op on apparel without CompBiocodable.
+                        if (FCSettings.antiExploit)
+                            ap.TryGetComp<CompBiocodable>()?.CodeFor(merc.pawn);
                     }
                 }
             }
 
-            // Carried inventory. Populate BEFORE CE auto-loads the weapon so CE can draw on
-            // player-chosen ammo already in the pack. Counts above the item's stack limit are
-            // split across multiple stacks.
+            // Carried inventory — the unit's player-chosen loadout (including any ammo). Counts
+            // above the item's stack limit are split across multiple stacks.
             if (merc.pawn.inventory?.innerContainer != null && loadout.inventory != null)
             {
                 foreach (SavedThing invDef in loadout.inventory)
@@ -174,7 +176,7 @@ namespace FactionColonies
                     while (remaining > 0)
                     {
                         int take = Mathf.Min(remaining, stackLimit);
-                        Thing invThing = new SavedThing(invDef.thing, invDef.stuff, take).CreateThing();
+                        Thing invThing = new SavedThing(invDef.thing, invDef.stuff, take, invDef.quality).CreateThing();
                         if (invThing == null) break;
                         merc.pawn.inventory.innerContainer.TryAdd(invThing, true);
                         remaining -= take;
@@ -190,12 +192,11 @@ namespace FactionColonies
                     if (weaponThing is ThingWithComps twc)
                     {
                         merc.pawn.equipment.AddEquipment(twc);
+                        // Anti-exploit: biocode equipped weapons to the merc so looted gear is
+                        // useless to other pawns. No-op on weapons without CompBiocodable.
+                        if (FCSettings.antiExploit)
+                            twc.TryGetComp<CompBiocodable>()?.CodeFor(merc.pawn);
                     }
-                }
-
-                if (CombatExtendedUtil.IsCELoaded && merc.pawn.equipment.Primary != null)
-                {
-                    CombatExtendedUtil.EquipWeaponWithAmmo(merc.pawn, merc.pawn.equipment.Primary);
                 }
             }
 
@@ -240,47 +241,201 @@ namespace FactionColonies
             }
         }
 
-        /// <summary>Syncs a merc's companion animal to <paramref name="target"/>'s animal:
-        /// creates, replaces, or destroys the animal-merc as needed and keeps
-        /// <see cref="MercenarySquadFC.animals"/> consistent (no orphaned entries). Shared by the per-pawn
-        /// Upgrade path and the bulk <see cref="SquadUpgradeUtil.UpgradeToTemplate"/> — <see cref="EquipPawn"/> only
-        /// touches apparel + weapons, so the animal has to be reconciled separately. A
-        /// fresh-hire merc (<c>animal == null</c>) is handled too: it just creates the
-        /// animal when the target has one.</summary>
+        /// <summary>Creates <paramref name="loadout"/>'s companion animals — and, when Giddy Up 2 is
+        /// active, its single rideable mount — as sub-pawns of <paramref name="merc"/>. Mirrors
+        /// <see cref="SpawnMechsFor"/>; assumes prior sub-pawns were already cleared (fresh outfit pass).
+        /// The mount lives in the same animals list, tagged <see cref="Mercenary.SubPawnType.Mount"/>.</summary>
+        public void SpawnAnimalsFor(Mercenary merc, MilUnitFC loadout)
+        {
+            if (squad is null || merc is null || loadout is null) return;
+            if (merc.animals is null) merc.animals = new List<Mercenary>();
+
+            if (loadout.animals != null)
+            {
+                foreach (SavedAnimal sa in loadout.animals)
+                {
+                    if (sa.kind is null) continue;
+                    for (int n = 0; n < Mathf.Max(1, sa.count); n++)
+                    {
+                        Mercenary animal = new Mercenary(true);
+                        MercenaryPawnFactory.CreateNewAnimal(squad, ref animal, sa.kind);
+                        animal.handler = merc;
+                        merc.animals.Add(animal);
+                    }
+                }
+            }
+
+            if (FactionCompat.GiddyUp2Active && loadout.mount is object)
+            {
+                Mercenary mount = new Mercenary(true);
+                MercenaryPawnFactory.CreateNewAnimal(squad, ref mount, loadout.mount);
+                mount.subPawnType = Mercenary.SubPawnType.Mount;   // CreateNewAnimal tags it Animal; override.
+                mount.handler = merc;
+                merc.animals.Add(mount);
+            }
+        }
+
+        /// <summary>Syncs a merc's companion animals AND mount to <paramref name="target"/>'s design:
+        /// keeps still-wanted live sub-pawns, destroys extras/wrong ones, and creates any missing —
+        /// keeping <see cref="Mercenary.animals"/> consistent (no orphaned entries). Preserving matching
+        /// live sub-pawns (rather than clear-and-rebuild like <see cref="ReconcileMechs"/>) avoids killing
+        /// a healthy companion on an unrelated loadout change. Shared by the per-pawn Upgrade path and the
+        /// bulk <see cref="SquadUpgradeUtil.UpgradeToTemplate"/>.</summary>
         public void ReconcileAnimal(Mercenary merc, MilUnitFC target)
         {
             if (merc is null || squad is null) return;
-            PawnKindDef wanted = target?.animal;
+            if (merc.animals is null) merc.animals = new List<Mercenary>();
 
-            /* No animal wanted — drop any existing one. */
+            ReconcileCompanions(merc, target);
+            ReconcileMount(merc, target);
+        }
+
+        /* Reconciles the (kind -> count) multiset of companion animals (subPawnType == Animal). */
+        private void ReconcileCompanions(Mercenary merc, MilUnitFC target)
+        {
+            Dictionary<PawnKindDef, int> wanted = new Dictionary<PawnKindDef, int>();
+            if (target?.animals != null)
+            {
+                foreach (SavedAnimal a in target.animals)
+                {
+                    if (a.kind is null) continue;
+                    int cur;
+                    wanted.TryGetValue(a.kind, out cur);
+                    wanted[a.kind] = cur + Mathf.Max(1, a.count);
+                }
+            }
+
+            // Keep each live, still-wanted companion (decrementing its tally); destroy the rest.
+            for (int i = merc.animals.Count - 1; i >= 0; i--)
+            {
+                Mercenary sub = merc.animals[i];
+                if (sub is null || sub.subPawnType != Mercenary.SubPawnType.Animal) continue;
+
+                PawnKindDef kind = sub.subPawnKind;
+                int remaining;
+                if (kind != null && sub.pawn != null && !sub.pawn.Destroyed
+                    && wanted.TryGetValue(kind, out remaining) && remaining > 0)
+                {
+                    wanted[kind] = remaining - 1;
+                }
+                else
+                {
+                    if (sub.pawn != null && !sub.pawn.Destroyed) sub.pawn.Destroy();
+                    merc.animals.RemoveAt(i);
+                }
+            }
+
+            // Create any still-missing companions.
+            foreach (KeyValuePair<PawnKindDef, int> kv in wanted)
+            {
+                for (int n = 0; n < kv.Value; n++)
+                {
+                    Mercenary animal = new Mercenary(true);
+                    MercenaryPawnFactory.CreateNewAnimal(squad, ref animal, kv.Key);
+                    animal.handler = merc;
+                    merc.animals.Add(animal);
+                }
+            }
+        }
+
+        /* Reconciles the single mount (subPawnType == Mount). Only wanted when Giddy Up 2 is active. */
+        private void ReconcileMount(Mercenary merc, MilUnitFC target)
+        {
+            PawnKindDef wanted = (FactionCompat.GiddyUp2Active && target != null) ? target.mount : null;
+
+            Mercenary existing = null;
+            for (int i = 0; i < merc.animals.Count; i++)
+            {
+                if (merc.animals[i] != null && merc.animals[i].subPawnType == Mercenary.SubPawnType.Mount)
+                {
+                    existing = merc.animals[i];
+                    break;
+                }
+            }
+
             if (wanted is null)
             {
-                if (merc.animal != null)
+                if (existing != null)
                 {
-                    if (merc.animal.pawn != null && !merc.animal.pawn.Destroyed) merc.animal.pawn.Destroy();
-                    squad.animals?.Remove(merc.animal);
-                    merc.animal = null;
+                    if (existing.pawn != null && !existing.pawn.Destroyed) existing.pawn.Destroy();
+                    merc.animals.Remove(existing);
                 }
                 return;
             }
 
-            /* Correct animal already present — leave it. */
-            if (merc.animal?.pawn?.kindDef == wanted) return;
+            // Correct mount already present and alive — leave it.
+            if (existing != null && existing.pawn != null && existing.subPawnKind == wanted) return;
 
-            /* Wrong / missing animal — destroy the old one (if any), create the wanted one. */
-            if (merc.animal != null)
+            if (existing != null)
             {
-                if (merc.animal.pawn != null && !merc.animal.pawn.Destroyed) merc.animal.pawn.Destroy();
-                squad.animals?.Remove(merc.animal);
-                merc.animal = null;
+                if (existing.pawn != null && !existing.pawn.Destroyed) existing.pawn.Destroy();
+                merc.animals.Remove(existing);
             }
 
-            Mercenary animal = new Mercenary(true);
-            MercenaryPawnFactory.CreateNewAnimal(squad, ref animal, wanted);
-            animal.handler = merc;
-            merc.animal = animal;
-            if (squad.animals is null) squad.animals = new List<Mercenary>();
-            squad.animals.Add(animal);
+            Mercenary mount = new Mercenary(true);
+            MercenaryPawnFactory.CreateNewAnimal(squad, ref mount, wanted);
+            mount.subPawnType = Mercenary.SubPawnType.Mount;
+            mount.handler = merc;
+            merc.animals.Add(mount);
+        }
+
+        /// <summary>Destroys and clears every sub-pawn (animals + mechs) of <paramref name="merc"/>.</summary>
+        public void ClearSubPawns(Mercenary merc)
+        {
+            if (merc is null) return;
+            if (merc.animals != null)
+            {
+                foreach (Mercenary a in merc.animals)
+                    if (a?.pawn != null && !a.pawn.Destroyed) a.pawn.Destroy();
+                merc.animals.Clear();
+            }
+            squad?.RemoveMechsFor(merc);
+        }
+
+        /// <summary>Creates and bonds every mech in <paramref name="loadout"/>'s mech list to
+        /// <paramref name="mechanitor"/>, adding them to <see cref="Mercenary.mechs"/>. Assumes
+        /// the mechanitor pawn already has its mechlink (applied in CreateNewPawn). No-op when Biotech
+        /// is absent, the loadout isn't a mechanitor design, or the pawn isn't a mechanitor.</summary>
+        public void SpawnMechsFor(Mercenary mechanitor, MilUnitFC loadout)
+        {
+            if (squad is null || mechanitor?.pawn is null || loadout is null) return;
+            if (!ModsConfig.BiotechActive || !loadout.IsMechanitorDesign) return;
+            // Ensure the mechlink is present (idempotent) so pawn.mechanitor exists even for a reused
+            // pawn that predates this loadout becoming a mechanitor design.
+            MilUnitFC.ApplyMechanitorToPawn(mechanitor.pawn, loadout);
+            if (mechanitor.pawn.mechanitor is null) return;
+            if (mechanitor.mechs is null) mechanitor.mechs = new List<Mercenary>();
+            if (loadout.mechs is null) return;
+
+            foreach (SavedMech sm in loadout.mechs)
+            {
+                if (sm.kind is null) continue;
+                int group = Mathf.Max(0, sm.group);
+                MechWorkModeDef workMode = loadout.GetGroupWorkMode(group);
+                for (int n = 0; n < Mathf.Max(1, sm.count); n++)
+                {
+                    Mercenary mech = new Mercenary(true);
+                    MercenaryPawnFactory.CreateNewMech(squad, ref mech, sm.kind, mechanitor.pawn, group, workMode);
+                    if (mech.pawn != null)
+                    {
+                        mech.handler = mechanitor;
+                        mechanitor.mechs.Add(mech);
+                    }
+                }
+            }
+        }
+
+        /// <summary>Syncs a mechanitor merc's bonded mechs to <paramref name="target"/>'s mech design:
+        /// destroys this merc's existing mechs and rebuilds from the design. Unlike <see cref="ReconcileAnimal"/>
+        /// (a single companion), a mechanitor owns N mechs, so this clear-and-rebuilds — simple and correct
+        /// since mech pawns are disposable battle pawns. Shared by the per-pawn Upgrade path and the bulk
+        /// <see cref="SquadUpgradeUtil.UpgradeToTemplate"/>.</summary>
+        public void ReconcileMechs(Mercenary merc, MilUnitFC target)
+        {
+            if (merc is null || squad is null) return;
+            squad.RemoveMechsFor(merc);
+            if (target != null && ModsConfig.BiotechActive && target.IsMechanitorDesign)
+                SpawnMechsFor(merc, target);
         }
 
         public void RemoveDroppedEquipment()
@@ -290,7 +445,10 @@ namespace FactionColonies
                 for (int i = UsedApparelList.Count - 1; i >= 0; i--)
                 {
                     Apparel apparel = UsedApparelList[i];
-                    if (apparel.ParentHolder is Pawn_ApparelTracker tracker)
+                    // A reference-mode Scribe load can leave null entries (an apparel that wasn't saved /
+                    // couldn't resolve). Drop them rather than deref ParentHolder on null.
+                    if (apparel is null) { UsedApparelList.RemoveAt(i); continue; }
+                    if (apparel.ParentHolder is Pawn_ApparelTracker tracker && tracker.pawn is object)
                     {
                         Pawn pawn = tracker.pawn;
                         if ((pawn.Faction == FindFC.EmpireFaction ||
@@ -298,7 +456,7 @@ namespace FactionColonies
                             continue;
                     }
                     UsedApparelList.RemoveAt(i);
-                    if (apparel != null && !apparel.Destroyed)
+                    if (!apparel.Destroyed)
                         apparel.Destroy();
                 }
             }
@@ -308,7 +466,8 @@ namespace FactionColonies
                 for (int i = UsedWeaponList.Count - 1; i >= 0; i--)
                 {
                     ThingWithComps weapon = UsedWeaponList[i];
-                    if (weapon.ParentHolder is Pawn_EquipmentTracker tracker)
+                    if (weapon is null) { UsedWeaponList.RemoveAt(i); continue; }
+                    if (weapon.ParentHolder is Pawn_EquipmentTracker tracker && tracker.pawn is object)
                     {
                         Pawn pawn = tracker.pawn;
                         if ((pawn.Faction == FindFC.EmpireFaction ||
@@ -316,7 +475,7 @@ namespace FactionColonies
                             continue;
                     }
                     UsedWeaponList.RemoveAt(i);
-                    if (weapon != null && !weapon.Destroyed)
+                    if (!weapon.Destroyed)
                         weapon.Destroy();
                 }
             }

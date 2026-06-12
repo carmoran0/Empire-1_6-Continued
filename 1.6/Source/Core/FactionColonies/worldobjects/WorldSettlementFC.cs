@@ -1020,10 +1020,24 @@ namespace FactionColonies
             {
                 foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned.ToList())
                 {
+                    // Squad pawns — mercenaries AND their bonded sub-pawns (mechs / companion animals) —
+                    // persist between battles. IsMercenary() now self-heals against a lagging cache, so it
+                    // reliably recognizes a freshly-bonded mech (a stale cache here is what let this method
+                    // wrongly destroy mechs at battle end). Despawn so the squad holds them off-map, not the
+                    // world pawn pool, and restore the Empire faction as a safety net so they redeploy
+                    // correctly next battle. Only genuine generated defenders get destroyed.
+                    if (pawn.IsMercenary())
+                    {
+                        if (pawn.Spawned) pawn.DeSpawn();
+                        if (pawn.Faction != empireFaction) pawn.SetFaction(empireFaction);
+                        continue;
+                    }
+
+                    // Generated (non-squad) Empire defenders are disposable — destroy them so they don't
+                    // ghost into the world pawn pool.
                     if (pawn.Faction != empireFaction) continue;
                     pawn.DeSpawn();
-                    // Squad mercenaries persist between battles; only destroy generated defenders
-                    if (!pawn.IsMercenary() && !pawn.Destroyed)
+                    if (!pawn.Destroyed)
                         pawn.Destroy();
                 }
             }

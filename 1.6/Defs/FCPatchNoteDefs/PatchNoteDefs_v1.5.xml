@@ -409,4 +409,24 @@
 		<li>PhenylPropion</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_27</defName>
+		<label>Mercs Update: Psycasts, Mechs, and Animals, oh my</label>
+		<description>Fairly substantial update to merc designs: now you can set psycasts, assign mechs, or even have your mercs run around with a pack of animals!</description>
+		<releaseDate>2026-06-12</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Squads will now receive their combat efficiency hediff when deployed, not just during manual battles</li>
+		<li>Added an &quot;Anti-Exploit&quot; setting (default on). When enabled, merc gear is biocoded, and all mercs spawn with Death Acidifiers. This replaces the old Empire behavior where dead mercs would have their corpse and all of their items immediately deleted on death</li>
+		<li>When determining if an item can be used for mercs or selected for tithing, check the ThingDef&apos;s own research fields, not just the recipe. This should filter out modded stuff like Warcasket armor if their research hasn&apos;t been unlocked</li>
+		<li>Mercs can be assigned psylinks. Comes with support for Vanilla Psycasts Expanded</li>
+		<li>Mercs can be made into mechanitors, and assigned mechs</li>
+		<li>Mercs can now be assigned more than one animal. This goes out to all of you druid fans out there</li>
+		<li>Updated Giddy-Up 2 support: if Giddy-Up 2 Continued is enabled, mercs can be assigned a mount, and will spawn riding it</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
