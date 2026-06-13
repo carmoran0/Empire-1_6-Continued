@@ -904,13 +904,12 @@ namespace FactionColonies
         private void ReplaceSubPawnPaid(Mercenary sub, int cost)
         {
             if (sub is null || squad.IsBusy) return;
-            if (cost > 0 && PaymentUtil.GetSilver() < cost)
+            if (cost > 0 && !PaymentUtil.TryPaySilver(cost, PaymentUtil.Reason_SquadFillSlot, squad.settlement))
             {
                 Messages.Message("FCSquadFillSlotsInsufficient".Translate(cost),
                     MessageTypeDefOf.RejectInput, false);
                 return;
             }
-            if (cost > 0) PaymentUtil.PaySilver(cost, PaymentUtil.Reason_SquadFillSlot, squad.settlement);
             squad.ReplaceSubPawn(sub);
             FindFC.Military?.RebuildMercenaryPawnSet();
         }
@@ -943,13 +942,12 @@ namespace FactionColonies
             if (merc?.pawn is null) return;
             MilUnitFC target = merc.BlueprintLoadout;
             if (target is null) return;
-            if (cost > 0 && PaymentUtil.GetSilver() < cost)
+            if (cost > 0 && !PaymentUtil.TryPaySilver(cost, PaymentUtil.Reason_SquadUpgrade, squad.settlement))
             {
                 Messages.Message("FCSquadUpgradeInsufficientSilver".Translate(cost),
                     MessageTypeDefOf.RejectInput, false);
                 return;
             }
-            if (cost > 0) PaymentUtil.PaySilver(cost, PaymentUtil.Reason_SquadUpgrade, squad.settlement);
             // ownedLoadout and loadout are preserved — assigned loadout is unchanged,
             // only the pawn's equipped state is being synced to it.
             MilUnitFC prior = merc.currentLoadout;
@@ -975,13 +973,12 @@ namespace FactionColonies
         private void FillSingleSlot(Mercenary merc, int cost, MilUnitFC blueprint)
         {
             if (blueprint is null || blueprint.isBlank) return;
-            if (cost > 0 && PaymentUtil.GetSilver() < cost)
+            if (cost > 0 && !PaymentUtil.TryPaySilver(cost, PaymentUtil.Reason_SquadFillSlot, squad.settlement))
             {
                 Messages.Message("FCSquadFillSlotsInsufficient".Translate(cost),
                     MessageTypeDefOf.RejectInput, false);
                 return;
             }
-            if (cost > 0) PaymentUtil.PaySilver(cost, PaymentUtil.Reason_SquadFillSlot, squad.settlement);
             Mercenary slot = merc;
             MercenaryPawnFactory.CreateNewPawn(squad, ref slot, blueprint.pawnKind, blueprint.xenotype, blueprint.customXenotypeName, blueprint);
             if (slot.pawn != null) squad.Equipment.EquipPawn(slot, blueprint);
@@ -1054,14 +1051,12 @@ namespace FactionColonies
                 return;
             }
 
-            if (cost > 0 && PaymentUtil.GetSilver() < cost)
+            if (cost > 0 && !PaymentUtil.TryPaySilver(cost, PaymentUtil.Reason_SquadFillSlot, squad.settlement))
             {
                 Messages.Message("FCSquadFillSlotsInsufficient".Translate(cost),
                     MessageTypeDefOf.RejectInput, false);
                 return;
             }
-            if (cost > 0)
-                PaymentUtil.PaySilver(cost, PaymentUtil.Reason_SquadFillSlot, squad.settlement);
 
             target.loadout = blueprint;
             target.ownedLoadout = null;

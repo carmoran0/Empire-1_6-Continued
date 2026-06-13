@@ -74,6 +74,75 @@ namespace FactionColonies
         }
 
         // ============================
+        // TryPaySilver (atomic, game state)
+        // ============================
+
+        [EmpireTest("Payment")]
+        public static void TryPaySilver_ZeroAmount_SucceedsNoDeduction()
+        {
+            int before = PaymentUtil.GetSilver();
+            TestAssert.IsTrue(PaymentUtil.TryPaySilver(0, "test"), "TryPaySilver(0) should return true");
+            TestAssert.AreEqual(before, PaymentUtil.GetSilver(), message: "TryPaySilver(0) must not deduct");
+        }
+
+        [EmpireTest("Payment")]
+        public static void TryPaySilver_NegativeAmount_SucceedsNoDeduction()
+        {
+            int before = PaymentUtil.GetSilver();
+            TestAssert.IsTrue(PaymentUtil.TryPaySilver(-50, "test"), "TryPaySilver(-50) should return true");
+            TestAssert.AreEqual(before, PaymentUtil.GetSilver(), message: "TryPaySilver(negative) must not deduct");
+        }
+
+        [EmpireTest("Payment")]
+        public static void TryPaySilver_Unaffordable_ReturnsFalseNoDeduction()
+        {
+            int before = PaymentUtil.GetSilver();
+            // Ask for far more than any plausible balance: must refuse and deduct nothing (closes the
+            // L1 footgun where the legacy PaySilver always returned true).
+            TestAssert.IsFalse(PaymentUtil.TryPaySilver(before + 1_000_000, "test"),
+                "TryPaySilver beyond the balance should return false");
+            TestAssert.AreEqual(before, PaymentUtil.GetSilver(), message: "Failed TryPaySilver must deduct nothing");
+        }
+
+        [EmpireTest("Payment")]
+        public static void TryPaySilver_ModifierZeros_SucceedsNoDeduction()
+        {
+            var modifier = new TestPaymentZeroer();
+            SilverPaymentRegistry.Register(modifier);
+            try
+            {
+                int before = PaymentUtil.GetSilver();
+                TestAssert.IsTrue(PaymentUtil.TryPaySilver(9999, "test"),
+                    "TryPaySilver should succeed when a modifier zeros the amount");
+                TestAssert.AreEqual(before, PaymentUtil.GetSilver(), message: "Zeroed payment must not deduct");
+            }
+            finally
+            {
+                SilverPaymentRegistry.Unregister(modifier);
+            }
+        }
+
+        [EmpireTest("Payment")]
+        public static void TryPaySilver_ModifierInflates_ChecksEffectiveAmount()
+        {
+            var modifier = new TestPaymentInflator(1_000_000);
+            SilverPaymentRegistry.Register(modifier);
+            try
+            {
+                int before = PaymentUtil.GetSilver();
+                // Nominal amount is 1, but the modifier inflates it past any balance. TryPaySilver must
+                // check the modifier-adjusted (effective) amount, not the nominal one, so it refuses.
+                TestAssert.IsFalse(PaymentUtil.TryPaySilver(1, "test"),
+                    "TryPaySilver must check the modifier-adjusted (effective) amount");
+                TestAssert.AreEqual(before, PaymentUtil.GetSilver(), message: "Refused inflated payment must deduct nothing");
+            }
+            finally
+            {
+                SilverPaymentRegistry.Unregister(modifier);
+            }
+        }
+
+        // ============================
         // GetSilver (game state)
         // ============================
 
@@ -133,6 +202,16 @@ namespace FactionColonies
             public void ModifyPayment(SilverPaymentContext context)
             {
                 context.Amount = 0;
+            }
+        }
+
+        private class TestPaymentInflator : ISilverPaymentModifier
+        {
+            private readonly int add;
+            public TestPaymentInflator(int add) { this.add = add; }
+            public void ModifyPayment(SilverPaymentContext context)
+            {
+                context.Amount += add;
             }
         }
     }

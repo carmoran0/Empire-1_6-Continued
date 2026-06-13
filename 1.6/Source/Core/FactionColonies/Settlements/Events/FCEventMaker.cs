@@ -791,8 +791,12 @@ namespace FactionColonies
             }
             else if (bill.taxes.silverAmount < 0) //if paying money
             {
-                //remove money from colony
-                PaymentUtil.PaySilver((int)(-1 * (bill.taxes.silverAmount)), PaymentUtil.Reason_TaxPayment, bill.settlement);
+                //remove money from colony. BillFC.AttemptResolve already verified the balance, so
+                //this atomic pay should always succeed; log if a payment modifier somehow inflated it.
+                if (!PaymentUtil.TryPaySilver((int)(-1 * (bill.taxes.silverAmount)), PaymentUtil.Reason_TaxPayment, bill.settlement))
+                {
+                    LogUtil.Warning($"CreateTaxEvent: could not collect {-bill.taxes.silverAmount} silver for {bill.settlement?.Name}; balance shifted after bill resolution.");
+                }
             }
 
 

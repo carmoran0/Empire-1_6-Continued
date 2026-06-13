@@ -217,11 +217,10 @@ namespace FactionColonies
                 delegate (LocalTargetInfo target)
                 {
                     float cost = support.ReturnTotalCost(settlement);
-                    if (DebugSettings.godMode || PaymentUtil.GetSilver() > cost)
+                    // godMode short-circuits before TryPaySilver, so no silver is taken under godMode.
+                    if (DebugSettings.godMode
+                        || PaymentUtil.TryPaySilver((int)Math.Round(cost), PaymentUtil.Reason_FireSupport, settlement))
                     {
-                        if (!DebugSettings.godMode)
-                            PaymentUtil.PaySilver((int)Math.Round(cost), PaymentUtil.Reason_FireSupport, settlement);
-
                         Map map = Find.CurrentMap;
                         List<ThingDef> projectiles = new List<ThingDef>(support.projectiles);
                         MilitaryFireSupport fireSupport = new MilitaryFireSupport("fireSupport", map, target.Cell,

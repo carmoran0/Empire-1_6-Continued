@@ -50,10 +50,10 @@ namespace FactionColonies
             if (!FindFC.FactionComp.IsActionAllowed(FCActionType.UpgradeSettlement)) return new Message("FCActionNotAllowed".Translate(), MessageTypeDefOf.RejectInput);
             if (settlement.IsUpgrading) return new Message("FCAlreadyUpgradeSettlement".Translate(), MessageTypeDefOf.RejectInput);
             if (settlement.MilitaryComp?.isUnderAttack == true) return new Message("FCSettlementUnderAttack".Translate(), MessageTypeDefOf.RejectInput);
-            if (PaymentUtil.GetSilver() < settlementUpgradeCost) return new Message("FCNotEnoughSilverUpgrade".Translate(), MessageTypeDefOf.RejectInput);
 
-            //on success
-            PaymentUtil.PaySilver(settlementUpgradeCost, PaymentUtil.Reason_SettlementUpgrade, settlement);
+            //on success (atomic affordability check + payment)
+            if (!PaymentUtil.TryPaySilver(settlementUpgradeCost, PaymentUtil.Reason_SettlementUpgrade, settlement))
+                return new Message("FCNotEnoughSilverUpgrade".Translate(), MessageTypeDefOf.RejectInput);
             FCEvent tmp = new FCEvent(true)
             {
                 def = FCEventDefOf.upgradeSettlement,

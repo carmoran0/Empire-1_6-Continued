@@ -480,9 +480,16 @@ namespace FactionColonies
                     if (available)
                     {
                         SoundDefOf.Click.PlayOneShotOnCamera();
-                        PaymentUtil.PaySilver(effectiveCost, PaymentUtil.Reason_EventOption);
-                        FCEventMaker.CalculateSuccess(opt, parentEvent);
-                        Find.WindowStack.TryRemove(this);
+                        // Atomic: only resolve the option if the silver was actually paid.
+                        if (PaymentUtil.TryPaySilver(effectiveCost, PaymentUtil.Reason_EventOption))
+                        {
+                            FCEventMaker.CalculateSuccess(opt, parentEvent);
+                            Find.WindowStack.TryRemove(this);
+                        }
+                        else
+                        {
+                            Messages.Message("FCNotEnoughSilverOption".Translate(), MessageTypeDefOf.RejectInput);
+                        }
                     }
                     else if (!meetsRequirements)
                     {

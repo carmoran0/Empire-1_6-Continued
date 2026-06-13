@@ -69,12 +69,44 @@ namespace FactionColonies
             DeliveryEvent.CreateDeliveryEvent(things, source, let, msg);
         }
 
+        /// <summary>Atomic affordability-checked silver payment. Runs payment modifiers, then:
+        /// returns true (deducting nothing) when the effective amount is &lt;= 0; returns
+        /// <c>false</c> (deducting nothing) when the player lacks enough silver in storage;
+        /// otherwise deducts the effective amount and returns true. Prefer this at every call
+        /// site so affordability and payment stay a single atomic operation -- callers no longer
+        /// need to pair a separate <see cref="GetSilver"/> check with the deduction.</summary>
+        public static bool TryPaySilver(int amount, string reason = null, WorldSettlementFC settlement = null)
+        {
+            SilverPaymentContext context = new SilverPaymentContext(amount, reason, settlement);
+            SilverPaymentRegistry.InvokeModifiers(context);
+            int effective = context.Amount;
+            if (effective <= 0) return true;            // modifiers waived it / nothing owed
+            if (GetSilver() < effective) return false;  // atomic: shortfall -> deduct nothing
+            DeductSilverFromStorage(effective);
+            return true;
+        }
+
+        /// <summary>Best-effort UNCHECKED deduction: runs payment modifiers and removes up to the
+        /// effective amount of silver from storage, returning true even if the player had less
+        /// than owed. Does NOT verify affordability -- prefer <see cref="TryPaySilver"/> in all new
+        /// code. Retained only as an escape hatch for callers that have already verified the balance
+        /// upstream and explicitly want a best-effort deduction.</summary>
         public static bool PaySilver(int amount, string reason = null, WorldSettlementFC settlement = null)
         {
             SilverPaymentContext context = new SilverPaymentContext(amount, reason, settlement);
             SilverPaymentRegistry.InvokeModifiers(context);
-            amount = context.Amount;
-            if (amount <= 0) return true;
+            int effective = context.Amount;
+            if (effective <= 0) return true;
+            DeductSilverFromStorage(effective);
+            return true;
+        }
+
+        /// <summary>Removes up to <paramref name="amount"/> silver from player-home storage stacks,
+        /// destroying whole stacks then splitting the remainder. Sees only silver
+        /// <see cref="ThingRequestGroup"/>-listed and <c>IsInAnyStorage()</c>.</summary>
+        private static void DeductSilverFromStorage(int amount)
+        {
+            if (amount <= 0) return;
 
             List<Thing> silverStacks = new List<Thing>();
             foreach (Map map in Find.Maps)
@@ -102,8 +134,6 @@ namespace FactionColonies
                     amount = 0;
                 }
             }
-
-            return true;
         }
         /* CreateDeploymentCostBill moved to TaxLedger as an instance factory method. */
 

@@ -583,12 +583,11 @@ namespace FactionColonies
                         "FCDemolishConfirmation".Translate(buildingDef.LabelCap, demolishCost),
                         delegate
                         {
-                            if (PaymentUtil.GetSilver() < demolishCost)
+                            if (!PaymentUtil.TryPaySilver(demolishCost, PaymentUtil.Reason_BuildingDemolition, settlement))
                             {
                                 Messages.Message("FCNotEnoughSilverDemolish".Translate(), MessageTypeDefOf.RejectInput);
                                 return;
                             }
-                            PaymentUtil.PaySilver(demolishCost, PaymentUtil.Reason_BuildingDemolition, settlement);
                             settlement.DeconstructBuilding(buildingSlot);
                             Messages.Message("FCBuildingDemolished".Translate(buildingDef.LabelCap), MessageTypeDefOf.PositiveEvent);
                             Find.WindowStack.TryRemove(this);
@@ -1306,6 +1305,12 @@ namespace FactionColonies
             if (selectedBuilding == null) return;
             if (settlement.BuildingsComp?.ValidConstructBuilding(selectedBuilding, buildingSlot) != true) return;
 
+            // Pay first (atomic). ValidConstructBuilding already validated affordability and showed
+            // any rejection message; this is the actual deduction and aborts cleanly before the
+            // construction event is queued if the balance somehow shifted.
+            if (!PaymentUtil.TryPaySilver(settlement.BuildingsComp.GetBuildingCost(selectedBuilding), PaymentUtil.Reason_BuildingConstruction, settlement))
+                return;
+
             FCEvent tmpEvt = new FCEvent(true)
             {
                 def = FCEventDefOf.constructBuilding,
@@ -1325,7 +1330,6 @@ namespace FactionColonies
             tmpEvt.hasCustomDescription = true;
             FindFC.EventManager.AddEvent(tmpEvt);
 
-            PaymentUtil.PaySilver(settlement.BuildingsComp.GetBuildingCost(selectedBuilding), PaymentUtil.Reason_BuildingConstruction, settlement);
             Messages.Message(selectedBuilding.label + " " + "FCWillBeConstructedIn".Translate() + " " + (tmpEvt.timeTillTrigger - Find.TickManager.TicksGame).ToTimeString(), MessageTypeDefOf.PositiveEvent);
             settlement.BuildingsComp.StartConstruction(selectedBuilding, buildingSlot, tmpEvt.timeTillTrigger);
             Find.WindowStack.TryRemove(this);

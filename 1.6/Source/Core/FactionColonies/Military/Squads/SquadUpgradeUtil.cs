@@ -227,15 +227,10 @@ namespace FactionColonies
             if (!plan.HasWork) return false;
             int net = plan.UpgradeSilver + plan.FreshHireSilver;
 
-            if (net > 0 && PaymentUtil.GetSilver() < net)
+            if (net > 0 && !PaymentUtil.TryPaySilver(net, PaymentUtil.Reason_SquadUpgrade, squad.settlement))
             {
                 Messages.Message("FCSquadUpgradeInsufficientSilver".Translate(net), MessageTypeDefOf.RejectInput, false);
                 return false;
-            }
-
-            if (net > 0)
-            {
-                PaymentUtil.PaySilver(net, PaymentUtil.Reason_SquadUpgrade, squad.settlement);
             }
 
             // Reset the equipment tracker's snapshots; Equipment.EquipPawn will repopulate

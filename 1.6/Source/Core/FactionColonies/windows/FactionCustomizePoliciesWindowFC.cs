@@ -381,7 +381,7 @@ namespace FactionColonies
 
         private void DoClearPolicies(int cost)
         {
-            if (!PaymentUtil.PaySilver(cost, PaymentUtil.Reason_PolicyRepick))
+            if (!PaymentUtil.TryPaySilver(cost, PaymentUtil.Reason_PolicyRepick))
             {
                 Messages.Message("FCClearPoliciesInsufficientSilver".Translate(cost), MessageTypeDefOf.RejectInput);
                 return;
