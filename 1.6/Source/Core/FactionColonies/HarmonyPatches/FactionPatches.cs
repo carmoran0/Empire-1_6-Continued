@@ -216,7 +216,8 @@ namespace FactionColonies
             Faction pcFaction = FindFC.EmpireFaction;
             if (pcFaction == null) return;
 
-            Faction player = Find.FactionManager.OfPlayer;
+            Faction player = Find.FactionManager?.OfPlayer;
+            if (player is null) return;
 
             Faction thirdParty;
             if (__instance == player && other != pcFaction)
