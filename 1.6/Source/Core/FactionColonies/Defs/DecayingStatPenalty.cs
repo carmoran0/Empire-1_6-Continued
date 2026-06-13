@@ -1,3 +1,4 @@
+using System;
 using Verse;
 
 namespace FactionColonies
@@ -47,7 +48,7 @@ namespace FactionColonies
         public void MergePenalty(double rem, int days)
         {
             remaining += rem;
-            daysTotal += days;
+            daysTotal = Math.Max(daysTotal, days);
             daysElapsed = 0;
         }
 
