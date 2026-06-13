@@ -460,17 +460,24 @@ namespace FactionColonies
            settlement's own resources/loot. Runs before defenders and attackers spawn (i.e.
            before ZoomIntoTile/SetupAttack), so battle spoils dropped later are NOT recorded and
            remain takeable. Used by the caravan-reform restriction patch to withhold the Empire's
-           own stuff from the reform/transporter item list. */
+           own stuff from the reform/transporter item list.
+
+           When the setting is on, each item is also force-forbidden so the player can't have
+           pawns manually equip/wear/haul it into inventory and carry it off (bypassing the reform
+           filter). The forbidden state is locked by the CompForbiddable.Forbidden setter patch,
+           which vetoes any un-forbid attempt on these items while the battle map exists. */
         private void RecordSettlementLoot()
         {
             if (settlementLoot is null) settlementLoot = new HashSet<Thing>();
             settlementLoot.Clear();
             if (map is null) return;
 
+            bool forbid = FCSettings.restrictDefenseMapLoot;
             foreach (Thing thing in map.listerThings.AllThings)
             {
-                if (thing.def.category == ThingCategory.Item)
-                    settlementLoot.Add(thing);
+                if (thing.def.category != ThingCategory.Item) continue;
+                settlementLoot.Add(thing);
+                if (forbid) thing.SetForbidden(true, false);
             }
 
             if (settlementLoot.Count > 0)

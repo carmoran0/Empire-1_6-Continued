@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using FactionColonies.util;
 using HarmonyLib;
+using RimWorld;
 using RimWorld.Planet;
 using Verse;
 
@@ -37,6 +38,35 @@ namespace FactionColonies
 
             if (removed > 0)
                 LogUtil.Message($"CaravanItemRestriction: withheld {removed} Empire item(s) from caravan at tile {map.Tile}");
+        }
+    }
+
+    /// <summary>
+    /// Keeps the settlement's loot force-forbidden on a manual defense map. The items are forbidden
+    /// at generation (<see cref="BattlefieldContext.RecordSettlementLoot"/>); this prefix vetoes any
+    /// attempt to un-forbid them so the player can't manually equip/wear/haul them off the map.
+    ///
+    /// Every un-forbid route funnels through this setter: the per-item Forbid gizmo, the area
+    /// <c>Designator_Unforbid</c>, and the auto-unforbid that vanilla's Equip/PickUp/Wear float-menu
+    /// options perform on click. Because those jobs also <c>FailOnDespawnedNullOrForbidden</c>, an
+    /// item that stays forbidden makes the equip/haul job abort. Guarded to settlement loot on
+    /// Empire battle maps, so the player keeps full control over battle spoils and everything else.
+    /// </summary>
+    [HarmonyPatch(typeof(CompForbiddable), nameof(CompForbiddable.Forbidden), MethodType.Setter)]
+    class CompForbiddable_set_Forbidden_Patch
+    {
+        public static bool Prefix(CompForbiddable __instance, bool value)
+        {
+            if (value) return true;                       // forbidding is always allowed
+            if (!FCSettings.restrictDefenseMapLoot) return true;
+
+            Thing parent = __instance.parent;
+            if (parent is null) return true;
+            if (!(parent.MapHeld?.Parent is WorldSettlementFC)) return true;
+
+            BattlefieldContext bf = FindFC.MilitaryManager?.GetBattlefield(parent.MapHeld.Tile);
+            if (bf is object && bf.IsSettlementLoot(parent)) return false;   // veto the un-forbid
+            return true;
         }
     }
 }
