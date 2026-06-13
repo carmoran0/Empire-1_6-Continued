@@ -53,6 +53,13 @@ namespace FactionColonies
 
         public List<Pawn> draftedNPCs = new List<Pawn>();
 
+        /* Loose items present on the defense map at generation time -- the settlement's own
+         * "stuff". Snapshotted by RecordSettlementLoot() before any pawns spawn, so anything
+         * dropped later in the fight (attacker spoils, fallen reinforcements' gear) is absent
+         * and remains takeable. Consumed by the caravan-reform restriction patch via
+         * IsSettlementLoot(). */
+        public HashSet<Thing> settlementLoot = new HashSet<Thing>();
+
         public bool battleMapInitialized;
         public bool endingBattle;
         public bool shuttleLandingPending;
@@ -91,6 +98,7 @@ namespace FactionColonies
             Scribe_Values.Look(ref awaitingPlayerExit, "awaitingPlayerExit", false);
 
             Scribe_Collections.Look(ref draftedNPCs, "draftedNPCs", LookMode.Reference);
+            Scribe_Collections.Look(ref settlementLoot, "settlementLoot", LookMode.Reference);
             Scribe_Values.Look(ref battleMapInitialized, "battleMapInitialized", false);
             Scribe_Values.Look(ref endingBattle, "endingBattle", false);
             Scribe_Values.Look(ref shuttleLandingPending, "shuttleLandingPending", false);
@@ -99,6 +107,7 @@ namespace FactionColonies
             {
                 if (activeOps is null) activeOps = new List<MilitaryOperation>();
                 if (draftedNPCs is null) draftedNPCs = new List<Pawn>();
+                if (settlementLoot is null) settlementLoot = new HashSet<Thing>();
             }
         }
 
@@ -447,6 +456,31 @@ namespace FactionColonies
                 LogUtil.Message($"StripLandmarkHostiles: removed {toDestroy.Count} hostile pre-existing thing(s) from defense map at tile {map.Tile}");
         }
 
+        /* Snapshots the loose items that exist on the freshly generated defense map -- the
+           settlement's own resources/loot. Runs before defenders and attackers spawn (i.e.
+           before ZoomIntoTile/SetupAttack), so battle spoils dropped later are NOT recorded and
+           remain takeable. Used by the caravan-reform restriction patch to withhold the Empire's
+           own stuff from the reform/transporter item list. */
+        private void RecordSettlementLoot()
+        {
+            if (settlementLoot is null) settlementLoot = new HashSet<Thing>();
+            settlementLoot.Clear();
+            if (map is null) return;
+
+            foreach (Thing thing in map.listerThings.AllThings)
+            {
+                if (thing.def.category == ThingCategory.Item)
+                    settlementLoot.Add(thing);
+            }
+
+            if (settlementLoot.Count > 0)
+                LogUtil.Message($"RecordSettlementLoot: marked {settlementLoot.Count} settlement item(s) as non-takeable on defense map at tile {map.Tile}");
+        }
+
+        /// <summary>True if the thing was part of the settlement's loot at map generation
+        /// (i.e. the Empire's own property), as opposed to battle spoils dropped during the fight.</summary>
+        public bool IsSettlementLoot(Thing t) => settlementLoot != null && settlementLoot.Contains(t);
+
         /* -*-*-*-*- Battle entry: StartDefense -*-*-*-*-
          * Called from op.OnEventFired's defensive branch (or via comp.StartDefence's facade) once
          * the warning event fires. Drives the three paths: add to existing battle, auto-resolve,
@@ -584,6 +618,7 @@ namespace FactionColonies
                 {
                     GenerateMap();
                     StripLandmarkHostiles();
+                    RecordSettlementLoot();
                 }
                 ZoomIntoTile(op);
                 SetupAttack(op);
