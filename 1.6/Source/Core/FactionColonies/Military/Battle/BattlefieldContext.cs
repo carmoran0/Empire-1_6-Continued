@@ -77,6 +77,18 @@ namespace FactionColonies
                 ? Enumerable.Empty<Pawn>()
                 : activeOps.SelectMany(o => o?.defender?.pawns ?? Enumerable.Empty<Pawn>());
 
+        /* Attackers/defenders still able to fight: excludes downed, dead, and truly-gone pawns.
+         * Battle-end decisions use these (not the raw attacker/defenderPawns) so an incapacitated
+         * combatant ends the fight even when no Lord notification fired to remove it. RimWorld's
+         * MakeDowned only notifies the pawn's OWN Lord; a lordless combatant (e.g. a drafted-then-
+         * downed Empire merc, or a pawn added via RegisterPawnsAsDefenders(assignToLord:false)) is
+         * otherwise never pruned on downing and would keep the battle alive until it actually dies. */
+        public IEnumerable<Pawn> standingAttackerPawns =>
+            attackerPawns.Where(p => p != null && !p.Dead && !p.Downed && !IsPawnTrulyGone(p));
+
+        public IEnumerable<Pawn> standingDefenderPawns =>
+            defenderPawns.Where(p => p != null && !p.Dead && !p.Downed && !IsPawnTrulyGone(p));
+
         /// <summary>Sum of every active op's defender <c>initialPawnCount</c>. Used by manual
         /// battle resolution to build the <see cref="BattleResult"/> (defender initial vs
         /// remaining drives overwhelming-victory detection in <c>op.CompleteBattle</c>).</summary>
@@ -237,9 +249,11 @@ namespace FactionColonies
                 }
             }
 
-            // Don't declare stuck if attackers are still inbound in drop pods.
-            bool attackersGone = !attackerPawns.Any() && !HasPendingPodAttackers();
-            if (attackersGone || !defenderPawns.Any())
+            // Don't declare stuck if attackers are still inbound in drop pods. "Standing" pawns,
+            // not the raw lists, so an incapacitated-but-lordless combatant (never pruned via
+            // Notify_PawnLost) still resolves the battle instead of dragging it out until it dies.
+            bool attackersGone = !standingAttackerPawns.Any() && !HasPendingPodAttackers();
+            if (attackersGone || !standingDefenderPawns.Any())
             {
                 LogUtil.Warning($"Stuck battle detected at {settlement.Name}, forcing resolution.");
                 endingBattle = true;
@@ -1149,10 +1163,14 @@ namespace FactionColonies
 
         public void EndAttack()
         {
-            // Snapshot defenderPawns before we start mutating per-op lists.
+            // Snapshot defenderPawns (full list — the cleanup loops below intentionally include
+            // downed-but-alive survivors when returning external defenders and stripping hediffs).
+            // The win/remaining calc, however, counts only STANDING defenders so a battle that ended
+            // because every defender was downed reports a loss, not a victory.
             List<Pawn> defendersSnapshot = defenderPawns.ToList();
-            bool won = defendersSnapshot.Count > 0;
-            int remaining = defendersSnapshot.Count;
+            int remaining = standingDefenderPawns.Count();
+            bool attackersGone = !standingAttackerPawns.Any() && !HasPendingPodAttackers();
+            bool won = remaining > 0 || attackersGone;
 
             // Return external defender pawns per op before map cleanup destroys them.
             if (activeOps is object)
@@ -1197,7 +1215,7 @@ namespace FactionColonies
             PruneStalePawns();
 
             bool anyUnderAttack = FindFC.MilitaryManager?.HasDefenseAt(ParentSettlement) ?? false;
-            if (attackerPawns.Any() || HasPendingPodAttackers() || endingBattle || !anyUnderAttack) return;
+            if (standingAttackerPawns.Any() || HasPendingPodAttackers() || endingBattle || !anyUnderAttack) return;
 
             endingBattle = true;
             LongEventHandler.QueueLongEvent(EndAttack, "EndingAttack", false, error =>
@@ -1214,7 +1232,7 @@ namespace FactionColonies
             PruneStalePawns();
 
             bool anyUnderAttack = FindFC.MilitaryManager?.HasDefenseAt(ParentSettlement) ?? false;
-            if (defenderPawns.Any() || endingBattle || !anyUnderAttack) return;
+            if (standingDefenderPawns.Any() || endingBattle || !anyUnderAttack) return;
 
             endingBattle = true;
             LongEventHandler.QueueLongEvent(EndAttack, "EndingAttack", false, error =>
