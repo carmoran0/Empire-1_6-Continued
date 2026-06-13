@@ -267,24 +267,25 @@ namespace FactionColonies
             return true;
         }
 
+        /// <summary>Shared "is this a valid edge spawn cell" test: standable, unfogged, and
+        /// reachable to the host faction base (or the biggest map-edge district if there is no
+        /// host faction). Used by both <see cref="FindNearEdgeCell"/> and
+        /// <see cref="FindEdgeCellAwayFromEnemies"/> so the two stay in lockstep.</summary>
+        private static bool IsValidEdgeSpawnCell(IntVec3 x, Map map, Faction hostFaction)
+        {
+            if (!x.Standable(map) || x.Fogged(map)) return false;
+            if (hostFaction is object && map.reachability.CanReachFactionBase(x, hostFaction)) return true;
+            return hostFaction is null && map.reachability.CanReachBiggestMapEdgeDistrict(x);
+        }
+
         public static IntVec3 FindNearEdgeCell(Map map)
         {
-            bool BaseValidator(IntVec3 x)
-            {
-                return x.Standable(map) && !x.Fogged(map);
-            }
-
             var hostFaction = map.ParentFaction;
-            if (CellFinder.TryFindRandomEdgeCellWith(x =>
-            {
-                if (!BaseValidator(x))
-                    return false;
-                if (hostFaction != null && map.reachability.CanReachFactionBase(x, hostFaction))
-                    return true;
-                return hostFaction == null && map.reachability.CanReachBiggestMapEdgeDistrict(x);
-            }, map, CellFinder.EdgeRoadChance_Neutral, out var result))
+            if (CellFinder.TryFindRandomEdgeCellWith(x => IsValidEdgeSpawnCell(x, map, hostFaction),
+                    map, CellFinder.EdgeRoadChance_Neutral, out var result))
                 return CellFinder.RandomClosewalkCellNear(result, map, 5);
-            if (CellFinder.TryFindRandomEdgeCellWith(BaseValidator, map, CellFinder.EdgeRoadChance_Neutral, out result))
+            if (CellFinder.TryFindRandomEdgeCellWith(x => x.Standable(map) && !x.Fogged(map),
+                    map, CellFinder.EdgeRoadChance_Neutral, out result))
                 return CellFinder.RandomClosewalkCellNear(result, map, 5);
             LogUtil.Warning("Could not find any valid edge cell.");
             return CellFinder.RandomCell(map);
@@ -1522,10 +1523,62 @@ namespace FactionColonies
             });
         }
 
+        /// <summary>Picks a valid edge spawn cell biased AWAY from currently-spawned enemy
+        /// attackers, so a defending caravan doesn't walk straight into the raiders. Samples
+        /// candidate edge cells (same validity rules as <see cref="FindNearEdgeCell"/>) and keeps
+        /// the one whose nearest enemy is farthest away (max-min distance). Falls back to plain
+        /// <see cref="FindNearEdgeCell"/> when there are no spawned enemies (e.g. all attackers
+        /// still in drop pods) or no valid candidate is sampled.</summary>
+        private IntVec3 FindEdgeCellAwayFromEnemies(Map map)
+        {
+            // Only spawned pawns have a meaningful Position; pod-bound attackers (!Spawned,
+            // ParentHolder is object) have no on-map position yet, so exclude them. If every
+            // attacker is still in a pod, there's nothing to avoid — fall back.
+            var enemyCells = new List<IntVec3>();
+            foreach (var enemy in attackerPawns)
+            {
+                if (enemy is object && enemy.Spawned)
+                    enemyCells.Add(enemy.Position);
+            }
+            if (enemyCells.Count == 0)
+                return FindNearEdgeCell(map);
+
+            const int SampleCount = 40;
+            var hostFaction = map.ParentFaction;
+
+            IntVec3 best = IntVec3.Invalid;
+            int bestScore = int.MinValue; // score = squared distance to the NEAREST enemy
+            for (int i = 0; i < SampleCount; i++)
+            {
+                IntVec3 candidate;
+                if (!CellFinder.TryFindRandomEdgeCellWith(x => IsValidEdgeSpawnCell(x, map, hostFaction),
+                        map, CellFinder.EdgeRoadChance_Neutral, out candidate))
+                    continue;
+
+                int nearest = int.MaxValue;
+                for (int e = 0; e < enemyCells.Count; e++)
+                {
+                    int d = candidate.DistanceToSquared(enemyCells[e]);
+                    if (d < nearest) nearest = d;
+                }
+
+                if (nearest > bestScore)
+                {
+                    bestScore = nearest;
+                    best = candidate;
+                }
+            }
+
+            if (!best.IsValid)
+                return FindNearEdgeCell(map);
+
+            return CellFinder.RandomClosewalkCellNear(best, map, 5);
+        }
+
         private void SpawnPawnsAtEdge(List<Pawn> pawns)
         {
             if (map is null) return;
-            var enterCell = FindNearEdgeCell(map);
+            var enterCell = FindEdgeCellAwayFromEnemies(map);
             foreach (var pawn in pawns)
             {
                 var loc = CellFinder.RandomSpawnCellForPawnNear(enterCell, map);
