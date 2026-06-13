@@ -141,6 +141,13 @@ namespace FactionColonies
                 return;
             }
 
+            /* Morale lockout: refuse the deploy before positioning / any deployment-cost bill. */
+            if (settlement is object && settlement.TryGetSquadDeploymentBlock(out string lockReason))
+            {
+                Messages.Message(lockReason, MessageTypeDefOf.RejectInput);
+                return;
+            }
+
             squad.CheckInitialization();
             squad.UpdateSquadStats(settlement.settlementMilitaryLevel);
             SquadHealthUtil.ResetNeeds(squad);
@@ -178,6 +185,14 @@ namespace FactionColonies
         /// <param name="DropPod"></param>
         public static void CallinExtraForces(WorldSettlementFC settlement, bool DropPod)
         {
+            /* Morale lockout: refuse before creating the temp squad (CallinAlliedForces also gates,
+             * but gating here avoids orphaning a freshly-created extra squad). */
+            if (settlement is object && settlement.TryGetSquadDeploymentBlock(out string lockReason))
+            {
+                Messages.Message(lockReason, MessageTypeDefOf.RejectInput);
+                return;
+            }
+
             MercenarySquadFC squad = FindFC.Military.CreateMercenarySquad(settlement, true);
             if (squad == null) return;
             // Copy the outfit from the settlement's primary stationed squad (any squad with an

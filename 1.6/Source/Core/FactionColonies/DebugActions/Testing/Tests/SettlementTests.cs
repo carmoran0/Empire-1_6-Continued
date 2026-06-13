@@ -105,6 +105,43 @@ namespace FactionColonies
         }
 
         [EmpireTest("Settlement")]
+        public static void Settlement_SquadDeploymentLockout_FlipsAtThresholds()
+        {
+            var settlement = GetFirstSettlement();
+            if (settlement == null) TestAssert.Skip("No settlements");
+
+            // Snapshot and restore the morale stats so this test leaves no side effects.
+            double h = settlement.happiness, l = settlement.loyalty, u = settlement.unrest;
+            try
+            {
+                // Healthy morale -> not locked.
+                settlement.happiness = 100; settlement.loyalty = 100; settlement.unrest = 0;
+                TestAssert.IsFalse(settlement.SquadDeploymentLocked, "Healthy settlement should not be deploy-locked");
+                TestAssert.IsFalse(settlement.TryGetSquadDeploymentBlock(out _), "Healthy settlement should report no block");
+
+                // Happiness below floor -> locked with a reason.
+                settlement.happiness = WorldSettlementFC.SquadDeployHappinessFloor - 5;
+                TestAssert.IsTrue(settlement.SquadDeploymentLocked, "Low happiness should lock deployment");
+                TestAssert.IsTrue(settlement.TryGetSquadDeploymentBlock(out string hReason) && hReason != null,
+                    "Low happiness should produce a non-null block reason");
+
+                // Restore happiness; loyalty below floor -> locked.
+                settlement.happiness = 100;
+                settlement.loyalty = WorldSettlementFC.SquadDeployLoyaltyFloor - 5;
+                TestAssert.IsTrue(settlement.SquadDeploymentLocked, "Low loyalty should lock deployment");
+
+                // Restore loyalty; unrest above ceiling -> locked.
+                settlement.loyalty = 100;
+                settlement.unrest = WorldSettlementFC.SquadDeployUnrestCeiling + 5;
+                TestAssert.IsTrue(settlement.SquadDeploymentLocked, "High unrest should lock deployment");
+            }
+            finally
+            {
+                settlement.happiness = h; settlement.loyalty = l; settlement.unrest = u;
+            }
+        }
+
+        [EmpireTest("Settlement")]
         public static void Settlement_AllDefs_BuildingSlotsNonDecreasingByLevel()
         {
             foreach (WorldSettlementDef def in DefDatabase<WorldSettlementDef>.AllDefsListForReading)

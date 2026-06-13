@@ -2152,6 +2152,10 @@ namespace FactionColonies
 
         private List<FloatMenuOption> DeploymentOptions(WorldSettlementFC settlement)
         {
+            /* Morale lockout: present a single disabled option explaining why deploys are blocked. */
+            if (settlement is object && settlement.TryGetSquadDeploymentBlock(out string lockReason))
+                return new List<FloatMenuOption> { new FloatMenuOption(lockReason, null) };
+
             MercenarySquadFC primary = settlement?.FirstAvailableStationedSquad
                                     ?? settlement?.PrimaryStationedSquad;
             int cost = primary.DeploymentCost();
@@ -2171,6 +2175,10 @@ namespace FactionColonies
         /// the per-slot Deploy button on the 1+N settlement card layout.</summary>
         private List<FloatMenuOption> SquadDeploymentOptions(WorldSettlementFC settlement, MercenarySquadFC squad)
         {
+            /* Morale lockout: present a single disabled option explaining why deploys are blocked. */
+            if (settlement is object && settlement.TryGetSquadDeploymentBlock(out string lockReason))
+                return new List<FloatMenuOption> { new FloatMenuOption(lockReason, null) };
+
             int cost = squad.DeploymentCost();
             string costSuffix = cost > 0 ? " ($" + cost + ")" : "";
 

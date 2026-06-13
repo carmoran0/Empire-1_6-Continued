@@ -145,6 +145,45 @@ namespace FactionColonies
             }
         }
 
+        /*-*-*- Squad deployment morale lockout -*-*-*/
+        /* A settlement whose morale has collapsed cannot launch offensive or deploy operations from
+         * itself. This is the anti-farming cutoff: squad deploys/raids charge a deferred bill, so
+         * without a morale gate a player could farm raid loot indefinitely while only ever eating
+         * the unpaid-bill happiness/unrest penalty. Defensive ops are intentionally NOT gated here
+         * (a low-morale settlement must still be able to defend itself). */
+        public const double SquadDeployHappinessFloor = 25;
+        public const double SquadDeployLoyaltyFloor = 25;
+        public const double SquadDeployUnrestCeiling = 75;
+
+        /// <summary>True when this settlement's morale is too low to launch offensive/deploy ops.</summary>
+        public bool SquadDeploymentLocked =>
+            happiness < SquadDeployHappinessFloor
+            || loyalty < SquadDeployLoyaltyFloor
+            || unrest > SquadDeployUnrestCeiling;
+
+        /// <summary>When <see cref="SquadDeploymentLocked"/>, outs the first failing condition as a
+        /// translated, player-facing reason and returns true. Otherwise outs null and returns false.</summary>
+        public bool TryGetSquadDeploymentBlock(out string reason)
+        {
+            if (happiness < SquadDeployHappinessFloor)
+            {
+                reason = "FCSquadDeployLockedHappiness".Translate(Name, (int)SquadDeployHappinessFloor);
+                return true;
+            }
+            if (loyalty < SquadDeployLoyaltyFloor)
+            {
+                reason = "FCSquadDeployLockedLoyalty".Translate(Name, (int)SquadDeployLoyaltyFloor);
+                return true;
+            }
+            if (unrest > SquadDeployUnrestCeiling)
+            {
+                reason = "FCSquadDeployLockedUnrest".Translate(Name, (int)SquadDeployUnrestCeiling);
+                return true;
+            }
+            reason = null;
+            return false;
+        }
+
         /// <summary>
         /// Stat modifiers from buildings, settlement type, and events that apply to this settlement.
         /// Use AddStatModifiers/RemoveStatModifiers to modify.
