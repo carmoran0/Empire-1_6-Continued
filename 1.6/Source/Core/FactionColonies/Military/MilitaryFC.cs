@@ -540,12 +540,11 @@ namespace FactionColonies
         {
             if (template is null) return null;
             int cost = (int)Math.Round(template.GetEquipmentTotalCost() * FCSettings.squadHireCostMultiplier);
-            if (cost > 0 && PaymentUtil.GetSilver() < cost)
+            if (cost > 0 && !PaymentUtil.TryPaySilver(cost, PaymentUtil.Reason_SquadHire, null))
             {
                 Messages.Message("FCSquadHireInsufficientSilver".Translate(cost), MessageTypeDefOf.RejectInput, false);
                 return null;
             }
-            if (cost > 0) PaymentUtil.PaySilver(cost, PaymentUtil.Reason_SquadHire, null);
 
             MercenarySquadFC squad = MilTemplateFactory.CreateMercSquad();
             squad.outfit = template;

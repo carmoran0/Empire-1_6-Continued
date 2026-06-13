@@ -443,4 +443,24 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_29</defName>
+		<label>Anti-Exploit Mechanics</label>
+		<description>Implements a handful of changes to remove exploits, or otherwise make them more difficult to perform</description>
+		<releaseDate>2026-06-13</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Whenever an Empire pawn dies, the pawn&apos;s home settlement recieves a temporary happiness penalty. If the pawn&apos;s death is caused by the player, then the penalty is more severe, and includes a loyalty or unrest penalty</li>
+		<li>Killing all of an Empire caravan&apos;s pack animals will result in a severe happiness/loyalty penalty</li>
+		<li>Prevent the player from picking up items belonging to the Empire faction when &quot;visiting&quot; a settlement for a manual defense battle</li>
+		<li>Prevent the player from caravanaing away with items belonging to the Empire faction when leaving a settlement after a manual defense battle</li>
+		<li>Add settings to disable most anti-exploit mechanics</li>
+		<li>Prevent settlements from deploying squads or sending them on raids if the settlement&apos;s happiness or loyalty are under 25%, or if its unrest is above 75%</li>
+		<li>Prosperity now difts toward its target value by distance / 5 (min 1) instead of simply 1 a day. Prosperity will now react more quickly to swift changes in happiness, loyalty, or unrest</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

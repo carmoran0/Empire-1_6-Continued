@@ -140,11 +140,7 @@ namespace FactionColonies
             int edictUpkeep = FindFC.PolicyManager.GetEdictUpkeep();
             if (edictUpkeep > 0)
             {
-                if (PaymentUtil.GetSilver() >= edictUpkeep)
-                {
-                    PaymentUtil.PaySilver(edictUpkeep, "EdictUpkeep");
-                }
-                else
+                if (!PaymentUtil.TryPaySilver(edictUpkeep, "EdictUpkeep"))
                 {
                     FindFC.PolicyManager.RevokeAllEdicts();
                     Messages.Message("FCEdictUpkeepUnpaid".Translate(), MessageTypeDefOf.NegativeEvent);

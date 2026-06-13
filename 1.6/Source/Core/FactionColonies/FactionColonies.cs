@@ -83,6 +83,7 @@ namespace FactionColonies
         public const float DEFAULT_DEFENDER_ADVANTAGE = 1.15f;
         public const float DEFAULT_EFFICIENCY_DAMPING = 0.5f;
         public const bool DEFAULT_ANTI_EXPLOIT = true;
+        public const bool DEFAULT_RESTRICT_DEFENSE_MAP_LOOT = true;
         // Vanilla Psycasts Expanded per-point silver costs (compat tab; scaled by militaryPsycastCostMultiplier).
         public const int DEFAULT_VPE_PSYCAST_BASE_COST = 300;
         public const int DEFAULT_VPE_PSYCAST_PER_LEVEL_COST = 300;
@@ -114,6 +115,7 @@ namespace FactionColonies
         public static bool mirrorPlayerTechLevel = DEFAULT_MIRROR_PLAYER_TECH_LEVEL;
         public static bool disableHostileMilitaryActions = DEFAULT_DISABLE_HOSTILE_MILITARY_ACTIONS;
         public static bool antiExploit = DEFAULT_ANTI_EXPLOIT;
+        public static bool restrictDefenseMapLoot = DEFAULT_RESTRICT_DEFENSE_MAP_LOOT;
         public static bool disableRandomEvents = DEFAULT_DISABLE_RANDOM_EVENTS;
         public static bool disableEventsWithOptions = DEFAULT_DISABLE_EVENTS_WITH_OPTIONS;
         public static float eventOptionDelaySeconds = DEFAULT_EVENT_OPTION_DELAY_SECONDS;
@@ -141,7 +143,8 @@ namespace FactionColonies
         public static double loyaltyBaseLost = 0;
         public static double happinessBaseGain = 1;
         public static double happinessBaseLost = 0;
-        public static double prosperityDriftRate = 1;
+        public static double prosperityDriftRate = 1;   // drift floor (minimum points/day)
+        public static double prosperityDriftStep = 5;    // distance points per +1 drift/day
         public static int productionResearchBase = 100;
         public static double militaryAnimalCostMultiplier = 1.5;
         public static double militaryRaceCostMultiplier = 0.075;
@@ -339,6 +342,7 @@ namespace FactionColonies
             Scribe_Values.Look(ref mirrorPlayerTechLevel, "mirrorPlayerTechLevel", DEFAULT_MIRROR_PLAYER_TECH_LEVEL);
             Scribe_Values.Look(ref disableHostileMilitaryActions, "disableHostileMilitaryActions", DEFAULT_DISABLE_HOSTILE_MILITARY_ACTIONS);
             Scribe_Values.Look(ref antiExploit, "antiExploit", DEFAULT_ANTI_EXPLOIT);
+            Scribe_Values.Look(ref restrictDefenseMapLoot, "restrictDefenseMapLoot", DEFAULT_RESTRICT_DEFENSE_MAP_LOOT);
             Scribe_Values.Look(ref disableRandomEvents, "disableRandomEvents", DEFAULT_DISABLE_RANDOM_EVENTS);
             Scribe_Values.Look(ref disableEventsWithOptions, "disableEventsWithOptions", DEFAULT_DISABLE_EVENTS_WITH_OPTIONS);
             Scribe_Values.Look(ref eventOptionDelaySeconds, "eventOptionDelaySeconds", DEFAULT_EVENT_OPTION_DELAY_SECONDS);
@@ -806,6 +810,7 @@ namespace FactionColonies
                 overwhelmingVictoryRewardMultiplier = DEFAULT_OVERWHELMING_VICTORY_REWARD_MULTIPLIER;
                 respectLethalDamageThreshold = DEFAULT_RESPECT_LETHAL_DAMAGE_THRESHOLD;
                 antiExploit = DEFAULT_ANTI_EXPLOIT;
+                restrictDefenseMapLoot = DEFAULT_RESTRICT_DEFENSE_MAP_LOOT;
                 mercenaryHealRatePerHour = 1f;
                 militaryMechRepairRate = 4f;
                 squadHireCostMultiplier = DEFAULT_SQUAD_HIRE_COST_MULTIPLIER;
@@ -937,6 +942,7 @@ namespace FactionColonies
 
             ls.CheckboxLabeled("FCSettingDisableHostileMilActions".Translate(), ref disableHostileMilitaryActions);
             ls.CheckboxLabeled("FCSettingAntiExploit".Translate(), ref antiExploit, "FCSettingAntiExploitTip".Translate());
+            ls.CheckboxLabeled("FCSettingRestrictDefenseMapLoot".Translate(), ref restrictDefenseMapLoot, "FCSettingRestrictDefenseMapLootTip".Translate());
             if (ls.ButtonText("FCSettingBattleMode".Translate() + battleMode)) Find.WindowStack.Add(new FloatMenu(BattleModeOptions));
 
             ls.Gap(10f);
@@ -987,6 +993,7 @@ namespace FactionColonies
             {
                 disableHostileMilitaryActions = DEFAULT_DISABLE_HOSTILE_MILITARY_ACTIONS;
                 antiExploit = DEFAULT_ANTI_EXPLOIT;
+                restrictDefenseMapLoot = DEFAULT_RESTRICT_DEFENSE_MAP_LOOT;
                 battleMode = DEFAULT_BATTLE_MODE;
                 minDaysTillMilitaryAction = DEFAULT_MIN_DAYS_TIL_MILITARY_ACTION;
                 maxDaysTillMilitaryAction = DEFAULT_MAX_DAYS_TIL_MILITARY_ACTION;

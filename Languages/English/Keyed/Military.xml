@@ -150,6 +150,9 @@
 Please report this if you don't get your colonists sent to defend back, or your military never comes off cooldown.</FCErrorEndingAttackDescription>
 
 	<!-- Deployment -->
+	<FCSquadDeployLockedHappiness>{0} is too unhappy to deploy squads or launch raids (happiness is below {1}%). Improve its happiness first.</FCSquadDeployLockedHappiness>
+	<FCSquadDeployLockedLoyalty>{0} is too disloyal to deploy squads or launch raids (loyalty is below {1}%). Improve its loyalty first.</FCSquadDeployLockedLoyalty>
+	<FCSquadDeployLockedUnrest>{0} is too restive to deploy squads or launch raids (unrest is above {1}%). Reduce its unrest first.</FCSquadDeployLockedUnrest>
 	<FCNotEnoughSilverToDeploySquad>You do not have enough silver to re-deploy that squad!</FCNotEnoughSilverToDeploySquad>
 	<FCXDaysToRedeploy>{0} days are left until the ability to re-deploy squads is refreshed</FCXDaysToRedeploy>
 	<FCDropPodDeploymentOption>Drop-Pod</FCDropPodDeploymentOption>
@@ -310,6 +313,7 @@ Please report this if you don't get your colonists sent to defend back, or your 
 	<FCSquadStatusEmptySlots>Slots empty: {0}</FCSquadStatusEmptySlots>
 	<FCSquadStatusBusyOp>Busy: {0} ({1} d)</FCSquadStatusBusyOp>
 	<FCSquadStatusInjured>{0} Injured</FCSquadStatusInjured>
+	<FCSquadStatusMoraleLocked>Settlement morale too low</FCSquadStatusMoraleLocked>
 
 	<FCSquadActReassign>Reassign</FCSquadActReassign>
 	<FCSquadActUpgrade>Upgrade</FCSquadActUpgrade>

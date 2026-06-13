@@ -141,6 +141,13 @@ namespace FactionColonies
                 return;
             }
 
+            /* Morale lockout: refuse the deploy before positioning / any deployment-cost bill. */
+            if (settlement is object && settlement.TryGetSquadDeploymentBlock(out string lockReason))
+            {
+                Messages.Message(lockReason, MessageTypeDefOf.RejectInput);
+                return;
+            }
+
             squad.CheckInitialization();
             squad.UpdateSquadStats(settlement.settlementMilitaryLevel);
             SquadHealthUtil.ResetNeeds(squad);
@@ -178,6 +185,14 @@ namespace FactionColonies
         /// <param name="DropPod"></param>
         public static void CallinExtraForces(WorldSettlementFC settlement, bool DropPod)
         {
+            /* Morale lockout: refuse before creating the temp squad (CallinAlliedForces also gates,
+             * but gating here avoids orphaning a freshly-created extra squad). */
+            if (settlement is object && settlement.TryGetSquadDeploymentBlock(out string lockReason))
+            {
+                Messages.Message(lockReason, MessageTypeDefOf.RejectInput);
+                return;
+            }
+
             MercenarySquadFC squad = FindFC.Military.CreateMercenarySquad(settlement, true);
             if (squad == null) return;
             // Copy the outfit from the settlement's primary stationed squad (any squad with an
@@ -202,11 +217,10 @@ namespace FactionColonies
                 delegate (LocalTargetInfo target)
                 {
                     float cost = support.ReturnTotalCost(settlement);
-                    if (DebugSettings.godMode || PaymentUtil.GetSilver() > cost)
+                    // godMode short-circuits before TryPaySilver, so no silver is taken under godMode.
+                    if (DebugSettings.godMode
+                        || PaymentUtil.TryPaySilver((int)Math.Round(cost), PaymentUtil.Reason_FireSupport, settlement))
                     {
-                        if (!DebugSettings.godMode)
-                            PaymentUtil.PaySilver((int)Math.Round(cost), PaymentUtil.Reason_FireSupport, settlement);
-
                         Map map = Find.CurrentMap;
                         List<ThingDef> projectiles = new List<ThingDef>(support.projectiles);
                         MilitaryFireSupport fireSupport = new MilitaryFireSupport("fireSupport", map, target.Cell,

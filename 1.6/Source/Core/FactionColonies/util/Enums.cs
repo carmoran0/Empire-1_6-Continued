@@ -16,6 +16,18 @@ namespace FactionColonies.util
         Multiplication
     }
 
+    /// <summary>
+    /// The three mutable settlement morale stats that a <see cref="FactionColonies.DecayingStatPenalty"/>
+    /// can target. Mapped to the matching loss FCStatDef by EmpireDeathPenaltyUtil
+    /// (Happiness -> happinessLostBase, Loyalty -> loyaltyLostBase, Unrest -> unrestGainedBase).
+    /// </summary>
+    public enum SettlementStat
+    {
+        Happiness,
+        Loyalty,
+        Unrest
+    }
+
     public enum PatchNoteType
     {
         Undefined,

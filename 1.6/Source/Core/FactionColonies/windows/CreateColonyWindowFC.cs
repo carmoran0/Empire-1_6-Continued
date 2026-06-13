@@ -422,7 +422,14 @@ namespace FactionColonies
         {
             LogUtil.Message($"DrawCreateSettlementButton: creating settleNewColony event");
 
-            PaymentUtil.PaySilver(costToPay, PaymentUtil.Reason_SettlementCreation);
+            // Atomic affordability + payment. CanCreateSettlementHere validated this on the button
+            // click; re-checking here guards the confirm-dialog path, where the balance could shift
+            // between opening the confirmation and accepting it.
+            if (!PaymentUtil.TryPaySilver(costToPay, PaymentUtil.Reason_SettlementCreation))
+            {
+                Messages.Message("FCNotEnoughSilverToSettle".Translate(), MessageTypeDefOf.RejectInput);
+                return;
+            }
             FoundingValidatorRegistry.NotifyFounded(currentTileSelected, currentSettlementType);
 
             //create settle event

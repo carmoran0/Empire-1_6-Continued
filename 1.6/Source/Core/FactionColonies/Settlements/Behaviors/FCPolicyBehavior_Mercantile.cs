@@ -21,6 +21,13 @@ namespace FactionColonies
         {
             if (nextCaravanTick > Find.TickManager.TicksGame) return;
 
+            // Don't send caravans while the Empire is too unhappy/disloyal/restless; retry later.
+            if (faction.ShouldSuppressCaravans())
+            {
+                ScheduleNextCaravan(true);
+                return;
+            }
+
             Map map = faction.TaxMap;
             if (map is null)
             {

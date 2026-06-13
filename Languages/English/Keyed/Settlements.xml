@@ -72,6 +72,11 @@
 	<FCBaseLoss>Base Loss</FCBaseLoss>
 	<FCSettlementStatGain>Gaining {0} {1} per day</FCSettlementStatGain>
 	<FCSettlementStatLoss>Losing {0} {1} per day</FCSettlementStatLoss>
+	<FCDecayingPenaltyDaysLeft>{0} days left</FCDecayingPenaltyDaysLeft>
+	<FCPenaltyPawnDeath>Empire citizen killed</FCPenaltyPawnDeath>
+	<FCPenaltyCaravanDeath>Empire caravan attacked</FCPenaltyCaravanDeath>
+	<FCPenaltyCaravanWipe>Empire caravan slaughtered</FCPenaltyCaravanWipe>
+	<FCPenaltyCaravanWipeMessage>The people of {0} are furious that one of their trade caravans was wiped out under your protection.</FCPenaltyCaravanWipeMessage>
 
 	<!-- Settlement Stat Descriptions -->
 	<FCSettlementMilitaryLevelDesc>The military level directly affects the settlement's ability to defend itself and host squads.</FCSettlementMilitaryLevelDesc>

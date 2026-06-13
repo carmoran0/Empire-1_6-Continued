@@ -71,10 +71,13 @@ namespace FactionColonies
 
             if (Widgets.ButtonText(button_Confirm, "FCConfirm".Translate()))
             {
-                PaymentUtil.PaySilver(selectedSilver, PaymentUtil.Reason_SilverPayment, settlement);
-                this.UseValue(selectedSilver);
-                this.Close();
-
+                // Atomic: only apply the effect if the silver was actually paid (guards against the
+                // balance dropping after the window's snapshot bounded the slider).
+                if (PaymentUtil.TryPaySilver(selectedSilver, PaymentUtil.Reason_SilverPayment, settlement))
+                {
+                    this.UseValue(selectedSilver);
+                    this.Close();
+                }
             }
 
             //reset anchor/font

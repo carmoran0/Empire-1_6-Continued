@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using FactionColonies.util;
+using HarmonyLib;
 using RimWorld;
 using RimWorld.Planet;
 using RimWorld.QuestGen;
@@ -80,22 +81,15 @@ namespace FactionColonies
                 (map.IsPlayerHome || map.Parent is WorldSettlementFC) &&
                 !__instance.HostileTo(Faction.OfPlayer))
             {
-                FactionFC faction = FindFC.FactionComp;
-                if (!FindFC.FactionComp.IsMemberDeathPenaltySuppressed() && dinfo != null)
+                // Mercs and trade-caravan pawns are already penalized in the Pawn.Kill prefix
+                // (EmpireDeathPenaltyUtil), which runs earlier in this same Kill call. Skip them here to
+                // avoid a second hit; everything else is a settlement defender / visitor and is routed to
+                // the defended settlement (or the capital). Always return false to block vanilla goodwill.
+                if (!member.IsMercenary() && !EmpireDeathPenaltyUtil.WasHandledByKillPrefix(member))
                 {
-                    if (dinfo.Value.Category == DamageInfo.SourceCategory.Collapse)
-                    {
-                        faction.GainUnrestForReason(new Message("FCDeathOfFactionPawn".Translate(), MessageTypeDefOf.PawnDeath), 5d);
-                        faction.GainHappiness(-5d);
-                    }
-                    else if (dinfo.Value.Instigator?.Faction == Find.FactionManager.OfPlayer)
-                    {
-                        faction.GainUnrestForReason(new Message("FCDeathOfFactionPawn".Translate(), MessageTypeDefOf.PawnDeath), 5d);
-                        faction.GainHappiness(-5d);
-                    }
+                    EmpireDeathPenaltyUtil.HandleCivilianDefenderDeath(member, dinfo, map.Parent as WorldSettlementFC);
                 }
 
-                //return false to stop from continuing method
                 return false;
             }
 

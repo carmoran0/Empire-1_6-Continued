@@ -458,13 +458,12 @@ namespace FactionColonies
         public bool FillEmptySlots()
         {
             int total = this.FillEmptySlotsCost();
-            if (total > 0 && PaymentUtil.GetSilver() < total)
+            if (total > 0 && !PaymentUtil.TryPaySilver(total, PaymentUtil.Reason_SquadFillSlot, settlement))
             {
                 Messages.Message("FCSquadFillSlotsInsufficient".Translate(total),
                     MessageTypeDefOf.RejectInput, false);
                 return false;
             }
-            if (total > 0) PaymentUtil.PaySilver(total, PaymentUtil.Reason_SquadFillSlot, settlement);
 
             if (mercenaries != null)
             {

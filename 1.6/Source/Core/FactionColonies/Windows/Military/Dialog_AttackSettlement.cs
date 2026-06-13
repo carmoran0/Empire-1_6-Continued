@@ -327,6 +327,13 @@ namespace FactionColonies
             if (!selected.IsAvailable) return;
             if (currentJob is null) return;
 
+            /* Morale lockout: refuse the raid before any deployment-cost bill is created. */
+            if (selected.settlement is object && selected.settlement.TryGetSquadDeploymentBlock(out string lockReason))
+            {
+                Messages.Message(lockReason, MessageTypeDefOf.RejectInput);
+                return;
+            }
+
             if (onConfirm is object)
             {
                 try { onConfirm(selected); }
@@ -364,6 +371,10 @@ namespace FactionColonies
             {
                 if (squad is null) continue;
                 bool available = squad.IsAvailable;
+                /* Morale lockout: a squad whose home settlement has collapsed morale cannot raid.
+                 * Treat it as unavailable so the row greys and the availableOnly filter hides it. */
+                bool moraleLocked = squad.settlement is object && squad.settlement.SquadDeploymentLocked;
+                if (moraleLocked) available = false;
                 if (availableOnly && !available) continue;
 
                 int travelTicks = 0;
@@ -422,6 +433,12 @@ namespace FactionColonies
                 {
                     status = "FCSquadStatusInjured".Translate(injuredCount);
                     statusColor = AccentUtil.MilActiveMission;
+                }
+                /* Surface the morale lockout in the status column (takes precedence — it's blocking). */
+                if (moraleLocked)
+                {
+                    status = "FCSquadStatusMoraleLocked".Translate();
+                    statusColor = AccentUtil.MilUnderAttack;
                 }
 
                 rows.Add(new RowData

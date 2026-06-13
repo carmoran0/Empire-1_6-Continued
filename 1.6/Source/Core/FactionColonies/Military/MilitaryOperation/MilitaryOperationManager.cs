@@ -116,6 +116,15 @@ namespace FactionColonies
             if (target is null) throw new ArgumentNullException(nameof(target));
             if (jobDef is null) throw new ArgumentNullException(nameof(jobDef));
 
+            /* Morale lockout backstop: an unhappy/disloyal/restive settlement cannot launch offensive
+             * ops. Entry points (SendMilitary, Dialog_AttackSettlement) gate first so no bill is
+             * charged; this guards any path that reaches the manager directly. */
+            if (source.settlement.SquadDeploymentLocked)
+            {
+                LogUtil.Warning($"CreateOffensiveOp: settlement {source.settlement.Name} is morale-locked; rejecting offensive op.");
+                return null;
+            }
+
             int newId = nextOperationId++;
             var op = new MilitaryOperation(newId, jobDef, target.Tile, target);
             op.phase = MilitaryOperationPhase.Traveling;
@@ -397,6 +406,14 @@ namespace FactionColonies
         public MilitaryOperation CreateDeployOp(MercenarySquadFC source, PlanetTile deployTile)
         {
             if (source is null) throw new ArgumentNullException(nameof(source));
+
+            /* Morale lockout backstop (see CreateOffensiveOp). Deploys are gated too; the deploy
+             * entry (CallinAlliedForces) checks first so no bill is charged. */
+            if (source.settlement is object && source.settlement.SquadDeploymentLocked)
+            {
+                LogUtil.Warning($"CreateDeployOp: settlement {source.settlement.Name} is morale-locked; rejecting deploy op.");
+                return null;
+            }
 
             int newId = nextOperationId++;
             // Use the current map's WorldObject as the targetObject if present, otherwise null.

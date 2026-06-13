@@ -760,6 +760,12 @@ namespace FactionColonies
                 LogUtil.Warning("SendMilitary: null squad parameter; aborting.");
                 return;
             }
+            /* Morale lockout: refuse the raid before any deployment-cost bill is created. */
+            if (squad.settlement is object && squad.settlement.TryGetSquadDeploymentBlock(out string lockReason))
+            {
+                Messages.Message(lockReason, MessageTypeDefOf.RejectInput);
+                return;
+            }
             if (IsTargetOccupied(location)) return;
 
             if (job?.Handler is object)
