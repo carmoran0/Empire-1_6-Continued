@@ -143,7 +143,8 @@ namespace FactionColonies
         public static double loyaltyBaseLost = 0;
         public static double happinessBaseGain = 1;
         public static double happinessBaseLost = 0;
-        public static double prosperityDriftRate = 1;
+        public static double prosperityDriftRate = 1;   // drift floor (minimum points/day)
+        public static double prosperityDriftStep = 5;    // distance points per +1 drift/day
         public static int productionResearchBase = 100;
         public static double militaryAnimalCostMultiplier = 1.5;
         public static double militaryRaceCostMultiplier = 0.075;

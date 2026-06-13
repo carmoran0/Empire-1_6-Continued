@@ -67,6 +67,21 @@ namespace FactionColonies.util
         }
 
         /// <summary>
+        /// Signed daily prosperity drift toward <paramref name="target"/>. Magnitude scales with distance
+        /// (1 extra point per <paramref name="driftStep"/> points of distance), floored at
+        /// <paramref name="driftFloor"/> and capped at the distance so it never overshoots.
+        /// Positive when below target, negative when above, 0 when equal.
+        /// </summary>
+        public static double CalculateProsperityDrift(double prosperity, double target, double driftFloor, double driftStep)
+        {
+            double distance = Math.Abs(prosperity - target);
+            double magnitude = Math.Min(Math.Max(distance / driftStep, driftFloor), distance);
+            if (prosperity < target) return magnitude;
+            if (prosperity > target) return -magnitude;
+            return 0;
+        }
+
+        /// <summary>
         /// Base happiness/loyalty reward granted to the winning squad's home settlement
         /// after an Overwhelming Victory.
         /// </summary>

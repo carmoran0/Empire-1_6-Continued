@@ -154,6 +154,42 @@ namespace FactionColonies
             TestAssert.AreEqual(22.5, loyalty);    // 15 * 1.5
         }
 
+        // --- CalculateProsperityDrift ---
+
+        [EmpireTest("Formula")]
+        public static void ProsperityDrift_FarAboveTarget_AcceleratesNegative()
+        {
+            // distance 80 -> 80/5 = 16, floor 1, cap 80; above target -> negative
+            TestAssert.AreEqual(-16.0, SettlementFormulas.CalculateProsperityDrift(100, 20, 1, 5));
+        }
+
+        [EmpireTest("Formula")]
+        public static void ProsperityDrift_FarBelowTarget_AcceleratesPositive()
+        {
+            // distance 80 -> 16, below target -> positive
+            TestAssert.AreEqual(16.0, SettlementFormulas.CalculateProsperityDrift(20, 100, 1, 5));
+        }
+
+        [EmpireTest("Formula")]
+        public static void ProsperityDrift_NearTarget_FlooredAtOne()
+        {
+            // distance 1 -> 0.2 floored to 1, below target -> +1
+            TestAssert.AreEqual(1.0, SettlementFormulas.CalculateProsperityDrift(99, 100, 1, 5));
+        }
+
+        [EmpireTest("Formula")]
+        public static void ProsperityDrift_WithinFloor_CappedAtDistance_NoOvershoot()
+        {
+            // distance 0.4 -> floor 1 capped to distance 0.4; above target -> -0.4
+            TestAssert.AreEqual(-0.4, SettlementFormulas.CalculateProsperityDrift(100.4, 100, 1, 5));
+        }
+
+        [EmpireTest("Formula")]
+        public static void ProsperityDrift_AtTarget_IsZero()
+        {
+            TestAssert.AreEqual(0.0, SettlementFormulas.CalculateProsperityDrift(50, 50, 1, 5));
+        }
+
         // --- CalculateUpgradeCost ---
 
         [EmpireTest("Formula")]
