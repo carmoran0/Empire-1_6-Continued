@@ -85,6 +85,8 @@ namespace FactionColonies
         /// to the right settlement. Cleaned up when the lord ends; pruned daily as a backstop.
         /// </summary>
         public Dictionary<int, WorldSettlementFC> caravanHomeSettlements = new Dictionary<int, WorldSettlementFC>();
+        private List<WorldSettlementFC> _caravanHomes = new List<WorldSettlementFC>();
+        private List<int> _caravanHomeIDs = new List<int>();
 
         /* Timing & Scheduling */
         public int timeStart = Find.TickManager.TicksGame;
@@ -325,8 +327,10 @@ namespace FactionColonies
 
             Scribe_Collections.Look(ref settlementCaravansList, "settlementCaravansList", LookMode.Value);
             Scribe_Collections.Look(ref enabledCaravanTypes, "enabledCaravanTypes", LookMode.Value);
-            Scribe_Collections.Look(ref caravanHomeSettlements, "caravanHomeSettlements", LookMode.Value, LookMode.Reference);
-            if (caravanHomeSettlements is null) caravanHomeSettlements = new Dictionary<int, WorldSettlementFC>();
+            Scribe_Collections.Look(ref caravanHomeSettlements, "caravanHomeSettlements", LookMode.Value, LookMode.Reference, ref _caravanHomeIDs, ref _caravanHomes);
+            // Re-init ONLY in PostLoadInit — a reference-valued dictionary re-inited before ResolvingCrossRefs crashes the cross-ref resolve
+            if (Scribe.mode == LoadSaveMode.PostLoadInit && caravanHomeSettlements is null)
+                caravanHomeSettlements = new Dictionary<int, WorldSettlementFC>();
 
             //New Production types
             Scribe_Collections.Look(ref resourcePools, "resourcePools", LookMode.Deep);
