@@ -57,6 +57,7 @@ namespace FactionColonies
             if (participant is IRaidTarget rt)                  { RaidTargetRegistry.Register(rt);         any = true; }
             if (participant is IAutoDefender ad)                { AutoDefenderRegistry.Register(ad);       any = true; }
             if (participant is IMilitaryTabEntry mte)           { MilitaryTabRegistry.Register(mte);       any = true; }
+            if (participant is IRoadNodeProvider rnp)           { RoadNodeProviderRegistry.Register(rnp);  any = true; }
             if (participant is BuildingFilter bf)               { BuildingFilterRegistry.Register(bf);     any = true; }
 
             if (!any)
@@ -96,6 +97,7 @@ namespace FactionColonies
             if (participant is IRaidTarget rt)                  RaidTargetRegistry.Unregister(rt);
             if (participant is IAutoDefender ad)                AutoDefenderRegistry.Unregister(ad);
             if (participant is IMilitaryTabEntry mte)           MilitaryTabRegistry.Unregister(mte);
+            if (participant is IRoadNodeProvider rnp)           RoadNodeProviderRegistry.Unregister(rnp);
             if (participant is BuildingFilter bf)               BuildingFilterRegistry.Unregister(bf);
         }
 
@@ -125,6 +127,7 @@ namespace FactionColonies
             RaidTargetRegistry.ClearAll();
             AutoDefenderRegistry.ClearAll();
             MilitaryTabRegistry.ClearAll();
+            RoadNodeProviderRegistry.ClearAll();
             BuildingFilterRegistry.ClearAll();
         }
     }

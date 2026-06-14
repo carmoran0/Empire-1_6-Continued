@@ -529,6 +529,12 @@ namespace FactionColonies
                 }
             }
 
+            // Collect submod-contributed road nodes (e.g. VOE outposts). Surface-only
+            // filtering and tileId extraction happen inside CollectInto, preserving the
+            // surface invariant documented above. No-op (zero cost) when no provider is
+            // registered, so the road network is unchanged without contributing submods.
+            RoadNodeProviderRegistry.CollectInto(allTileSet);
+
             lastFromTileCount = fromCount;
             lastToTileCount = toCount;
 
