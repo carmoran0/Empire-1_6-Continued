@@ -1056,7 +1056,7 @@ namespace FactionColonies
 
             // Vanilla psylink cost (base-game psycasts). Hidden when VPE is active — VPE makes psylink
             // levels free and charges per chosen psycast instead (see the Compatibility tab).
-            if (!ModsConfig.IsActive("VanillaExpanded.VPsycastsE"))
+            if (!FactionCompat.VPEActive)
             {
                 ls.Label("FCSettingPsylinkCostMult".Translate() + ": " + militaryPsylinkCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingPsylinkCostMultTip".Translate());
                 militaryPsylinkCostMultiplier = ls.Slider((float)militaryPsylinkCostMultiplier, 0f, 5f);
@@ -1233,7 +1233,7 @@ namespace FactionColonies
             bool any = false;
 
             /* -- Vanilla Psycasts Expanded -- */
-            if (ModsConfig.IsActive("VanillaExpanded.VPsycastsE"))
+            if (FactionCompat.VPEActive)
             {
                 any = true;
                 Text.Font = GameFont.Medium;
