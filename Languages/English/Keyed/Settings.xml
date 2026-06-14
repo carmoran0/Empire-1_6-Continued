@@ -136,7 +136,7 @@ Values in between dampen the effect of military efficiency on the auto combat.</
 	<FCSettingEdgesPerRoadTick>Edges per road tick</FCSettingEdgesPerRoadTick>
 	<FCSettingFlushRoadCache>Flush Road Path Cache</FCSettingFlushRoadCache>
 	<FCSettingEnableDebugLogging>Enable Verbose Logging</FCSettingEnableDebugLogging>
-	<FCSettingResetButton>Reset Settings</FCSettingResetButton>
+	<FCSettingResetButton>Reset All Settings</FCSettingResetButton>
 	<FCSettingResetSection>Reset Section to Defaults</FCSettingResetSection>
 	<FCOpenPatchNotes>Open Patch Notes Window</FCOpenPatchNotes>
 

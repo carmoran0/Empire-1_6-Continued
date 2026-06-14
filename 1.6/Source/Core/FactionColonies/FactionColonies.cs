@@ -910,7 +910,11 @@ namespace FactionColonies
                 }));
             }
 
+            ls.Gap(11f);
+
             DrawSectionResetButton(ls, ResetGeneralToDefaults);
+
+            ls.GapLine();
 
             if (ls.ButtonText("FCSettingResetButton".Translate()))
             {
@@ -1274,7 +1278,7 @@ namespace FactionColonies
         {
             ls.Gap(4f);
             Rect row = ls.GetRect(28f);
-            Rect btn = new Rect(row.x, row.y, Mathf.Min(240f, row.width), row.height);
+            Rect btn = new Rect(row.x, row.y, row.width, row.height);
             if (Widgets.ButtonText(btn, "FCSettingResetSection".Translate())) resetAction();
         }
     }
