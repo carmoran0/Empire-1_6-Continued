@@ -1609,6 +1609,14 @@ namespace FactionColonies
 
             randomEventLastAdded += 1f;
 
+            // Bar new roots while a multi-step chain resolves; supersedes the frequency setting.
+            // Hold the timer at 0 so a fresh min/max wait applies once the chain clears.
+            if (FCSettings.blockEventsDuringChain && FCEventMaker.IsRandomChainInProgress(this))
+            {
+                randomEventLastAdded = 0f;
+                return;
+            }
+
             if (CanMakeRandomEventNow())
             {
                 FCEvent tmpEvt = FCEventMaker.MakeRandomEvent(FCEventMaker.ReturnRandomEvent(), null);
