@@ -432,7 +432,7 @@ namespace FactionColonies
                 LogUtil.Error($"BattlefieldContext.GenerateMap: no Empire settlement at tile {tile}; cannot generate map.");
                 return null;
             }
-            int size = 70 + settlement.settlementLevel * 10;
+            int size = settlement.DefenseMapSize;
             map = MapGenerator.GenerateMap(
                 new IntVec3(size, 1, size),
                 settlement, settlement.MapGeneratorDef, settlement.ExtraGenStepDefs);
@@ -995,16 +995,22 @@ namespace FactionColonies
 
             void tryFindLoc(out IntVec3 loc, Pawn friendly)
             {
-                var min = (70 + settlement.settlementLevel * 10) / 2 - 5 - 5 * settlement.settlementLevel;
-                var size = 10 + settlement.settlementLevel * 10;
-                CellFinder.TryFindRandomCellInsideWith(new CellRect(min, min, size, size),
+                // Source the spawn zone from the already-generated map's actual size so it
+                // can never drift from DefenseMapSize. A centered square (~half the map),
+                // clipped on-map, preserves the original "spawn near the middle" intent.
+                int mapSize = map.Size.x;
+                int zone = mapSize / 2;
+                if (zone < 10) zone = 10;
+                if (zone > mapSize - 2) zone = mapSize - 2;
+                int min = (mapSize - zone) / 2;
+                CellRect rect = new CellRect(min, min, zone, zone).ClipInsideMap(map);
+                CellFinder.TryFindRandomCellInsideWith(rect,
                     testing => testing.Standable(map) && map.reachability.CanReachMapEdge(testing,
                         TraverseParms.For(TraverseMode.PassDoors)), out loc);
                 if (loc.x == -1000)
                 {
                     LogUtil.Message("Failed with " + friendly + ", " + loc);
-                    CellFinder.TryFindRandomCellNear(new IntVec3(min + 10 + settlement.settlementLevel, 1,
-                            min + 10 + settlement.settlementLevel), map, 75,
+                    CellFinder.TryFindRandomCellNear(map.Center, map, 75,
                         testing => testing.Standable(map), out loc);
                 }
             }

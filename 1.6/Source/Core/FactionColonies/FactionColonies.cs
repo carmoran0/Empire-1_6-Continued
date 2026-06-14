@@ -85,6 +85,12 @@ namespace FactionColonies
         public const bool DEFAULT_ANTI_EXPLOIT = true;
         public const bool DEFAULT_RESTRICT_DEFENSE_MAP_LOOT = true;
         public const int DEFAULT_MAX_CONCURRENT_BATTLE_MAPS = 0;
+        // Manual-defense battle map sizing. Final edge length =
+        // clamp(baseSize + settlementLevel * perLevelStep, minSize, maxSize).
+        public const int DEFAULT_DEFENSE_MAP_BASE_SIZE = 110;
+        public const int DEFAULT_DEFENSE_MAP_PER_LEVEL_STEP = 10;
+        public const int DEFAULT_DEFENSE_MAP_MIN_SIZE = 120;
+        public const int DEFAULT_DEFENSE_MAP_MAX_SIZE = 250;
         // Off-map healing / repair rates and Biotech/psycast merc cost multipliers (Military & Compat tabs).
         public const float DEFAULT_MERCENARY_HEAL_RATE_PER_HOUR = 1f;
         public const float DEFAULT_MILITARY_MECH_REPAIR_RATE = 4f;
@@ -238,6 +244,12 @@ namespace FactionColonies
         /// <summary>Max simultaneous manual battle maps across all settlements. 0 = unlimited.</summary>
         public static int maxConcurrentBattleMaps = DEFAULT_MAX_CONCURRENT_BATTLE_MAPS;
 
+        /// <summary>Manual-defense battle map size controls. See WorldSettlementFC.DefenseMapSizeFor.</summary>
+        public static int defenseMapBaseSize = DEFAULT_DEFENSE_MAP_BASE_SIZE;
+        public static int defenseMapPerLevelStep = DEFAULT_DEFENSE_MAP_PER_LEVEL_STEP;
+        public static int defenseMapMinSize = DEFAULT_DEFENSE_MAP_MIN_SIZE;
+        public static int defenseMapMaxSize = DEFAULT_DEFENSE_MAP_MAX_SIZE;
+
         /* Auto-resolve battle pacing. Auto-resolved battles roll one round per
          * autoResolveTicksPerRound ticks (default: 1 in-game hour). The flow:
          *   T+0      Preparing (no roll)
@@ -374,6 +386,10 @@ namespace FactionColonies
             Scribe_Values.Look(ref defenderAdvantage, "defenderAdvantage", DEFAULT_DEFENDER_ADVANTAGE);
             Scribe_Values.Look(ref efficiencyDamping, "efficiencyDamping", DEFAULT_EFFICIENCY_DAMPING);
             Scribe_Values.Look(ref maxConcurrentBattleMaps, "maxConcurrentBattleMaps", DEFAULT_MAX_CONCURRENT_BATTLE_MAPS);
+            Scribe_Values.Look(ref defenseMapBaseSize, "defenseMapBaseSize", DEFAULT_DEFENSE_MAP_BASE_SIZE);
+            Scribe_Values.Look(ref defenseMapPerLevelStep, "defenseMapPerLevelStep", DEFAULT_DEFENSE_MAP_PER_LEVEL_STEP);
+            Scribe_Values.Look(ref defenseMapMinSize, "defenseMapMinSize", DEFAULT_DEFENSE_MAP_MIN_SIZE);
+            Scribe_Values.Look(ref defenseMapMaxSize, "defenseMapMaxSize", DEFAULT_DEFENSE_MAP_MAX_SIZE);
             Scribe_Values.Look(ref autoResolveTicksPerRound, "autoResolveTicksPerRound", DEFAULT_AUTO_RESOLVE_TICKS_PER_ROUND);
             Scribe_Values.Look(ref autoResolveCasualtyDeathThreshold, "autoResolveCasualtyDeathThreshold", DEFAULT_AUTO_RESOLVE_CASUALTY_DEATH_THRESHOLD);
             Scribe_Values.Look(ref autoResolveCasualtyMaxDeathFraction, "autoResolveCasualtyMaxDeathFraction", DEFAULT_AUTO_RESOLVE_CASUALTY_MAX_DEATH_FRACTION);
@@ -581,6 +597,10 @@ namespace FactionColonies
             maxThreatMultiplier = DEFAULT_MAX_THREAT_MULTIPLIER;
             defenderAdvantage = DEFAULT_DEFENDER_ADVANTAGE;
             maxConcurrentBattleMaps = DEFAULT_MAX_CONCURRENT_BATTLE_MAPS;
+            defenseMapBaseSize = DEFAULT_DEFENSE_MAP_BASE_SIZE;
+            defenseMapPerLevelStep = DEFAULT_DEFENSE_MAP_PER_LEVEL_STEP;
+            defenseMapMinSize = DEFAULT_DEFENSE_MAP_MIN_SIZE;
+            defenseMapMaxSize = DEFAULT_DEFENSE_MAP_MAX_SIZE;
             efficiencyDamping = DEFAULT_EFFICIENCY_DAMPING;
             mercenaryHealRatePerHour = DEFAULT_MERCENARY_HEAL_RATE_PER_HOUR;
             militaryMechRepairRate = DEFAULT_MILITARY_MECH_REPAIR_RATE;
@@ -1044,6 +1064,26 @@ namespace FactionColonies
             string concurrentLabel = maxConcurrentBattleMaps == 0 ? (string)"FCUnlimited".Translate() : maxConcurrentBattleMaps.ToString();
             ls.Label("FCSettingMaxConcurrentBattleMaps".Translate() + ": " + concurrentLabel, -1f, "FCSettingMaxConcurrentBattleMapsTip".Translate());
             maxConcurrentBattleMaps = (int)ls.Slider(maxConcurrentBattleMaps, 0f, 5f);
+
+            ls.Label("FCSettingDefenseMapBaseSize".Translate() + ": " + defenseMapBaseSize.ToString(), -1f, "FCSettingDefenseMapBaseSizeTip".Translate());
+            defenseMapBaseSize = (int)ls.Slider(defenseMapBaseSize, 50f, 250f);
+
+            ls.Label("FCSettingDefenseMapPerLevelStep".Translate() + ": " + defenseMapPerLevelStep.ToString(), -1f, "FCSettingDefenseMapPerLevelStepTip".Translate());
+            defenseMapPerLevelStep = (int)ls.Slider(defenseMapPerLevelStep, 0f, 20f);
+
+            int oldMinSize = defenseMapMinSize;
+            ls.Label("FCSettingDefenseMapMinSize".Translate() + ": " + defenseMapMinSize.ToString(), -1f, "FCSettingDefenseMapMinSizeTip".Translate());
+            defenseMapMinSize = (int)ls.Slider(defenseMapMinSize, 60f, 250f);
+
+            ls.Label("FCSettingDefenseMapMaxSize".Translate() + ": " + defenseMapMaxSize.ToString(), -1f, "FCSettingDefenseMapMaxSizeTip".Translate());
+            defenseMapMaxSize = (int)ls.Slider(defenseMapMaxSize, 100f, 500f);
+
+            // Keep the cap >= the floor: nudge whichever slider the player didn't just move.
+            if (defenseMapMaxSize < defenseMapMinSize)
+            {
+                if (defenseMapMinSize != oldMinSize) defenseMapMaxSize = defenseMapMinSize; // raised the floor -> raise the cap
+                else defenseMapMinSize = defenseMapMaxSize;                                 // lowered the cap   -> lower the floor
+            }
 
             ls.Label("FCSettingEfficiencyDamping".Translate() + ": " + efficiencyDamping.ToString("0.00"), -1f, "FCSettingEfficiencyDampingTooltip".Translate());
             efficiencyDamping = ls.Slider(efficiencyDamping, 0.0f, 1.0f);

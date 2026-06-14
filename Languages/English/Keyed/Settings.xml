@@ -47,6 +47,14 @@ Spreading out the computation will reduce the impact on performance, but no road
 	<FCSettingMaxConcurrentBattleMaps>Max Concurrent Battle Maps</FCSettingMaxConcurrentBattleMaps>
 	<FCSettingMaxConcurrentBattleMapsTip>Maximum number of manual defense battle maps that can be open simultaneously across all settlements. Set to 0 for unlimited. Additional battles beyond this limit will auto-resolve.</FCSettingMaxConcurrentBattleMapsTip>
 	<FCUnlimited>Unlimited</FCUnlimited>
+	<FCSettingDefenseMapBaseSize>Defense Map Base Size</FCSettingDefenseMapBaseSize>
+	<FCSettingDefenseMapBaseSizeTip>Base edge length (in cells) of manually-defended settlement battle maps. Final size = base + (settlement level * per-level step), clamped between the minimum and maximum below.</FCSettingDefenseMapBaseSizeTip>
+	<FCSettingDefenseMapPerLevelStep>Defense Map Size Per Level</FCSettingDefenseMapPerLevelStep>
+	<FCSettingDefenseMapPerLevelStepTip>How many cells the defense map grows for each settlement level above the base size.</FCSettingDefenseMapPerLevelStepTip>
+	<FCSettingDefenseMapMinSize>Defense Map Minimum Size</FCSettingDefenseMapMinSize>
+	<FCSettingDefenseMapMinSizeTip>Hard floor (in cells) for the defense map edge length, regardless of base/step settings.</FCSettingDefenseMapMinSizeTip>
+	<FCSettingDefenseMapMaxSize>Defense Map Maximum Size</FCSettingDefenseMapMaxSize>
+	<FCSettingDefenseMapMaxSizeTip>Hard cap (in cells) for the defense map edge length.</FCSettingDefenseMapMaxSizeTip>
 	<FCSettingEfficiencyDamping>Efficiency Combat Influence (0 = HP only, 1 = full roll effect)</FCSettingEfficiencyDamping>
 	<FCSettingEfficiencyDampingTooltip>Controls how much the military efficiency stat affects auto-resolve battle outcomes.
 
