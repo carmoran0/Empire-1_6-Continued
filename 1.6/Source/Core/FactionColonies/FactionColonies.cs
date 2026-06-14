@@ -66,6 +66,9 @@ namespace FactionColonies
         public static double DEFAULT_SETTLEMENT_FOUNDING_COST = 1000;
         public static double DEFAULT_SETTLEMENT_BASE_UPGRADE_COST = 1000;
         public static int DEFAULT_SETTLEMENT_MAX_LEVEL = 10;
+        /* Timer-duration multipliers */
+        public const float DEFAULT_SETTLEMENT_UPGRADE_TIME_MULTIPLIER = 1.0f;
+        public const float DEFAULT_BUILDING_CONSTRUCT_TIME_MULTIPLIER = 1.0f;
         /* Defaults for Events & Military settings */
         public const bool DEFAULT_DISABLE_HOSTILE_MILITARY_ACTIONS = false;
         public const bool DEFAULT_DISABLE_RANDOM_EVENTS = false;
@@ -126,6 +129,9 @@ namespace FactionColonies
 
         public static double settlementBaseUpgradeCost = DEFAULT_SETTLEMENT_BASE_UPGRADE_COST;
         public static int settlementMaxLevel = DEFAULT_SETTLEMENT_MAX_LEVEL;
+
+        public static float settlementUpgradeTimeMultiplier = DEFAULT_SETTLEMENT_UPGRADE_TIME_MULTIPLIER;
+        public static float buildingConstructTimeMultiplier = DEFAULT_BUILDING_CONSTRUCT_TIME_MULTIPLIER;
 
         public static bool showSettleConfirm = DEFAULT_SHOW_SETTLE_CONFIRM;
         public static bool medievalTechOnly = DEFAULT_MEDIEVAL_TECH_ONLY;
@@ -361,6 +367,8 @@ namespace FactionColonies
             Scribe_Values.Look(ref productionTitheMod, "productionTitheMod", DEFAULT_PRODUCTION_TITHE_MOD);
             Scribe_Values.Look(ref workerCost, "workerCost", DEFAULT_WORKER_COST);
             Scribe_Values.Look(ref settlementMaxLevel, "settlementMaxLevel", DEFAULT_SETTLEMENT_MAX_LEVEL);
+            Scribe_Values.Look(ref settlementUpgradeTimeMultiplier, "settlementUpgradeTimeMultiplier", DEFAULT_SETTLEMENT_UPGRADE_TIME_MULTIPLIER);
+            Scribe_Values.Look(ref buildingConstructTimeMultiplier, "buildingConstructTimeMultiplier", DEFAULT_BUILDING_CONSTRUCT_TIME_MULTIPLIER);
             Scribe_Values.Look(ref showSettleConfirm, "showSettleConfirm", DEFAULT_SHOW_SETTLE_CONFIRM);
             Scribe_Values.Look(ref medievalTechOnly, "medievalTechOnly", DEFAULT_MEDIEVAL_TECH_ONLY);
             Scribe_Values.Look(ref mirrorPlayerTechLevel, "mirrorPlayerTechLevel", DEFAULT_MIRROR_PLAYER_TECH_LEVEL);
@@ -567,6 +575,8 @@ namespace FactionColonies
             difficultyLevel = DEFAULT_DIFFICULTY_LEVEL;
             ApplyDifficultyPreset(difficultyLevel); // silverPerResource / timeBetweenTaxes_days / productionTitheMod / workerCost
             settlementMaxLevel = DEFAULT_SETTLEMENT_MAX_LEVEL;
+            settlementUpgradeTimeMultiplier = DEFAULT_SETTLEMENT_UPGRADE_TIME_MULTIPLIER;
+            buildingConstructTimeMultiplier = DEFAULT_BUILDING_CONSTRUCT_TIME_MULTIPLIER;
             medievalTechOnly = DEFAULT_MEDIEVAL_TECH_ONLY;
             mirrorPlayerTechLevel = DEFAULT_MIRROR_PLAYER_TECH_LEVEL;
             showSettleConfirm = DEFAULT_SHOW_SETTLE_CONFIRM;
@@ -933,6 +943,13 @@ namespace FactionColonies
                     new FloatMenuOption("Never", () => patchNoteAutoOpenThreshold = PatchNoteType.Undefined)
                 }));
             }
+
+            ls.GapLine();
+            ls.Label("FCSettingTimersHeader".Translate());
+            ls.Label("FCSettingSettlementUpgradeTime".Translate() + ": " + settlementUpgradeTimeMultiplier.ToString("0.0") + "x", -1f, "FCSettingTimerTip".Translate());
+            settlementUpgradeTimeMultiplier = (float)Math.Round(ls.Slider(settlementUpgradeTimeMultiplier, 0f, 10f), 1);
+            ls.Label("FCSettingBuildingConstructTime".Translate() + ": " + buildingConstructTimeMultiplier.ToString("0.0") + "x", -1f, "FCSettingTimerTip".Translate());
+            buildingConstructTimeMultiplier = (float)Math.Round(ls.Slider(buildingConstructTimeMultiplier, 0f, 10f), 1);
 
             ls.Gap(11f);
 

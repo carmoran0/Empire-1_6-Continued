@@ -9,6 +9,10 @@
 	<FCSettingProductionTitheMod>Production Tithe Modifier</FCSettingProductionTitheMod>
 	<FCSettingWorkerCost>Cost Per Worker</FCSettingWorkerCost>
 	<FCSettingMaxSettlementLevel>Max Settlement Level</FCSettingMaxSettlementLevel>
+	<FCSettingTimersHeader>Timers</FCSettingTimersHeader>
+	<FCSettingSettlementUpgradeTime>Settlement upgrade time multiplier</FCSettingSettlementUpgradeTime>
+	<FCSettingBuildingConstructTime>Building construction time multiplier</FCSettingBuildingConstructTime>
+	<FCSettingTimerTip>Scales how long this timer takes.</FCSettingTimerTip>
 	<FCSettingDisableHostileMilActions>Disable Hostile Military Actions</FCSettingDisableHostileMilActions>
 	<FCSettingAntiExploit>Anti-Exploit (mercenary gear)</FCSettingAntiExploit>
 	<FCSettingAntiExploitTip>When enabled (default), mercenary weapons and apparel are biocoded to their wielder, and humanlike mercenaries receive a death acidifier implant that dissolves their worn gear when they die, so you can't farm free gear from your own squads.</FCSettingAntiExploitTip>

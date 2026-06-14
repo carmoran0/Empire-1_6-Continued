@@ -705,7 +705,7 @@ namespace FactionColonies
             Rect costRect = new Rect(statsX, curY, statsW, 22f);
             Widgets.Label(costRect, "FCCost".Translate() + ": " + (settlement.BuildingsComp?.GetBuildingCost(selectedBuilding) ?? (int)selectedBuilding.cost));
 
-            int buildTime = (int)(selectedBuilding.constructionDuration * settlement.GetStatValue(FCStatDefOf.buildTimeMultiplier));
+            int buildTime = settlement.BuildingsComp?.GetBuildingConstructionTime(selectedBuilding) ?? 0;
             Rect timeRect = new Rect(statsX, costRect.yMax + smallMargin, statsW, 22f);
             Widgets.Label(timeRect, "FCBuildTime".Translate(buildTime.ToTimeString()));
 
@@ -1320,7 +1320,7 @@ namespace FactionColonies
                 buildingSlot = buildingSlot
             };
 
-            int triggerTime = (int)(selectedBuilding.constructionDuration * settlement.GetStatValue(FCStatDefOf.buildTimeMultiplier));
+            int triggerTime = settlement.BuildingsComp.GetBuildingConstructionTime(selectedBuilding);
 
             tmpEvt.timeTillTrigger = Find.TickManager.TicksGame + triggerTime;
             tmpEvt.customDescription = "FCBuildingEventDesc".Translate(

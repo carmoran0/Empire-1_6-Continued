@@ -1,4 +1,5 @@
 ﻿using RimWorld;
+using RimWorld.Planet;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,12 +17,28 @@ namespace FactionColonies
         private static readonly Color TableHeaderBgColor = new Color(1f, 1f, 1f, 0.1f);
         private static readonly Color TableHeaderTextColor = new Color(0.85f, 0.85f, 0.85f);
 
+        /// <summary>
+        /// Fraction (0..1+) of the way from <paramref name="start"/> to <paramref name="finish"/> at the
+        /// current game tick. A zero-or-negative span (e.g. an instant 0-tick timer) returns 1f (complete)
+        /// instead of dividing by zero. Callers pass the bar to a draw helper, which clamps the result.
+        /// </summary>
+        public static float NormalizeProgress(int start, int finish)
+        {
+            int span = finish - start;
+            return span <= 0
+                ? 1f
+                : (Find.TickManager.TicksGame - start) / (float)span;
+        }
+
         public static void DrawProgressBar(Rect rect, float progress)
         {
             DrawProgressBarColors(rect, progress, Color.black, Color.cyan);
         }
         public static void DrawProgressBarColors(Rect rect, float progress, Color background, Color bar)
         {
+            // Sanitize so a NaN (e.g. a 0/0 from a zero-length timer) or out-of-range value can never
+            // reach the draw as a NaN/negative bar width. Mathf.Clamp01 alone does NOT catch NaN.
+            progress = float.IsNaN(progress) ? 0f : Mathf.Clamp01(progress);
             Rect baseRect = new Rect(rect.x, rect.y, rect.width, rect.height);
             Rect progressRect = new Rect(rect.x, rect.y, rect.width * progress, rect.height);
             Widgets.DrawBoxSolid(baseRect, background);

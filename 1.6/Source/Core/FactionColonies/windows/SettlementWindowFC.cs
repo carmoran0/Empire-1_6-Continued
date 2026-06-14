@@ -1365,7 +1365,7 @@ namespace FactionColonies
 
                 if (settlement.IsUpgrading)
                 {
-                    float progress = (float)(Find.TickManager.TicksGame - settlement.StartUpgradeTick) / (float)(settlement.FinishUpgradeTick - settlement.StartUpgradeTick);
+                    float progress = UIUtil.NormalizeProgress(settlement.StartUpgradeTick, settlement.FinishUpgradeTick);
                     Rect upgradeRect = new Rect(viewRect.x + margin,
                                                 viewRect.y,
                                                 viewRect.width - (margin * 2),
@@ -1379,7 +1379,7 @@ namespace FactionColonies
 
                 for (int i = 0; i < construction.Count; i++)
                 {
-                    float progress = (float)(Find.TickManager.TicksGame - construction[i].startedTick) / (float)(construction[i].completionTick - construction[i].startedTick);
+                    float progress = UIUtil.NormalizeProgress(construction[i].startedTick, construction[i].completionTick);
                     Rect upgradeRect = new Rect(viewRect.x + margin,
                                                 initialY + (i * (constructionListItemHeight + margin)),
                                                 viewRect.width - (margin * 2),

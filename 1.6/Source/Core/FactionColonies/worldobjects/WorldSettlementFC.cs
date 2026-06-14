@@ -92,7 +92,8 @@ namespace FactionColonies
 
         public int GetUpgradeTime(double buildTimeMult)
         {
-            return settlementDef.GetSettlementTypeExtension().GetUpgradeTime(settlementLevel, buildTimeMult);
+            int baseTime = settlementDef.GetSettlementTypeExtension().GetUpgradeTime(settlementLevel, buildTimeMult);
+            return (int)(baseTime * FCSettings.settlementUpgradeTimeMultiplier);
         }
 
         /* Workers — lazy-cached, use DirtyStatsCache()/DirtyProfitCache() to invalidate */
