@@ -1,41 +1,50 @@
 using System;
 using System.Linq;
 using Verse;
+using RimWorld;
 
 namespace FactionColonies
 {
     /// <summary>
-    /// Dynamic provider that shows the current Empire Threat Level breakdown,
-    /// including component contributions and the handicap cap.
+    /// Dynamic provider for the raid-strength Codex entry. Raids are sized by each attacking
+    /// faction's own defined power (no empire-wide multiplier); this shows the player's
+    /// average military level — which biases which factions attack — and the early-game raid
+    /// cap while it is still active.
     /// </summary>
     public class CodexProvider_ThreatLevel : ICodexDynamicProvider
     {
         public string GetDynamicContent(FactionFC faction)
         {
             if (!faction.settlements.Any())
-                return "FCCodexETLNoSettlements".Translate();
+                return "FCCodexRaidNoSettlements".Translate();
 
-            double avgLevel = faction.settlements.Average(s => (double)s.settlementLevel);
-            int maxLevel = faction.settlements.Max(s => s.settlementLevel);
-            double income = faction.income;
-            int count = faction.settlements.Count;
+            double avgMilitaryLevel = faction.settlements.Average(s => (double)s.settlementMilitaryLevel);
 
-            double avgFactor = (avgLevel - 1.0) * 0.2;
-            double maxFactor = (maxLevel - 1.0) * 0.1;
+            double raidsBeganTick = faction.timeStart + GenDate.TicksPerSeason;
+            double daysSinceRaidsBegan = (Find.TickManager.TicksGame - raidsBeganTick)
+                                       / (double)GenDate.TicksPerDay;
 
-            double etl = ThreatScalingUtil.ComputeEmpireThreatLevel(faction);
-            double handicapCap = ThreatScalingUtil.ComputeHandicapCap(faction);
+            string result = "FCCodexRaidAvgMilLevel".Translate(Math.Round(avgMilitaryLevel, 1)) + "\n";
+            result += "FCCodexRaidTargetBand".Translate(
+                Math.Round(Math.Max(0.0, avgMilitaryLevel - 2.0), 1),
+                Math.Round(avgMilitaryLevel + 2.0, 1)) + "\n\n";
 
-            string result = "FCCodexETLCurrent".Translate(Math.Round(etl, 2)) + "\n\n";
-            result += "FCCodexETLBreakdown".Translate() + "\n";
-            result += "  " + "FCCodexETLAvgLevel".Translate(Math.Round(avgLevel, 1)) + "\n";
-            result += "    " + "FCCodexETLContrib".Translate(Math.Round(avgFactor * 0.35, 3)) + "\n";
-            result += "  " + "FCCodexETLMaxLevel".Translate(maxLevel) + "\n";
-            result += "    " + "FCCodexETLContrib".Translate(Math.Round(maxFactor * 0.15, 3)) + "\n";
-            result += "  " + "FCCodexETLIncome".Translate(Math.Round(income, 0)) + "\n";
-            result += "  " + "FCCodexETLCount".Translate(count) + "\n\n";
-            result += "FCCodexETLHandicapCap".Translate(Math.Round(handicapCap, 2)) + "\n";
-            result += "FCCodexETLMaxSetting".Translate(FCSettings.maxThreatMultiplier);
+            if (daysSinceRaidsBegan < 0.0)
+            {
+                result += "FCCodexRaidNotStarted".Translate(
+                    Math.Max(0, (int)Math.Ceiling(-daysSinceRaidsBegan)));
+            }
+            else if (daysSinceRaidsBegan < 30.0)
+            {
+                double earlyCap = ThreatScalingUtil.ComputeEarlyGameRaidCap(faction);
+                result += "FCCodexRaidEarlyCapActive".Translate(
+                    Math.Round(earlyCap, 1),
+                    Math.Max(0, (int)Math.Ceiling(30.0 - daysSinceRaidsBegan)));
+            }
+            else
+            {
+                result += "FCCodexRaidEarlyCapInactive".Translate();
+            }
 
             return result;
         }

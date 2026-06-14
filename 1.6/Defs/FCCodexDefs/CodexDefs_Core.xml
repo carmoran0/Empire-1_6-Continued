@@ -41,7 +41,7 @@ At 50 prosperity, your settlement produces half as much as at 100. At 1, product
 Prosperity drifts daily toward a target calculated from your other social stats:
   Target = (Happiness + Loyalty + (100 − Unrest)) / 3
 
-The drift rate is 1 point per day (plus any stat modifiers from policies, buildings, or events). If your happiness and loyalty are high and unrest is low, prosperity will climb. If social stats deteriorate, prosperity follows.
+The drift rate is equal to the distance from the current target, divided by 5 (plus any stat modifiers from policies, buildings, or events). If your happiness and loyalty are high and unrest is low, prosperity will climb. If social stats deteriorate, prosperity follows.
 
 Losing a defensive battle costs 20 prosperity immediately, which can take many days to recover from.</description>
         <category>CodexCat_Economy</category>
@@ -155,20 +155,18 @@ Choose Custom to set each parameter independently. Useful when you want, for exa
 
     <FactionColonies.CodexEntryDef>
         <defName>Codex_ThreatLevel</defName>
-        <label>Empire Threat Level (ETL)</label>
-        <description>The Empire Threat Level (ETL) is a hidden multiplier (1.0x to 3.0x by default) that scales how dangerous enemy attacks are against your settlements.
+        <label>Enemy Raid Strength</label>
+        <description>Enemy raids are sized by each attacking faction's own military tier, not by how large or wealthy your empire is. A pirate band hits about as hard whether you run one settlement or twenty.
 
-It is weighted by four factors:
- - Average settlement level (35% weight)
- - Highest settlement level (15% weight)
- - Faction income (30% weight)
- - Settlement count (20% weight)
+How strong a raid is:
+ - Raid level and combat efficiency come from the attacking faction's tech level (Neolithic, Industrial, Spacer, Empire, and so on), plus a small random variance.
+ - There is no empire-wide multiplier on raid strength.
 
-Each factor follows a non-linear curve; early growth raises threat slowly, but large empires with high income hit the cap fast. Having one high-level settlement raises threat less than having many mid-level ones.
+Who attacks you:
+ - Attackers are chosen to roughly match your development. Factions whose power level is within +/-2 of your average settlement military level are favored; far-off tiers can still attack, but rarely.
 
-During your first year, a handicap limits how fast threat can grow regardless of your empire's strength. After one year, the cap transitions smoothly to ETL-based scaling.
-
-The Max Threat Multiplier setting (default 3.0x) provides an absolute ceiling to ETL.</description>
+Early-game grace:
+ - For the first 30 days after raids begin, a cap softens how strong raids can be. After that it lifts and raids arrive at full faction strength.</description>
         <category>CodexCat_Military</category>
         <displayOrder>10</displayOrder>
         <iconPath>GUI/MilitaryLevel</iconPath>
@@ -183,11 +181,11 @@ The Max Threat Multiplier setting (default 3.0x) provides an absolute ceiling to
     <FactionColonies.CodexEntryDef>
         <defName>Codex_AttackFrequency</defName>
         <label>Attack Frequency</label>
-        <description>Empire Threat Level governs how dangerous each attack is. Attack Frequency governs how often they come.
+        <description>Empire military level governs how dangerous each attack is. Attack Frequency governs how often they come.
 
 Attack frequency is driven by your settlement count: roughly 1.0x at one settlement, 1.4x at five, 1.8x at ten, and 2.0x at fifteen or more. It is capped only by the "min/max days till military action" setting; attacks will never occur more frequently than the minimum value.
 
-In practical terms, a sprawling fifteen-settlement empire faces attacks roughly twice as often as a single-settlement empire, even if both have identical Empire Threat Level.</description>
+In practical terms, a sprawling fifteen-settlement empire faces attacks roughly twice as often as a single-settlement empire, even if both have the same average military level.</description>
         <category>CodexCat_Military</category>
         <displayOrder>20</displayOrder>
         <dynamicProvider>FactionColonies.CodexProvider_AttackFrequency</dynamicProvider>
@@ -217,7 +215,6 @@ The effect of Military Efficiency can be dampened through the Efficiency Damping
         <seeAlso>
             <li>Codex_BattleSimulation</li>
             <li>Codex_ThreatLevel</li>
-            <li>Codex_MilitaryCooldown</li>
         </seeAlso>
     </FactionColonies.CodexEntryDef>
 
@@ -237,22 +234,6 @@ Set damping high to preserve the raw outcomes (sharp wins and sharp losses); set
         <seeAlso>
             <li>Codex_BattleSimulation_AutoBattles</li>
             <li>Codex_ThreatLevel</li>
-            <li>Codex_MilitaryCooldown</li>
-        </seeAlso>
-    </FactionColonies.CodexEntryDef>
-
-    <FactionColonies.CodexEntryDef>
-        <defName>Codex_MilitaryCooldown</defName>
-        <label>Military Cooldown</label>
-        <description>After any military operation - offensive, defensive, or aborted - your army enters a cooldown during which it cannot be deployed again.
-
-The base cooldown is 3 days. If the "dead pawns increase military cooldown" setting is enabled (it is by default), each pawn lost during the operation adds 4 hours of additional cooldown on top of the base.</description>
-        <category>CodexCat_Military</category>
-        <displayOrder>40</displayOrder>
-        <dynamicProvider>FactionColonies.CodexProvider_MilitaryCooldown</dynamicProvider>
-        <seeAlso>
-            <li>Codex_BattleSimulation</li>
-            <li>Codex_AttackFrequency</li>
         </seeAlso>
     </FactionColonies.CodexEntryDef>
 

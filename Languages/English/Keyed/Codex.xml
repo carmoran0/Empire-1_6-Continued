@@ -10,7 +10,15 @@
 	<FCCodexEnabled>Enabled</FCCodexEnabled>
 	<FCCodexDisabled>Disabled</FCCodexDisabled>
 
-	<!-- Threat Level Provider -->
+	<!-- Raid Strength Provider -->
+	<FCCodexRaidNoSettlements>No settlements - no raids yet.</FCCodexRaidNoSettlements>
+	<FCCodexRaidAvgMilLevel>Average military level: {0}</FCCodexRaidAvgMilLevel>
+	<FCCodexRaidTargetBand>Favored attacker tier: level {0}–{1}</FCCodexRaidTargetBand>
+	<FCCodexRaidNotStarted>Raids have not begun yet (start in ~{0} days).</FCCodexRaidNotStarted>
+	<FCCodexRaidEarlyCapActive>Early-game cap: raids limited to ~level {0} ({1} days remaining).</FCCodexRaidEarlyCapActive>
+	<FCCodexRaidEarlyCapInactive>Early-game cap: no longer active. Raids arrive at full faction strength.</FCCodexRaidEarlyCapInactive>
+
+	<!-- Threat Level Provider (legacy ETL keys; retained for the dormant threat-scaling system) -->
 	<FCCodexETLNoSettlements>No settlements — ETL defaults to 1.0×.</FCCodexETLNoSettlements>
 	<FCCodexETLCurrent>Current ETL: {0}×</FCCodexETLCurrent>
 	<FCCodexETLBreakdown>Components:</FCCodexETLBreakdown>

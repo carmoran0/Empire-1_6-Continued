@@ -862,8 +862,7 @@ namespace FactionColonies
 
                         if (validSettlements.Any() || validExternalTargets.Any())
                         {
-                            double etl = ThreatScalingUtil.ComputeEmpireThreatLevel(this);
-                            Faction enemy = ThreatScalingUtil.PickWeightedEnemyFaction(etl);
+                            Faction enemy = ThreatScalingUtil.PickWeightedEnemyFaction(this);
                             if (enemy != null)
                             {
                                 List<WorldSettlementFC> raidableSettlements = validSettlements

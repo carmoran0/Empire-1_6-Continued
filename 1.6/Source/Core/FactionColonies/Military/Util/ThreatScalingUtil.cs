@@ -6,8 +6,9 @@ using Verse;
 namespace FactionColonies
 {
     /// <summary>
-    /// Computes the Empire Threat Level (ETL), handicap cap, frequency scaling,
-    /// and weighted enemy faction selection for threat scaling.
+    /// Raid-scaling helpers. Live: the early-game raid cap, attack-frequency scaling, and
+    /// weighted enemy-faction selection. Dormant (retained for a future threat-scaling submod
+    /// and the test suite): the Empire Threat Level and the old handicap cap.
     /// </summary>
     public static class ThreatScalingUtil
     {
@@ -32,7 +33,7 @@ namespace FactionColonies
             new CurvePoint(15f, 0.6f)
         };
 
-        /* Time curve: maps seasons elapsed to a handicap cap */
+        /* Time curve for the dormant handicap cap: maps seasons elapsed to a cap */
         private static readonly SimpleCurve TimeCurve = new SimpleCurve
         {
             new CurvePoint(0f, 2f),
@@ -40,6 +41,16 @@ namespace FactionColonies
             new CurvePoint(2f, 4.5f),
             new CurvePoint(4f, 8f),
             new CurvePoint(8f, 15f)
+        };
+
+        /* Early-game raid cap: softens raids for the first 30 days after raids begin, then
+           rises above any faction level (max ~9 + variance ~2) so it no longer binds.
+           X axis = days since raids began. */
+        private static readonly SimpleCurve EarlyGameCapCurve = new SimpleCurve
+        {
+            new CurvePoint(0f, 2f),
+            new CurvePoint(30f, 12f),
+            new CurvePoint(60f, 100f)
         };
 
         /* Frequency curve: maps settlement count to a frequency multiplier */
@@ -53,10 +64,11 @@ namespace FactionColonies
         };
 
         /// <summary>
-        /// Computes the Empire Threat Level (ETL) — a composite multiplier
-        /// based on average settlement level, max settlement level, income,
-        /// settlement count, FCStatDef modifiers, and registry contributions.
-        /// Result is clamped between 1.0 and <see cref="FCSettings.maxThreatMultiplier"/>.
+        /// DORMANT — not used by the live raid path; retained for a future threat-scaling
+        /// submod and the test suite. Computes the Empire Threat Level (ETL): a composite
+        /// multiplier based on average settlement level, max settlement level, income,
+        /// settlement count, FCStatDef modifiers, and registry contributions. Clamped between
+        /// 1.0 and <see cref="FCSettings.maxThreatMultiplier"/>.
         /// </summary>
         public static double ComputeEmpireThreatLevel(FactionFC faction)
         {
@@ -65,9 +77,9 @@ namespace FactionColonies
         }
 
         /// <summary>
-        /// Same composite formula as <see cref="ComputeEmpireThreatLevel"/>, but without the
-        /// settings cap. Floored at 1.0. Used for cost scaling that should keep growing past
-        /// the threat cap (e.g., policy re-pick cost).
+        /// Empire-scale composite (avg/max settlement level, income, settlement count, plus
+        /// FCStatDef and registry modifiers), floored at 1.0 with no upper cap. Used for cost
+        /// scaling that should keep growing with the empire (e.g., policy re-pick cost).
         /// </summary>
         public static double ComputeEmpireScaleUncapped(FactionFC faction)
         {
@@ -102,9 +114,10 @@ namespace FactionColonies
         }
 
         /// <summary>
-        /// Computes the handicap cap that replaces the old pure time-based cap.
-        /// During the first year it's primarily time-based; after that it transitions
-        /// to ETL-based scaling.
+        /// DORMANT — not used by the live raid path (incoming raids use
+        /// <see cref="ComputeEarlyGameRaidCap"/>); retained for a future threat-scaling submod
+        /// and the test suite. During the first year it's primarily time-based; after that it
+        /// transitions to ETL-based scaling.
         /// </summary>
         public static double ComputeHandicapCap(FactionFC faction)
         {
@@ -119,24 +132,42 @@ namespace FactionColonies
         }
 
         /// <summary>
-        /// Picks a random enemy faction, weighted by tech level strength at higher ETL.
-        /// At ETL 1.0, all factions have roughly equal weight.
-        /// At higher ETL, advanced factions are heavily favored.
+        /// Early-game raid level cap applied to incoming raids. Softens raids for the first
+        /// 30 days after raids begin (raids start at <c>timeStart + 1 season</c>), then rises
+        /// above any faction's level so it stops binding.
         /// </summary>
-        public static Faction PickWeightedEnemyFaction(double etl)
+        public static double ComputeEarlyGameRaidCap(FactionFC faction)
         {
-            var enemies = Find.FactionManager.AllFactionsVisible.Where(f => f.HostileTo(Faction.OfPlayer) && !f.defeated && !f.Hidden);
+            double raidsBeganTick = faction.timeStart + GenDate.TicksPerSeason;
+            double daysSinceRaidsBegan = (Find.TickManager.TicksGame - raidsBeganTick)
+                                       / (double)GenDate.TicksPerDay;
+            return Math.Max(2.0, EarlyGameCapCurve.Evaluate((float)daysSinceRaidsBegan));
+        }
+
+        /// <summary>
+        /// Picks a random hostile faction, weighted to favor factions whose defined power
+        /// level close to the empire's average settlement military level. Factions
+        /// far from the player's tier are rare but never fully excluded, so raids track the
+        /// player's military development rather than empire size.
+        /// </summary>
+        public static Faction PickWeightedEnemyFaction(FactionFC faction)
+        {
+            var enemies = Find.FactionManager.AllFactionsVisible
+                .Where(f => f.HostileTo(Faction.OfPlayer) && !f.defeated && !f.Hidden).ToList();
             if (!enemies.Any()) return null;
+
+            double avgMilitaryLevel = faction.settlements.Any()
+                ? faction.settlements.Average(s => (double)s.settlementMilitaryLevel)
+                : 0.0;
 
             return enemies.RandomElementByWeight(f =>
             {
-                double factionStrength;
-                MilitaryDeploymentUtil.GetTechLevelBaseline(
-                    f.def.techLevel, out factionStrength, out _);
-                // At ETL 1.0: all factions equal weight (~1.0)
-                // At ETL 2.0: Spacer(6) weight ~2.5, Neolithic(2) weight ~0.7
-                double relevance = 1.0 + (factionStrength * (etl - 1.0) * 0.3);
-                return (float)Math.Max(0.1, relevance);
+                double factionLevel = FindFC.EnemyPower?.GetOrCompute(f)?.level ?? 1.0;
+                double distance = Math.Abs(factionLevel - avgMilitaryLevel);
+                // 100% chance at even level; 75% chance at +/-1; 50% chance at +/-2; 25% chance at +/-3
+                // 5% for everything else
+                double weight = 1.0 - (distance * 0.25);
+                return (float)Math.Max(0.05, weight);
             });
         }
 
