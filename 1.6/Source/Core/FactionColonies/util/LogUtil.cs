@@ -24,19 +24,19 @@ namespace FactionColonies
         /// <param name="message"></param>
         public static void MessageForce(string message)
         {
-            Log.Message($"{slug} {message}");
+            Log.Message($"{slug}[Forced] {message}");
         }
         public static void Warning(string message)
         {
-            Log.Warning($"{slug} {message}");
+            Log.Warning($"{slug}[WARN] {message}");
         }
         public static void Error(string message)
         {
-            Log.Error($"{slug} {message}");
+            Log.Error($"{slug}[ERR] {message}");
         }
         public static void ErrorOnce(string message, int key)
         {
-            Log.ErrorOnce($"{slug} {message}", key);
+            Log.ErrorOnce($"{slug}[ERRONCE] {message}", key);
         }
     }
 }
