@@ -84,6 +84,16 @@ namespace FactionColonies
         public const float DEFAULT_EFFICIENCY_DAMPING = 0.5f;
         public const bool DEFAULT_ANTI_EXPLOIT = true;
         public const bool DEFAULT_RESTRICT_DEFENSE_MAP_LOOT = true;
+        public const int DEFAULT_MAX_CONCURRENT_BATTLE_MAPS = 0;
+        // Off-map healing / repair rates and Biotech/psycast merc cost multipliers (Military & Compat tabs).
+        public const float DEFAULT_MERCENARY_HEAL_RATE_PER_HOUR = 1f;
+        public const float DEFAULT_MILITARY_MECH_REPAIR_RATE = 4f;
+        public const double DEFAULT_MILITARY_PSYLINK_COST_MULTIPLIER = 1.0;
+        public const double DEFAULT_MILITARY_PSYCAST_COST_MULTIPLIER = 1.0;
+        public const double DEFAULT_MILITARY_MECH_COST_MULTIPLIER = 1.0;
+        public const double DEFAULT_MILITARY_MECHLINK_COST = 1000.0;
+        /* Default for debug/verbose logging */
+        public const bool DEFAULT_PRINT_DEBUG = false;
         // Vanilla Psycasts Expanded per-point silver costs (compat tab; scaled by militaryPsycastCostMultiplier).
         public const int DEFAULT_VPE_PSYCAST_BASE_COST = 300;
         public const int DEFAULT_VPE_PSYCAST_PER_LEVEL_COST = 300;
@@ -148,22 +158,22 @@ namespace FactionColonies
         public static int productionResearchBase = 100;
         public static double militaryAnimalCostMultiplier = 1.5;
         public static double militaryRaceCostMultiplier = 0.075;
-        public static double militaryPsylinkCostMultiplier = 1.0;
-        public static double militaryPsycastCostMultiplier = 1.0;
+        public static double militaryPsylinkCostMultiplier = DEFAULT_MILITARY_PSYLINK_COST_MULTIPLIER;
+        public static double militaryPsycastCostMultiplier = DEFAULT_MILITARY_PSYCAST_COST_MULTIPLIER;
         // Mechanitor merc costs (Biotech). Per-mech market-value multiplier + a flat surcharge for the
         // mechlink itself. Default mechlink cost ~ the in-game Mechlink item market value (1000).
-        public static double militaryMechCostMultiplier = 1.0;
-        public static double militaryMechlinkCost = 1000.0;
+        public static double militaryMechCostMultiplier = DEFAULT_MILITARY_MECH_COST_MULTIPLIER;
+        public static double militaryMechlinkCost = DEFAULT_MILITARY_MECHLINK_COST;
         // Vanilla Psycasts Expanded point-purchase costs (configured in the Compatibility settings tab).
         public static int vpePsycastBaseCost = DEFAULT_VPE_PSYCAST_BASE_COST;
         public static int vpePsycastPerLevelCost = DEFAULT_VPE_PSYCAST_PER_LEVEL_COST;
         public static int vpeFocusCost = DEFAULT_VPE_FOCUS_COST;
         public static int vpeStatPointCost = DEFAULT_VPE_STAT_POINT_COST;
-        public static float mercenaryHealRatePerHour = 1f;
+        public static float mercenaryHealRatePerHour = DEFAULT_MERCENARY_HEAL_RATE_PER_HOUR;
         // HP repaired per hourly heal tick for off-map mechs (alternate to the merc heal path,
         // which doesn't apply to mechanoids). Drives the number of 1-HP MechRepairUtility.RepairTick
         // calls made per tick.
-        public static float militaryMechRepairRate = 4f;
+        public static float militaryMechRepairRate = DEFAULT_MILITARY_MECH_REPAIR_RATE;
 
         public static float maxThreatMultiplier = DEFAULT_MAX_THREAT_MULTIPLIER;
         public static float defenderAdvantage = DEFAULT_DEFENDER_ADVANTAGE;
@@ -226,7 +236,7 @@ namespace FactionColonies
         public static int deploymentBillLifespan_days = DEFAULT_DEPLOYMENT_BILL_LIFESPAN_DAYS;
 
         /// <summary>Max simultaneous manual battle maps across all settlements. 0 = unlimited.</summary>
-        public static int maxConcurrentBattleMaps = 0;
+        public static int maxConcurrentBattleMaps = DEFAULT_MAX_CONCURRENT_BATTLE_MAPS;
 
         /* Auto-resolve battle pacing. Auto-resolved battles roll one round per
          * autoResolveTicksPerRound ticks (default: 1 in-game hour). The flow:
@@ -291,7 +301,7 @@ namespace FactionColonies
         public static int maxPolicyCount = 2;
 
         /* Flag for debug/verbose logging. */
-        private static bool printDebug = false;
+        private static bool printDebug = DEFAULT_PRINT_DEBUG;
         public static bool PrintDebug => printDebug;
 
         // Window size settings
@@ -359,11 +369,11 @@ namespace FactionColonies
             Scribe_Values.Look(ref buildingWindowWidth, "buildingWindowWidth", 800f);
             Scribe_Values.Look(ref buildingWindowHeight, "buildingWindowHeight", 600f);
             Scribe_Values.Look(ref difficultyLevel, "difficultyLevel", DEFAULT_DIFFICULTY_LEVEL);
-            Scribe_Values.Look(ref printDebug, "printDebug", false);
+            Scribe_Values.Look(ref printDebug, "printDebug", DEFAULT_PRINT_DEBUG);
             Scribe_Values.Look(ref maxThreatMultiplier, "maxThreatMultiplier", DEFAULT_MAX_THREAT_MULTIPLIER);
             Scribe_Values.Look(ref defenderAdvantage, "defenderAdvantage", DEFAULT_DEFENDER_ADVANTAGE);
             Scribe_Values.Look(ref efficiencyDamping, "efficiencyDamping", DEFAULT_EFFICIENCY_DAMPING);
-            Scribe_Values.Look(ref maxConcurrentBattleMaps, "maxConcurrentBattleMaps", 0);
+            Scribe_Values.Look(ref maxConcurrentBattleMaps, "maxConcurrentBattleMaps", DEFAULT_MAX_CONCURRENT_BATTLE_MAPS);
             Scribe_Values.Look(ref autoResolveTicksPerRound, "autoResolveTicksPerRound", DEFAULT_AUTO_RESOLVE_TICKS_PER_ROUND);
             Scribe_Values.Look(ref autoResolveCasualtyDeathThreshold, "autoResolveCasualtyDeathThreshold", DEFAULT_AUTO_RESOLVE_CASUALTY_DEATH_THRESHOLD);
             Scribe_Values.Look(ref autoResolveCasualtyMaxDeathFraction, "autoResolveCasualtyMaxDeathFraction", DEFAULT_AUTO_RESOLVE_CASUALTY_MAX_DEATH_FRACTION);
@@ -380,12 +390,12 @@ namespace FactionColonies
                 battleArchiveMaxEntries = DEFAULT_BATTLE_ARCHIVE_MAX_ENTRIES;
             }
             Scribe_Values.Look(ref battleArchiveUnlimited, "battleArchiveUnlimited", DEFAULT_BATTLE_ARCHIVE_UNLIMITED);
-            Scribe_Values.Look(ref mercenaryHealRatePerHour, "mercenaryHealRatePerHour", 1f);
-            Scribe_Values.Look(ref militaryMechRepairRate, "militaryMechRepairRate", 4f);
-            Scribe_Values.Look(ref militaryPsylinkCostMultiplier, "militaryPsylinkCostMultiplier", 1.0);
-            Scribe_Values.Look(ref militaryPsycastCostMultiplier, "militaryPsycastCostMultiplier", 1.0);
-            Scribe_Values.Look(ref militaryMechCostMultiplier, "militaryMechCostMultiplier", 1.0);
-            Scribe_Values.Look(ref militaryMechlinkCost, "militaryMechlinkCost", 1000.0);
+            Scribe_Values.Look(ref mercenaryHealRatePerHour, "mercenaryHealRatePerHour", DEFAULT_MERCENARY_HEAL_RATE_PER_HOUR);
+            Scribe_Values.Look(ref militaryMechRepairRate, "militaryMechRepairRate", DEFAULT_MILITARY_MECH_REPAIR_RATE);
+            Scribe_Values.Look(ref militaryPsylinkCostMultiplier, "militaryPsylinkCostMultiplier", DEFAULT_MILITARY_PSYLINK_COST_MULTIPLIER);
+            Scribe_Values.Look(ref militaryPsycastCostMultiplier, "militaryPsycastCostMultiplier", DEFAULT_MILITARY_PSYCAST_COST_MULTIPLIER);
+            Scribe_Values.Look(ref militaryMechCostMultiplier, "militaryMechCostMultiplier", DEFAULT_MILITARY_MECH_COST_MULTIPLIER);
+            Scribe_Values.Look(ref militaryMechlinkCost, "militaryMechlinkCost", DEFAULT_MILITARY_MECHLINK_COST);
             Scribe_Values.Look(ref vpePsycastBaseCost, "vpePsycastBaseCost", DEFAULT_VPE_PSYCAST_BASE_COST);
             Scribe_Values.Look(ref vpePsycastPerLevelCost, "vpePsycastPerLevelCost", DEFAULT_VPE_PSYCAST_PER_LEVEL_COST);
             Scribe_Values.Look(ref vpeFocusCost, "vpeFocusCost", DEFAULT_VPE_FOCUS_COST);
@@ -524,6 +534,125 @@ namespace FactionColonies
                     break;
             }
             LogUtil.Message($"ApplyDifficultyPreset({difficulty}): timeBetweenTaxes_days={timeBetweenTaxes_days}");
+        }
+
+        /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+         *           ~  SECTION RESETS  ~
+         * One method per settings section. Each section's "Reset Section" button calls its own
+         * method; ResetAllToDefaults() (the universal "Reset to defaults" button) calls them all.
+         * Add a field's reset here, never inline in the UI, so the section and universal resets
+         * can never drift apart.
+         *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
+        public static void ResetGeneralToDefaults()
+        {
+            difficultyLevel = DEFAULT_DIFFICULTY_LEVEL;
+            ApplyDifficultyPreset(difficultyLevel); // silverPerResource / timeBetweenTaxes_days / productionTitheMod / workerCost
+            settlementMaxLevel = DEFAULT_SETTLEMENT_MAX_LEVEL;
+            medievalTechOnly = DEFAULT_MEDIEVAL_TECH_ONLY;
+            mirrorPlayerTechLevel = DEFAULT_MIRROR_PLAYER_TECH_LEVEL;
+            showSettleConfirm = DEFAULT_SHOW_SETTLE_CONFIRM;
+            forcedTaxDeliveryMode = DEFAULT_TAX_DELIVERY_MODE;
+            taxNotificationMode = DEFAULT_TAX_NOTIFICATION_MODE;
+            printDebug = DEFAULT_PRINT_DEBUG;
+            patchNoteAutoOpenThreshold = DEFAULT_PATCH_NOTE_AUTO_OPEN_THRESHOLD;
+        }
+
+        public static void ResetEventsToDefaults()
+        {
+            disableRandomEvents = DEFAULT_DISABLE_RANDOM_EVENTS;
+            disableEventsWithOptions = DEFAULT_DISABLE_EVENTS_WITH_OPTIONS;
+            eventOptionDelaySeconds = DEFAULT_EVENT_OPTION_DELAY_SECONDS;
+            eventSilverCostMultiplier = DEFAULT_EVENT_SILVER_COST_MULTIPLIER;
+            minDaysTillRandomEvent = DEFAULT_MIN_DAYS_TIL_RANDOM_EVENT;
+            maxDaysTillRandomEvent = DEFAULT_MAX_DAYS_TIL_RANDOM_EVENT;
+            minMaxDaysTillRandomEvent = new IntRange(minDaysTillRandomEvent, maxDaysTillRandomEvent);
+            disabledEventDefs.Clear();
+        }
+
+        public static void ResetMilitaryActionToDefaults()
+        {
+            disableHostileMilitaryActions = DEFAULT_DISABLE_HOSTILE_MILITARY_ACTIONS;
+            antiExploit = DEFAULT_ANTI_EXPLOIT;
+            restrictDefenseMapLoot = DEFAULT_RESTRICT_DEFENSE_MAP_LOOT;
+            battleMode = DEFAULT_BATTLE_MODE;
+            minDaysTillMilitaryAction = DEFAULT_MIN_DAYS_TIL_MILITARY_ACTION;
+            maxDaysTillMilitaryAction = DEFAULT_MAX_DAYS_TIL_MILITARY_ACTION;
+            minMaxDaysTillMilitaryAction = new IntRange(minDaysTillMilitaryAction, maxDaysTillMilitaryAction);
+            maxThreatMultiplier = DEFAULT_MAX_THREAT_MULTIPLIER;
+            defenderAdvantage = DEFAULT_DEFENDER_ADVANTAGE;
+            maxConcurrentBattleMaps = DEFAULT_MAX_CONCURRENT_BATTLE_MAPS;
+            efficiencyDamping = DEFAULT_EFFICIENCY_DAMPING;
+            mercenaryHealRatePerHour = DEFAULT_MERCENARY_HEAL_RATE_PER_HOUR;
+            militaryMechRepairRate = DEFAULT_MILITARY_MECH_REPAIR_RATE;
+            militaryPsylinkCostMultiplier = DEFAULT_MILITARY_PSYLINK_COST_MULTIPLIER;
+            militaryMechCostMultiplier = DEFAULT_MILITARY_MECH_COST_MULTIPLIER;
+            militaryMechlinkCost = DEFAULT_MILITARY_MECHLINK_COST;
+        }
+
+        public static void ResetAutoResolveToDefaults()
+        {
+            applyAutoResolveInjuries = DEFAULT_APPLY_AUTO_RESOLVE_INJURIES;
+            autoResolveCasualtyDeathThreshold = DEFAULT_AUTO_RESOLVE_CASUALTY_DEATH_THRESHOLD;
+            autoResolveCasualtyMaxDeathFraction = DEFAULT_AUTO_RESOLVE_CASUALTY_MAX_DEATH_FRACTION;
+            crushingDefeatPenaltyMultiplier = DEFAULT_CRUSHING_DEFEAT_PENALTY_MULTIPLIER;
+            overwhelmingVictoryRewardMultiplier = DEFAULT_OVERWHELMING_VICTORY_REWARD_MULTIPLIER;
+            respectLethalDamageThreshold = DEFAULT_RESPECT_LETHAL_DAMAGE_THRESHOLD;
+            autoResolveTicksPerRound = DEFAULT_AUTO_RESOLVE_TICKS_PER_ROUND;
+        }
+
+        public static void ResetSquadsAndGenesToDefaults()
+        {
+            maxSquadSize = DEFAULT_MAX_SQUAD_SIZE;
+            maxAnimalSubpawns = DEFAULT_MAX_ANIMAL_SUBPAWNS;
+            squadHireCostMultiplier = DEFAULT_SQUAD_HIRE_COST_MULTIPLIER;
+            squadUpgradeCostMultiplier = DEFAULT_SQUAD_UPGRADE_COST_MULTIPLIER;
+            squadDeploymentCostPercentage = DEFAULT_SQUAD_DEPLOYMENT_COST_PERCENTAGE;
+            deploymentBillLifespan_days = DEFAULT_DEPLOYMENT_BILL_LIFESPAN_DAYS;
+            geneValueWeightMvf       = DEFAULT_GENE_W_MVF;
+            geneValueWeightMet       = DEFAULT_GENE_W_MET;
+            geneValueWeightArc       = DEFAULT_GENE_W_ARC;
+            geneValueWeightEffects   = DEFAULT_GENE_W_EFFECTS;
+            geneValueWeightPain      = DEFAULT_GENE_W_PAIN;
+            geneValueWeightDmgResist = DEFAULT_GENE_W_DMGRESIST;
+            geneValueFactorUnlimited = DEFAULT_GENE_FACTOR_UNLIMITED;
+            geneValueMaxFactor       = DEFAULT_GENE_MAX_FACTOR;
+        }
+
+        public static void ResetBattleArchiveToDefaults()
+        {
+            battleArchiveMaxEntries = DEFAULT_BATTLE_ARCHIVE_MAX_ENTRIES;
+            battleArchiveUnlimited = DEFAULT_BATTLE_ARCHIVE_UNLIMITED;
+        }
+
+        public static void ResetRoadBuilderToDefaults()
+        {
+            useThreadedRoadComputation = DEFAULT_USE_THREADED_ROAD_COMPUTATION;
+            edgesPerRoadTick = DEFAULT_EDGES_PER_ROAD_TICK;
+        }
+
+        public static void ResetCompatToDefaults()
+        {
+            vpePsycastBaseCost = DEFAULT_VPE_PSYCAST_BASE_COST;
+            vpePsycastPerLevelCost = DEFAULT_VPE_PSYCAST_PER_LEVEL_COST;
+            vpeFocusCost = DEFAULT_VPE_FOCUS_COST;
+            vpeStatPointCost = DEFAULT_VPE_STAT_POINT_COST;
+            militaryPsycastCostMultiplier = DEFAULT_MILITARY_PSYCAST_COST_MULTIPLIER;
+        }
+
+        /// <summary>
+        /// Universal "Reset to defaults": resets every settings section, including Compatibility.
+        /// </summary>
+        public static void ResetAllToDefaults()
+        {
+            ResetGeneralToDefaults();
+            ResetEventsToDefaults();
+            ResetMilitaryActionToDefaults();
+            ResetAutoResolveToDefaults();
+            ResetSquadsAndGenesToDefaults();
+            ResetBattleArchiveToDefaults();
+            ResetRoadBuilderToDefaults();
+            ResetCompatToDefaults();
+            LogUtil.Message($"Settings reset: timeBetweenTaxes_days={timeBetweenTaxes_days}");
         }
 
         public static int DaysBetweenTaxesByDifficulty(EmpireDifficultyLevel difficulty)
@@ -781,63 +910,11 @@ namespace FactionColonies
                 }));
             }
 
+            DrawSectionResetButton(ls, ResetGeneralToDefaults);
+
             if (ls.ButtonText("FCSettingResetButton".Translate()))
             {
-                silverPerResource = DEFAULT_SILVER_PER_RESOURCE;
-                timeBetweenTaxes_days = DEFAULT_TAX_INTERVAL_DAYS;
-                productionTitheMod = DEFAULT_PRODUCTION_TITHE_MOD;
-                workerCost = DEFAULT_WORKER_COST;
-                medievalTechOnly = DEFAULT_MEDIEVAL_TECH_ONLY;
-                mirrorPlayerTechLevel = DEFAULT_MIRROR_PLAYER_TECH_LEVEL;
-                settlementMaxLevel = DEFAULT_SETTLEMENT_MAX_LEVEL;
-                minDaysTillMilitaryAction = DEFAULT_MIN_DAYS_TIL_MILITARY_ACTION;
-                maxDaysTillMilitaryAction = DEFAULT_MAX_DAYS_TIL_MILITARY_ACTION;
-                minDaysTillRandomEvent = DEFAULT_MIN_DAYS_TIL_RANDOM_EVENT;
-                maxDaysTillRandomEvent = DEFAULT_MAX_DAYS_TIL_RANDOM_EVENT;
-                disableRandomEvents = DEFAULT_DISABLE_RANDOM_EVENTS;
-                useThreadedRoadComputation = DEFAULT_USE_THREADED_ROAD_COMPUTATION;
-                edgesPerRoadTick = DEFAULT_EDGES_PER_ROAD_TICK;
-                battleMode = DEFAULT_BATTLE_MODE;
-                maxThreatMultiplier = DEFAULT_MAX_THREAT_MULTIPLIER;
-                defenderAdvantage = DEFAULT_DEFENDER_ADVANTAGE;
-                efficiencyDamping = DEFAULT_EFFICIENCY_DAMPING;
-                maxConcurrentBattleMaps = 0;
-                autoResolveTicksPerRound = DEFAULT_AUTO_RESOLVE_TICKS_PER_ROUND;
-                autoResolveCasualtyDeathThreshold = DEFAULT_AUTO_RESOLVE_CASUALTY_DEATH_THRESHOLD;
-                autoResolveCasualtyMaxDeathFraction = DEFAULT_AUTO_RESOLVE_CASUALTY_MAX_DEATH_FRACTION;
-                applyAutoResolveInjuries = DEFAULT_APPLY_AUTO_RESOLVE_INJURIES;
-                crushingDefeatPenaltyMultiplier = DEFAULT_CRUSHING_DEFEAT_PENALTY_MULTIPLIER;
-                overwhelmingVictoryRewardMultiplier = DEFAULT_OVERWHELMING_VICTORY_REWARD_MULTIPLIER;
-                respectLethalDamageThreshold = DEFAULT_RESPECT_LETHAL_DAMAGE_THRESHOLD;
-                antiExploit = DEFAULT_ANTI_EXPLOIT;
-                restrictDefenseMapLoot = DEFAULT_RESTRICT_DEFENSE_MAP_LOOT;
-                mercenaryHealRatePerHour = 1f;
-                militaryMechRepairRate = 4f;
-                squadHireCostMultiplier = DEFAULT_SQUAD_HIRE_COST_MULTIPLIER;
-                squadUpgradeCostMultiplier = DEFAULT_SQUAD_UPGRADE_COST_MULTIPLIER;
-                maxSquadSize = DEFAULT_MAX_SQUAD_SIZE;
-                maxAnimalSubpawns = DEFAULT_MAX_ANIMAL_SUBPAWNS;
-                squadDeploymentCostPercentage = DEFAULT_SQUAD_DEPLOYMENT_COST_PERCENTAGE;
-                deploymentBillLifespan_days = DEFAULT_DEPLOYMENT_BILL_LIFESPAN_DAYS;
-                geneValueWeightMvf       = DEFAULT_GENE_W_MVF;
-                geneValueWeightMet       = DEFAULT_GENE_W_MET;
-                geneValueWeightArc       = DEFAULT_GENE_W_ARC;
-                geneValueWeightEffects   = DEFAULT_GENE_W_EFFECTS;
-                geneValueWeightPain      = DEFAULT_GENE_W_PAIN;
-                geneValueWeightDmgResist = DEFAULT_GENE_W_DMGRESIST;
-                geneValueFactorUnlimited = DEFAULT_GENE_FACTOR_UNLIMITED;
-                geneValueMaxFactor       = DEFAULT_GENE_MAX_FACTOR;
-                battleArchiveMaxEntries = DEFAULT_BATTLE_ARCHIVE_MAX_ENTRIES;
-                battleArchiveUnlimited = DEFAULT_BATTLE_ARCHIVE_UNLIMITED;
-                disableEventsWithOptions = DEFAULT_DISABLE_EVENTS_WITH_OPTIONS;
-                eventSilverCostMultiplier = DEFAULT_EVENT_SILVER_COST_MULTIPLIER;
-                forcedTaxDeliveryMode = DEFAULT_TAX_DELIVERY_MODE;
-                taxNotificationMode = DEFAULT_TAX_NOTIFICATION_MODE;
-                difficultyLevel = DEFAULT_DIFFICULTY_LEVEL;
-                patchNoteAutoOpenThreshold = DEFAULT_PATCH_NOTE_AUTO_OPEN_THRESHOLD;
-                disabledEventDefs.Clear();
-                ApplyDifficultyPreset(difficultyLevel);
-                LogUtil.Message($"Settings reset: timeBetweenTaxes_days={timeBetweenTaxes_days}");
+                ResetAllToDefaults();
             }
 
             contentHeightGeneral = ls.CurHeight + 12f;
@@ -925,6 +1002,8 @@ namespace FactionColonies
                 }
             }
 
+            DrawSectionResetButton(ls, ResetEventsToDefaults);
+
             contentHeightEvents = ls.CurHeight + 12f;
             ls.End();
 
@@ -989,25 +1068,7 @@ namespace FactionColonies
                 militaryMechlinkCost = ls.Slider((float)militaryMechlinkCost, 0f, 5000f);
             }
 
-            DrawSectionResetButton(ls, delegate
-            {
-                disableHostileMilitaryActions = DEFAULT_DISABLE_HOSTILE_MILITARY_ACTIONS;
-                antiExploit = DEFAULT_ANTI_EXPLOIT;
-                restrictDefenseMapLoot = DEFAULT_RESTRICT_DEFENSE_MAP_LOOT;
-                battleMode = DEFAULT_BATTLE_MODE;
-                minDaysTillMilitaryAction = DEFAULT_MIN_DAYS_TIL_MILITARY_ACTION;
-                maxDaysTillMilitaryAction = DEFAULT_MAX_DAYS_TIL_MILITARY_ACTION;
-                minMaxDaysTillMilitaryAction = new IntRange(minDaysTillMilitaryAction, maxDaysTillMilitaryAction);
-                maxThreatMultiplier = DEFAULT_MAX_THREAT_MULTIPLIER;
-                defenderAdvantage = DEFAULT_DEFENDER_ADVANTAGE;
-                maxConcurrentBattleMaps = 0;
-                efficiencyDamping = DEFAULT_EFFICIENCY_DAMPING;
-                mercenaryHealRatePerHour = 1f;
-                militaryMechRepairRate = 4f;
-                militaryPsylinkCostMultiplier = 1.0;
-                militaryMechCostMultiplier = 1.0;
-                militaryMechlinkCost = 1000.0;
-            });
+            DrawSectionResetButton(ls, ResetMilitaryActionToDefaults);
 
             ls.Gap(12f);
             ls.GapLine();
@@ -1031,15 +1092,7 @@ namespace FactionColonies
 
             ls.CheckboxLabeled("FCSettingRespectLethalDamageThreshold".Translate(), ref respectLethalDamageThreshold, "FCSettingRespectLethalDamageThresholdTip".Translate());
 
-            DrawSectionResetButton(ls, delegate
-            {
-                applyAutoResolveInjuries = DEFAULT_APPLY_AUTO_RESOLVE_INJURIES;
-                autoResolveCasualtyDeathThreshold = DEFAULT_AUTO_RESOLVE_CASUALTY_DEATH_THRESHOLD;
-                autoResolveCasualtyMaxDeathFraction = DEFAULT_AUTO_RESOLVE_CASUALTY_MAX_DEATH_FRACTION;
-                crushingDefeatPenaltyMultiplier = DEFAULT_CRUSHING_DEFEAT_PENALTY_MULTIPLIER;
-                overwhelmingVictoryRewardMultiplier = DEFAULT_OVERWHELMING_VICTORY_REWARD_MULTIPLIER;
-                respectLethalDamageThreshold = DEFAULT_RESPECT_LETHAL_DAMAGE_THRESHOLD;
-            });
+            DrawSectionResetButton(ls, ResetAutoResolveToDefaults);
 
             ls.Gap(12f);
             ls.GapLine();
@@ -1099,23 +1152,7 @@ namespace FactionColonies
                 }
             }
 
-            DrawSectionResetButton(ls, delegate
-            {
-                maxSquadSize = DEFAULT_MAX_SQUAD_SIZE;
-                maxAnimalSubpawns = DEFAULT_MAX_ANIMAL_SUBPAWNS;
-                squadHireCostMultiplier = DEFAULT_SQUAD_HIRE_COST_MULTIPLIER;
-                squadUpgradeCostMultiplier = DEFAULT_SQUAD_UPGRADE_COST_MULTIPLIER;
-                squadDeploymentCostPercentage = DEFAULT_SQUAD_DEPLOYMENT_COST_PERCENTAGE;
-                deploymentBillLifespan_days = DEFAULT_DEPLOYMENT_BILL_LIFESPAN_DAYS;
-                geneValueWeightMvf       = DEFAULT_GENE_W_MVF;
-                geneValueWeightMet       = DEFAULT_GENE_W_MET;
-                geneValueWeightArc       = DEFAULT_GENE_W_ARC;
-                geneValueWeightEffects   = DEFAULT_GENE_W_EFFECTS;
-                geneValueWeightPain      = DEFAULT_GENE_W_PAIN;
-                geneValueWeightDmgResist = DEFAULT_GENE_W_DMGRESIST;
-                geneValueFactorUnlimited = DEFAULT_GENE_FACTOR_UNLIMITED;
-                geneValueMaxFactor       = DEFAULT_GENE_MAX_FACTOR;
-            });
+            DrawSectionResetButton(ls, ResetSquadsAndGenesToDefaults);
 
             ls.Gap(12f);
             ls.GapLine();
@@ -1129,6 +1166,8 @@ namespace FactionColonies
                 ls.Label("FCBattleArchiveMaxEntriesLabel".Translate() + ": " + battleArchiveMaxEntries.ToString(), -1f, "FCBattleArchiveMaxEntriesTip".Translate());
                 battleArchiveMaxEntries = (int)ls.Slider(battleArchiveMaxEntries, MIN_BATTLE_ARCHIVE_MAX_ENTRIES, MAX_BATTLE_ARCHIVE_MAX_ENTRIES);
             }
+
+            DrawSectionResetButton(ls, ResetBattleArchiveToDefaults);
 
             contentHeightMilitary = ls.CurHeight + 12f;
             ls.End();
@@ -1167,6 +1206,9 @@ namespace FactionColonies
             {
                 queue.FlushCache();
             }
+
+            ls.Gap(12f);
+            DrawSectionResetButton(ls, ResetRoadBuilderToDefaults);
 
             contentHeightRoadBuilder = ls.CurHeight + 12f;
             ls.End();
@@ -1212,14 +1254,7 @@ namespace FactionColonies
                 ls.Label("FCSettingPsycastCostMult".Translate() + ": " + militaryPsycastCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingPsycastCostMultTip".Translate());
                 militaryPsycastCostMultiplier = ls.Slider((float)militaryPsycastCostMultiplier, 0f, 5f);
 
-                DrawSectionResetButton(ls, delegate
-                {
-                    vpePsycastBaseCost = DEFAULT_VPE_PSYCAST_BASE_COST;
-                    vpePsycastPerLevelCost = DEFAULT_VPE_PSYCAST_PER_LEVEL_COST;
-                    vpeFocusCost = DEFAULT_VPE_FOCUS_COST;
-                    vpeStatPointCost = DEFAULT_VPE_STAT_POINT_COST;
-                    militaryPsycastCostMultiplier = 1.0;
-                });
+                DrawSectionResetButton(ls, ResetCompatToDefaults);
             }
 
             if (!any)
