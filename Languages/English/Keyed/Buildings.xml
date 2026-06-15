@@ -40,7 +40,13 @@
 	<FCCapitalLost>Empire capital has been lost! You should establish a new capital seat.</FCCapitalLost>
 
 	<!-- Tax Spot -->
+	<FCTaxSpotGizmoLabel>Set Tax Delivery Spot</FCTaxSpotGizmoLabel>
+	<FCTaxSpotGizmoDescActive>This tax spot is currently the active tax delivery location. Click to disable.</FCTaxSpotGizmoDescActive>
 	<FCTaxSpotGizmoDescInactive>Click to make this tax spot the active tax delivery location for {0}.</FCTaxSpotGizmoDescInactive>
+	<FCTaxSpotEnabledMessage>Tax delivery spot set! All taxes and goods will now be delivered to this location.</FCTaxSpotEnabledMessage>
+	<FCTaxSpotDisabledMessage>Tax delivery spot disabled. Taxes will use the fallback tax map if set.</FCTaxSpotDisabledMessage>
+	<FCTaxSpotInspectActive>Active tax delivery spot</FCTaxSpotInspectActive>
+	<FCTaxSpotInspectInactive>Tax spot (delivery disabled)</FCTaxSpotInspectInactive>
 
 	<!-- Building Window -->
 	<Empire_BuildingWindow_Header>Buildings — {0}</Empire_BuildingWindow_Header>

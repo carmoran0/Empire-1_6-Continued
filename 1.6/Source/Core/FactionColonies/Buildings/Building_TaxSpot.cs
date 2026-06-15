@@ -58,10 +58,10 @@ namespace FactionColonies
             {
                 yield return new Command_Toggle
                 {
-                    defaultLabel = "Set Tax Delivery Spot",
+                    defaultLabel = "FCTaxSpotGizmoLabel".Translate(),
                     defaultDesc = isActiveTaxDeliverySpot
-                        ? "This tax spot is currently the active tax delivery location. Click to disable."
-                        : (string)"FCTaxSpotGizmoDescInactive".Translate(FindFC.EmpireName),
+                        ? "FCTaxSpotGizmoDescActive".Translate()
+                        : "FCTaxSpotGizmoDescInactive".Translate(FindFC.EmpireName),
                     icon = TexLoad.iconTrade, // Using existing trade icon
                     isActive = () => isActiveTaxDeliverySpot,
                     toggleAction = () =>
@@ -70,14 +70,14 @@ namespace FactionColonies
                         if (IsActiveTaxDeliverySpot)
                         {
                             Messages.Message(
-                                "Tax delivery spot set! All taxes and goods will now be delivered to this location.",
+                                "FCTaxSpotEnabledMessage".Translate(),
                                 MessageTypeDefOf.PositiveEvent
                             );
                         }
                         else
                         {
                             Messages.Message(
-                                "Tax delivery spot disabled. Taxes will use the fallback tax map if set.",
+                                "FCTaxSpotDisabledMessage".Translate(),
                                 MessageTypeDefOf.NeutralEvent
                             );
                         }
@@ -90,8 +90,8 @@ namespace FactionColonies
         {
             string baseString = base.GetInspectString();
             string statusString = isActiveTaxDeliverySpot
-                ? "Active tax delivery spot"
-                : "Tax spot (delivery disabled)";
+                ? "FCTaxSpotInspectActive".Translate()
+                : "FCTaxSpotInspectInactive".Translate();
 
             return string.IsNullOrEmpty(baseString)
                 ? statusString
