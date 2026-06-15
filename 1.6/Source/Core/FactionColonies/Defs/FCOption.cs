@@ -102,7 +102,7 @@ namespace FactionColonies
 
             this.header = evt.label;
             this.options = evt.options;
-            this.desc = string.IsNullOrEmpty(evt.optionDescription) ? evt.desc : evt.optionDescription;
+            this.desc = FCEventMaker.ResolveFactionTokens(evt.optionDescription.NullOrEmpty() ? evt.desc : evt.optionDescription);
             this.parentEvent = parentEvent;
 
             // Category color

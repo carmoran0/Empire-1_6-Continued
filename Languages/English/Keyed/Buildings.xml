@@ -39,6 +39,9 @@
 	<FCCapitalSeatDisabled>Capital seat disabled. Empire will use fallback capital location if available.</FCCapitalSeatDisabled>
 	<FCCapitalLost>Empire capital has been lost! You should establish a new capital seat.</FCCapitalLost>
 
+	<!-- Tax Spot -->
+	<FCTaxSpotGizmoDescInactive>Click to make this tax spot the active tax delivery location for {0}.</FCTaxSpotGizmoDescInactive>
+
 	<!-- Building Window -->
 	<Empire_BuildingWindow_Header>Buildings — {0}</Empire_BuildingWindow_Header>
 	<Empire_BuildingWindow_EmptySlot>Empty Building Slot</Empire_BuildingWindow_EmptySlot>

@@ -61,7 +61,7 @@ namespace FactionColonies
                     defaultLabel = "Set Tax Delivery Spot",
                     defaultDesc = isActiveTaxDeliverySpot
                         ? "This tax spot is currently the active tax delivery location. Click to disable."
-                        : "Click to make this tax spot the active tax delivery location for your empire.",
+                        : (string)"FCTaxSpotGizmoDescInactive".Translate(FindFC.EmpireName),
                     icon = TexLoad.iconTrade, // Using existing trade icon
                     isActive = () => isActiveTaxDeliverySpot,
                     toggleAction = () =>

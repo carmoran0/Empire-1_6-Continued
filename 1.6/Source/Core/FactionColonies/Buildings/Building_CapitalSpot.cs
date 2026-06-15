@@ -93,7 +93,7 @@ namespace FactionColonies
 
                         Find.LetterStack.ReceiveLetter(
                             "FCCapitalRelocatedLabel".Translate(),
-                            "FCCapitalRelocatedDesc".Translate(),
+                            "FCCapitalRelocatedDesc".Translate(FindFC.EmpireName),
                             LetterDefOf.NeutralEvent
                         );
 

@@ -4,7 +4,7 @@
 	<FactionColonies.FCEventDef>
 		<defName>wanderlust</defName>
 		<label>Wanderlust</label>
-		<desc>The citizens of your faction are itching to get on the road and settle new lands.</desc>
+		<desc>The citizens of {FACTION} are itching to get on the road and settle new lands.</desc>
 		<category>EC_Settlement</category>
 
 		<timeTillTrigger>300000</timeTillTrigger>

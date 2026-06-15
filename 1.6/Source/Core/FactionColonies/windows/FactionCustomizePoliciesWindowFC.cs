@@ -103,7 +103,7 @@ namespace FactionColonies
                 }
 
                 GUI.color = savedColor;
-                TooltipHandler.TipRegion(clearBtn, "FCClearPoliciesTooltip".Translate());
+                TooltipHandler.TipRegion(clearBtn, "FCClearPoliciesTooltip".Translate(FindFC.EmpireName));
             }
 
             // Confirm button

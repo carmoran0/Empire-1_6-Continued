@@ -247,7 +247,7 @@ namespace FactionColonies
 
                 string roadTypeName = this.roadDef?.LabelCap ?? "Road";
                 Messages.Message(
-                    "FCRoadSegmentsBuilt".Translate(roadTypeName),
+                    "FCRoadSegmentsBuilt".Translate(FindFC.EmpireName, roadTypeName),
                     MessageTypeDefOf.PositiveEvent);
             }
             return built;

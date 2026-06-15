@@ -227,7 +227,7 @@
   <FactionColonies.FCEventDef>
     <defName>drugTrade-investigation_success</defName>
     <label>Drug Trade (Investigation Success)</label>
-    <desc>The authorities have returned with good news! They have found the drug production. The sneaky lads almost got away, but no one can match the strength of your empire!
+    <desc>The authorities have returned with good news! They have found the drug production. The sneaky lads almost got away, but no one can match the strength of {FACTION}!
 
 However, they point out that a coin or two could be turned from taking over the production instead...</desc>
     <category>EC_Economy</category>

@@ -54,7 +54,7 @@
 	<FCPolicySelection>Policy Selection</FCPolicySelection>
 	<FCSelectPolicies>Select Policies</FCSelectPolicies>
 	<FCClearPolicies>Clear Policies ({0} silver)</FCClearPolicies>
-	<FCClearPoliciesTooltip>Wipe your current core policies and choose new ones. The cost scales with your empire's size and prosperity.</FCClearPoliciesTooltip>
+	<FCClearPoliciesTooltip>Wipe your current core policies and choose new ones. The cost scales with {0}'s size and prosperity.</FCClearPoliciesTooltip>
 	<FCClearPoliciesConfirm>Spend {0} silver to clear your current core policies and choose new ones?</FCClearPoliciesConfirm>
 	<FCClearPoliciesInsufficientSilver>Insufficient silver to clear policies (need {0}).</FCClearPoliciesInsufficientSilver>
 	<FCPolicyAlreadyEnacted>That policy has already been enacted</FCPolicyAlreadyEnacted>
@@ -155,10 +155,10 @@
 	<FCCapitalAlreadyEstablished>Empire capital is already established at {0}. Disable the capital seat there first if you want to move it.</FCCapitalAlreadyEstablished>
 	<FCUnableToSetCapitalHere>Unable to set faction capital on this map. Please go to your capital map and use the Set Capital button or build a Capital Seat.</FCUnableToSetCapitalHere>
 	<FCCapitalRelocatedLabel>Empire Capital Relocated</FCCapitalRelocatedLabel>
-	<FCCapitalRelocatedDesc>The seat of your Empire's capital has updated to your new location.</FCCapitalRelocatedDesc>
+	<FCCapitalRelocatedDesc>The seat of {0}'s capital has updated to your new location.</FCCapitalRelocatedDesc>
 	
 	<FCCaravanTypes>Caravan Types</FCCaravanTypes>
-	<FCCaravanTypesDesc>Select which types of trade caravans your empire will send.</FCCaravanTypesDesc>
+	<FCCaravanTypesDesc>Select which types of trade caravans {0} will send.</FCCaravanTypesDesc>
 	<FCCaravanNoneError>At least one caravan type must be enabled.</FCCaravanNoneError>
 	<FCCaravanResourceTooltip>Caravan specializing in {0} goods, drawn from empire-wide production.</FCCaravanResourceTooltip>
 	<FCCaravanResourceTechLocked>{0} caravans are not available at your current tech level.</FCCaravanResourceTechLocked>

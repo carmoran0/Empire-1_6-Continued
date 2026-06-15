@@ -52,7 +52,7 @@
 	<FCOpenSettlementWindowDefaultLabel>See settlement information</FCOpenSettlementWindowDefaultLabel>
 	<FCOpenSettlementWindowDefaultDesc>Opens the settlement window</FCOpenSettlementWindowDefaultDesc>
 	<FCBuildRoads>Build Roads</FCBuildRoads>
-	<FCRoadSegmentsBuilt>Your Empire settlements have constructed new {0} segments connecting your territories.</FCRoadSegmentsBuilt>
+	<FCRoadSegmentsBuilt>{0}'s settlements have constructed new {1} segments connecting your territories.</FCRoadSegmentsBuilt>
 
 	<!-- Settlement Stats -->
 	<FCSettlementMilitaryLevel>Settlement Military Level</FCSettlementMilitaryLevel>

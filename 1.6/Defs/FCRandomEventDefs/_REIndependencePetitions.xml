@@ -4,7 +4,7 @@
   <FactionColonies.FCEventDef>
     <defName>independencePetitions_0</defName>
     <label>Independence Petitions</label>
-    <desc>Due to widespread unrest in your faction, a growing number of settlements are beginning to entertain ideas of secession and independence.
+    <desc>Due to widespread unrest in {FACTION}, a growing number of settlements are beginning to entertain ideas of secession and independence.
 
 How will you address the dissent?</desc>
     <category>EC_Social</category>

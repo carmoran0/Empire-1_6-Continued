@@ -76,7 +76,7 @@ namespace FactionColonies
             // Sub-header
             Text.Font = GameFont.Tiny;
             Rect subHeader = new Rect(inRect.x, header.yMax, inRect.width, 20f);
-            Widgets.Label(subHeader, "FCCaravanTypesDesc".Translate());
+            Widgets.Label(subHeader, "FCCaravanTypesDesc".Translate(FindFC.EmpireName));
 
             float bottomY = inRect.yMax - CloseButSize.y - margin;
 
