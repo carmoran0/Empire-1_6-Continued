@@ -273,7 +273,7 @@ namespace FactionColonies
          * Crushing Defeat (100% rate, the losing side wiped) follows the same ramp,
          * which lands at ~80% deaths with defaults. */
         public const float DEFAULT_AUTO_RESOLVE_CASUALTY_DEATH_THRESHOLD = 0.75f;
-        public const float DEFAULT_AUTO_RESOLVE_CASUALTY_MAX_DEATH_FRACTION = 0.80f;
+        public const float DEFAULT_AUTO_RESOLVE_CASUALTY_MAX_DEATH_FRACTION = 0.50f;
         public const bool DEFAULT_APPLY_AUTO_RESOLVE_INJURIES = true;
         public const bool DEFAULT_RESPECT_LETHAL_DAMAGE_THRESHOLD = true;
         public static float autoResolveCasualtyDeathThreshold = DEFAULT_AUTO_RESOLVE_CASUALTY_DEATH_THRESHOLD;
@@ -618,9 +618,6 @@ namespace FactionColonies
             efficiencyDamping = DEFAULT_EFFICIENCY_DAMPING;
             mercenaryHealRatePerHour = DEFAULT_MERCENARY_HEAL_RATE_PER_HOUR;
             militaryMechRepairRate = DEFAULT_MILITARY_MECH_REPAIR_RATE;
-            militaryPsylinkCostMultiplier = DEFAULT_MILITARY_PSYLINK_COST_MULTIPLIER;
-            militaryMechCostMultiplier = DEFAULT_MILITARY_MECH_COST_MULTIPLIER;
-            militaryMechlinkCost = DEFAULT_MILITARY_MECHLINK_COST;
         }
 
         public static void ResetAutoResolveToDefaults()
@@ -642,6 +639,9 @@ namespace FactionColonies
             squadUpgradeCostMultiplier = DEFAULT_SQUAD_UPGRADE_COST_MULTIPLIER;
             squadDeploymentCostPercentage = DEFAULT_SQUAD_DEPLOYMENT_COST_PERCENTAGE;
             deploymentBillLifespan_days = DEFAULT_DEPLOYMENT_BILL_LIFESPAN_DAYS;
+            militaryPsylinkCostMultiplier = DEFAULT_MILITARY_PSYLINK_COST_MULTIPLIER;
+            militaryMechCostMultiplier = DEFAULT_MILITARY_MECH_COST_MULTIPLIER;
+            militaryMechlinkCost = DEFAULT_MILITARY_MECHLINK_COST;
             geneValueWeightMvf       = DEFAULT_GENE_W_MVF;
             geneValueWeightMet       = DEFAULT_GENE_W_MET;
             geneValueWeightArc       = DEFAULT_GENE_W_ARC;
@@ -919,6 +919,13 @@ namespace FactionColonies
             if (ls.ButtonText("FCSelectTaxDeliveryModeButton".Translate() + forcedTaxDeliveryMode)) Find.WindowStack.Add(new FloatMenu(ForcedTaxDeliveryOptions));
             if (ls.ButtonText("FCTaxNotificationModeButton".Translate() + taxNotificationMode)) Find.WindowStack.Add(new FloatMenu(TaxNotificationOptions));
 
+            ls.Label("FCSettingSettlementUpgradeTime".Translate() + ": " + settlementUpgradeTimeMultiplier.ToString("0.0") + "x", -1f);
+            settlementUpgradeTimeMultiplier = (float)Math.Round(ls.Slider(settlementUpgradeTimeMultiplier, 0f, 10f), 1);
+            ls.Label("FCSettingBuildingConstructTime".Translate() + ": " + buildingConstructTimeMultiplier.ToString("0.0") + "x", -1f);
+            buildingConstructTimeMultiplier = (float)Math.Round(ls.Slider(buildingConstructTimeMultiplier, 0f, 10f), 1);
+
+            ls.GapLine();
+
             ls.CheckboxLabeled("FCSettingEnableDebugLogging".Translate(), ref printDebug);
 
             if (ls.ButtonText("FCOpenPatchNotes".Translate())) DebugActionsMisc.PatchNotesDisplayWindow();
@@ -945,15 +952,10 @@ namespace FactionColonies
             }
 
             ls.GapLine();
-            ls.Label("FCSettingTimersHeader".Translate());
-            ls.Label("FCSettingSettlementUpgradeTime".Translate() + ": " + settlementUpgradeTimeMultiplier.ToString("0.0") + "x", -1f, "FCSettingTimerTip".Translate());
-            settlementUpgradeTimeMultiplier = (float)Math.Round(ls.Slider(settlementUpgradeTimeMultiplier, 0f, 10f), 1);
-            ls.Label("FCSettingBuildingConstructTime".Translate() + ": " + buildingConstructTimeMultiplier.ToString("0.0") + "x", -1f, "FCSettingTimerTip".Translate());
-            buildingConstructTimeMultiplier = (float)Math.Round(ls.Slider(buildingConstructTimeMultiplier, 0f, 10f), 1);
 
             ls.Gap(11f);
 
-            DrawSectionResetButton(ls, ResetGeneralToDefaults);
+            DrawSectionResetButton(ls, ResetGeneralToDefaults, "FCSettingResetSectionTag".Translate("FCSettingsTabGeneral".Translate()));
 
             ls.GapLine();
 
@@ -1117,24 +1119,6 @@ namespace FactionColonies
             ls.Label("FCSettingMechRepairRate".Translate() + ": " + militaryMechRepairRate.ToString("0") + " HP", -1f, "FCSettingMechRepairRateTip".Translate());
             militaryMechRepairRate = ls.Slider(militaryMechRepairRate, 0f, 50f);
 
-            // Vanilla psylink cost (base-game psycasts). Hidden when VPE is active — VPE makes psylink
-            // levels free and charges per chosen psycast instead (see the Compatibility tab).
-            if (!FactionCompat.VPEActive)
-            {
-                ls.Label("FCSettingPsylinkCostMult".Translate() + ": " + militaryPsylinkCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingPsylinkCostMultTip".Translate());
-                militaryPsylinkCostMultiplier = ls.Slider((float)militaryPsylinkCostMultiplier, 0f, 5f);
-            }
-
-            // Mechanitor merc costs (Biotech only).
-            if (ModsConfig.BiotechActive)
-            {
-                ls.Label("FCSettingMechCostMult".Translate() + ": " + militaryMechCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingMechCostMultTip".Translate());
-                militaryMechCostMultiplier = ls.Slider((float)militaryMechCostMultiplier, 0f, 5f);
-
-                ls.Label("FCSettingMechlinkCost".Translate() + ": " + militaryMechlinkCost.ToString("0"), -1f, "FCSettingMechlinkCostTip".Translate());
-                militaryMechlinkCost = ls.Slider((float)militaryMechlinkCost, 0f, 5000f);
-            }
-
             DrawSectionResetButton(ls, ResetMilitaryActionToDefaults);
 
             ls.Gap(12f);
@@ -1170,7 +1154,8 @@ namespace FactionColonies
             ls.Label("FCSettingMaxSquadSize".Translate() + ": " + maxSquadSize.ToString(), -1f, "FCSettingMaxSquadSizeTip".Translate());
             maxSquadSize = (int)ls.Slider(maxSquadSize, 1f, 60f);
 
-            ls.Label("FCSettingMaxAnimalSubpawns".Translate() + ": " + maxAnimalSubpawns.ToString(), -1f, "FCSettingMaxAnimalSubpawnsTip".Translate());
+            string tip = FactionCompat.GiddyUp2Active ? "FCSettingMaxAnimalSubpawnsGiddyUpTip".Translate() : "FCSettingMaxAnimalSubpawnsTip".Translate();
+            ls.Label("FCSettingMaxAnimalSubpawns".Translate() + ": " + maxAnimalSubpawns.ToString(), -1f, tip);
             maxAnimalSubpawns = (int)ls.Slider(maxAnimalSubpawns, MIN_ANIMAL_SUBPAWNS, MAX_ANIMAL_SUBPAWNS_SLIDER);
 
             ls.Label("FCSettingSquadHireCostMultiplier".Translate() + ": " + squadHireCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingSquadHireCostMultiplierTip".Translate());
@@ -1184,6 +1169,25 @@ namespace FactionColonies
 
             ls.Label("FCSettingDeploymentBillLifespan".Translate() + ": " + deploymentBillLifespan_days.ToString() + " d", -1f, "FCSettingDeploymentBillLifespanTip".Translate());
             deploymentBillLifespan_days = (int)ls.Slider(deploymentBillLifespan_days, 1f, 60f);
+
+            // Vanilla psylink cost (base-game psycasts). Hidden when VPE is active — VPE makes psylink
+            // levels free and charges per chosen psycast instead (see the Compatibility tab).
+            // Only shows if Royalty is active (psylinks come with Royalty, after all)
+            if (!FactionCompat.VPEActive && ModsConfig.RoyaltyActive)
+            {
+                ls.Label("FCSettingPsylinkCostMult".Translate() + ": " + militaryPsylinkCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingPsylinkCostMultTip".Translate());
+                militaryPsylinkCostMultiplier = ls.Slider((float)militaryPsylinkCostMultiplier, 0f, 5f);
+            }
+
+            // Mechanitor merc costs (Biotech only).
+            if (ModsConfig.BiotechActive)
+            {
+                ls.Label("FCSettingMechCostMult".Translate() + ": " + militaryMechCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingMechCostMultTip".Translate());
+                militaryMechCostMultiplier = ls.Slider((float)militaryMechCostMultiplier, 0f, 5f);
+
+                ls.Label("FCSettingMechlinkCost".Translate() + ": " + militaryMechlinkCost.ToString("0"), -1f, "FCSettingMechlinkCostTip".Translate());
+                militaryMechlinkCost = ls.Slider((float)militaryMechlinkCost, 0f, 5000f);
+            }
 
             ls.Gap(8f);
             if (ModsConfig.BiotechActive)
@@ -1337,12 +1341,13 @@ namespace FactionColonies
         /// Draws a compact, left-aligned "Reset Section to Defaults" button into the given
         /// listing and invokes <paramref name="resetAction"/> when clicked.
         /// </summary>
-        private void DrawSectionResetButton(Listing_Standard ls, Action resetAction)
+        private void DrawSectionResetButton(Listing_Standard ls, Action resetAction, string label = null)
         {
+            string key = label ?? "FCSettingResetSection".Translate();
             ls.Gap(4f);
             Rect row = ls.GetRect(28f);
             Rect btn = new Rect(row.x, row.y, row.width, row.height);
-            if (Widgets.ButtonText(btn, "FCSettingResetSection".Translate())) resetAction();
+            if (Widgets.ButtonText(btn, key)) resetAction();
         }
     }
 
