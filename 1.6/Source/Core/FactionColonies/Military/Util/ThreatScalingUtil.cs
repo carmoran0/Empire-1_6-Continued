@@ -163,12 +163,21 @@ namespace FactionColonies
             return enemies.RandomElementByWeight(f =>
             {
                 double factionLevel = FindFC.EnemyPower?.GetOrCompute(f)?.level ?? 1.0;
-                double distance = Math.Abs(factionLevel - avgMilitaryLevel);
-                // 100% chance at even level; 75% chance at +/-1; 50% chance at +/-2; 25% chance at +/-3
-                // 5% for everything else
-                double weight = 1.0 - (distance * 0.25);
-                return (float)Math.Max(0.05, weight);
+                return (float)ComputeFactionSelectionWeight(factionLevel, avgMilitaryLevel);
             });
+        }
+
+        /// <summary>
+        /// Selection weight for an enemy faction, favoring factions whose defined power level is
+        /// close to the empire's average settlement military level. Full weight (1.0) at even
+        /// level; falls off linearly by 0.25 per level of distance (+/-1 -> 0.75, +/-2 -> 0.5,
+        /// +/-3 -> 0.25) and is floored at 0.05 so distant tiers are rare but never excluded.
+        /// Pure seam for <see cref="PickWeightedEnemyFaction"/>.
+        /// </summary>
+        public static double ComputeFactionSelectionWeight(double factionLevel, double avgMilitaryLevel)
+        {
+            double distance = Math.Abs(factionLevel - avgMilitaryLevel);
+            return Math.Max(0.05, 1.0 - (distance * 0.25));
         }
 
         /// <summary>
