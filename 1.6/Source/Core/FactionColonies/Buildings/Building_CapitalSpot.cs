@@ -144,10 +144,10 @@ namespace FactionColonies
             {
                 yield return new Command_Toggle
                 {
-                    defaultLabel = "Set Empire Capital",
+                    defaultLabel = "FCCapitalSpotGizmoLabel".Translate(),
                     defaultDesc = isActiveCapitalSpot
-                        ? "This is currently your Empire's capital seat. Click to disable."
-                        : "Click to make this the seat of your Empire's capital. This location will be used for travel time calculations and event targeting.",
+                        ? "FCCapitalSpotGizmoDescActive".Translate(FindFC.EmpireName)
+                        : "FCCapitalSpotGizmoDescInactive".Translate(FindFC.EmpireName),
                     icon = TexLoad.iconCustomize, // Using existing customize icon
                     isActive = () => isActiveCapitalSpot,
                     toggleAction = () =>
@@ -180,8 +180,8 @@ namespace FactionColonies
         {
             string baseString = base.GetInspectString();
             string statusString = isActiveCapitalSpot
-                ? "Active Empire Capital"
-                : "Capital seat (inactive)";
+                ? "FCCapitalSpotInspectActive".Translate()
+                : "FCCapitalSpotInspectInactive".Translate();
 
             return string.IsNullOrEmpty(baseString)
                 ? statusString
