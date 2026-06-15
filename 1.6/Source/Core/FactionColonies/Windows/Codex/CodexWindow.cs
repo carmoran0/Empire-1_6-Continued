@@ -41,6 +41,7 @@ namespace FactionColonies
                 new CodexTab_Info(),
                 new CodexTab_Settlements(this),
                 new CodexTab_Resources(this),
+                new CodexTab_Biomes(this),
                 new CodexTab_Buildings(this)
             };
             tabLabels = tabs.Select(t => t.TabLabel).ToList();
@@ -84,6 +85,28 @@ namespace FactionColonies
                 tabs[activeTabIndex].OnTabSelected();
             }
             resTab.SelectDef(def);
+        }
+
+        /// <summary>
+        /// Switches to the Biomes tab and selects the given biome.
+        /// Used for cross-tab navigation from the Resources and Settlements tabs.
+        /// </summary>
+        public void SelectBiome(BiomeResourceDef def)
+        {
+            CodexTab_Biomes biomeTab = tabs.OfType<CodexTab_Biomes>().FirstOrDefault();
+            if (biomeTab is null) return;
+
+            // Only switch to the tab if the biome is actually listed there (skips synthetic
+            // biomes like defaultBiome that the Resources table can show but this tab excludes).
+            if (!biomeTab.SelectDef(def)) return;
+
+            int tabIndex = tabs.IndexOf(biomeTab);
+            if (tabIndex >= 0 && tabIndex != activeTabIndex)
+            {
+                tabs[activeTabIndex].OnTabDeselected();
+                activeTabIndex = tabIndex;
+                tabs[activeTabIndex].OnTabSelected();
+            }
         }
 
         /// <summary>

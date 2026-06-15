@@ -29,7 +29,7 @@ namespace FactionColonies
 
         /// <summary>
         /// Optional banner texture path displayed in the right info pane.
-        /// If empty, falls back to the source mod's latest <see cref="PatchNoteDef"/> banner.
+        /// If empty, falls back to the source mod's About/Preview.png.
         /// </summary>
         [NoTranslate]
         public string bannerPath;
@@ -41,7 +41,7 @@ namespace FactionColonies
 
         /// <summary>
         /// Returns the banner texture. Checks <see cref="bannerPath"/> first,
-        /// then falls back to the source mod's latest <see cref="PatchNoteDef"/> banner.
+        /// then falls back to the source mod's About/Preview.png.
         /// </summary>
         public Texture2D BannerImage
         {
@@ -52,8 +52,8 @@ namespace FactionColonies
                     bannerLookedUp = true;
                     if (!bannerPath.NullOrEmpty())
                         bannerCached = ContentFinder<Texture2D>.Get(bannerPath, false);
-                    if (bannerCached is null && !modId.NullOrEmpty())
-                        bannerCached = PatchNoteDef.GetLatestForMod(modId)?.BannerImage;
+                    if (bannerCached is null)
+                        bannerCached = ModContentPack?.ModMetaData?.PreviewImage;
                 }
                 return bannerCached;
             }

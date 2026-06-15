@@ -75,10 +75,6 @@ namespace FactionColonies
         private string lastAppliedSearch = "";
         private readonly Dictionary<TechLevel, List<BuildingFCDef>> filteredCache = new Dictionary<TechLevel, List<BuildingFCDef>>();
 
-        /* Banner cache */
-        private readonly Dictionary<string, Texture2D> bannerCache = new Dictionary<string, Texture2D>();
-        private readonly HashSet<string> bannerLookedUp = new HashSet<string>();
-
         private class TechGroup
         {
             public TechLevel techLevel;
@@ -429,7 +425,7 @@ namespace FactionColonies
                 Color accent = GetTechColor(selectedBuilding.techLevel);
 
                 /* Banner */
-                Texture2D banner = GetBanner(selectedBuilding);
+                Texture2D banner = UIUtil.GetModBanner(selectedBuilding.modContentPack);
                 if (banner is object)
                 {
                     Rect bannerRect = new Rect(0f, curY, contentWidth, BannerHeight);
@@ -774,29 +770,6 @@ namespace FactionColonies
         }
 
         /**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-         *  BANNER HELPER
-         *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
-        private Texture2D GetBanner(BuildingFCDef def)
-        {
-            string modId = def.modContentPack?.PackageId;
-            if (modId.NullOrEmpty()) return null;
-
-            if (bannerLookedUp.Contains(modId))
-            {
-                Texture2D cached;
-                bannerCache.TryGetValue(modId, out cached);
-                return cached;
-            }
-            bannerLookedUp.Add(modId);
-
-            PatchNoteDef patchNote = PatchNoteDef.GetLatestForMod(modId);
-            Texture2D banner = patchNote?.BannerImage;
-            if (banner is object)
-                bannerCache[modId] = banner;
-            return banner;
-        }
-
-        /**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
          *  HEIGHT CALCULATIONS
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
         private float CalculateCenterHeight(float width)
@@ -857,7 +830,7 @@ namespace FactionColonies
             if (selectedBuilding is object)
             {
                 // Banner + mod name
-                if (GetBanner(selectedBuilding) is object)
+                if (UIUtil.GetModBanner(selectedBuilding.modContentPack) is object)
                     total += BannerHeight + SmallMargin;
                 string modName = selectedBuilding.modContentPack?.ModMetaData?.Name ?? "";
                 if (!modName.NullOrEmpty())

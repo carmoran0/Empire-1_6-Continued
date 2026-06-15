@@ -39,10 +39,6 @@ namespace FactionColonies
         /* Truncation cache */
         private readonly Dictionary<string, string> truncateCache = new Dictionary<string, string>();
 
-        /* Banner cache */
-        private readonly Dictionary<string, Texture2D> bannerCache = new Dictionary<string, Texture2D>();
-        private readonly HashSet<string> bannerLookedUp = new HashSet<string>();
-
         /* Tithe item cache (built once per resource, lazy) */
         private readonly Dictionary<ResourceTypeDef, List<TitheItemEntry>> titheItemCache
             = new Dictionary<ResourceTypeDef, List<TitheItemEntry>>();
@@ -245,7 +241,7 @@ namespace FactionColonies
                 Color accent = GetAccent(selectedResource);
 
                 /* Banner */
-                Texture2D banner = GetBanner(selectedResource);
+                Texture2D banner = UIUtil.GetModBanner(selectedResource.modContentPack);
                 if (banner is object)
                 {
                     Rect bannerRect = new Rect(0f, curY, contentWidth, BannerHeight);
@@ -405,6 +401,7 @@ namespace FactionColonies
             float tableW = width - x - margin;
 
             List<BiomeResourceDef> allBiomes = DefDatabase<BiomeResourceDef>.AllDefsListForReading;
+            List<BiomeResourceDef> rowBiomes = new List<BiomeResourceDef>();
             List<string> biomeNames = new List<string>();
             List<string> additives = new List<string>();
             List<string> multipliers = new List<string>();
@@ -428,6 +425,7 @@ namespace FactionColonies
                 else if (total < 1)
                     biomeS = biomeS.Colorize(Color.red);
 
+                rowBiomes.Add(biomeDef);
                 biomeNames.Add(biomeS);
                 additives.Add(additiveS);
                 multipliers.Add(multiplierS);
@@ -437,12 +435,19 @@ namespace FactionColonies
             if (biomeNames.Count > 0)
             {
                 Rect tableRect = new Rect(x, curY, tableW, 0f);
-                curY += UIUtil.DrawTable(tableRect,
+                int clickedRow;
+                curY += UIUtil.DrawTable(tableRect, out clickedRow,
                     "FCCodexResourceBiomeName".Translate(), biomeNames,
                     "FCCodexResourceBiomeAdditive".Translate(), additives,
                     "FCCodexResourceBiomeMultiplier".Translate(), multipliers,
                     "FCCodexResourceBiomeTotal".Translate(), totals);
                 curY += SmallMargin;
+
+                if (clickedRow >= 0 && clickedRow < rowBiomes.Count)
+                {
+                    parentWindow.SelectBiome(rowBiomes[clickedRow]);
+                    SoundDefOf.Click.PlayOneShotOnCamera();
+                }
             }
 
             return curY;
@@ -696,29 +701,6 @@ namespace FactionColonies
         }
 
         /**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-         *  BANNER HELPER
-         *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
-        private Texture2D GetBanner(ResourceTypeDef def)
-        {
-            string modId = def.modContentPack?.PackageId;
-            if (modId.NullOrEmpty()) return null;
-
-            if (bannerLookedUp.Contains(modId))
-            {
-                Texture2D cached;
-                bannerCache.TryGetValue(modId, out cached);
-                return cached;
-            }
-            bannerLookedUp.Add(modId);
-
-            PatchNoteDef patchNote = PatchNoteDef.GetLatestForMod(modId);
-            Texture2D banner = patchNote?.BannerImage;
-            if (banner is object)
-                bannerCache[modId] = banner;
-            return banner;
-        }
-
-        /**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
          *  HEIGHT CALCULATIONS
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
         private float CalculateCenterHeight(float width)
@@ -771,7 +753,7 @@ namespace FactionColonies
 
             if (selectedResource is object)
             {
-                if (GetBanner(selectedResource) is object)
+                if (UIUtil.GetModBanner(selectedResource.modContentPack) is object)
                     total += BannerHeight + SmallMargin;
                 string modName = selectedResource.modContentPack?.ModMetaData?.Name ?? "";
                 if (!modName.NullOrEmpty())

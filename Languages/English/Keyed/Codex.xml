@@ -157,6 +157,17 @@
 	<FCCodexResourceCompatibleSettlements>Compatible Settlements</FCCodexResourceCompatibleSettlements>
 	<FCCodexResourceRequiresResearch>Requires: {0}</FCCodexResourceRequiresResearch>
 
+	<!-- Biomes Tab -->
+	<FCCodexTabBiomes>Biomes</FCCodexTabBiomes>
+	<FCCodexSelectBiome>Select a biome from the left to view details.</FCCodexSelectBiome>
+	<FCCodexBiomeKeyInfo>Key Info</FCCodexBiomeKeyInfo>
+	<FCCodexBiomeSettleable>Settleable: {0}</FCCodexBiomeSettleable>
+	<FCCodexBiomeResourceProduction>Resource Production</FCCodexBiomeResourceProduction>
+	<FCCodexBiomeResourceColumn>Resource</FCCodexBiomeResourceColumn>
+	<FCCodexBiomeStatModifiers>Stat Modifiers</FCCodexBiomeStatModifiers>
+	<FCCodexBiomeSettlementTypes>Foundable Settlement Types</FCCodexBiomeSettlementTypes>
+	<FCCodexBiomeNoSettlements>No settlements can be founded in this biome.</FCCodexBiomeNoSettlements>
+
 	<!-- Buildings Tab -->
 	<FCCodexTabBuildings>Buildings</FCCodexTabBuildings>
 	<FCCodexSelectBuilding>Select a building from the left to view details.</FCCodexSelectBuilding>

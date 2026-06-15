@@ -55,10 +55,6 @@ namespace FactionColonies
         /* Truncation cache */
         private readonly Dictionary<string, string> truncateCache = new Dictionary<string, string>();
 
-        /* Banner cache */
-        private readonly Dictionary<string, Texture2D> bannerCache = new Dictionary<string, Texture2D>();
-        private readonly HashSet<string> bannerLookedUp = new HashSet<string>();
-
         public string TabLabel => "FCCodexTabSettlements".Translate();
         public bool HasRightPane => true;
 
@@ -321,7 +317,7 @@ namespace FactionColonies
             /* Banner */
             if (selectedDef is object)
             {
-                Texture2D banner = GetBanner(selectedDef);
+                Texture2D banner = UIUtil.GetModBanner(selectedDef.modContentPack);
                 if (banner is object)
                 {
                     Rect bannerRect = new Rect(0f, curY, contentWidth, BannerHeight);
@@ -559,13 +555,13 @@ namespace FactionColonies
 
             if (selectedDef.blockedBiomes.Count > 0)
             {
-                string biomes = string.Join(", ", selectedDef.blockedBiomes.Select(b => b.LabelCap.RawText).ToArray());
-                curY = DrawStatLine(curY, x, textW, "FCCodexSettlementBlockedBiomes".Translate(biomes));
+                curY = DrawStatLine(curY, x, textW, "FCCodexSettlementBlockedBiomes".Translate(""));
+                curY = DrawBiomeLinks(curY, x, textW, selectedDef.blockedBiomes);
             }
             else if (selectedDef.allowedBiomes.Count > 0)
             {
-                string biomes = string.Join(", ", selectedDef.allowedBiomes.Select(b => b.LabelCap.RawText).ToArray());
-                curY = DrawStatLine(curY, x, textW, "FCCodexSettlementAllowedBiomes".Translate(biomes));
+                curY = DrawStatLine(curY, x, textW, "FCCodexSettlementAllowedBiomes".Translate(""));
+                curY = DrawBiomeLinks(curY, x, textW, selectedDef.allowedBiomes);
             }
             else
             {
@@ -575,27 +571,48 @@ namespace FactionColonies
             return curY;
         }
 
-        /**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-         *  BANNER HELPER
-         *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
-        private Texture2D GetBanner(WorldSettlementDef def)
+        /// <summary>
+        /// Draws an indented row per biome. Biomes with a matching <see cref="BiomeResourceDef"/>
+        /// are clickable and navigate to the Biomes tab; others render as plain text.
+        /// </summary>
+        private float DrawBiomeLinks(float curY, float x, float textW, List<BiomeDef> biomes)
         {
-            string modId = def.modContentPack?.PackageId;
-            if (modId.NullOrEmpty()) return null;
-
-            if (bannerLookedUp.Contains(modId))
+            float indentX = x + 12f;
+            foreach (BiomeDef b in biomes)
             {
-                Texture2D cached;
-                bannerCache.TryGetValue(modId, out cached);
-                return cached;
-            }
-            bannerLookedUp.Add(modId);
+                BiomeResourceDef brd = DefDatabase<BiomeResourceDef>.GetNamedSilentFail(b.defName);
+                Rect rowRect = new Rect(indentX, curY, textW - 12f, StatRowHeight);
 
-            PatchNoteDef patchNote = PatchNoteDef.GetLatestForMod(modId);
-            Texture2D banner = patchNote?.BannerImage;
-            if (banner is object)
-                bannerCache[modId] = banner;
-            return banner;
+                bool isLink = brd is object;
+                bool isHover = isLink && Mouse.IsOver(rowRect);
+
+                Text.Font = GameFont.Small;
+                Text.Anchor = TextAnchor.MiddleLeft;
+                UIUtil.DrawColoredLabel(rowRect, b.LabelCap, isHover ? HighlightColor : Color.white);
+                ResetText();
+
+                if (isLink)
+                {
+                    if (isHover)
+                        Widgets.DrawHighlight(rowRect);
+                    if (Widgets.ButtonInvisible(rowRect))
+                    {
+                        parentWindow.SelectBiome(brd);
+                        SoundDefOf.Click.PlayOneShotOnCamera();
+                    }
+                }
+
+                curY += StatRowHeight;
+            }
+            return curY;
+        }
+
+        /// <summary>Number of rows <see cref="DrawBiomeRestrictions"/> will render (for height calc).</summary>
+        private int BiomeRestrictionRowCount()
+        {
+            if (selectedDef.blockedBiomes.Count > 0) return 1 + selectedDef.blockedBiomes.Count;
+            if (selectedDef.allowedBiomes.Count > 0) return 1 + selectedDef.allowedBiomes.Count;
+            return 1;
         }
 
         /**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -647,7 +664,7 @@ namespace FactionColonies
             }
 
             // Biome Restrictions
-            total += SectionHeaderHeight + SmallMargin + StatRowHeight + Margin;
+            total += SectionHeaderHeight + SmallMargin + BiomeRestrictionRowCount() * StatRowHeight + Margin;
 
             return total + 50f;
         }
@@ -658,7 +675,7 @@ namespace FactionColonies
 
             if (selectedDef is object)
             {
-                if (GetBanner(selectedDef) is object)
+                if (UIUtil.GetModBanner(selectedDef.modContentPack) is object)
                     total += BannerHeight + SmallMargin;
                 string modName = selectedDef.modContentPack?.ModMetaData?.Name ?? "";
                 if (!modName.NullOrEmpty())
