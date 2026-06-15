@@ -13,9 +13,9 @@ namespace FactionColonies
         {
             string result = "FCCodexTechCurrent".Translate(faction.techLevel.ToStringHuman().CapitalizeFirst());
             if (FCSettings.mirrorPlayerTechLevel)
-                result += "\n" + "FCCodexTechMirrorOn".Translate();
+                result += "\n\n" + "FCCodexTechMirrorOn".Translate();
             else
-                result += "\n" + "FCCodexTechNext".Translate(faction.ReturnNextTechToLevel());
+                result += "\n\n" + "FCCodexTechNext".Translate(faction.ReturnNextTechToLevel());
             return result;
         }
     }
