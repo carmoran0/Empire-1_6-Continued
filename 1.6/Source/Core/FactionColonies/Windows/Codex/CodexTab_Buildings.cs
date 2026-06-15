@@ -385,7 +385,7 @@ namespace FactionColonies
             {
                 Text.Font = GameFont.Small;
                 Rect descRect = new Rect(0f, curY, contentWidth, 100f);
-                Widgets.LabelCacheHeight(ref descRect, selectedBuilding.desc);
+                Widgets.LabelCacheHeight(ref descRect, selectedBuilding.FormattedDesc);
                 curY += descRect.height + Margin;
                 ResetText();
             }
@@ -815,7 +815,7 @@ namespace FactionColonies
             if (!selectedBuilding.desc.NullOrEmpty())
             {
                 Text.Font = GameFont.Small;
-                total += Text.CalcHeight(selectedBuilding.desc, width) + Margin;
+                total += Text.CalcHeight(selectedBuilding.FormattedDesc, width) + Margin;
             }
 
             // Stat Modifiers

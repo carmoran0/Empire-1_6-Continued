@@ -64,7 +64,7 @@ namespace FactionColonies
                 ? evt.customDescription
                 : evt.def.desc ?? "";
 
-            string body = TextUtil.ResolveFactionTokens(desc);
+            string body = desc.Format();
 
             // Stat modifiers
             TaggedString statDesc = FCStatModifier.GetDescription(evt.def.statModifiers);

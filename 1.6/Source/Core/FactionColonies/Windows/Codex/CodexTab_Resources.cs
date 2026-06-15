@@ -203,7 +203,7 @@ namespace FactionColonies
             {
                 Text.Font = GameFont.Small;
                 Rect descRect = new Rect(0f, curY, contentWidth, 100f);
-                Widgets.LabelCacheHeight(ref descRect, selectedResource.description);
+                Widgets.LabelCacheHeight(ref descRect, selectedResource.FormattedDesc);
                 curY += descRect.height + margin;
                 ResetText();
             }
@@ -730,7 +730,7 @@ namespace FactionColonies
             if (!selectedResource.description.NullOrEmpty())
             {
                 Text.Font = GameFont.Small;
-                total += Text.CalcHeight(selectedResource.description, width) + margin;
+                total += Text.CalcHeight(selectedResource.FormattedDesc, width) + margin;
             }
 
             // Key Info section (always present)

@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿using FactionColonies.util;
+using RimWorld;
 using RimWorld.Planet;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,8 @@ namespace FactionColonies
     public class BuildingFCDef : Def
     {
         public string desc;
+        /// <summary>Description with {FACTION}/{FACTION_TITLE} tokens and [b]/[i] emphasis markup resolved for display.</summary>
+        public string FormattedDesc => desc.Format();
         public double cost;
         public int constructionDuration;
         public TechLevel techLevel = TechLevel.Undefined;

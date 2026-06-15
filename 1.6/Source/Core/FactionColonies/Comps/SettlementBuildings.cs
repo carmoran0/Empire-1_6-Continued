@@ -573,7 +573,7 @@ namespace FactionColonies
 
         public TaggedString GetBuildingDesc(BuildingFCDef building)
         {
-            TaggedString desc = building.desc + "\n";
+            TaggedString desc = building.FormattedDesc + "\n";
             int buildingUpkeep = GetBuildingUpkeep(building);
             if (buildingUpkeep > 0)
             {

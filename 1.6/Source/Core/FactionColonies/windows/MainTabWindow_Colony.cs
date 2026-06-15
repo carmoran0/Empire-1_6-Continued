@@ -1473,8 +1473,8 @@ namespace FactionColonies
         private static string GetEventDescription(FCEvent evt)
         {
             if (evt.hasCustomDescription && !evt.customDescription.NullOrEmpty())
-                return evt.customDescription;
-            return TextUtil.ResolveFactionTokens(evt.def.desc ?? "");
+                return evt.customDescription.Format();
+            return evt.def.FormattedDesc ?? "";
         }
 
         private string GetEventFullTooltip(FCEvent evt)

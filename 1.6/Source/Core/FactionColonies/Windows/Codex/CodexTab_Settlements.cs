@@ -283,7 +283,7 @@ namespace FactionColonies
             {
                 Text.Font = GameFont.Small;
                 Rect descRect = new Rect(0f, curY, contentWidth, 100f);
-                Widgets.LabelCacheHeight(ref descRect, selectedDef.description);
+                Widgets.LabelCacheHeight(ref descRect, selectedDef.FormattedDesc);
                 curY += descRect.height + Margin;
                 ResetText();
             }
@@ -610,7 +610,7 @@ namespace FactionColonies
             if (!selectedDef.description.NullOrEmpty())
             {
                 Text.Font = GameFont.Small;
-                total += Text.CalcHeight(selectedDef.description, width) + Margin;
+                total += Text.CalcHeight(selectedDef.FormattedDesc, width) + Margin;
             }
 
             // Key Stats section

@@ -730,9 +730,9 @@ namespace FactionColonies
             // C3: Description (def text only)
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.UpperLeft;
-            float descHeight = Text.CalcHeight(selectedBuilding.desc, w);
+            float descHeight = Text.CalcHeight(selectedBuilding.FormattedDesc, w);
             Rect descRect = new Rect(scrollViewRect.x, curY, w, descHeight);
-            Widgets.Label(descRect, selectedBuilding.desc);
+            Widgets.Label(descRect, selectedBuilding.FormattedDesc);
             curY = descRect.yMax + margin;
 
             // C3.25: Required buildings prerequisite status
@@ -810,7 +810,7 @@ namespace FactionColonies
             // Description
             GameFont tmp = Text.Font;
             Text.Font = GameFont.Small;
-            h += Text.CalcHeight(selectedBuilding.desc, width) + margin;
+            h += Text.CalcHeight(selectedBuilding.FormattedDesc, width) + margin;
             Text.Font = tmp;
             // Required buildings prereqs
             if (selectedBuilding.requiredBuildings.Count > 0)

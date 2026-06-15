@@ -12,6 +12,8 @@ namespace FactionColonies
     /// </summary>
     public class WorldSettlementDef : WorldObjectDef
     {
+        /// <summary>Description with {FACTION}/{FACTION_TITLE} tokens and [b]/[i] emphasis markup resolved for display.</summary>
+        public string FormattedDesc => description.Format();
         public List<ResourceAvailability> resources = new List<ResourceAvailability>();
         /// <summary>
         /// If true, all ResourceTypeDefs with isDefaultResource set to true are automatically added to this settlement's resources list
