@@ -131,7 +131,8 @@
 	<FCCodexSettlementTechLevel>Tech Level: {0}</FCCodexSettlementTechLevel>
 	<FCCodexSettlementResearch>Research: {0}</FCCodexSettlementResearch>
 	<FCCodexSettlementBiomes>Biome Restrictions</FCCodexSettlementBiomes>
-	<FCCodexSettlementAllBiomes>All biomes</FCCodexSettlementAllBiomes>
+	<FCCodexLayerSurface>surface</FCCodexLayerSurface>
+	<FCCodexSettlementAllBiomes>All {0} biomes</FCCodexSettlementAllBiomes>
 	<FCCodexSettlementBlockedBiomes>Blocked: {0}</FCCodexSettlementBlockedBiomes>
 	<FCCodexSettlementAllowedBiomes>Allowed only: {0}</FCCodexSettlementAllowedBiomes>
 	<FCCodexYes>Yes</FCCodexYes>

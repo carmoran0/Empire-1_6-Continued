@@ -413,10 +413,7 @@ namespace FactionColonies
             curY += SmallMargin;
 
             if (selectedDef.planetLayers.Count > 0)
-            {
-                string layers = string.Join(", ", selectedDef.planetLayers.Select(p => p.LabelCap.RawText).ToArray());
-                curY = DrawStatLine(curY, x, textW, "FCCodexSettlementPlanetLayer".Translate(layers));
-            }
+                curY = DrawStatLine(curY, x, textW, "FCCodexSettlementPlanetLayer".Translate(selectedDef.PlanetLayersLabel.CapitalizeFirst()));
 
             string yesStr = "FCCodexYes".Translate();
             string noStr = "FCCodexNo".Translate();
@@ -565,7 +562,7 @@ namespace FactionColonies
             }
             else
             {
-                curY = DrawStatLine(curY, x, textW, "FCCodexSettlementAllBiomes".Translate());
+                curY = DrawStatLine(curY, x, textW, "FCCodexSettlementAllBiomes".Translate(selectedDef.PlanetLayersLabel));
             }
 
             return curY;

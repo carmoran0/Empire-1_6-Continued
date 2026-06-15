@@ -561,6 +561,7 @@ namespace FactionColonies
             BiomeDef bd = entry.biomeDef;
             foreach (WorldSettlementDef def in FactionCache.AvailableWorldSettlementDefs)
             {
+                if (!def.CanFoundOnSurface) continue; // orbital/non-surface types aren't foundable in any (surface) biome
                 if (def.allowedBiomes != null && def.allowedBiomes.Count > 0 && !def.allowedBiomes.Contains(bd))
                     continue;
                 if (def.blockedBiomes != null && def.blockedBiomes.Contains(bd))

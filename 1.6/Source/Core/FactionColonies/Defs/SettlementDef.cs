@@ -40,6 +40,33 @@ namespace FactionColonies
         public List<PlanetLayerDef> planetLayers = new List<PlanetLayerDef>();
 
         /// <summary>
+        /// Lower-case display label of the planet layer(s) this settlement can be founded on.
+        /// Empty planetLayers means Surface-only (the WorldTileChecker convention). The Surface
+        /// layer is shown as "surface" rather than its vanilla label ("planet").
+        /// </summary>
+        public string PlanetLayersLabel
+        {
+            get
+            {
+                if (planetLayers == null || planetLayers.Count == 0)
+                    return "FCCodexLayerSurface".Translate().RawText;
+                List<string> labels = new List<string>(planetLayers.Count);
+                foreach (PlanetLayerDef layer in planetLayers)
+                    labels.Add(layer == PlanetLayerDefOf.Surface ? "FCCodexLayerSurface".Translate().RawText : layer.label);
+                return string.Join(", ", labels.ToArray());
+            }
+        }
+
+        /// <summary>
+        /// True if this settlement type can be founded on the planet surface. Mirrors WorldTileChecker:
+        /// empty planetLayers means Surface-only; otherwise Surface must be among the allowed layers.
+        /// Biome restrictions only apply to surface-foundable types, so non-surface types (orbital)
+        /// must be excluded from per-biome foundability listings.
+        /// </summary>
+        public bool CanFoundOnSurface =>
+            planetLayers == null || planetLayers.Count == 0 || planetLayers.Contains(PlanetLayerDefOf.Surface);
+
+        /// <summary>
         /// Optional parent settlement type for inheritance-aware allow/block list checks on buildings.
         /// When a BuildingFCDef's allow/block list is checked, the chain of baseSettlementType references
         /// is walked upward, so subtypes automatically match their parent type.
