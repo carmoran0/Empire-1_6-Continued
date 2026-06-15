@@ -58,21 +58,13 @@ namespace FactionColonies
             return false;
         }
 
-        /// <summary>Resolves player-facing tokens in event description text. Maps {FACTION} -> the live empire name. Null-safe.</summary>
-        public static string ResolveFactionTokens(string text)
-        {
-            if (text.NullOrEmpty()) return text;
-            if (text.IndexOf("{FACTION}", StringComparison.Ordinal) < 0) return text;
-            return text.Replace("{FACTION}", FindFC.EmpireName);
-        }
-
         public static string BuildEventLetterBody(FCEvent evt)
         {
             string desc = evt.hasCustomDescription && !evt.customDescription.NullOrEmpty()
                 ? evt.customDescription
                 : evt.def.desc ?? "";
 
-            string body = ResolveFactionTokens(desc);
+            string body = TextUtil.ResolveFactionTokens(desc);
 
             // Stat modifiers
             TaggedString statDesc = FCStatModifier.GetDescription(evt.def.statModifiers);

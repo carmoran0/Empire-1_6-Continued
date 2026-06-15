@@ -205,7 +205,7 @@ namespace FactionColonies
                     enabled = faction.enabledCaravanTypes.Contains(rtd.defName) && techAllowed,
                     locked = !techAllowed,
                     tooltip = techAllowed
-                        ? "FCCaravanResourceTooltip".Translate(rtd.LabelCap)
+                        ? "FCCaravanResourceTooltip".Translate(rtd.LabelCap, FindFC.EmpireTitle)
                         : "FCCaravanResourceTechLocked".Translate(rtd.LabelCap)
                 });
             }

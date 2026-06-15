@@ -55,9 +55,13 @@ namespace FactionColonies
         private void ApplyChanges()
         {
             if (tempName.NullOrEmpty()) tempName = "FCPlayerFaction".Translate();
+            if (tempTitle.NullOrEmpty()) tempTitle = "FCEmpire".Translate();
 
             faction.title = tempTitle;
             faction.name = tempName;
+
+            // Title/name feed policy-description tokens ({FACTION_TITLE}/{FACTION}); drop the cache so tooltips re-resolve.
+            FactionCache.InvalidatePolicyDescs();
             faction.factionIconPath = tempFactionIconPath;
             faction.factionIcon = tempFactionIcon;
 
@@ -183,6 +187,7 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleLeft;
             Rect fieldRect = new Rect(rect.x + cardPadding, rect.y + cardPadding + 18f, rect.width - cardPadding * 2, 28f);
             tempTitle = Widgets.TextField(fieldRect, tempTitle);
+            TooltipHandler.TipRegion(fieldRect, "FCFactionTitleDesc".Translate());
         }
 
         private void DrawIconCard(Rect rect)

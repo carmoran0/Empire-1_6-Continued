@@ -32,7 +32,7 @@ How will you address the dissent?</desc>
 
   <FactionColonies.FCOptionDef>
     <defName>independencePetitions_0_1</defName>
-    <label>Let them petition. We are a just empire.</label>
+    <label>Let them petition. We are a just {FACTION_TITLE}.</label>
     <parentEvent>independencePetitions_0</parentEvent>
     <baseChanceOfSuccess>100</baseChanceOfSuccess>
     <successEvent>independencePetitions_1-1</successEvent>

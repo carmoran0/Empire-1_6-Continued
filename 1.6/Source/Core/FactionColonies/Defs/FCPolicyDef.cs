@@ -127,7 +127,7 @@ namespace FactionColonies
             {
                 foreach (string positive in positiveEffects)
                 {
-                    str += positive.Colorize(Color.green) + "\n";
+                    str += TextUtil.ResolveFactionTokens(positive).Colorize(Color.green) + "\n";
                 }
             }
 
@@ -140,7 +140,7 @@ namespace FactionColonies
             {
                 foreach (string negative in negativeEffects)
                 {
-                    str += negative.Colorize(Color.red) + "\n";
+                    str += TextUtil.ResolveFactionTokens(negative).Colorize(Color.red) + "\n";
                 }
             }
 

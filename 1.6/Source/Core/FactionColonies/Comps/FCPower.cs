@@ -41,7 +41,7 @@ namespace FactionColonies
                         FindFC.FactionComp.powerOutput = this.parent;
                         Messages.Message("FCSetAsOutputSuccess".Translate(), MessageTypeDefOf.NeutralEvent);
                     },
-                    defaultDesc = "FCSetAsEmpirePowerOutput".Translate(),
+                    defaultDesc = "FCSetAsEmpirePowerOutput".Translate(FindFC.EmpireTitle.CapitalizeFirst()),
                     icon = ContentFinder<Texture2D>.Get("UI/Commands/TryReconnect", true),
                     defaultLabel = "FCSetAsOutput".Translate()
                 };

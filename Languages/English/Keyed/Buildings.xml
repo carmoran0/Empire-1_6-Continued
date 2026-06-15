@@ -35,13 +35,13 @@
 	<FCBuildingFilterMilitary>Military</FCBuildingFilterMilitary>
 
 	<!-- Capital Seat -->
-	<FCCapitalEstablished>Empire capital established at {0}! This location will be used as the center of your empire.</FCCapitalEstablished>
-	<FCCapitalSeatDisabled>Capital seat disabled. Empire will use fallback capital location if available.</FCCapitalSeatDisabled>
-	<FCCapitalLost>Empire capital has been lost! You should establish a new capital seat.</FCCapitalLost>
-	<FCCapitalSpotGizmoLabel>Set Empire Capital</FCCapitalSpotGizmoLabel>
+	<FCCapitalEstablished>{1} capital established at {0}! This location will be used as the center of your {2}.</FCCapitalEstablished>
+	<FCCapitalSeatDisabled>Capital seat disabled. {0} will use fallback capital location if available.</FCCapitalSeatDisabled>
+	<FCCapitalLost>{0} capital has been lost! You should establish a new capital seat.</FCCapitalLost>
+	<FCCapitalSpotGizmoLabel>Set {0} Capital</FCCapitalSpotGizmoLabel>
 	<FCCapitalSpotGizmoDescActive>This is currently {0}'s capital seat. Click to disable.</FCCapitalSpotGizmoDescActive>
 	<FCCapitalSpotGizmoDescInactive>Click to make this the seat of {0}'s capital. This location will be used for travel time calculations and event targeting.</FCCapitalSpotGizmoDescInactive>
-	<FCCapitalSpotInspectActive>Active Empire Capital</FCCapitalSpotInspectActive>
+	<FCCapitalSpotInspectActive>Active {0} Capital</FCCapitalSpotInspectActive>
 	<FCCapitalSpotInspectInactive>Capital seat (inactive)</FCCapitalSpotInspectInactive>
 
 	<!-- Tax Spot -->

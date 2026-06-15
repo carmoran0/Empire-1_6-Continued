@@ -201,7 +201,7 @@
 		</positiveEffects>
 		<negativeEffects>
 			<li>- New settlements start at 75% prosperity</li>
-			<li>- Your empire's rapid growth draws stronger raids (+10% threat scaling)</li>
+			<li>- Your {FACTION_TITLE}'s rapid growth draws stronger raids (+10% threat scaling)</li>
 		</negativeEffects>
 		<modExtensions>
 			<li Class="FactionColonies.FCPolicyBehaviorExt_Expansionist">

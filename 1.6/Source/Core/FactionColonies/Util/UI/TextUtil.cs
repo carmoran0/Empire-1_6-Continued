@@ -47,6 +47,17 @@ namespace FactionColonies
                 return baseBonus.Colorize(Color.green);
             }
         }
+        /// <summary>Resolves player-facing tokens in description text.
+        /// Maps {FACTION} -> the live empire name and {FACTION_TITLE} -> the live polity title. Null-safe.</summary>
+        public static string ResolveFactionTokens(string text)
+        {
+            if (text.NullOrEmpty()) return text;
+            if (text.IndexOf("{FACTION}", StringComparison.Ordinal) >= 0)
+                text = text.Replace("{FACTION}", FindFC.EmpireName);
+            if (text.IndexOf("{FACTION_TITLE}", StringComparison.Ordinal) >= 0)
+                text = text.Replace("{FACTION_TITLE}", FindFC.EmpireTitle);
+            return text;
+        }
         public static string CleaveAtNewline(string input)
         {
             int newline = input.IndexOf('\n');

@@ -23,10 +23,12 @@
 	<FCCustomizeFaction>Customize Faction</FCCustomizeFaction>
 	<FCFactionName>Faction Name</FCFactionName>
 	<FCFactionTitle>Faction Title</FCFactionTitle>
+	<FCFactionTitleDesc>Your polity's type - Empire, Kingdom, Republic, Commune, etc.</FCFactionTitleDesc>
 	<FCFactionIcon>Faction Icon</FCFactionIcon>
 	<FCInvalidFaction>That faction can't run an empire on its own!</FCInvalidFaction>
 	<FCPlayerFaction>Player Faction</FCPlayerFaction>
 	<FCBastion>Bastion</FCBastion>
+	<FCEmpire>Empire</FCEmpire>
 	<FCFoundedOn>Founded on {0}</FCFoundedOn>
 
 	<!-- Faction Stats -->
@@ -152,15 +154,15 @@
 
 	<!-- Capital -->
 	<FCCouldNotFindMapOfCapital>Could not find map of capital</FCCouldNotFindMapOfCapital>
-	<FCCapitalAlreadyEstablished>Empire capital is already established at {0}. Disable the capital seat there first if you want to move it.</FCCapitalAlreadyEstablished>
+	<FCCapitalAlreadyEstablished>{1} capital is already established at {0}. Disable the capital seat there first if you want to move it.</FCCapitalAlreadyEstablished>
 	<FCUnableToSetCapitalHere>Unable to set faction capital on this map. Please go to your capital map and use the Set Capital button or build a Capital Seat.</FCUnableToSetCapitalHere>
-	<FCCapitalRelocatedLabel>Empire Capital Relocated</FCCapitalRelocatedLabel>
+	<FCCapitalRelocatedLabel>{0} Capital Relocated</FCCapitalRelocatedLabel>
 	<FCCapitalRelocatedDesc>The seat of {0}'s capital has updated to your new location.</FCCapitalRelocatedDesc>
 	
 	<FCCaravanTypes>Caravan Types</FCCaravanTypes>
 	<FCCaravanTypesDesc>Select which types of trade caravans {0} will send.</FCCaravanTypesDesc>
 	<FCCaravanNoneError>At least one caravan type must be enabled.</FCCaravanNoneError>
-	<FCCaravanResourceTooltip>Caravan specializing in {0} goods, drawn from empire-wide production.</FCCaravanResourceTooltip>
+	<FCCaravanResourceTooltip>Caravan specializing in {0} goods, drawn from {1}-wide production.</FCCaravanResourceTooltip>
 	<FCCaravanResourceTechLocked>{0} caravans are not available at your current tech level.</FCCaravanResourceTechLocked>
 	<FCCaravanExotic>Exotic Goods</FCCaravanExotic>
 	<FCCaravanExoticTooltip>Rare and high-value trade goods: artifacts, implants, and exotic materials.</FCCaravanExoticTooltip>

@@ -394,6 +394,10 @@ namespace FactionColonies
                 return _cachedFCPolicyDescs;
             }
         }
+
+        /// <summary>Drops the cached policy descriptions so they re-resolve their tokens
+        /// (e.g. {FACTION_TITLE}/{FACTION}) on next access. Call after the faction title or name changes.</summary>
+        public static void InvalidatePolicyDescs() => _cachedFCPolicyDescs = null;
         public static List<XenotypeDef> ViolentXenotypeDefs => _cachedViolentXenotypeList ??
                                                                (_cachedViolentXenotypeList = XenotypeDefs.Where(x => !XenotypeIsNonViolent(x)).ToList());
         public static List<CustomXenotype> ViolentCustomXenotypes => _cachedViolentCustomXenotypeList ??

@@ -92,7 +92,7 @@ namespace FactionColonies
                         LogUtil.Message($"Empire capital location updated from {oldCapital} to {currentTile} (gravship moved)");
 
                         Find.LetterStack.ReceiveLetter(
-                            "FCCapitalRelocatedLabel".Translate(),
+                            "FCCapitalRelocatedLabel".Translate(FindFC.EmpireTitle.CapitalizeFirst()),
                             "FCCapitalRelocatedDesc".Translate(FindFC.EmpireName),
                             LetterDefOf.NeutralEvent
                         );
@@ -144,7 +144,7 @@ namespace FactionColonies
             {
                 yield return new Command_Toggle
                 {
-                    defaultLabel = "FCCapitalSpotGizmoLabel".Translate(),
+                    defaultLabel = "FCCapitalSpotGizmoLabel".Translate(FindFC.EmpireTitle.CapitalizeFirst()),
                     defaultDesc = isActiveCapitalSpot
                         ? "FCCapitalSpotGizmoDescActive".Translate(FindFC.EmpireName)
                         : "FCCapitalSpotGizmoDescInactive".Translate(FindFC.EmpireName),
@@ -160,14 +160,14 @@ namespace FactionColonies
                         if (IsActiveCapitalSpot)
                         {
                             Messages.Message(
-                                "FCCapitalEstablished".Translate(Map.Parent.LabelCap),
+                                "FCCapitalEstablished".Translate(Map.Parent.LabelCap, FindFC.EmpireTitle.CapitalizeFirst(), FindFC.EmpireTitle),
                                 MessageTypeDefOf.PositiveEvent
                             );
                         }
                         else
                         {
                             Messages.Message(
-                                "FCCapitalSeatDisabled".Translate(),
+                                "FCCapitalSeatDisabled".Translate(FindFC.EmpireTitle.CapitalizeFirst()),
                                 MessageTypeDefOf.NeutralEvent
                             );
                         }
@@ -180,7 +180,7 @@ namespace FactionColonies
         {
             string baseString = base.GetInspectString();
             string statusString = isActiveCapitalSpot
-                ? "FCCapitalSpotInspectActive".Translate()
+                ? "FCCapitalSpotInspectActive".Translate(FindFC.EmpireTitle.CapitalizeFirst())
                 : "FCCapitalSpotInspectInactive".Translate();
 
             return string.IsNullOrEmpty(baseString)
@@ -198,7 +198,7 @@ namespace FactionColonies
                 {
                     faction.capitalLocation = PlanetTile.Invalid;
                     Messages.Message(
-                        "FCCapitalLost".Translate(),
+                        "FCCapitalLost".Translate(FindFC.EmpireTitle.CapitalizeFirst()),
                         MessageTypeDefOf.NegativeEvent
                     );
                 }

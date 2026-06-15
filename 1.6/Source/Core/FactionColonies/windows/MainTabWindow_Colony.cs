@@ -1474,7 +1474,7 @@ namespace FactionColonies
         {
             if (evt.hasCustomDescription && !evt.customDescription.NullOrEmpty())
                 return evt.customDescription;
-            return FCEventMaker.ResolveFactionTokens(evt.def.desc ?? "");
+            return TextUtil.ResolveFactionTokens(evt.def.desc ?? "");
         }
 
         private string GetEventFullTooltip(FCEvent evt)

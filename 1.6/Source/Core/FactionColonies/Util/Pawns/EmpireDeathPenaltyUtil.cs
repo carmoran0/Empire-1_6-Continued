@@ -70,7 +70,7 @@ namespace FactionColonies
             if (home is null) return;
 
             double extra = FindFC.FactionComp?.GetStatValue(FCStatDefOf.mercenaryDeathHappinessPenalty, home) ?? 0;
-            ApplyDeathPenalty(home, dinfo, extra, SrcPawn, "FCPenaltyPawnDeath".Translate());
+            ApplyDeathPenalty(home, dinfo, extra, SrcPawn, "FCPenaltyPawnDeath".Translate(FindFC.EmpireTitle.CapitalizeFirst()));
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace FactionColonies
             if (faction is null) return;
             if (home is null) home = HighestProsperity(faction);
             if (home is null) return;
-            ApplyDeathPenalty(home, dinfo, 0, SrcPawn, "FCPenaltyPawnDeath".Translate());
+            ApplyDeathPenalty(home, dinfo, 0, SrcPawn, "FCPenaltyPawnDeath".Translate(FindFC.EmpireTitle.CapitalizeFirst()));
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace FactionColonies
 
             WorldSettlementFC home = faction.TryGetCaravanHome(lord.loadID) ?? HighestProsperity(faction);
             if (home is object)
-                ApplyDeathPenalty(home, dinfo, 0, SrcCaravan, "FCPenaltyCaravanDeath".Translate());
+                ApplyDeathPenalty(home, dinfo, 0, SrcCaravan, "FCPenaltyCaravanDeath".Translate(FindFC.EmpireTitle.CapitalizeFirst()));
 
             // Pack-animal wipe: every animal in the caravan now dead (this pawn included).
             if (wipedCaravanLords.Contains(lord.loadID)) return;
@@ -178,7 +178,7 @@ namespace FactionColonies
 
             bool playerCaused = IsPlayerCaused(dinfo);
             double amount = playerCaused ? PACK_WIPE_LARGE : PACK_WIPE_SMALL;
-            string label = "FCPenaltyCaravanWipe".Translate();
+            string label = "FCPenaltyCaravanWipe".Translate(FindFC.EmpireTitle.CapitalizeFirst());
 
             foreach (WorldSettlementFC s in faction.settlements)
             {

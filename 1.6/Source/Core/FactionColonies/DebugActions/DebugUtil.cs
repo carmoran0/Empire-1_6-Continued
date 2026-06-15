@@ -216,7 +216,7 @@ namespace FactionColonies
                         }
 
                         string settlementString = evt.settlementTraitLocations.Join((settlement) => $" {settlement.Name}", "\n");
-                        string eventDesc = FCEventMaker.ResolveFactionTokens(evt.def.desc);
+                        string eventDesc = TextUtil.ResolveFactionTokens(evt.def.desc);
                         if (!settlementString.NullOrEmpty())
                             Find.LetterStack.ReceiveLetter("Random Event", $"{eventDesc}\n{"FCEventAffectingSettlements".Translate()}\n{settlementString}", LetterDefOf.NeutralEvent);
                         else

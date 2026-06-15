@@ -15,7 +15,7 @@ namespace FactionColonies
 
         /* Core Identity */
         public string name = "FCPlayerFaction".Translate();
-        public string title = "FCBastion".Translate();
+        public string title = "FCEmpire".Translate();
         public Texture2D factionIcon = TexLoad.factionIcons[0];
         public string factionIconPath = TexLoad.factionIcons[0].name;
         public Color factionColorPrimary = Color.white;
@@ -1814,7 +1814,7 @@ namespace FactionColonies
             Building_CapitalSpot activeCapitalSpot = GetActiveCapitalSpot();
             if (activeCapitalSpot != null)
             {
-                Messages.Message("FCCapitalAlreadyEstablished".Translate(activeCapitalSpot.Map.Parent.LabelCap), MessageTypeDefOf.RejectInput);
+                Messages.Message("FCCapitalAlreadyEstablished".Translate(activeCapitalSpot.Map.Parent.LabelCap, FindFC.EmpireTitle.CapitalizeFirst()), MessageTypeDefOf.RejectInput);
                 return;
             }
 

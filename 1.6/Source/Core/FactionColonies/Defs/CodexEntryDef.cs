@@ -95,6 +95,12 @@ namespace FactionColonies
         }
 
         /// <summary>
+        /// The entry description with player-facing tokens resolved ({FACTION}, {FACTION_TITLE}).
+        /// Not cached — the name/title are mutable, and the resolve early-outs when no token is present.
+        /// </summary>
+        public string ResolvedDescription => TextUtil.ResolveFactionTokens(description);
+
+        /// <summary>
         /// Returns the singleton <see cref="ICodexDynamicProvider"/> instance, or null.
         /// </summary>
         public ICodexDynamicProvider DynamicProvider

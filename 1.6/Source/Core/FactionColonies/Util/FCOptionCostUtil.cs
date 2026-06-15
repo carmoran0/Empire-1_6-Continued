@@ -87,7 +87,8 @@ namespace FactionColonies.util
                     {
                         lines.Add("FCOptionCostIncome".Translate(
                             (ext.costPerEmpireIncomeUnit * 100f).ToString("0.#"),
-                            ((int)Math.Round(contribution)).ToString("N0")));
+                            ((int)Math.Round(contribution)).ToString("N0"),
+                            FindFC.EmpireTitle));
                     }
                 }
 

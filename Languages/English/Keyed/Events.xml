@@ -32,7 +32,7 @@
 	<!-- Option Cost Breakdown Tooltip -->
 	<FCOptionCostBase>Base: {0}</FCOptionCostBase>
 	<FCOptionCostPerSettlement>× {0} affected settlements: {1}</FCOptionCostPerSettlement>
-	<FCOptionCostIncome>+ {0}% of empire income: {1}</FCOptionCostIncome>
+	<FCOptionCostIncome>+ {0}% of {2} income: {1}</FCOptionCostIncome>
 	<FCOptionCostResource>+ {0} scaling ({1} produced): {2}</FCOptionCostResource>
 	<FCOptionCostMultiplier>× {0} (global cost setting)</FCOptionCostMultiplier>
 	<FCOptionCostTotal>Total: {0}</FCOptionCostTotal>
