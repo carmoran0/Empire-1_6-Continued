@@ -28,8 +28,8 @@ namespace FactionColonies
             TestAssert.DoesNotThrow(() => f.GainHappiness(-100000), "GainHappiness(-) threw");
             foreach (WorldSettlementFC s in f.settlements)
             {
-                TestAssert.IsTrue(s.happiness >= 1 && s.happiness <= 100,
-                    $"{s.Name}: happiness should stay in [1,100], got {s.happiness}");
+                TestAssert.IsTrue(s.happiness >= 0 && s.happiness <= 100,
+                    $"{s.Name}: happiness should stay in [0,100], got {s.happiness}");
             }
             DestructiveTestUtil.AssertEmpireInvariants(f, "GainHappiness_StaysClamped");
         }

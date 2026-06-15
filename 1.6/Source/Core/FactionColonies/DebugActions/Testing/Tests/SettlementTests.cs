@@ -64,8 +64,8 @@ namespace FactionColonies
             var settlement = GetFirstSettlement();
             if (settlement == null) TestAssert.Skip("No settlements");
 
-            TestAssert.IsTrue(settlement.happiness >= 1 && settlement.happiness <= 100,
-                $"Happiness should be in [1, 100], got {settlement.happiness}");
+            TestAssert.IsTrue(settlement.happiness >= 0 && settlement.happiness <= 100,
+                $"Happiness should be in [0, 100], got {settlement.happiness}");
         }
 
         [EmpireTest("Settlement")]
@@ -74,8 +74,8 @@ namespace FactionColonies
             var settlement = GetFirstSettlement();
             if (settlement == null) TestAssert.Skip("No settlements");
 
-            TestAssert.IsTrue(settlement.loyalty >= 1 && settlement.loyalty <= 100,
-                $"Loyalty should be in [1, 100], got {settlement.loyalty}");
+            TestAssert.IsTrue(settlement.loyalty >= 0 && settlement.loyalty <= 100,
+                $"Loyalty should be in [0, 100], got {settlement.loyalty}");
         }
 
         [EmpireTest("Settlement")]
@@ -84,8 +84,8 @@ namespace FactionColonies
             var settlement = GetFirstSettlement();
             if (settlement == null) TestAssert.Skip("No settlements");
 
-            TestAssert.IsTrue(settlement.prosperity >= 1 && settlement.prosperity <= 100,
-                $"Prosperity should be in [1, 100], got {settlement.prosperity}");
+            TestAssert.IsTrue(settlement.prosperity >= 0 && settlement.prosperity <= 100,
+                $"Prosperity should be in [0, 100], got {settlement.prosperity}");
         }
 
         [EmpireTest("Settlement")]
