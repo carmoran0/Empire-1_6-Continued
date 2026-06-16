@@ -1,5 +1,4 @@
 using CombatExtended;
-using HarmonyLib;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -24,8 +23,7 @@ namespace FactionColonies.CE
 
     /// <summary>
     /// Direct CE API implementation of ICombatExtendedBridge.
-    /// Uses direct type references instead of reflection for all public CE APIs.
-    /// Only LoadoutPropertiesExtension's private methods still require Traverse.
+    /// Uses direct type references instead of reflection for all CE APIs.
     /// </summary>
     public class CombatExtendedBridge : ICombatExtendedBridge
     {
@@ -85,8 +83,7 @@ FindFC.EmpireFaction?.leader,
                 // Override the internally-computed Destination with the exact target.
                 // CE's Lerped trajectory interpolates toward Destination, so this
                 // guarantees the shell lands at the target regardless of ballistic math.
-                Traverse.Create(projectile).Property("Destination")
-                    .SetValue(new Vector2(target.x + 0.5f, target.z + 0.5f));
+                projectile.Destination = new Vector2(target.x + 0.5f, target.z + 0.5f);
 
                 return true;
             }
