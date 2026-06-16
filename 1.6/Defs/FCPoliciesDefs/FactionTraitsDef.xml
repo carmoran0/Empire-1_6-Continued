@@ -54,6 +54,7 @@
 		</incompatiblePolicies>
 		<positiveEffects>
 			<li>- Once per five days, can send a diplomatic envoy to another faction to attempt to improve relations</li>
+			<li>- A populace at peace is a happy one (+0.5 happiness per day in every settlement)</li>
 		</positiveEffects>
 		<negativeEffects>
 			<li>- Cannot use military forces to raid or to capture other faction's settlements</li>
@@ -70,6 +71,7 @@
 		</modExtensions>
 		<statModifiers>
 			<li><stat>mercenaryDeathHappinessPenalty</stat><value>0.5</value></li>
+			<li><stat>happinessGainedBase</stat><value>0.5</value></li>
 		</statModifiers>
 		<blockedActions>
 			<li>DeployMilitary</li>
@@ -200,19 +202,19 @@
 			<li>- Settlements that you construct start at level 2</li>
 		</positiveEffects>
 		<negativeEffects>
-			<li>- New settlements start at 75% prosperity</li>
-			<li>- Your {FACTION_TITLE}'s rapid growth draws stronger raids (+10% threat scaling)</li>
+			<li>- New settlements start at 50% prosperity</li>
+			<li>- Rapid expansion strains governance (+0.5 unrest per day in every settlement)</li>
 		</negativeEffects>
 		<modExtensions>
 			<li Class="FactionColonies.FCPolicyBehaviorExt_Expansionist">
 				<behaviorClass>FactionColonies.FCPolicyBehavior_Expansionist</behaviorClass>
 				<autoUpgradeToLevel>2</autoUpgradeToLevel>
-				<startingProsperity>75</startingProsperity>
+				<startingProsperity>50</startingProsperity>
 			</li>
 		</modExtensions>
 		<statModifiers>
 			<li><stat>settlementCostMultiplier</stat><value>0.75</value></li>
-			<li><stat>threatScalingMultiplier</stat><value>1.1</value></li>
+			<li><stat>unrestGainedBase</stat><value>0.5</value></li>
 		</statModifiers>
 	</FactionColonies.FCPolicyDef>
 
@@ -294,18 +296,22 @@
 		</incompatiblePolicies>
 		<positiveEffects>
 			<li>- Your Faction has been using slaves for its projects since the start, gaining more workers at the cost of not being able to hire as many normal citizens.</li>
-			<li>- +2 Workers Per Settlement Level</li>
+			<li>- +1 Worker Per Settlement Level</li>
+			<li>- Can send your military to raid another faction's settlement to enslave its members instead of ordinary raiding</li>
 		</positiveEffects>
 		<negativeEffects>
 			<li>- -2 Over Max Workers</li>
 			<li>- Slave labor breeds discontent (-0.5 happiness gained, +0.5 unrest gained per day)</li>
 		</negativeEffects>
 		<statModifiers>
-			<li><stat>extraWorkersSoftcap</stat><value>2</value></li>
+			<li><stat>extraWorkersSoftcap</stat><value>1</value></li>
 			<li><stat>overMaxWorkersAdjustment</stat><value>-2</value></li>
 			<li><stat>happinessGainedBase</stat><value>-0.5</value></li>
 			<li><stat>unrestGainedBase</stat><value>0.5</value></li>
 		</statModifiers>
+		<enabledMilitaryJobs>
+			<li>EnslaveEnemySettlement</li>
+		</enabledMilitaryJobs>
 	</FactionColonies.FCPolicyDef>
 
 </Defs>
