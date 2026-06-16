@@ -502,12 +502,13 @@ namespace FactionColonies
                     curY += BannerHeight + 4f;
                 }
 
-                // Mod name
+                // Mod name (wraps to fit long names, mirroring the left pane's HeaderHeightFor sizing)
+                float nameHeight = HeaderHeightFor(selectedEntry.category.ModName, contentWidth, 20f, 0f);
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.MiddleCenter;
-                UIUtil.DrawColoredLabel(new Rect(0f, curY, contentWidth, 20f), selectedEntry.category.ModName, Color.gray);
+                UIUtil.DrawColoredLabel(new Rect(0f, curY, contentWidth, nameHeight), selectedEntry.category.ModName, Color.gray);
                 ResetText();
-                curY += 24f;
+                curY += nameHeight + 4f;
 
                 UIUtil.DrawColoredHorizontalLine(Margin, curY, contentWidth - Margin * 2, Color.gray);
                 curY += Margin;
@@ -588,7 +589,8 @@ namespace FactionColonies
             {
                 if (selectedEntry.category.BannerImage is object)
                     total += BannerHeight + 4f;
-                total += 24f + Margin; // mod name + divider
+                float nameHeight = HeaderHeightFor(selectedEntry.category.ModName, width, 20f, 0f);
+                total += nameHeight + 4f + Margin; // mod name (may wrap) + divider
             }
 
             if (selectedEntry is object && selectedEntry.DynamicProvider is object)
