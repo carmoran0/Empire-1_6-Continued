@@ -232,6 +232,12 @@ namespace FactionColonies
             return AccentUtil.GetStatColor((float)midPct, inverted: false);
         }
 
+        /* Color of the left accent strip. Defaults to the win-chance hue — attack/defend pickers
+         * encode predicted outcome there. Pickers that hide win chance (e.g. the assign picker)
+         * override this so the strip conveys something useful instead of staying perpetually
+         * gray (WinChanceColor returns MilInactive when ShowWinChance is false). */
+        protected virtual Color AccentColor(RowData row) => WinChanceColor(row);
+
         /* Per-squad card. Header row: accent strip, squad name, win-chance box (Pow/Eff top,
          * WinChance bottom), and right-side column with status badge over Inspect button.
          * Detail row: Settlement / Travel / Cost cells. The whole card (minus the Inspect
@@ -242,10 +248,11 @@ namespace FactionColonies
         {
             MercenarySquadFC squad = row.squad;
             Color winColor = WinChanceColor(row);
+            Color accentColor = AccentColor(row);
 
             // Hover / selected highlight (whole card). Selected gets a faint win-chance tint
             // overlay so the selection visual reinforces the box color. The "current" indicator
-            // (already-assigned squad in this picker's context) renders as a green 2-px outline
+            // (already-assigned squad in this picker's context) renders as a green row highlight
             // so it stays visible whether or not the row is also the user's row-click selection.
             bool isSelected = selected == squad;
             bool isCurrentCard = CurrentSquadIndicator is object && squad == CurrentSquadIndicator;
@@ -260,11 +267,12 @@ namespace FactionColonies
             }
             if (isCurrentCard)
             {
-                UIUtil.DrawColoredBox(cardRect, new Color(0.6f, 0.9f, 0.6f), 2);
+                UIUtil.DrawColoredHighlight(cardRect, Color.green);
             }
 
-            // Accent strip — driven by win chance, not settlement military state.
-            Widgets.DrawBoxSolid(new Rect(cardRect.x, cardRect.y, AccentW, cardRect.height), winColor);
+            // Accent strip — AccentColor() default is the win-chance hue; pickers that hide win
+            // chance override it (assign picker uses billet-readiness status).
+            Widgets.DrawBoxSolid(new Rect(cardRect.x, cardRect.y, AccentW, cardRect.height), accentColor);
 
             float contentX = cardRect.x + AccentW + 6f;
 
@@ -371,11 +379,11 @@ namespace FactionColonies
              * already-assigned candidate without scanning every billet. */
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
-            // Over-budget rows use the amber underfunded tint for the name too, mirroring the
-            // colony-tab slot-row treatment. Otherwise the name follows win-chance color.
-            Color nameColor = overBudget
-                ? baseTint
-                : (row.available ? winColor : ColorUtil.TransformA(winColor, 0.7f));
+            // Name matches the accent strip (win chance for op pickers, billet-readiness for the
+            // assign picker — green/amber/gray), dimmed when the squad is unavailable. For the
+            // assign picker this keeps over-budget names amber, mirroring the colony-tab slot-row
+            // treatment, since AccentColor returns the underfunded amber for those rows.
+            Color nameColor = row.available ? accentColor : ColorUtil.TransformA(accentColor, 0.7f);
             bool boxVisible = ShowForceMetrics || ShowWinChance;
             float nameW = boxVisible ? (boxX - contentX - boxGap) : (rightColX - contentX - 4f);
             if (nameW < 0f) nameW = 0f;

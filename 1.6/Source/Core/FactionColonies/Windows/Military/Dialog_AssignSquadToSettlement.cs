@@ -94,6 +94,15 @@ namespace FactionColonies
          * underfunded-slot treatment. */
         protected override bool RowOverBudget(RowData row) => row.deploymentCost > maxDeployCost;
 
+        /* Win chance is hidden in this picker, so the accent strip would otherwise be a flat
+         * gray. Encode billet-readiness instead: amber for over-budget (can't be deployed from
+         * this slot), green for ready/available, gray for busy/unavailable. */
+        protected override Color AccentColor(RowData row)
+        {
+            if (RowOverBudget(row)) return AccentUtil.MilUnderfunded;
+            return row.available ? AccentUtil.MilReady : AccentUtil.MilInactive;
+        }
+
         protected override bool CanConfirm()
         {
             if (unassignSelected) return currentSlotSquad is object && !currentSlotSquad.IsBusy;
