@@ -65,6 +65,17 @@ namespace FactionColonies
             UIUtil.DrawColoredLabel(new Rect(innerX, rect.y + Pad, innerW * 0.5f, SummaryH),
                 "FCHireSquadsCount".Translate(pool.Count), Color.gray);
 
+            // "Hire Squads" button — right-aligned in the free right half of the header row.
+            // Opens the template browse-and-hire menu, dropping hires into the unassigned pool.
+            const float hireBtnW = 140f;
+            const float hireBtnH = 22f;
+            Rect hireBtnRect = new Rect(innerX + innerW - hireBtnW, rect.y + Pad, hireBtnW, hireBtnH);
+            Text.Anchor = TextAnchor.UpperLeft;
+            if (UIUtil.ButtonFlat(hireBtnRect, "FCHireSquadsPoolButton".Translate()))
+            {
+                Find.WindowStack.Add(new Dialog_HireSquadsPool());
+            }
+
             Rect tableRect = new Rect(rect.x, rect.y + SummaryH + 4f,
                 rect.width, rect.height - SummaryH - 4f);
 

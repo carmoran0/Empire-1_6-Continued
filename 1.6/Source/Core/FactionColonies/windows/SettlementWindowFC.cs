@@ -1163,7 +1163,7 @@ namespace FactionColonies
             list.Add(new FloatMenuOption("FCSettlementMilHireAndAssign".Translate(),
                 roomForHire ? (Action)delegate
                 {
-                    Find.WindowStack.Add(new Dialog_HireSquad(settlement));
+                    Find.WindowStack.Add(new Dialog_HireSquadsPool(settlement));
                 }
             : (Action)null));
 
