@@ -99,6 +99,8 @@ namespace FactionColonies
             if (unassignSelected) return currentSlotSquad is object && !currentSlotSquad.IsBusy;
             if (selected is null) return false;
             if (selected == currentSlotSquad) return true; // explicit no-op confirm
+            // Can't billet an over-budget squad here (matches the unavailable treatment in RebuildRows).
+            if (selected.DeploymentCost() > maxDeployCost) return false;
             return !selected.IsBusy;
         }
 
@@ -159,7 +161,11 @@ namespace FactionColonies
             foreach (MercenarySquadFC squad in pool)
             {
                 if (squad is null) continue;
-                bool available = !squad.IsBusy;
+                // Over-budget squads (deploy cost > the destination's max deploy budget) are
+                // treated as unavailable — they can't be billeted here. The current occupant
+                // stays available so it can be kept (no-op confirm) even if it's over budget.
+                bool overBudget = squad.DeploymentCost() > maxDeployCost;
+                bool available = !squad.IsBusy && (!overBudget || squad == currentSlotSquad);
                 if (availableOnly && !available && squad != currentSlotSquad) continue;
 
                 SquadPower sp = SquadPowerRegistry.Resolve(squad);
