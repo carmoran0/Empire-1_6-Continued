@@ -15,5 +15,6 @@
         <li IfModActive="SmashPhil.VehicleFramework">Compat/1.6/VehicleFramework</li>
         <li IfModActive="VanillaExpanded.VPsycastsE">Compat/1.6/VPE</li>
         <li IfModActive="MemeGoddess.GiddyUp">Compat/1.6/GiddyUp</li>
+        <li IfModActive="vanillaexpanded.gravship">Compat/1.6/VanillaGravshipsExpanded</li>
     </v1.6>
 </loadFolders>

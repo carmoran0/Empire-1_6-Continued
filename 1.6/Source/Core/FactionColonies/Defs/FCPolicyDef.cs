@@ -10,6 +10,8 @@ namespace FactionColonies
     public class FCPolicyDef : Def
     {
         public string desc;
+        /// <summary>Description with {FACTION}/{FACTION_TITLE} tokens and [b]/[i] emphasis markup resolved for display.</summary>
+        public string FormattedDesc => desc.Format();
         public FCPolicyCategory category;
         public TechLevel techLevelRequirement;
         public int factionLevelRequirement;
@@ -127,7 +129,7 @@ namespace FactionColonies
             {
                 foreach (string positive in positiveEffects)
                 {
-                    str += positive.Colorize(Color.green) + "\n";
+                    str += positive.Format().Colorize(Color.green) + "\n";
                 }
             }
 
@@ -140,7 +142,7 @@ namespace FactionColonies
             {
                 foreach (string negative in negativeEffects)
                 {
-                    str += negative.Colorize(Color.red) + "\n";
+                    str += negative.Format().Colorize(Color.red) + "\n";
                 }
             }
 

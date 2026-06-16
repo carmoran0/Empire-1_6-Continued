@@ -463,4 +463,33 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_30</defName>
+		<label>General Fixes and Updates</label>
+		<description>Numerous fixes and minor changes. A 1.5 release to the workshop ought to be soon. Hopefully...</description>
+		<releaseDate>2026-06-15</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: add null-guards to patches that touched faction relations</li>
+		<li>Bugfix: player caravans will not spawn into manual defense battles in the same location as the enemy anymore</li>
+		<li>Bugfix: in rare cases, manual battles would only end when all defenders die, instead of simply going down</li>
+		<li>Bugfix: if a merc dies on deployment, their assigned animals might not leave when commanded to, leaving the squad command window open and the squad busy</li>
+		<li>Settings UI change: give each discrete section its own &quot;Reset to Defaults&quot; button</li>
+		<li>MILITARY RAIDS CHANGE: the strength of enemy raids on Empire settlements has been reworked. Enemy strength no longer scales by an invisible &quot;Empire Threat Level&quot;; instead, empires will preferentially be raided by enemy factions that are within 2 levels of the empire&apos;s average military level</li>
+		<li>Add Neutroamine to the medicine resource (unlocked by the same research that unlocks industrial medicine)</li>
+		<li>Compat: when Vanilla Gravships Expanded is enabled, Astrofuel is added to the chemfuel and gravtech resources (gated by Basic Gravtech)</li>
+		<li>Manual Defense change: manual defense maps are slightly larger by default, and there are settings to let the player further adjust their size</li>
+		<li>Add a mod setting to block new random events from firing if a multi-step event chain is still in progress</li>
+		<li>Add mod settings to let the user scale how long it takes for settlements to upgrade, or for buildings to construct</li>
+		<li>Replace most instances of &quot;empire&quot;/&quot;your empire&quot; with the player empire&apos;s actual name or title (&quot;title&quot; is now treated as though it&apos;s a polity type, e.g. Kingdom, Republic, Commune)</li>
+		<li>Update existing Codex entries and add several more</li>
+		<li>Add a Biomes section to the Codex, showing the resource breakdown for every biome in the game. Supports modded biomes</li>
+		<li>Minor balance tweaks to Expansionist, Pacifist, and Slavor policies</li>
+		<li>Various fixes and updates to the various squad UIs (including a dedicated window for hiring squads)</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

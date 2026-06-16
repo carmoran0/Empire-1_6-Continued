@@ -80,7 +80,7 @@
   <FactionColonies.FCEventDef>
     <defName>denseWildlife_1-2</defName>
     <label>Dense Wildlife (Grand Hunt)</label>
-    <desc>A grand hunt is organized. Hunters join from across your empire, eager to hone their skills with this opportunity.</desc>
+    <desc>A grand hunt is organized. Hunters join from across {FACTION}, eager to hone their skills with this opportunity.</desc>
     <category>EC_Economy</category>
     <timeTillTrigger>240000</timeTillTrigger>
     <timeTillTriggerMax>360000</timeTillTriggerMax>

@@ -38,13 +38,33 @@ namespace FactionColonies
             }
         }
 
+        /// <summary>
+        /// True if a multi-step random event chain is currently unresolved for the faction.
+        /// Used by the <c>blockEventsDuringChain</c> setting to bar new random roots while a chain
+        /// is in progress (the check supersedes the frequency timer).
+        /// </summary>
+        public static bool IsRandomChainInProgress(FactionFC faction)
+        {
+            if (faction is null) return false;
+            HashSet<FCEventDef> members = FactionCache.RandomChainMemberDefs;
+            if (members.Count == 0) return false;
+
+            // Any queued / in-flight chain event. Completed events are awaiting sweep — ignore.
+            foreach (FCEvent e in faction.eventManager.Events)
+            {
+                if (e?.def != null && !e.IsCompleted && members.Contains(e.def)) return true;
+            }
+
+            return false;
+        }
+
         public static string BuildEventLetterBody(FCEvent evt)
         {
             string desc = evt.hasCustomDescription && !evt.customDescription.NullOrEmpty()
                 ? evt.customDescription
                 : evt.def.desc ?? "";
 
-            string body = desc;
+            string body = desc.Format();
 
             // Stat modifiers
             TaggedString statDesc = FCStatModifier.GetDescription(evt.def.statModifiers);

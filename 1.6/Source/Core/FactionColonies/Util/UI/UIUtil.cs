@@ -1,4 +1,5 @@
 ﻿using RimWorld;
+using RimWorld.Planet;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,12 +17,28 @@ namespace FactionColonies
         private static readonly Color TableHeaderBgColor = new Color(1f, 1f, 1f, 0.1f);
         private static readonly Color TableHeaderTextColor = new Color(0.85f, 0.85f, 0.85f);
 
+        /// <summary>
+        /// Fraction (0..1+) of the way from <paramref name="start"/> to <paramref name="finish"/> at the
+        /// current game tick. A zero-or-negative span (e.g. an instant 0-tick timer) returns 1f (complete)
+        /// instead of dividing by zero. Callers pass the bar to a draw helper, which clamps the result.
+        /// </summary>
+        public static float NormalizeProgress(int start, int finish)
+        {
+            int span = finish - start;
+            return span <= 0
+                ? 1f
+                : (Find.TickManager.TicksGame - start) / (float)span;
+        }
+
         public static void DrawProgressBar(Rect rect, float progress)
         {
             DrawProgressBarColors(rect, progress, Color.black, Color.cyan);
         }
         public static void DrawProgressBarColors(Rect rect, float progress, Color background, Color bar)
         {
+            // Sanitize so a NaN (e.g. a 0/0 from a zero-length timer) or out-of-range value can never
+            // reach the draw as a NaN/negative bar width. Mathf.Clamp01 alone does NOT catch NaN.
+            progress = float.IsNaN(progress) ? 0f : Mathf.Clamp01(progress);
             Rect baseRect = new Rect(rect.x, rect.y, rect.width, rect.height);
             Rect progressRect = new Rect(rect.x, rect.y, rect.width * progress, rect.height);
             Widgets.DrawBoxSolid(baseRect, background);
@@ -321,6 +338,15 @@ namespace FactionColonies
                 (r, l, sel) => ButtonFlatIcon(r, l, icon, labelColor: labelColor, highlighted: sel, baseColor: baseColor),
                 tabHeight, minTabWidth, borderColor);
         }
+        /// <summary>
+        /// Returns the given mod's banner image — its About/Preview.png — or null if the mod has none.
+        /// RimWorld's ModMetaData caches the texture internally, so repeated calls are cheap.
+        /// </summary>
+        public static Texture2D GetModBanner(ModContentPack mod)
+        {
+            return mod?.ModMetaData?.PreviewImage;
+        }
+
         // TABLE RENDERING
 
         /// <summary>Returns the height a table with the given row count will consume.</summary>
@@ -362,8 +388,33 @@ namespace FactionColonies
                 new List<string>[] { col1, col2, col3, col4 });
         }
 
+        /// <summary>
+        /// Draws an interactive 4-column table whose data rows respond to hover and clicks.
+        /// <paramref name="clickedRow"/> is set to the index of the data row clicked this frame, or -1.
+        /// Returns the total height consumed.
+        /// </summary>
+        public static float DrawTable(Rect rect, out int clickedRow,
+            string col1Header, List<string> col1,
+            string col2Header, List<string> col2,
+            string col3Header, List<string> col3,
+            string col4Header, List<string> col4)
+        {
+            return DrawTableCore(rect,
+                new string[] { col1Header, col2Header, col3Header, col4Header },
+                new List<string>[] { col1, col2, col3, col4 },
+                true, out clickedRow);
+        }
+
         private static float DrawTableCore(Rect rect, string[] headers, List<string>[] columns)
         {
+            int ignored;
+            return DrawTableCore(rect, headers, columns, false, out ignored);
+        }
+
+        private static float DrawTableCore(Rect rect, string[] headers, List<string>[] columns,
+            bool interactive, out int clickedRow)
+        {
+            clickedRow = -1;
             int colCount = headers.Length;
             int rowCount = columns[0].Count;
             float colW = rect.width / colCount;
@@ -387,8 +438,18 @@ namespace FactionColonies
             // Data rows
             for (int r = 0; r < rowCount; r++)
             {
+                Rect rowRect = new Rect(rect.x, curY, rect.width, TableRowHeight);
+
                 if (r % 2 == 1)
-                    Widgets.DrawBoxSolid(new Rect(rect.x, curY, rect.width, TableRowHeight), TableAltRowColor);
+                    Widgets.DrawBoxSolid(rowRect, TableAltRowColor);
+
+                if (interactive)
+                {
+                    if (Mouse.IsOver(rowRect))
+                        Widgets.DrawHighlight(rowRect);
+                    if (Widgets.ButtonInvisible(rowRect))
+                        clickedRow = r;
+                }
 
                 Text.Anchor = TextAnchor.MiddleCenter;
                 GUI.color = Color.white;

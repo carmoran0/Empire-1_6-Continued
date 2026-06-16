@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FactionColonies.util;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Verse;
@@ -93,6 +94,13 @@ namespace FactionColonies
                 return imagesCached;
             }
         }
+
+        /// <summary>
+        /// The entry description with player-facing markup resolved: {FACTION}/{FACTION_TITLE} tokens
+        /// and [b]/[i] emphasis. Not cached — the name/title are mutable, and the resolve early-outs
+        /// when no token is present.
+        /// </summary>
+        public string FormattedDesc => description.Format();
 
         /// <summary>
         /// Returns the singleton <see cref="ICodexDynamicProvider"/> instance, or null.

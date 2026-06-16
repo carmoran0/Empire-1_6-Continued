@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿using FactionColonies.util;
+using RimWorld;
 using RimWorld.Planet;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace FactionColonies
     {
         public string iconPath;
         public Color color = new Color(0.65f, 0.65f, 0.65f);
+        /// <summary>Description with {FACTION}/{FACTION_TITLE} tokens and [b]/[i] emphasis markup resolved for display.</summary>
+        public string FormattedDesc => description.Format();
 
         /* For all Allow-Blocklist pairs, the allowlist is processed first, and then the blocklist is used to shave off blocked elements */
         /* NOTE: The thingAllowList is treated as the ultimate source of truth for the Things it specifies. That is:

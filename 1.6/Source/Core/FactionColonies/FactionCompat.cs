@@ -13,15 +13,28 @@ namespace FactionColonies
     public static class FactionCompat
     {
         private static bool isGiddyUp2Active = false;
+        private static bool isVPEActive = false;
+        private static bool isCombatExtendedActive = false;
+
         public static bool GiddyUp2Active => isGiddyUp2Active;
+        public static bool VPEActive => isVPEActive;
+        public static bool CombatExtendedActive => isCombatExtendedActive;
 
         public static void CheckForMods()
         {
-            if (LoadedModManager.RunningMods.Any(mod => mod.PackageId.ToLower() == "memegoddess.giddyup"))
-            {
-                isGiddyUp2Active = true;
-            }
+            isGiddyUp2Active = ModActive("MemeGoddess.GiddyUp");
+            isVPEActive = ModActive("VanillaExpanded.VPsycastsE");
+            isCombatExtendedActive = ModActive("CETeam.CombatExtended");
+
             LogUtil.Message($"[FactionCompat] Giddy Up 2 Active: {GiddyUp2Active}");
+            LogUtil.Message($"[FactionCompat] Vanilla Psycasts Expanded Active: {VPEActive}");
+            LogUtil.Message($"[FactionCompat] Combat Extended Active: {CombatExtendedActive}");
+        }
+
+        private static bool ModActive(string packageId)
+        {
+            string target = packageId.ToLower();
+            return LoadedModManager.RunningMods.Any(mod => mod.PackageId.ToLower() == target);
         }
     }
 }

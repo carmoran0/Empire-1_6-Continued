@@ -1,4 +1,7 @@
 using System;
+using System.Linq;
+using RimWorld;
+using Verse;
 
 namespace FactionColonies
 {
@@ -202,6 +205,9 @@ namespace FactionColonies
 
         // ============================
         // Tier 3: ETL Computation (requires active faction)
+        // DORMANT — ComputeEmpireThreatLevel is no longer in the live raid path (removed in the
+        // 2026-06-14 threat-scaling simplification); retained for a future threat-scaling submod.
+        // The live raid path is covered by Tier 7 / Tier 8 below.
         // ============================
 
         [EmpireTest("ThreatScaling")]
@@ -307,6 +313,8 @@ namespace FactionColonies
 
         // ============================
         // Tier 4: Handicap Cap (requires active faction)
+        // DORMANT — ComputeHandicapCap is no longer in the live raid path (incoming raids use the
+        // early-game raid cap, covered in Tier 8); retained for a future threat-scaling submod.
         // ============================
 
         [EmpireTest("ThreatScaling")]
@@ -418,6 +426,129 @@ namespace FactionColonies
 
             TestAssert.IsNotNull(faction.threatAdaptation,
                 "threatAdaptation field should never be null");
+        }
+
+        // ============================
+        // Tier 7: Faction Selection Weight (live raid path; no game state)
+        // Pure coverage for ThreatScalingUtil.ComputeFactionSelectionWeight, the closeness-based
+        // weighting that drives live enemy-faction selection (replaced ETL on 2026-06-14).
+        // ============================
+
+        [EmpireTest("ThreatScaling")]
+        public static void SelectionWeight_EvenLevel_IsFull()
+        {
+            TestAssert.AreEqual(1.0, ThreatScalingUtil.ComputeFactionSelectionWeight(5, 5),
+                message: "Even level should weight 1.0");
+        }
+
+        [EmpireTest("ThreatScaling")]
+        public static void SelectionWeight_OneApart_IsThreeQuarters()
+        {
+            TestAssert.AreEqual(0.75, ThreatScalingUtil.ComputeFactionSelectionWeight(6, 5),
+                message: "+/-1 level should weight 0.75");
+        }
+
+        [EmpireTest("ThreatScaling")]
+        public static void SelectionWeight_TwoApart_IsHalf()
+        {
+            TestAssert.AreEqual(0.5, ThreatScalingUtil.ComputeFactionSelectionWeight(3, 5),
+                message: "+/-2 level should weight 0.5");
+        }
+
+        [EmpireTest("ThreatScaling")]
+        public static void SelectionWeight_ThreeApart_IsQuarter()
+        {
+            TestAssert.AreEqual(0.25, ThreatScalingUtil.ComputeFactionSelectionWeight(2, 5),
+                message: "+/-3 level should weight 0.25");
+        }
+
+        [EmpireTest("ThreatScaling")]
+        public static void SelectionWeight_FourApart_FlooredAt5Percent()
+        {
+            // Raw 1 - 4*0.25 = 0.0, floored to 0.05
+            TestAssert.AreEqual(0.05, ThreatScalingUtil.ComputeFactionSelectionWeight(9, 5),
+                message: "+/-4 level should floor to 0.05");
+        }
+
+        [EmpireTest("ThreatScaling")]
+        public static void SelectionWeight_FarApart_FlooredAt5Percent()
+        {
+            // Raw 1 - 10*0.25 = -1.5, floored to 0.05 (distant tiers rare but never excluded)
+            TestAssert.AreEqual(0.05, ThreatScalingUtil.ComputeFactionSelectionWeight(15, 5),
+                message: "Distant levels should never drop below the 0.05 floor");
+        }
+
+        [EmpireTest("ThreatScaling")]
+        public static void SelectionWeight_IsSymmetric()
+        {
+            TestAssert.AreEqual(
+                ThreatScalingUtil.ComputeFactionSelectionWeight(3, 7),
+                ThreatScalingUtil.ComputeFactionSelectionWeight(7, 3),
+                message: "Weight should depend only on the absolute level distance");
+        }
+
+        // ============================
+        // Tier 8: Live raid path (requires active faction)
+        // ComputeEarlyGameRaidCap + PickWeightedEnemyFaction — the live incoming-raid cap and
+        // enemy-faction selection that replaced the dormant ETL/handicap tiers.
+        // ============================
+
+        [EmpireTest("ThreatScaling")]
+        public static void EarlyGameRaidCap_RespectsFloor()
+        {
+            var faction = GetFaction();
+            if (faction == null)
+                TestAssert.Skip("No faction");
+
+            double cap = ThreatScalingUtil.ComputeEarlyGameRaidCap(faction);
+            TestAssert.IsTrue(cap >= 2.0,
+                $"Early-game raid cap should be >= 2.0 floor, got {cap}");
+        }
+
+        [EmpireTest("ThreatScaling")]
+        public static void EarlyGameRaidCap_IsFiniteNumber()
+        {
+            var faction = GetFaction();
+            if (faction == null)
+                TestAssert.Skip("No faction");
+
+            double cap = ThreatScalingUtil.ComputeEarlyGameRaidCap(faction);
+            TestAssert.IsFalse(double.IsNaN(cap), "Early-game raid cap should not be NaN");
+            TestAssert.IsFalse(double.IsInfinity(cap), "Early-game raid cap should not be infinite");
+        }
+
+        [EmpireTest("ThreatScaling")]
+        public static void PickWeightedEnemyFaction_DoesNotThrow()
+        {
+            var faction = GetFaction();
+            if (faction == null)
+                TestAssert.Skip("No faction");
+
+            TestAssert.DoesNotThrow(() => ThreatScalingUtil.PickWeightedEnemyFaction(faction));
+        }
+
+        [EmpireTest("ThreatScaling")]
+        public static void PickWeightedEnemyFaction_ReturnsHostileOrNull()
+        {
+            var faction = GetFaction();
+            if (faction == null)
+                TestAssert.Skip("No faction");
+
+            Faction picked = ThreatScalingUtil.PickWeightedEnemyFaction(faction);
+            bool anyEligible = Find.FactionManager.AllFactionsVisible
+                .Any(f => f.HostileTo(Faction.OfPlayer) && !f.defeated && !f.Hidden);
+
+            if (picked == null)
+            {
+                TestAssert.IsFalse(anyEligible,
+                    "Returned null but an eligible hostile faction exists");
+                return;
+            }
+
+            TestAssert.IsTrue(picked.HostileTo(Faction.OfPlayer),
+                $"Picked faction {picked.Name} should be hostile to the player");
+            TestAssert.IsFalse(picked.defeated, $"Picked faction {picked.Name} should not be defeated");
+            TestAssert.IsFalse(picked.Hidden, $"Picked faction {picked.Name} should not be hidden");
         }
     }
 }

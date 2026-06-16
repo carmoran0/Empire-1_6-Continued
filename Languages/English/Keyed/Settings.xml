@@ -9,11 +9,15 @@
 	<FCSettingProductionTitheMod>Production Tithe Modifier</FCSettingProductionTitheMod>
 	<FCSettingWorkerCost>Cost Per Worker</FCSettingWorkerCost>
 	<FCSettingMaxSettlementLevel>Max Settlement Level</FCSettingMaxSettlementLevel>
+	<FCSettingTimersHeader>Timers</FCSettingTimersHeader>
+	<FCSettingSettlementUpgradeTime>Settlement upgrade time multiplier</FCSettingSettlementUpgradeTime>
+	<FCSettingBuildingConstructTime>Building construction time multiplier</FCSettingBuildingConstructTime>
+	<FCSettingTimerTip>Scales how long this timer takes.</FCSettingTimerTip>
 	<FCSettingDisableHostileMilActions>Disable Hostile Military Actions</FCSettingDisableHostileMilActions>
 	<FCSettingAntiExploit>Anti-Exploit (mercenary gear)</FCSettingAntiExploit>
 	<FCSettingAntiExploitTip>When enabled (default), mercenary weapons and apparel are biocoded to their wielder, and humanlike mercenaries receive a death acidifier implant that dissolves their worn gear when they die, so you can't farm free gear from your own squads.</FCSettingAntiExploitTip>
 	<FCSettingRestrictDefenseMapLoot>Restrict Defense-Map Loot</FCSettingRestrictDefenseMapLoot>
-	<FCSettingRestrictDefenseMapLootTip>When enabled (default), a settlement's own items are forbidden and locked while you manually defend it, so you can't load them into a caravan or drop pod, nor have pawns equip, wear, or haul them away, when you leave the battle map. You still keep your own pawns and their gear, recover your fallen reinforcements, and may take spoils dropped by dead attackers.</FCSettingRestrictDefenseMapLootTip>
+	<FCSettingRestrictDefenseMapLootTip>When enabled (default), a settlement's own items are forbidden and locked on manual defense maps, so you can't freely take their items. You still keep your own pawns and their gear, recover your fallen reinforcements, and may take spoils dropped by dead attackers.</FCSettingRestrictDefenseMapLootTip>
 	<FCSettingDisableRandomEvents>Disable Random Events</FCSettingDisableRandomEvents>
 	<FCSettingConfigureEvents>Enable or disable individual events below. Disabled events will not fire in any save.</FCSettingConfigureEvents>
 	<FCSettingsTabGeneral>General</FCSettingsTabGeneral>
@@ -21,7 +25,7 @@
 	<FCSettingsTabMilitary>Military</FCSettingsTabMilitary>
 	<FCSettingsTabRoadBuilder>Road Builder</FCSettingsTabRoadBuilder>
 	<FCSettingsTabCompat>Compatibility</FCSettingsTabCompat>
-	<FCSettingRoadBuilderDesc>The Road Builder automatically connects your Empire settlements with roads using a Minimum Spanning Tree algorithm, which is recalculated on the following events:
+	<FCSettingRoadBuilderDesc>The Road Builder automatically connects your Empire settlements with roads using a Minimum Spanning Tree algorithm, which is recalculated (with caching) on the following events:
  - each time a settlement is founded or lost
  - when you research a new level of roads
 		
@@ -32,6 +36,8 @@ By default, this computation runs on a background thread to avoid freezing the g
 Spreading out the computation will reduce the impact on performance, but no roads will build until the MST is fully constructed. So the more you throttle the algorithm, the longer it will take for your roads to start building.</FCSettingRoadBuilderDesc>
 	<FCSettingEnableAllEvents>Enable All Events</FCSettingEnableAllEvents>
 	<FCSettingDisableEventsWithOptions>Disable Events With Options</FCSettingDisableEventsWithOptions>
+	<FCSettingBlockEventsDuringChain>Block new events during an active chain</FCSettingBlockEventsDuringChain>
+	<FCSettingBlockEventsDuringChainDesc>While a multi-step event chain is still resolving, do not fire a new random event even if the time-between-events would allow it. Overrides the frequency setting.</FCSettingBlockEventsDuringChainDesc>
 	<FCSettingEventOptionDelay>Event option misclick protection: {0}s</FCSettingEventOptionDelay>
 	<FCSettingEventSilverCostMultiplier>Event option silver cost multiplier: {0}x</FCSettingEventSilverCostMultiplier>
 	<FCSettingBattleMode>Battle Mode: </FCSettingBattleMode>
@@ -47,6 +53,14 @@ Spreading out the computation will reduce the impact on performance, but no road
 	<FCSettingMaxConcurrentBattleMaps>Max Concurrent Battle Maps</FCSettingMaxConcurrentBattleMaps>
 	<FCSettingMaxConcurrentBattleMapsTip>Maximum number of manual defense battle maps that can be open simultaneously across all settlements. Set to 0 for unlimited. Additional battles beyond this limit will auto-resolve.</FCSettingMaxConcurrentBattleMapsTip>
 	<FCUnlimited>Unlimited</FCUnlimited>
+	<FCSettingDefenseMapBaseSize>Defense Map Base Size</FCSettingDefenseMapBaseSize>
+	<FCSettingDefenseMapBaseSizeTip>Base edge length (in cells) of manually-defended settlement battle maps. Final size = base + (settlement level * per-level step), clamped between the minimum and maximum below.</FCSettingDefenseMapBaseSizeTip>
+	<FCSettingDefenseMapPerLevelStep>Defense Map Size Per Level</FCSettingDefenseMapPerLevelStep>
+	<FCSettingDefenseMapPerLevelStepTip>How many cells the defense map grows for each settlement level above the base size.</FCSettingDefenseMapPerLevelStepTip>
+	<FCSettingDefenseMapMinSize>Defense Map Minimum Size</FCSettingDefenseMapMinSize>
+	<FCSettingDefenseMapMinSizeTip>Hard floor (in cells) for the defense map edge length, regardless of base/step settings.</FCSettingDefenseMapMinSizeTip>
+	<FCSettingDefenseMapMaxSize>Defense Map Maximum Size</FCSettingDefenseMapMaxSize>
+	<FCSettingDefenseMapMaxSizeTip>Hard cap (in cells) for the defense map edge length.</FCSettingDefenseMapMaxSizeTip>
 	<FCSettingEfficiencyDamping>Efficiency Combat Influence (0 = HP only, 1 = full roll effect)</FCSettingEfficiencyDamping>
 	<FCSettingEfficiencyDampingTooltip>Controls how much the military efficiency stat affects auto-resolve battle outcomes.
 
@@ -89,26 +103,31 @@ Values in between dampen the effect of military efficiency on the auto combat.</
 	<FCSettingAutoResolveDeathThreshold>Auto-resolve death threshold</FCSettingAutoResolveDeathThreshold>
 	<FCSettingAutoResolveDeathThresholdTip>If the squad's casualty rate is below this threshold, then no members of the squad will die. At 75% (default), only squads that lose 75% or more of their force will see deaths.</FCSettingAutoResolveDeathThresholdTip>
 	<FCSettingAutoResolveMaxDeathFraction>Auto-resolve max death fraction</FCSettingAutoResolveMaxDeathFraction>
-	<FCSettingAutoResolveMaxDeathFractionTip>The fraction of casualties that become deaths. At 80% (default), roughly 80% the squad's injured pawns will die.</FCSettingAutoResolveMaxDeathFractionTip>
+	<FCSettingAutoResolveMaxDeathFractionTip>The maximum fraction of casualties that become deaths. At 50% (default), roughly 50% the squad's injured pawns will die.</FCSettingAutoResolveMaxDeathFractionTip>
 	<FCSettingCrushingDefeatPenaltyMultiplier>Crushing Defeat penalty multiplier</FCSettingCrushingDefeatPenaltyMultiplier>
 	<FCSettingCrushingDefeatPenaltyMultiplierTip>Multiplies the settlement-side penalties (prosperity, happiness, loyalty, building destruction chance) when a settlement suffers a Crushing Defeat: a defense where your forces failed to inflict a single casualty.</FCSettingCrushingDefeatPenaltyMultiplierTip>
 	<FCSettingOverwhelmingVictoryRewardMultiplier>Overwhelming Victory reward multiplier</FCSettingOverwhelmingVictoryRewardMultiplier>
 	<FCSettingOverwhelmingVictoryRewardMultiplierTip>Multiplies the happiness/loyalty bonus granted to the winning squad's home settlement after an Overwhelming Victory: a battle won without taking a single casualty. Set to 0 to disable the reward (the flavor letter still appears).</FCSettingOverwhelmingVictoryRewardMultiplierTip>
-	<FCSettingRespectLethalDamageThreshold>Respect vanilla lethal damage threshold</FCSettingRespectLethalDamageThreshold>
-	<FCSettingRespectLethalDamageThresholdTip>When enabled (default), auto-resolve injuries are capped so cumulative injury severity stays under vanilla's lethal-damage threshold and the injury path can't accidentally kill a pawn. Disable when running mods that remove or relax vanilla's check.</FCSettingRespectLethalDamageThresholdTip>
+	<FCSettingRespectLethalDamageThreshold>Respect lethal damage threshold</FCSettingRespectLethalDamageThreshold>
+	<FCSettingRespectLethalDamageThresholdTip>When enabled (default), auto-resolve injuries are capped so cumulative injury severity stays under Rimworld's lethal-damage threshold and the injury path can't accidentally kill a pawn. Disable when running mods that remove or relax this check.</FCSettingRespectLethalDamageThresholdTip>
 
 	<!-- Squad-first economy sliders -->
 	<FCSettingSquadsHeader>Squads</FCSettingSquadsHeader>
 	<FCSettingMaxSquadSize>Max Squad Size</FCSettingMaxSquadSize>
 	<FCSettingMaxSquadSizeTip>Hard cap on mercenaries per squad. Existing templates retain their existing slot count when this is changed; only newly-created templates and new hires use the new value. Per-settlement bonuses (from buildings/policies) still stack on top.</FCSettingMaxSquadSizeTip>
 	<FCSettingMaxAnimalSubpawns>Max Companion Animals</FCSettingMaxAnimalSubpawns>
-	<FCSettingMaxAnimalSubpawnsTip>Maximum companion animals a single mercenary design can carry. Adding past this is blocked; lowering it never removes animals from existing designs. With Giddy Up 2, a merc's separate mount does not count toward this limit.</FCSettingMaxAnimalSubpawnsTip>
+	<FCSettingMaxAnimalSubpawnsTip>Maximum companion animals a single mercenary design can carry. Adding past this is blocked; lowering it never removes animals from existing designs.</FCSettingMaxAnimalSubpawnsTip>
+	<FCSettingMaxAnimalSubpawnsGiddyUpTip>Maximum companion animals a single mercenary design can carry. Adding past this is blocked; lowering it never removes animals from existing designs. With Giddy Up 2, a merc's separate mount does not count toward this limit.</FCSettingMaxAnimalSubpawnsGiddyUpTip>
 	<FCSettingSquadHireCostMultiplier>Squad Hire Cost Multiplier</FCSettingSquadHireCostMultiplier>
 	<FCSettingSquadHireCostMultiplierTip>Multiplier applied to a template's full equipment cost when the player hires a fresh squad. 1.0 = sticker price; 0.0 = free; higher values make hiring more expensive.</FCSettingSquadHireCostMultiplierTip>
 	<FCSettingSquadUpgradeCostMultiplier>Squad Upgrade Cost Multiplier</FCSettingSquadUpgradeCostMultiplier>
-	<FCSettingSquadUpgradeCostMultiplierTip>Multiplier applied to the diff between a hired squad's current loadout and its source template when the player upgrades the squad to match.</FCSettingSquadUpgradeCostMultiplierTip>
+	<FCSettingSquadUpgradeCostMultiplierTip>Multiplier applied to the difference in cost between a hired squad's current loadout and its source template when the player upgrades the squad to match.</FCSettingSquadUpgradeCostMultiplierTip>
 	<FCSettingSquadDeploymentCostPercentage>Squad Deployment Cost</FCSettingSquadDeploymentCostPercentage>
-	<FCSettingSquadDeploymentCostPercentageTip>Percentage of a squad's current equipment value billed in silver each time it is deployed (sent to a player map or on an offensive operation). Defensive operations are free. The cost becomes a bill against the squad's home settlement, due after the lifespan setting expires. 0% disables the cost.</FCSettingSquadDeploymentCostPercentageTip>
+	<FCSettingSquadDeploymentCostPercentageTip>Percentage of a squad's current equipment value billed in silver each time it is deployed (sent to a player map or on an offensive operation). Defensive operations are free.
+	
+The cost becomes a bill against the squad's home settlement, due after the lifespan setting expires.
+
+0% disables the cost.</FCSettingSquadDeploymentCostPercentageTip>
 	<FCSettingDeploymentBillLifespan>Deployment Bill Lifespan</FCSettingDeploymentBillLifespan>
 	<FCSettingDeploymentBillLifespanTip>Number of days a deployment-cost bill remains payable before it expires and the settlement takes the late- or unpaid-bill penalty. Independent of the tax cycle.</FCSettingDeploymentBillLifespanTip>
 	<FCSettingGeneValueHeader>Gene Valuation</FCSettingGeneValueHeader>
@@ -136,8 +155,10 @@ Values in between dampen the effect of military efficiency on the auto combat.</
 	<FCSettingEdgesPerRoadTick>Edges per road tick</FCSettingEdgesPerRoadTick>
 	<FCSettingFlushRoadCache>Flush Road Path Cache</FCSettingFlushRoadCache>
 	<FCSettingEnableDebugLogging>Enable Verbose Logging</FCSettingEnableDebugLogging>
-	<FCSettingResetButton>Reset Settings</FCSettingResetButton>
+	
+	<FCSettingResetButton>Reset All Settings</FCSettingResetButton>
 	<FCSettingResetSection>Reset Section to Defaults</FCSettingResetSection>
+	<FCSettingResetSectionTag>Reset {0} Section to Defaults</FCSettingResetSectionTag>
 	<FCOpenPatchNotes>Open Patch Notes Window</FCOpenPatchNotes>
 
 	<FCMedievalTechOnly>Medieval Tech Only</FCMedievalTechOnly>

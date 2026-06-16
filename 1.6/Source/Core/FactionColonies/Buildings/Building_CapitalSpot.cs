@@ -92,8 +92,8 @@ namespace FactionColonies
                         LogUtil.Message($"Empire capital location updated from {oldCapital} to {currentTile} (gravship moved)");
 
                         Find.LetterStack.ReceiveLetter(
-                            "FCCapitalRelocatedLabel".Translate(),
-                            "FCCapitalRelocatedDesc".Translate(),
+                            "FCCapitalRelocatedLabel".Translate(FindFC.EmpireTitle.CapitalizeFirst()),
+                            "FCCapitalRelocatedDesc".Translate(FindFC.EmpireName),
                             LetterDefOf.NeutralEvent
                         );
 
@@ -144,10 +144,10 @@ namespace FactionColonies
             {
                 yield return new Command_Toggle
                 {
-                    defaultLabel = "Set Empire Capital",
+                    defaultLabel = "FCCapitalSpotGizmoLabel".Translate(FindFC.EmpireTitle.CapitalizeFirst()),
                     defaultDesc = isActiveCapitalSpot
-                        ? "This is currently your Empire's capital seat. Click to disable."
-                        : "Click to make this the seat of your Empire's capital. This location will be used for travel time calculations and event targeting.",
+                        ? "FCCapitalSpotGizmoDescActive".Translate(FindFC.EmpireName)
+                        : "FCCapitalSpotGizmoDescInactive".Translate(FindFC.EmpireName),
                     icon = TexLoad.iconCustomize, // Using existing customize icon
                     isActive = () => isActiveCapitalSpot,
                     toggleAction = () =>
@@ -160,14 +160,14 @@ namespace FactionColonies
                         if (IsActiveCapitalSpot)
                         {
                             Messages.Message(
-                                "FCCapitalEstablished".Translate(Map.Parent.LabelCap),
+                                "FCCapitalEstablished".Translate(Map.Parent.LabelCap, FindFC.EmpireTitle.CapitalizeFirst(), FindFC.EmpireTitle),
                                 MessageTypeDefOf.PositiveEvent
                             );
                         }
                         else
                         {
                             Messages.Message(
-                                "FCCapitalSeatDisabled".Translate(),
+                                "FCCapitalSeatDisabled".Translate(FindFC.EmpireTitle.CapitalizeFirst()),
                                 MessageTypeDefOf.NeutralEvent
                             );
                         }
@@ -180,8 +180,8 @@ namespace FactionColonies
         {
             string baseString = base.GetInspectString();
             string statusString = isActiveCapitalSpot
-                ? "Active Empire Capital"
-                : "Capital seat (inactive)";
+                ? "FCCapitalSpotInspectActive".Translate(FindFC.EmpireTitle.CapitalizeFirst())
+                : "FCCapitalSpotInspectInactive".Translate();
 
             return string.IsNullOrEmpty(baseString)
                 ? statusString
@@ -198,7 +198,7 @@ namespace FactionColonies
                 {
                     faction.capitalLocation = PlanetTile.Invalid;
                     Messages.Message(
-                        "FCCapitalLost".Translate(),
+                        "FCCapitalLost".Translate(FindFC.EmpireTitle.CapitalizeFirst()),
                         MessageTypeDefOf.NegativeEvent
                     );
                 }

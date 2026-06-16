@@ -34,6 +34,12 @@ namespace FactionColonies
         private Map currentMap;
         private bool finalized;
 
+        // Tick the current RecoverWoundedAndLeave order was first seen, or -1 when not leaving.
+        // Drives the prompt force-finalize in LordJobTick so a stuck sub-pawn (e.g. an orphaned
+        // companion animal whose handler merc died) can't hold the lord — and thus the command
+        // window — open until the long backstop fires.
+        private int leaveOrderStartTick = -1;
+
         /// <summary>
         /// Default constructor, meant to only be used when creating the job object during loading
         /// </summary>
@@ -104,12 +110,43 @@ namespace FactionColonies
         /// If pawns are still in the lord after this, force-finalize.</summary>
         public const int PostLeaveGraceTicks = 10000;
 
+        /// <summary>Short grace after a RecoverWoundedAndLeave order before force-finalizing, so pawns
+        /// that CAN path off still leave naturally (~1 in-game hour). Far shorter than the
+        /// <see cref="whenToForceLeave"/>+<see cref="PostLeaveGraceTicks"/> backstop.</summary>
+        public const int LeaveOrderForceFinalizeTicks = 2500;
+
         public override void LordJobTick()
         {
             base.LordJobTick();
             ApplyMountsIfNeeded();
-            if (!finalized
-                && Find.TickManager.TicksGame > whenToForceLeave + PostLeaveGraceTicks
+            if (finalized) return;
+
+            // Under a leave order, finalize promptly so a single stuck pawn can't wedge the lord
+            // (and the command window) open. Finalize once every top-level merc has physically left
+            // the map, OR after a short grace (covers the case where a merc itself is the straggler).
+            // FinalizeDeployment DeSpawns whatever remains (alive/redeployable) and completes the op.
+            bool leaving = squad is object
+                           && squad.Deployment.MilitaryOrder == MilitaryOrder.RecoverWoundedAndLeave;
+            if (leaving)
+            {
+                if (leaveOrderStartTick < 0) leaveOrderStartTick = Find.TickManager.TicksGame;
+
+                bool allMercsGone = !squad.DeployedMercenaries.Any();
+                bool graceElapsed = Find.TickManager.TicksGame - leaveOrderStartTick > LeaveOrderForceFinalizeTicks;
+                if (allMercsGone || graceElapsed)
+                {
+                    FinalizeDeployment();
+                    return;
+                }
+            }
+            else
+            {
+                // Leave -> Move/Attack resets the grace; it re-seeds on the next leave order.
+                leaveOrderStartTick = -1;
+            }
+
+            // Long backstop: pawns still in the lord well past the force-leave horizon.
+            if (Find.TickManager.TicksGame > whenToForceLeave + PostLeaveGraceTicks
                 && lord.ownedPawns.Count > 0)
             {
                 FinalizeDeployment();
@@ -154,6 +191,7 @@ namespace FactionColonies
             Scribe_References.Look(ref squad, "squad");
             Scribe_References.Look(ref currentMap, "currentMap");
             Scribe_Values.Look(ref finalized, "finalized");
+            Scribe_Values.Look(ref leaveOrderStartTick, "leaveOrderStartTick", -1);
             Scribe_Values.Look(ref mountsApplied, "mountsApplied", false);
             Scribe_Collections.Look(ref mounts, "mounts", LookMode.Reference, LookMode.Reference, ref mountsKeys, ref mountsValues);
 

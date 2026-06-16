@@ -9,13 +9,39 @@ namespace FactionColonies
 {
     public static class EmpireTestRunner
     {
+        /*-*-*- Standard (non-destructive) tier -*-*-*/
+
         [DebugAction("Empire", "Run All Tests", allowedGameStates = AllowedGameStates.Playing)]
-        public static void RunAll() => RunTests(null);
+        public static void RunAll() => RunTests(null, destructive: false);
 
         [DebugAction("Empire", "Run Tests by Category", allowedGameStates = AllowedGameStates.Playing)]
-        public static void RunByCategory()
+        public static void RunByCategory() => ShowCategoryMenu(destructive: false);
+
+        /*-*-*- Destructive tier (save-first, mutates live state) -*-*-*/
+
+        [DebugAction("Empire", "Run Destructive Tests", allowedGameStates = AllowedGameStates.Playing)]
+        public static void RunAllDestructive() =>
+            ConfirmDestructive(() => RunTests(null, destructive: true));
+
+        [DebugAction("Empire", "Run Destructive Tests by Category", allowedGameStates = AllowedGameStates.Playing)]
+        public static void RunDestructiveByCategory() =>
+            ConfirmDestructive(() => ShowCategoryMenu(destructive: true));
+
+        private static void ConfirmDestructive(Action confirmedAct)
+        {
+            Find.WindowStack.Add(Dialog_MessageBox.CreateConfirmation(
+                "DESTRUCTIVE TESTS mutate live game state (create/destroy settlements, run tax "
+                + "cycles, hire/dismiss squads, create & resolve battles, fire events, level the "
+                + "faction, enact/revoke edicts). They are NOT cleaned up afterward.\n\n"
+                + "SAVE FIRST. The runner will not crash, but your game state will be thrashed.\n\n"
+                + "Continue?",
+                confirmedAct, destructive: true, title: "Run Destructive Empire Tests"));
+        }
+
+        private static void ShowCategoryMenu(bool destructive)
         {
             var categories = DiscoverTests()
+                .Where(t => t.attr.Destructive == destructive)
                 .Select(t => t.attr.Category)
                 .Distinct()
                 .OrderBy(c => c)
@@ -25,21 +51,23 @@ namespace FactionColonies
             foreach (string cat in categories)
             {
                 string local = cat;
-                options.Add(new DebugMenuOption(local, DebugMenuOptionMode.Action, () => RunTests(local)));
+                options.Add(new DebugMenuOption(local, DebugMenuOptionMode.Action,
+                    () => RunTests(local, destructive)));
             }
             Find.WindowStack.Add(new Dialog_DebugOptionListLister(options));
         }
 
-        public static void RunTests(string category)
+        public static void RunTests(string category, bool destructive = false)
         {
-            var tests = DiscoverTests();
+            var tests = DiscoverTests().Where(t => t.attr.Destructive == destructive);
             if (category != null)
-                tests = tests.Where(t => t.attr.Category == category).ToList();
+                tests = tests.Where(t => t.attr.Category == category);
+            var list = tests.ToList();
 
             int passed = 0, failed = 0, errors = 0, skipped = 0;
             var skipDetails = new List<string>();
             var failDetails = new List<string>();
-            foreach (var (method, attr) in tests)
+            foreach (var (method, attr) in list)
             {
                 string testName = $"[{attr.Category}] {method.DeclaringType.Name}.{method.Name}";
                 try
@@ -68,8 +96,9 @@ namespace FactionColonies
                 }
             }
 
-            string label = category != null ? $"[{category}]" : "[All]";
-            LogUtil.MessageForce($"Test results {label}: {passed} passed, {failed} failed, {errors} errors, {skipped} skipped (of {tests.Count} total)");
+            string label = (category != null ? $"[{category}]" : "[All]")
+                + (destructive ? " DESTRUCTIVE" : "");
+            LogUtil.MessageForce($"Test results {label}: {passed} passed, {failed} failed, {errors} errors, {skipped} skipped (of {list.Count} total)");
             if (failDetails.Count > 0)
             {
                 LogUtil.MessageForce("Failed tests:\n" + string.Join("\n", failDetails));
@@ -77,6 +106,13 @@ namespace FactionColonies
             if (skipDetails.Count > 0)
             {
                 LogUtil.MessageForce("Skipped tests:\n" + string.Join("\n", skipDetails));
+            }
+            if (destructive && list.Count > 0)
+            {
+                LogUtil.MessageForce("Destructive tests left residue that is NOT auto-reverted: "
+                    + "silver spent, faction XP/level gained, bills/events created, letters & "
+                    + "messages fired, and any settlements/squads created if teardown was skipped. "
+                    + "Reload your pre-test save to restore the prior state.");
             }
         }
 

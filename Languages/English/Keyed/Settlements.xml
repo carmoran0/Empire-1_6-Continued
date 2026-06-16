@@ -52,7 +52,7 @@
 	<FCOpenSettlementWindowDefaultLabel>See settlement information</FCOpenSettlementWindowDefaultLabel>
 	<FCOpenSettlementWindowDefaultDesc>Opens the settlement window</FCOpenSettlementWindowDefaultDesc>
 	<FCBuildRoads>Build Roads</FCBuildRoads>
-	<FCRoadSegmentsBuilt>Your Empire settlements have constructed new {0} segments connecting your territories.</FCRoadSegmentsBuilt>
+	<FCRoadSegmentsBuilt>{0}'s settlements have constructed new {1} segments connecting your territories.</FCRoadSegmentsBuilt>
 
 	<!-- Settlement Stats -->
 	<FCSettlementMilitaryLevel>Settlement Military Level</FCSettlementMilitaryLevel>
@@ -73,9 +73,9 @@
 	<FCSettlementStatGain>Gaining {0} {1} per day</FCSettlementStatGain>
 	<FCSettlementStatLoss>Losing {0} {1} per day</FCSettlementStatLoss>
 	<FCDecayingPenaltyDaysLeft>{0} days left</FCDecayingPenaltyDaysLeft>
-	<FCPenaltyPawnDeath>Empire citizen killed</FCPenaltyPawnDeath>
-	<FCPenaltyCaravanDeath>Empire caravan attacked</FCPenaltyCaravanDeath>
-	<FCPenaltyCaravanWipe>Empire caravan slaughtered</FCPenaltyCaravanWipe>
+	<FCPenaltyPawnDeath>{0} citizen killed</FCPenaltyPawnDeath>
+	<FCPenaltyCaravanDeath>{0} caravan attacked</FCPenaltyCaravanDeath>
+	<FCPenaltyCaravanWipe>{0} caravan slaughtered</FCPenaltyCaravanWipe>
 	<FCPenaltyCaravanWipeMessage>The people of {0} are furious that one of their trade caravans was wiped out under your protection.</FCPenaltyCaravanWipeMessage>
 
 	<!-- Settlement Stat Descriptions -->

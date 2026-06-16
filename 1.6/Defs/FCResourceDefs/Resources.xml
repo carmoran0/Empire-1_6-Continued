@@ -415,6 +415,12 @@
 	<productionAdditiveStat>RTD_Medicine_ProductionAdditive</productionAdditiveStat>
 	<productionMultiplierStat>RTD_Medicine_ProductionMultiplier</productionMultiplierStat>
 	<thingAllowList>
+		<li>
+			<thingDef>Neutroamine</thingDef>
+			<researchProjectDefs>
+				<li>MedicineProduction</li>
+			</researchProjectDefs>
+		</li>
 		<li MayRequire="Ludeon.RimWorld.Biotech">
 			<thingDef>DeathrestCapacitySerum</thingDef>
 			<researchProjectDefs>

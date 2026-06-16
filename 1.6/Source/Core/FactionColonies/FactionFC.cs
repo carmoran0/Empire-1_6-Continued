@@ -15,7 +15,7 @@ namespace FactionColonies
 
         /* Core Identity */
         public string name = "FCPlayerFaction".Translate();
-        public string title = "FCBastion".Translate();
+        public string title = "FCEmpire".Translate();
         public Texture2D factionIcon = TexLoad.factionIcons[0];
         public string factionIconPath = TexLoad.factionIcons[0].name;
         public Color factionColorPrimary = Color.white;
@@ -862,8 +862,7 @@ namespace FactionColonies
 
                         if (validSettlements.Any() || validExternalTargets.Any())
                         {
-                            double etl = ThreatScalingUtil.ComputeEmpireThreatLevel(this);
-                            Faction enemy = ThreatScalingUtil.PickWeightedEnemyFaction(etl);
+                            Faction enemy = ThreatScalingUtil.PickWeightedEnemyFaction(this);
                             if (enemy != null)
                             {
                                 List<WorldSettlementFC> raidableSettlements = validSettlements
@@ -1610,6 +1609,14 @@ namespace FactionColonies
 
             randomEventLastAdded += 1f;
 
+            // Bar new roots while a multi-step chain resolves; supersedes the frequency setting.
+            // Hold the timer at 0 so a fresh min/max wait applies once the chain clears.
+            if (FCSettings.blockEventsDuringChain && FCEventMaker.IsRandomChainInProgress(this))
+            {
+                randomEventLastAdded = 0f;
+                return;
+            }
+
             if (CanMakeRandomEventNow())
             {
                 FCEvent tmpEvt = FCEventMaker.MakeRandomEvent(FCEventMaker.ReturnRandomEvent(), null);
@@ -1807,7 +1814,7 @@ namespace FactionColonies
             Building_CapitalSpot activeCapitalSpot = GetActiveCapitalSpot();
             if (activeCapitalSpot != null)
             {
-                Messages.Message("FCCapitalAlreadyEstablished".Translate(activeCapitalSpot.Map.Parent.LabelCap), MessageTypeDefOf.RejectInput);
+                Messages.Message("FCCapitalAlreadyEstablished".Translate(activeCapitalSpot.Map.Parent.LabelCap, FindFC.EmpireTitle.CapitalizeFirst()), MessageTypeDefOf.RejectInput);
                 return;
             }
 

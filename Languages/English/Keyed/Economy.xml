@@ -224,7 +224,7 @@ Total accrued budget: {2}</FCNoTitheLetterDesc2>
 	<FCPeriodAverageTooltipFaction>This is the sum of every settlement's expected payout, minus edict upkeep. Each settlement snapshots its income and upkeep daily, with the silver paid at tax time being the average of those snapshots.</FCPeriodAverageTooltipFaction>
 
 	<!-- Power Output -->
-	<FCSetAsEmpirePowerOutput>Set as Empire Power Output</FCSetAsEmpirePowerOutput>
+	<FCSetAsEmpirePowerOutput>Set as {0} Power Output</FCSetAsEmpirePowerOutput>
 	<FCSetAsOutput>Set Power Output</FCSetAsOutput>
 	<FCSetAsOutputSuccess>The transformer has been set as the power output for your settlements!</FCSetAsOutputSuccess>
 

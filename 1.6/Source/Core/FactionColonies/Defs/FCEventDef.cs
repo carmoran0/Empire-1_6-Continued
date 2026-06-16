@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿using FactionColonies.util;
+using RimWorld;
 using System.Collections.Generic;
 using Verse;
 
@@ -9,6 +10,8 @@ namespace FactionColonies
         public int timeTillTrigger = -1;
         public int timeTillTriggerMax = -1;
         public string desc;
+        /// <summary>Description with {FACTION}/{FACTION_TITLE} tokens and [b]/[i] emphasis markup resolved for display.</summary>
+        public string FormattedDesc => desc.Format();
         public FCEventCategoryDef category;
 
         //Random Event Information

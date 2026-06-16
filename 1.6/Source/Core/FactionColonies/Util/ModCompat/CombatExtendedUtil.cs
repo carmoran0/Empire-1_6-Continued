@@ -30,7 +30,7 @@ namespace FactionColonies
         /// <summary>
         /// Whether Combat Extended is in the active mod list.
         /// </summary>
-        public static bool IsCELoaded => FCSettings.IsModLoaded("CETeam.CombatExtended");
+        public static bool IsCELoaded => FactionCompat.CombatExtendedActive;
 
         public static void UpdateInventory(Pawn pawn)
             => Bridge?.UpdateInventory(pawn);

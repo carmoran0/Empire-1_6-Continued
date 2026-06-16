@@ -28,7 +28,7 @@ namespace FactionColonies.VPE
 
         public string Key => ProviderKey;
         public string Label => "Vanilla Psycasts Expanded";
-        public bool IsActive => ModsConfig.IsActive("VanillaExpanded.VPsycastsE");
+        public bool IsActive => FactionCompat.VPEActive;
         public int Priority => 100;
         public int MaxPsylinkLevel => PsycastsMod.Settings != null ? PsycastsMod.Settings.maxLevel : 30;
         public bool SupportsExplicitSelection => true;

@@ -102,7 +102,7 @@ namespace FactionColonies
 
             this.header = evt.label;
             this.options = evt.options;
-            this.desc = string.IsNullOrEmpty(evt.optionDescription) ? evt.desc : evt.optionDescription;
+            this.desc = (evt.optionDescription.NullOrEmpty() ? evt.desc : evt.optionDescription).Format();
             this.parentEvent = parentEvent;
 
             // Category color
@@ -169,7 +169,7 @@ namespace FactionColonies
                     string dynLabel = handler.GetDynamicOptionLabel(options[i], parentEvent);
                     if (dynLabel != null) measureLabel = dynLabel;
                 }
-                cachedOptionLabelHeights[i] = Text.CalcHeight(measureLabel, labelWidth);
+                cachedOptionLabelHeights[i] = Text.CalcHeight(measureLabel.Format(), labelWidth);
             }
 
             cachedEffectPreviews = new string[options.Count];
@@ -355,7 +355,7 @@ namespace FactionColonies
                 }
                 Text.Font = GameFont.Small;
                 Text.Anchor = TextAnchor.UpperLeft;
-                UIUtil.DrawColoredLabel(new Rect(innerX, innerY, innerW, cachedOptionLabelHeights[i]), displayLabel, available ? Color.white : new Color(0.5f, 0.5f, 0.5f));
+                UIUtil.DrawColoredLabel(new Rect(innerX, innerY, innerW, cachedOptionLabelHeights[i]), displayLabel.Format(), available ? Color.white : new Color(0.5f, 0.5f, 0.5f));
                 innerY += cachedOptionLabelHeights[i] + 6f;
 
                 // Metadata row: success hint (left) + cost (right)

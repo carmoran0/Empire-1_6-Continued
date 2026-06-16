@@ -404,8 +404,8 @@ namespace FactionColonies
 
             // --- Gender control (below the slots) ---
             float genderY = EquipmentWeapon.yMax + 25f;
-            Rect genderLabelRect = new Rect(slotsStartX, genderY, slotsWidth, 16f);
-            Rect genderBtnRect = new Rect(slotsStartX, genderLabelRect.yMax, slotsWidth, 28f);
+            Rect genderLabelRect = new Rect(slotsStartX-10f, genderY, slotsWidth+20f, 16f);
+            Rect genderBtnRect = new Rect(slotsStartX-10f, genderLabelRect.yMax, slotsWidth+20f, 28f);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.UpperCenter;
             Widgets.Label(genderLabelRect, "fcUnitGender".Translate());

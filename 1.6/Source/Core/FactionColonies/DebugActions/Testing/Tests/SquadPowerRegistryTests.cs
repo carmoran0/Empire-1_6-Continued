@@ -124,7 +124,7 @@ namespace FactionColonies
         [EmpireTest("Registry")]
         public static void Resolve_NullSquad_DoesNotRunProviders()
         {
-            // Guard in Resolve: unassigned squads short-circuit BEFORE the chain.
+            // Guard in Resolve: a null squad short-circuits BEFORE the chain.
             // Register a modifier that would bump level if it ran; verify it doesn't.
             var modifier = new AddLevelModifier(100, 50);
             SquadPowerRegistry.Register(modifier);
@@ -138,9 +138,11 @@ namespace FactionColonies
         }
 
         [EmpireTest("Registry")]
-        public static void Resolve_UnassignedSquad_DefaultPower()
+        public static void Resolve_EmptySquad_DefaultPower()
         {
-            // A fresh squad with no settlement set should return the default.
+            // A fresh squad with no loadout (no mercenaries) projects level 1 — its cost is 0
+            // so LevelFromCost floors at 1 — regardless of whether it has a home settlement.
+            // (Unassigned squads that DO carry a loadout now report their real cost-derived power.)
             var squad = new MercenarySquadFC();
             SquadPower p = SquadPowerRegistry.Resolve(squad);
             TestAssert.AreEqual(1.0, p.militaryLevel);

@@ -256,7 +256,7 @@ namespace FactionColonies
         {
             GameFont prev = Text.Font;
             Text.Font = GameFont.Tiny;
-            float descHeight = Text.CalcHeight(def.desc, textWidth);
+            float descHeight = Text.CalcHeight(def.FormattedDesc, textWidth);
             Text.Font = prev;
             return RowPadding + LabelHeight + descHeight + UpkeepHeight;
         }
@@ -297,7 +297,7 @@ namespace FactionColonies
             Rect descRect = new Rect(textX, labelRect.yMax, textWidth, descHeight);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.UpperLeft;
-            Widgets.Label(descRect, def.desc);
+            Widgets.Label(descRect, def.FormattedDesc);
 
             // Upkeep
             Rect upkeepRect = new Rect(textX, descRect.yMax, textWidth, 20f);

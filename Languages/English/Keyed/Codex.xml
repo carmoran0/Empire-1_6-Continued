@@ -10,7 +10,15 @@
 	<FCCodexEnabled>Enabled</FCCodexEnabled>
 	<FCCodexDisabled>Disabled</FCCodexDisabled>
 
-	<!-- Threat Level Provider -->
+	<!-- Raid Strength Provider -->
+	<FCCodexRaidNoSettlements>No settlements - no raids yet.</FCCodexRaidNoSettlements>
+	<FCCodexRaidAvgMilLevel>Average military level: {0}</FCCodexRaidAvgMilLevel>
+	<FCCodexRaidTargetBand>Favored attacker tier: level {0}–{1}</FCCodexRaidTargetBand>
+	<FCCodexRaidNotStarted>Raids have not begun yet (start in ~{0} days).</FCCodexRaidNotStarted>
+	<FCCodexRaidEarlyCapActive>Early-game cap: raids limited to ~level {0} ({1} days remaining).</FCCodexRaidEarlyCapActive>
+	<FCCodexRaidEarlyCapInactive>Early-game cap: no longer active. Raids arrive at full faction strength.</FCCodexRaidEarlyCapInactive>
+
+	<!-- Threat Level Provider (legacy ETL keys; retained for the dormant threat-scaling system) -->
 	<FCCodexETLNoSettlements>No settlements — ETL defaults to 1.0×.</FCCodexETLNoSettlements>
 	<FCCodexETLCurrent>Current ETL: {0}×</FCCodexETLCurrent>
 	<FCCodexETLBreakdown>Components:</FCCodexETLBreakdown>
@@ -27,6 +35,8 @@
 	<FCCodexBattleDefAdv>Defender Advantage: {0}× ({1}% force bonus)</FCCodexBattleDefAdv>
 	<FCCodexBattleDamping>Efficiency Damping: {0}</FCCodexBattleDamping>
 	<FCCodexBattleDampExample>Example: raw efficiency {0}× → dampened to {1}×</FCCodexBattleDampExample>
+	<FCCodexBattleEffHeader>Raw efficiency by tech level (before damping):</FCCodexBattleEffHeader>
+	<FCCodexBattleEffRow>{0}: {1}×</FCCodexBattleEffRow>
 
 	<!-- Resource Production Provider -->
 	<FCCodexResNoSettlements>No settlements to show production data.</FCCodexResNoSettlements>
@@ -57,7 +67,7 @@
 
 	<!-- Military Cooldown Provider -->
 	<FCCodexCooldownParams>Current Cooldown Parameters</FCCodexCooldownParams>
-	<FCCodexCooldownTravelDefense>Defense ops: 24 hours flat (squad re-organizes locally).</FCCodexCooldownTravelDefense>
+	<FCCodexCooldownTravelDefense>Defense ops: no cooldown when defending a squad's own home settlement; 24 hours when sent to defend a different settlement.</FCCodexCooldownTravelDefense>
 	<FCCodexCooldownTravelOffense>Offense ops: calculated travel time for the squad to return from the target tile to its home settlement.</FCCodexCooldownTravelOffense>
 	<FCCodexCooldownEffectivenessNote>Injured pawns reduce the squad's combat effectiveness until they heal; the squad inspection window shows the estimated healing time. Dead mercenaries leave their slot empty until the player fills it.</FCCodexCooldownEffectivenessNote>
 
@@ -74,6 +84,32 @@
 	<FCCodexDiffRow>{0}: {1} | {2}d | {3} | {4}</FCCodexDiffRow>
 	<FCCodexDiffCustomLabel>Your custom values:</FCCodexDiffCustomLabel>
 	<FCCodexDiffCustomRow>  {0}: {1}</FCCodexDiffCustomRow>
+
+	<!-- Social Stats Provider -->
+	<FCCodexSocialNoSettlements>No settlements yet. Found one to see its social stats here.</FCCodexSocialNoSettlements>
+	<FCCodexSocialHeader>Per-Settlement Social Stats</FCCodexSocialHeader>
+	<FCCodexSocialHappiness>Happiness: {0}</FCCodexSocialHappiness>
+	<FCCodexSocialLoyalty>Loyalty: {0}</FCCodexSocialLoyalty>
+	<FCCodexSocialUnrest>Unrest: {0}</FCCodexSocialUnrest>
+	<FCCodexSocialProsperity>Prosperity: {0}</FCCodexSocialProsperity>
+	<FCCodexSocialDeployLocked>(offensive deploys locked: morale too low)</FCCodexSocialDeployLocked>
+
+	<!-- Tech Progression Provider -->
+	<FCCodexTechCurrent>Current Empire tech level: {0}</FCCodexTechCurrent>
+	<FCCodexTechMirrorOn>Tech level is pinned to your own faction's tech level (mirror setting is on).</FCCodexTechMirrorOn>
+	<FCCodexTechNext>Researching this unlocks the next tier: {0}</FCCodexTechNext>
+
+	<!-- Anti-Exploit Provider -->
+	<FCCodexExploitThresholds>Offensive deploys lock when a settlement's happiness drops below {0}, loyalty below {1}, or unrest rises above {2}.</FCCodexExploitThresholds>
+	<FCCodexExploitNoSettlements>No settlements yet.</FCCodexExploitNoSettlements>
+	<FCCodexExploitHeader>Current deployment locks:</FCCodexExploitHeader>
+	<FCCodexExploitNoneLocked>None. Every settlement can currently deploy.</FCCodexExploitNoneLocked>
+
+	<!-- Policies/Traits/Edicts Provider -->
+	<FCCodexPolicyPolicies>Active policies:</FCCodexPolicyPolicies>
+	<FCCodexPolicyTraits>Faction traits:</FCCodexPolicyTraits>
+	<FCCodexPolicyEdicts>Active edicts:</FCCodexPolicyEdicts>
+	<FCCodexPolicyNone>(none)</FCCodexPolicyNone>
 
 	<!-- Settlement Types Tab -->
 	<FCCodexTabSettlements>Settlements</FCCodexTabSettlements>
@@ -95,7 +131,8 @@
 	<FCCodexSettlementTechLevel>Tech Level: {0}</FCCodexSettlementTechLevel>
 	<FCCodexSettlementResearch>Research: {0}</FCCodexSettlementResearch>
 	<FCCodexSettlementBiomes>Biome Restrictions</FCCodexSettlementBiomes>
-	<FCCodexSettlementAllBiomes>All biomes</FCCodexSettlementAllBiomes>
+	<FCCodexLayerSurface>surface</FCCodexLayerSurface>
+	<FCCodexSettlementAllBiomes>All {0} biomes</FCCodexSettlementAllBiomes>
 	<FCCodexSettlementBlockedBiomes>Blocked: {0}</FCCodexSettlementBlockedBiomes>
 	<FCCodexSettlementAllowedBiomes>Allowed only: {0}</FCCodexSettlementAllowedBiomes>
 	<FCCodexYes>Yes</FCCodexYes>
@@ -120,6 +157,17 @@
 	<FCCodexResourceSearchTithe>Search tithe items...</FCCodexResourceSearchTithe>
 	<FCCodexResourceCompatibleSettlements>Compatible Settlements</FCCodexResourceCompatibleSettlements>
 	<FCCodexResourceRequiresResearch>Requires: {0}</FCCodexResourceRequiresResearch>
+
+	<!-- Biomes Tab -->
+	<FCCodexTabBiomes>Biomes</FCCodexTabBiomes>
+	<FCCodexSelectBiome>Select a biome from the left to view details.</FCCodexSelectBiome>
+	<FCCodexBiomeKeyInfo>Key Info</FCCodexBiomeKeyInfo>
+	<FCCodexBiomeSettleable>Settleable: {0}</FCCodexBiomeSettleable>
+	<FCCodexBiomeResourceProduction>Resource Production</FCCodexBiomeResourceProduction>
+	<FCCodexBiomeResourceColumn>Resource</FCCodexBiomeResourceColumn>
+	<FCCodexBiomeStatModifiers>Stat Modifiers</FCCodexBiomeStatModifiers>
+	<FCCodexBiomeSettlementTypes>Foundable Settlement Types</FCCodexBiomeSettlementTypes>
+	<FCCodexBiomeNoSettlements>No settlements can be founded in this biome.</FCCodexBiomeNoSettlements>
 
 	<!-- Buildings Tab -->
 	<FCCodexTabBuildings>Buildings</FCCodexTabBuildings>

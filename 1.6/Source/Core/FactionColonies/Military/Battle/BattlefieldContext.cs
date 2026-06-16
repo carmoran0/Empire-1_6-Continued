@@ -77,6 +77,18 @@ namespace FactionColonies
                 ? Enumerable.Empty<Pawn>()
                 : activeOps.SelectMany(o => o?.defender?.pawns ?? Enumerable.Empty<Pawn>());
 
+        /* Attackers/defenders still able to fight: excludes downed, dead, and truly-gone pawns.
+         * Battle-end decisions use these (not the raw attacker/defenderPawns) so an incapacitated
+         * combatant ends the fight even when no Lord notification fired to remove it. RimWorld's
+         * MakeDowned only notifies the pawn's OWN Lord; a lordless combatant (e.g. a drafted-then-
+         * downed Empire merc, or a pawn added via RegisterPawnsAsDefenders(assignToLord:false)) is
+         * otherwise never pruned on downing and would keep the battle alive until it actually dies. */
+        public IEnumerable<Pawn> standingAttackerPawns =>
+            attackerPawns.Where(p => p != null && !p.Dead && !p.Downed && !IsPawnTrulyGone(p));
+
+        public IEnumerable<Pawn> standingDefenderPawns =>
+            defenderPawns.Where(p => p != null && !p.Dead && !p.Downed && !IsPawnTrulyGone(p));
+
         /// <summary>Sum of every active op's defender <c>initialPawnCount</c>. Used by manual
         /// battle resolution to build the <see cref="BattleResult"/> (defender initial vs
         /// remaining drives overwhelming-victory detection in <c>op.CompleteBattle</c>).</summary>
@@ -237,9 +249,11 @@ namespace FactionColonies
                 }
             }
 
-            // Don't declare stuck if attackers are still inbound in drop pods.
-            bool attackersGone = !attackerPawns.Any() && !HasPendingPodAttackers();
-            if (attackersGone || !defenderPawns.Any())
+            // Don't declare stuck if attackers are still inbound in drop pods. "Standing" pawns,
+            // not the raw lists, so an incapacitated-but-lordless combatant (never pruned via
+            // Notify_PawnLost) still resolves the battle instead of dragging it out until it dies.
+            bool attackersGone = !standingAttackerPawns.Any() && !HasPendingPodAttackers();
+            if (attackersGone || !standingDefenderPawns.Any())
             {
                 LogUtil.Warning($"Stuck battle detected at {settlement.Name}, forcing resolution.");
                 endingBattle = true;
@@ -267,24 +281,25 @@ namespace FactionColonies
             return true;
         }
 
+        /// <summary>Shared "is this a valid edge spawn cell" test: standable, unfogged, and
+        /// reachable to the host faction base (or the biggest map-edge district if there is no
+        /// host faction). Used by both <see cref="FindNearEdgeCell"/> and
+        /// <see cref="FindEdgeCellAwayFromEnemies"/> so the two stay in lockstep.</summary>
+        private static bool IsValidEdgeSpawnCell(IntVec3 x, Map map, Faction hostFaction)
+        {
+            if (!x.Standable(map) || x.Fogged(map)) return false;
+            if (hostFaction is object && map.reachability.CanReachFactionBase(x, hostFaction)) return true;
+            return hostFaction is null && map.reachability.CanReachBiggestMapEdgeDistrict(x);
+        }
+
         public static IntVec3 FindNearEdgeCell(Map map)
         {
-            bool BaseValidator(IntVec3 x)
-            {
-                return x.Standable(map) && !x.Fogged(map);
-            }
-
             var hostFaction = map.ParentFaction;
-            if (CellFinder.TryFindRandomEdgeCellWith(x =>
-            {
-                if (!BaseValidator(x))
-                    return false;
-                if (hostFaction != null && map.reachability.CanReachFactionBase(x, hostFaction))
-                    return true;
-                return hostFaction == null && map.reachability.CanReachBiggestMapEdgeDistrict(x);
-            }, map, CellFinder.EdgeRoadChance_Neutral, out var result))
+            if (CellFinder.TryFindRandomEdgeCellWith(x => IsValidEdgeSpawnCell(x, map, hostFaction),
+                    map, CellFinder.EdgeRoadChance_Neutral, out var result))
                 return CellFinder.RandomClosewalkCellNear(result, map, 5);
-            if (CellFinder.TryFindRandomEdgeCellWith(BaseValidator, map, CellFinder.EdgeRoadChance_Neutral, out result))
+            if (CellFinder.TryFindRandomEdgeCellWith(x => x.Standable(map) && !x.Fogged(map),
+                    map, CellFinder.EdgeRoadChance_Neutral, out result))
                 return CellFinder.RandomClosewalkCellNear(result, map, 5);
             LogUtil.Warning("Could not find any valid edge cell.");
             return CellFinder.RandomCell(map);
@@ -417,7 +432,7 @@ namespace FactionColonies
                 LogUtil.Error($"BattlefieldContext.GenerateMap: no Empire settlement at tile {tile}; cannot generate map.");
                 return null;
             }
-            int size = 70 + settlement.settlementLevel * 10;
+            int size = settlement.DefenseMapSize;
             map = MapGenerator.GenerateMap(
                 new IntVec3(size, 1, size),
                 settlement, settlement.MapGeneratorDef, settlement.ExtraGenStepDefs);
@@ -980,16 +995,22 @@ namespace FactionColonies
 
             void tryFindLoc(out IntVec3 loc, Pawn friendly)
             {
-                var min = (70 + settlement.settlementLevel * 10) / 2 - 5 - 5 * settlement.settlementLevel;
-                var size = 10 + settlement.settlementLevel * 10;
-                CellFinder.TryFindRandomCellInsideWith(new CellRect(min, min, size, size),
+                // Source the spawn zone from the already-generated map's actual size so it
+                // can never drift from DefenseMapSize. A centered square (~half the map),
+                // clipped on-map, preserves the original "spawn near the middle" intent.
+                int mapSize = map.Size.x;
+                int zone = mapSize / 2;
+                if (zone < 10) zone = 10;
+                if (zone > mapSize - 2) zone = mapSize - 2;
+                int min = (mapSize - zone) / 2;
+                CellRect rect = new CellRect(min, min, zone, zone).ClipInsideMap(map);
+                CellFinder.TryFindRandomCellInsideWith(rect,
                     testing => testing.Standable(map) && map.reachability.CanReachMapEdge(testing,
                         TraverseParms.For(TraverseMode.PassDoors)), out loc);
                 if (loc.x == -1000)
                 {
                     LogUtil.Message("Failed with " + friendly + ", " + loc);
-                    CellFinder.TryFindRandomCellNear(new IntVec3(min + 10 + settlement.settlementLevel, 1,
-                            min + 10 + settlement.settlementLevel), map, 75,
+                    CellFinder.TryFindRandomCellNear(map.Center, map, 75,
                         testing => testing.Standable(map), out loc);
                 }
             }
@@ -1148,10 +1169,14 @@ namespace FactionColonies
 
         public void EndAttack()
         {
-            // Snapshot defenderPawns before we start mutating per-op lists.
+            // Snapshot defenderPawns (full list — the cleanup loops below intentionally include
+            // downed-but-alive survivors when returning external defenders and stripping hediffs).
+            // The win/remaining calc, however, counts only STANDING defenders so a battle that ended
+            // because every defender was downed reports a loss, not a victory.
             List<Pawn> defendersSnapshot = defenderPawns.ToList();
-            bool won = defendersSnapshot.Count > 0;
-            int remaining = defendersSnapshot.Count;
+            int remaining = standingDefenderPawns.Count();
+            bool attackersGone = !standingAttackerPawns.Any() && !HasPendingPodAttackers();
+            bool won = remaining > 0 || attackersGone;
 
             // Return external defender pawns per op before map cleanup destroys them.
             if (activeOps is object)
@@ -1196,7 +1221,7 @@ namespace FactionColonies
             PruneStalePawns();
 
             bool anyUnderAttack = FindFC.MilitaryManager?.HasDefenseAt(ParentSettlement) ?? false;
-            if (attackerPawns.Any() || HasPendingPodAttackers() || endingBattle || !anyUnderAttack) return;
+            if (standingAttackerPawns.Any() || HasPendingPodAttackers() || endingBattle || !anyUnderAttack) return;
 
             endingBattle = true;
             LongEventHandler.QueueLongEvent(EndAttack, "EndingAttack", false, error =>
@@ -1213,7 +1238,7 @@ namespace FactionColonies
             PruneStalePawns();
 
             bool anyUnderAttack = FindFC.MilitaryManager?.HasDefenseAt(ParentSettlement) ?? false;
-            if (defenderPawns.Any() || endingBattle || !anyUnderAttack) return;
+            if (standingDefenderPawns.Any() || endingBattle || !anyUnderAttack) return;
 
             endingBattle = true;
             LongEventHandler.QueueLongEvent(EndAttack, "EndingAttack", false, error =>
@@ -1522,10 +1547,62 @@ namespace FactionColonies
             });
         }
 
+        /// <summary>Picks a valid edge spawn cell biased AWAY from currently-spawned enemy
+        /// attackers, so a defending caravan doesn't walk straight into the raiders. Samples
+        /// candidate edge cells (same validity rules as <see cref="FindNearEdgeCell"/>) and keeps
+        /// the one whose nearest enemy is farthest away (max-min distance). Falls back to plain
+        /// <see cref="FindNearEdgeCell"/> when there are no spawned enemies (e.g. all attackers
+        /// still in drop pods) or no valid candidate is sampled.</summary>
+        private IntVec3 FindEdgeCellAwayFromEnemies(Map map)
+        {
+            // Only spawned pawns have a meaningful Position; pod-bound attackers (!Spawned,
+            // ParentHolder is object) have no on-map position yet, so exclude them. If every
+            // attacker is still in a pod, there's nothing to avoid — fall back.
+            var enemyCells = new List<IntVec3>();
+            foreach (var enemy in attackerPawns)
+            {
+                if (enemy is object && enemy.Spawned)
+                    enemyCells.Add(enemy.Position);
+            }
+            if (enemyCells.Count == 0)
+                return FindNearEdgeCell(map);
+
+            const int SampleCount = 40;
+            var hostFaction = map.ParentFaction;
+
+            IntVec3 best = IntVec3.Invalid;
+            int bestScore = int.MinValue; // score = squared distance to the NEAREST enemy
+            for (int i = 0; i < SampleCount; i++)
+            {
+                IntVec3 candidate;
+                if (!CellFinder.TryFindRandomEdgeCellWith(x => IsValidEdgeSpawnCell(x, map, hostFaction),
+                        map, CellFinder.EdgeRoadChance_Neutral, out candidate))
+                    continue;
+
+                int nearest = int.MaxValue;
+                for (int e = 0; e < enemyCells.Count; e++)
+                {
+                    int d = candidate.DistanceToSquared(enemyCells[e]);
+                    if (d < nearest) nearest = d;
+                }
+
+                if (nearest > bestScore)
+                {
+                    bestScore = nearest;
+                    best = candidate;
+                }
+            }
+
+            if (!best.IsValid)
+                return FindNearEdgeCell(map);
+
+            return CellFinder.RandomClosewalkCellNear(best, map, 5);
+        }
+
         private void SpawnPawnsAtEdge(List<Pawn> pawns)
         {
             if (map is null) return;
-            var enterCell = FindNearEdgeCell(map);
+            var enterCell = FindEdgeCellAwayFromEnemies(map);
             foreach (var pawn in pawns)
             {
                 var loc = CellFinder.RandomSpawnCellForPawnNear(enterCell, map);

@@ -8,28 +8,33 @@ namespace FactionColonies
     {
         public static void AttackFaction(Faction faction)
         {
-            Find.FactionManager.OfPlayer.TryAffectGoodwillWith(faction, -50);
-            TrySetRelationKind(Find.FactionManager.OfPlayer, faction, FactionRelationKind.Hostile);
+            Faction player = Find.FactionManager?.OfPlayer;
+            if (player is null || faction is null) return;
+            player.TryAffectGoodwillWith(faction, -50);
+            TrySetRelationKind(player, faction, FactionRelationKind.Hostile);
         }
 
         public static void ResetPlayerColonyRelations()
         {
             Faction PCFaction = FindFC.EmpireFaction;
+            Faction player = Find.FactionManager?.OfPlayer;
+            if (PCFaction is null || player is null) return;   // nothing to sync
+
             foreach (Faction faction in Find.FactionManager.AllFactionsInViewOrder)
             {
-                if (faction != Find.FactionManager.OfPlayer && faction != PCFaction)
-                {
-                    //if not player faction or player colony faction
-                    PCFaction.TryAffectGoodwillWith(faction,
-                        (Find.FactionManager.OfPlayer.RelationWith(faction).baseGoodwill -
-                         PCFaction.RelationWith(faction).baseGoodwill));
-                    TrySetRelationKind(PCFaction, faction, Find.FactionManager.OfPlayer.RelationKindWith(faction));
-                }
+                //skip null entries, the player faction, and the player colony faction
+                if (faction is null || faction == player || faction == PCFaction) continue;
+
+                PCFaction.TryAffectGoodwillWith(faction,
+                    (player.RelationWith(faction).baseGoodwill -
+                     PCFaction.RelationWith(faction).baseGoodwill));
+                TrySetRelationKind(PCFaction, faction, player.RelationKindWith(faction));
             }
         }
 
         internal static bool TrySetRelationKind(Faction self, Faction other, FactionRelationKind kind, bool canSendLetter = true)
         {
+            if (self is null || other is null) return false;
             FactionRelation factionRelation = self.RelationWith(other);
             if (factionRelation.kind == kind)
             {

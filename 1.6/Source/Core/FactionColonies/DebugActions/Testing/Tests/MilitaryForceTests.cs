@@ -51,12 +51,12 @@ namespace FactionColonies
         }
 
         [EmpireTest("MilitaryForce")]
-        public static void TechLevelMapping_Spacer_Level6_Eff1Point3()
+        public static void TechLevelMapping_Spacer_Level6_Eff1Point1()
         {
             MilitaryDeploymentUtil.GetTechLevelBaseline(
                 TechLevel.Spacer, out double level, out double eff);
             TestAssert.AreEqual(6.0, level, message: "Spacer level");
-            TestAssert.AreEqual(1.2, eff, message: "Spacer efficiency");
+            TestAssert.AreEqual(1.1, eff, message: "Spacer efficiency");
         }
 
         [EmpireTest("MilitaryForce")]
@@ -65,7 +65,7 @@ namespace FactionColonies
             MilitaryDeploymentUtil.GetTechLevelBaseline(
                 TechLevel.Archotech, out double level, out double eff);
             TestAssert.AreEqual(9.0, level, message: "Archotech level");
-            TestAssert.AreEqual(1.5, eff, message: "Archotech efficiency");
+            TestAssert.AreEqual(1.3, eff, message: "Archotech efficiency");
         }
 
         [EmpireTest("MilitaryForce")]

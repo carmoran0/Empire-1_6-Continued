@@ -14,7 +14,7 @@ namespace FactionColonies
     ///
     /// <para>Three modifier sites fire from this component:</para>
     /// <list type="number">
-    /// <item><c>InvokeFactionPowerModifiers</c> — after the deterministic faction baseline (tech + ETL + adaptation) is computed.</item>
+    /// <item><c>InvokeFactionPowerModifiers</c> — after the deterministic faction baseline (tech-level def + faction override) is computed.</item>
     /// <item><c>InvokeSettlementPowerModifiers</c> — after a settlement entry is mirrored from its faction.</item>
     /// <item><c>InvokeBattleModifiers</c> — at engagement / display, via <see cref="ResolveDefenderForceForOp"/>, <see cref="ResolveDefenderBounds"/>, and <see cref="ApplyBattleModifiers"/>.</item>
     /// </list>
@@ -310,9 +310,8 @@ namespace FactionColonies
         /* === Internals === */
 
         /// <summary>
-        /// Resolves the deterministic baseline for <paramref name="faction"/>: tech-level def
-        /// supplies all four values, then any matching faction def overrides per-field, then
-        /// Empire Threat Level + storyteller adaptation scale <c>level</c> on top.
+        /// Resolves the deterministic baseline for <paramref name="faction"/>: the tech-level def
+        /// supplies all four values, then any matching faction def overrides them per-field.
         /// </summary>
         private void ComputeFactionBaseline(Faction faction, EnemyPower power)
         {
@@ -340,14 +339,6 @@ namespace FactionColonies
                     if (factionDef.efficiency.HasValue) efficiency = factionDef.efficiency.Value;
                     if (factionDef.levelVariance.HasValue) levelVariance = factionDef.levelVariance.Value;
                     if (factionDef.efficiencyVariance.HasValue) efficiencyVariance = factionDef.efficiencyVariance.Value;
-                }
-
-                FactionFC factionComp = FindFC.FactionComp;
-                if (factionComp is object)
-                {
-                    level *= ThreatScalingUtil.ComputeEmpireThreatLevel(factionComp);
-                    if (factionComp.threatAdaptation is object)
-                        level *= factionComp.threatAdaptation.ThreatFactor;
                 }
             }
 

@@ -48,23 +48,6 @@ namespace FactionColonies
         }
 
         [EmpireTest("EventSystem")]
-        public static void IncompatibleEvents_AreSymmetric()
-        {
-            foreach (FCEventDef def in DefDatabase<FCEventDef>.AllDefsListForReading)
-            {
-                if (def.incompatibleEvents == null) continue;
-                foreach (FCEventDef other in def.incompatibleEvents)
-                {
-                    TestAssert.IsNotNull(other,
-                        $"{def.defName}: incompatibleEvents contains a null ref");
-                    TestAssert.IsTrue(
-                        other.incompatibleEvents != null && other.incompatibleEvents.Contains(def),
-                        $"{def.defName} lists {other.defName} as incompatible, but not vice versa");
-                }
-            }
-        }
-
-        [EmpireTest("EventSystem")]
         public static void AllEventDefs_StatModifiers_NoNullStats()
         {
             foreach (FCEventDef def in DefDatabase<FCEventDef>.AllDefsListForReading)

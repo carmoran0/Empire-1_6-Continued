@@ -46,11 +46,13 @@ namespace FactionColonies
         public static IReadOnlyList<ISquadPowerModifier> Modifiers => _modifiers;
 
         /// <summary>Resolves <paramref name="squad"/> to its projected combat power.
-        /// Returns a sensible default (level 1, efficiency 1) for a null or unassigned
-        /// squad — callers don't need a null check on the result.</summary>
+        /// Returns a sensible default (level 1, efficiency 1) only for a null squad — callers
+        /// don't need a null check on the result. An unassigned squad still reports its real
+        /// cost-derived power level (efficiency falls back to 1 without a home settlement);
+        /// <see cref="ComputeBasePower"/> already guards the settlement-dependent terms.</summary>
         public static SquadPower Resolve(MercenarySquadFC squad)
         {
-            if (squad?.settlement is null) return new SquadPower(1, 1);
+            if (squad is null) return new SquadPower(1, 1);
 
             SquadPower power = ComputeBasePower(squad);
             SquadPower running = power;

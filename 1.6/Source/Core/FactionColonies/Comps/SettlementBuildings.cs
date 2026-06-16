@@ -555,9 +555,25 @@ namespace FactionColonies
             return Convert.ToInt32(cost);
         }
 
+        /// <summary>
+        /// Duration in ticks to construct the given building in this settlement.
+        /// Formula: def.constructionDuration * buildTimeMultiplier stat * the settings-driven
+        /// buildingConstructTimeMultiplier (0 = instant). Single source of truth for both the
+        /// UI estimate and the actual construction timer.
+        /// </summary>
+        public int GetBuildingConstructionTime(BuildingFCDef building)
+        {
+            if (building is null)
+                return 0;
+
+            return (int)(building.constructionDuration
+                * WorldSettlement.GetStatValue(FCStatDefOf.buildTimeMultiplier)
+                * FCSettings.buildingConstructTimeMultiplier);
+        }
+
         public TaggedString GetBuildingDesc(BuildingFCDef building)
         {
-            TaggedString desc = building.desc + "\n";
+            TaggedString desc = building.FormattedDesc + "\n";
             int buildingUpkeep = GetBuildingUpkeep(building);
             if (buildingUpkeep > 0)
             {

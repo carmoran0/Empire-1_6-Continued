@@ -338,7 +338,7 @@ namespace FactionColonies
             {
                 Text.Font = GameFont.Small;
                 Rect descRect = new Rect(0f, curY, contentWidth, 100f);
-                Widgets.LabelCacheHeight(ref descRect, selectedEntry.description);
+                Widgets.LabelCacheHeight(ref descRect, selectedEntry.FormattedDesc);
                 curY += descRect.height + Margin;
                 ResetText();
             }
@@ -452,7 +452,7 @@ namespace FactionColonies
             }
 
             if (!selectedEntry.description.NullOrEmpty())
-                total += Text.CalcHeight(selectedEntry.description, width) + Margin;
+                total += Text.CalcHeight(selectedEntry.FormattedDesc, width) + Margin;
 
             if (!selectedEntry.seeAlso.NullOrEmpty())
                 total += Margin + 22f + selectedEntry.seeAlso.Count * (SeeAlsoButtonHeight + 2f);

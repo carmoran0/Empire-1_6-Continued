@@ -53,6 +53,7 @@ namespace FactionColonies
         private static List<FCEventDef> _cachedRandomRollableEvents = null;
         private static List<FCEventDef> _cachedAllRandomEventDefs = null;
         private static HashSet<string> _cachedEventDefNamesWithOptionsInChain = null;
+        private static HashSet<FCEventDef> _cachedRandomChainMemberDefs = null;
         private static HashSet<BiomeResourceDef> _cachedBiomeResourceDefSet = null;
         private static Dictionary<TechLevel, List<BuildingFCDef>> _cachedBuildingDefsByTechLevel = null;
 
@@ -393,6 +394,10 @@ namespace FactionColonies
                 return _cachedFCPolicyDescs;
             }
         }
+
+        /// <summary>Drops the cached policy descriptions so they re-resolve their tokens
+        /// (e.g. {FACTION_TITLE}/{FACTION}) on next access. Call after the faction title or name changes.</summary>
+        public static void InvalidatePolicyDescs() => _cachedFCPolicyDescs = null;
         public static List<XenotypeDef> ViolentXenotypeDefs => _cachedViolentXenotypeList ??
                                                                (_cachedViolentXenotypeList = XenotypeDefs.Where(x => !XenotypeIsNonViolent(x)).ToList());
         public static List<CustomXenotype> ViolentCustomXenotypes => _cachedViolentCustomXenotypeList ??
@@ -791,6 +796,64 @@ namespace FactionColonies
             return false;
         }
 
+        /// <summary>
+        /// Every event def that can appear in the queue as part of a <i>multi-step</i> random chain:
+        /// each random root that actually leads to a follow-up, plus the full closure of its
+        /// <c>eventFollows</c> targets and option <c>successEvent</c> / <c>failEvent</c> targets.
+        /// Used by the <c>blockEventsDuringChain</c> setting to detect an in-progress chain. One-shot
+        /// random events (no follow-up) are intentionally excluded so they never block new roots.
+        /// </summary>
+        public static HashSet<FCEventDef> RandomChainMemberDefs
+        {
+            get
+            {
+                if (_cachedRandomChainMemberDefs is null)
+                {
+                    _cachedRandomChainMemberDefs = new HashSet<FCEventDef>();
+                    foreach (FCEventDef root in AllRandomEventDefs)
+                    {
+                        if (!LeadsToFollowUp(root)) continue; // one-shot roots never block
+                        CollectChainMembers(root, _cachedRandomChainMemberDefs);
+                    }
+                }
+                return _cachedRandomChainMemberDefs;
+            }
+        }
+
+        // "multi-step" = can actually spawn a follow-up (an auto-follow with a target, or an option
+        // with a success/fail event). An options-only event with no follow-up does not count.
+        private static bool LeadsToFollowUp(FCEventDef def)
+        {
+            if (def.eventFollows && (def.followingEvent != null ||
+                (def.splitEventFollows && def.followingEvent2 != null))) return true;
+            if (def.options != null)
+            {
+                foreach (FCOptionDef opt in def.options)
+                    if (opt.successEvent != null || opt.failEvent != null) return true;
+            }
+            return false;
+        }
+
+        // acc doubles as the visited set: HashSet.Add returns false if the def is already present,
+        // which both breaks cycles and skips already-traversed shared subtrees.
+        private static void CollectChainMembers(FCEventDef def, HashSet<FCEventDef> acc)
+        {
+            if (def is null || !acc.Add(def)) return;
+            if (def.eventFollows)
+            {
+                CollectChainMembers(def.followingEvent, acc);
+                if (def.splitEventFollows) CollectChainMembers(def.followingEvent2, acc);
+            }
+            if (def.options != null)
+            {
+                foreach (FCOptionDef opt in def.options)
+                {
+                    CollectChainMembers(opt.successEvent, acc);
+                    CollectChainMembers(opt.failEvent, acc);
+                }
+            }
+        }
+
         public static HashSet<BiomeResourceDef> BiomeResourceDefSet => _cachedBiomeResourceDefSet ??
                                                                        (_cachedBiomeResourceDefSet = new HashSet<BiomeResourceDef>(DefDatabase<BiomeResourceDef>.AllDefsListForReading));
 
@@ -861,6 +924,7 @@ namespace FactionColonies
             _cachedRandomRollableEvents = null;
             _cachedAllRandomEventDefs = null;
             _cachedEventDefNamesWithOptionsInChain = null;
+            _cachedRandomChainMemberDefs = null;
             _cachedBiomeResourceDefSet = null;
             _cachedBuildingDefsByTechLevel = null;
 

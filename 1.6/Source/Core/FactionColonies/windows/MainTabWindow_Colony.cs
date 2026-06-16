@@ -868,9 +868,7 @@ namespace FactionColonies
                     Text.Anchor = anchorBefore;
 
                     // Progress bar
-                    float progress = (float)(Find.TickManager.TicksGame - s.StartUpgradeTick)
-                                   / (float)(s.FinishUpgradeTick - s.StartUpgradeTick);
-                    progress = Mathf.Clamp01(progress);
+                    float progress = UIUtil.NormalizeProgress(s.StartUpgradeTick, s.FinishUpgradeTick);
                     float barW = 30f;
                     float barH = 10f;
                     Rect barRect = new Rect(upgradeBadgeX + labelW + 2f, botY + (lineH - barH) / 2f, barW, barH);
@@ -1475,8 +1473,8 @@ namespace FactionColonies
         private static string GetEventDescription(FCEvent evt)
         {
             if (evt.hasCustomDescription && !evt.customDescription.NullOrEmpty())
-                return evt.customDescription;
-            return evt.def.desc ?? "";
+                return evt.customDescription.Format();
+            return evt.def.FormattedDesc ?? "";
         }
 
         private string GetEventFullTooltip(FCEvent evt)

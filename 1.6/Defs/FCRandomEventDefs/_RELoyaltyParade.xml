@@ -4,7 +4,7 @@
 	<FactionColonies.FCEventDef>
 		<defName>loyaltyParade_0</defName>
 		<label>Loyalty Parade</label>
-		<desc>Some of the settlements in your faction are having a parade in your honor! How will you respond to their display of loyalty?</desc>
+		<desc>Some of the settlements in {FACTION} are having a parade in your honor! How will you respond to their display of loyalty?</desc>
 		<category>EC_Social</category>
 		<timeTillTrigger>0</timeTillTrigger>
 		<options>
@@ -96,7 +96,7 @@
 	<FactionColonies.FCEventDef>
 		<defName>loyaltyParade_1-3</defName>
 		<label>Loyalty Parade (Recruitment)</label>
-		<desc>The enthusiastic gathering is used to recruit new workers for the empire's settlements.</desc>
+		<desc>The enthusiastic gathering is used to recruit new workers for {FACTION}'s settlements.</desc>
 		<category>EC_Social</category>
 		<timeTillTrigger>300000</timeTillTrigger>
 		<timeTillTriggerMax>420000</timeTillTriggerMax>

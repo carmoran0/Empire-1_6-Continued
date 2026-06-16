@@ -61,6 +61,21 @@ namespace FactionColonies
             && settlementLevel < FCSettings.settlementMaxLevel
             && settlementLevel < settlementDef.maxSettlementLevel;
 
+        /// <summary>
+        /// Edge length (cells) of this settlement's manual-defense battle map.
+        /// Single source of truth: BattlefieldContext.GenerateMap and the friendly
+        /// spawn-zone math both derive from this so they can't drift apart.
+        /// </summary>
+        public int DefenseMapSize => DefenseMapSizeFor(settlementLevel);
+
+        public static int DefenseMapSizeFor(int level)
+        {
+            int size = FCSettings.defenseMapBaseSize + level * FCSettings.defenseMapPerLevelStep;
+            if (size > FCSettings.defenseMapMaxSize) size = FCSettings.defenseMapMaxSize;
+            if (size < FCSettings.defenseMapMinSize) size = FCSettings.defenseMapMinSize; // floor wins ties (KCSG safety)
+            return size;
+        }
+
         public int GetBuildingSlots()
         {
             int slots = settlementDef.GetSettlementTypeExtension().GetBuildingSlots(settlementLevel, settlementDef.maxBuildingCount);
@@ -77,7 +92,8 @@ namespace FactionColonies
 
         public int GetUpgradeTime(double buildTimeMult)
         {
-            return settlementDef.GetSettlementTypeExtension().GetUpgradeTime(settlementLevel, buildTimeMult);
+            int baseTime = settlementDef.GetSettlementTypeExtension().GetUpgradeTime(settlementLevel, buildTimeMult);
+            return (int)(baseTime * FCSettings.settlementUpgradeTimeMultiplier);
         }
 
         /* Workers — lazy-cached, use DirtyStatsCache()/DirtyProfitCache() to invalidate */

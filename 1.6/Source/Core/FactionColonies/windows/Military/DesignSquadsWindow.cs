@@ -256,12 +256,23 @@ namespace FactionColonies
             float equipWidth = Text.CalcSize(equipLabel).x;
             Widgets.Label(new Rect(rect.x, costY, equipWidth, 20f), equipLabel);
 
+            // Power readout — right-aligned on the same line. Derived from the design's equipment
+            // cost via the same cost->level formula live squads use, so the number matches what a
+            // hired-but-unassigned squad would project. Reserve its width so the deploy label
+            // (left-anchored) can't overrun it.
+            const float powerW = 160f;
+            double power = SquadPowerRegistry.LevelFromCost(selectedSquad.GetEquipmentTotalCost());
+
             int deployCost = MilitaryDeploymentUtil.CalculateDeploymentCost(selectedSquad.GetEquipmentTotalCost());
             const float gap = 20f;
             float deployX = rect.x + equipWidth + gap;
             Widgets.Label(
-                new Rect(deployX, costY, rect.width - (deployX - rect.x), 20f),
+                new Rect(deployX, costY, rect.width - (deployX - rect.x) - powerW, 20f),
                 "FCSquadDesignDeployCost".Translate(deployCost));
+
+            Text.Anchor = TextAnchor.MiddleRight;
+            Widgets.Label(new Rect(rect.xMax - powerW, costY, powerW, 20f),
+                (string)"FCSquadColPower".Translate() + ": " + power.ToString("0.0"));
 
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;

@@ -705,7 +705,7 @@ namespace FactionColonies
             Rect costRect = new Rect(statsX, curY, statsW, 22f);
             Widgets.Label(costRect, "FCCost".Translate() + ": " + (settlement.BuildingsComp?.GetBuildingCost(selectedBuilding) ?? (int)selectedBuilding.cost));
 
-            int buildTime = (int)(selectedBuilding.constructionDuration * settlement.GetStatValue(FCStatDefOf.buildTimeMultiplier));
+            int buildTime = settlement.BuildingsComp?.GetBuildingConstructionTime(selectedBuilding) ?? 0;
             Rect timeRect = new Rect(statsX, costRect.yMax + smallMargin, statsW, 22f);
             Widgets.Label(timeRect, "FCBuildTime".Translate(buildTime.ToTimeString()));
 
@@ -730,9 +730,9 @@ namespace FactionColonies
             // C3: Description (def text only)
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.UpperLeft;
-            float descHeight = Text.CalcHeight(selectedBuilding.desc, w);
+            float descHeight = Text.CalcHeight(selectedBuilding.FormattedDesc, w);
             Rect descRect = new Rect(scrollViewRect.x, curY, w, descHeight);
-            Widgets.Label(descRect, selectedBuilding.desc);
+            Widgets.Label(descRect, selectedBuilding.FormattedDesc);
             curY = descRect.yMax + margin;
 
             // C3.25: Required buildings prerequisite status
@@ -810,7 +810,7 @@ namespace FactionColonies
             // Description
             GameFont tmp = Text.Font;
             Text.Font = GameFont.Small;
-            h += Text.CalcHeight(selectedBuilding.desc, width) + margin;
+            h += Text.CalcHeight(selectedBuilding.FormattedDesc, width) + margin;
             Text.Font = tmp;
             // Required buildings prereqs
             if (selectedBuilding.requiredBuildings.Count > 0)
@@ -1320,7 +1320,7 @@ namespace FactionColonies
                 buildingSlot = buildingSlot
             };
 
-            int triggerTime = (int)(selectedBuilding.constructionDuration * settlement.GetStatValue(FCStatDefOf.buildTimeMultiplier));
+            int triggerTime = settlement.BuildingsComp.GetBuildingConstructionTime(selectedBuilding);
 
             tmpEvt.timeTillTrigger = Find.TickManager.TicksGame + triggerTime;
             tmpEvt.customDescription = "FCBuildingEventDesc".Translate(

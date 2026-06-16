@@ -18,7 +18,7 @@ namespace FactionColonies
             float contentWidth = width - AccentBarWidth - margin * 3;
 
             Text.Font = GameFont.Tiny;
-            float descHeight = Text.CalcHeight(def.description, contentWidth);
+            float descHeight = Text.CalcHeight(def.FormattedDesc, contentWidth);
 
             float height = RowPadding + NameHeight + descHeight + margin;
 
@@ -52,8 +52,8 @@ namespace FactionColonies
             // Description
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.UpperLeft;
-            float descHeight = Text.CalcHeight(def.description, contentWidth);
-            Widgets.Label(new Rect(xOffset, curY, contentWidth, descHeight), def.description);
+            float descHeight = Text.CalcHeight(def.FormattedDesc, contentWidth);
+            Widgets.Label(new Rect(xOffset, curY, contentWidth, descHeight), def.FormattedDesc);
             curY += descHeight + margin;
 
             // Resource icons

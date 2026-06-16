@@ -39,6 +39,20 @@ namespace FactionColonies
         public static Faction PlayerFaction => _cachedPlayerFaction ?? (_cachedPlayerFaction = Find.FactionManager?.AllFactions?.FirstOrDefault(faction => faction.IsPlayer));
         public static FactionDef EmpireFactionDef => _cachedFactionDef ?? (_cachedFactionDef = DefDatabase<FactionDef>.GetNamed("PColony"));
 
+        /// <summary>Live player-empire name; falls back to the comp's display name, then a generic label.
+        /// Reads live (the name is mutable) — never cached.</summary>
+        public static string EmpireName =>
+            EmpireFaction?.Name
+            ?? FactionComp?.name
+            ?? "FCPlayerFaction".Translate().ToString();
+
+        /// <summary>Live player-empire polity title (Empire / Kingdom / Republic / ...).
+        /// No real-Faction equivalent exists; falls back to the comp's title then a generic label.
+        /// Reads live (the title is mutable) — never cached.</summary>
+        public static string EmpireTitle =>
+            FactionComp?.title
+            ?? "FCEmpire".Translate().ToString();
+
         /*-*-*-*-*/
         /* World components */
         /*-*-*-*-*/

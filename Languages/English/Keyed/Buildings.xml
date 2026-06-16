@@ -35,9 +35,23 @@
 	<FCBuildingFilterMilitary>Military</FCBuildingFilterMilitary>
 
 	<!-- Capital Seat -->
-	<FCCapitalEstablished>Empire capital established at {0}! This location will be used as the center of your empire.</FCCapitalEstablished>
-	<FCCapitalSeatDisabled>Capital seat disabled. Empire will use fallback capital location if available.</FCCapitalSeatDisabled>
-	<FCCapitalLost>Empire capital has been lost! You should establish a new capital seat.</FCCapitalLost>
+	<FCCapitalEstablished>{1} capital established at {0}! This location will be used as the center of your {2}.</FCCapitalEstablished>
+	<FCCapitalSeatDisabled>Capital seat disabled. {0} will use fallback capital location if available.</FCCapitalSeatDisabled>
+	<FCCapitalLost>{0} capital has been lost! You should establish a new capital seat.</FCCapitalLost>
+	<FCCapitalSpotGizmoLabel>Set {0} Capital</FCCapitalSpotGizmoLabel>
+	<FCCapitalSpotGizmoDescActive>This is currently {0}'s capital seat. Click to disable.</FCCapitalSpotGizmoDescActive>
+	<FCCapitalSpotGizmoDescInactive>Click to make this the seat of {0}'s capital. This location will be used for travel time calculations and event targeting.</FCCapitalSpotGizmoDescInactive>
+	<FCCapitalSpotInspectActive>Active {0} Capital</FCCapitalSpotInspectActive>
+	<FCCapitalSpotInspectInactive>Capital seat (inactive)</FCCapitalSpotInspectInactive>
+
+	<!-- Tax Spot -->
+	<FCTaxSpotGizmoLabel>Set Tax Delivery Spot</FCTaxSpotGizmoLabel>
+	<FCTaxSpotGizmoDescActive>This tax spot is currently the active tax delivery location. Click to disable.</FCTaxSpotGizmoDescActive>
+	<FCTaxSpotGizmoDescInactive>Click to make this tax spot the active tax delivery location for {0}.</FCTaxSpotGizmoDescInactive>
+	<FCTaxSpotEnabledMessage>Tax delivery spot set! All taxes and goods will now be delivered to this location.</FCTaxSpotEnabledMessage>
+	<FCTaxSpotDisabledMessage>Tax delivery spot disabled. Taxes will use the fallback tax map if set.</FCTaxSpotDisabledMessage>
+	<FCTaxSpotInspectActive>Active tax delivery spot</FCTaxSpotInspectActive>
+	<FCTaxSpotInspectInactive>Tax spot (delivery disabled)</FCTaxSpotInspectInactive>
 
 	<!-- Building Window -->
 	<Empire_BuildingWindow_Header>Buildings — {0}</Empire_BuildingWindow_Header>

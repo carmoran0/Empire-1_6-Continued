@@ -94,11 +94,22 @@ namespace FactionColonies
          * underfunded-slot treatment. */
         protected override bool RowOverBudget(RowData row) => row.deploymentCost > maxDeployCost;
 
+        /* Win chance is hidden in this picker, so the accent strip would otherwise be a flat
+         * gray. Encode billet-readiness instead: amber for over-budget (can't be deployed from
+         * this slot), green for ready/available, gray for busy/unavailable. */
+        protected override Color AccentColor(RowData row)
+        {
+            if (RowOverBudget(row)) return AccentUtil.MilUnderfunded;
+            return row.available ? AccentUtil.MilReady : AccentUtil.MilInactive;
+        }
+
         protected override bool CanConfirm()
         {
             if (unassignSelected) return currentSlotSquad is object && !currentSlotSquad.IsBusy;
             if (selected is null) return false;
             if (selected == currentSlotSquad) return true; // explicit no-op confirm
+            // Can't billet an over-budget squad here (matches the unavailable treatment in RebuildRows).
+            if (selected.DeploymentCost() > maxDeployCost) return false;
             return !selected.IsBusy;
         }
 
@@ -159,7 +170,11 @@ namespace FactionColonies
             foreach (MercenarySquadFC squad in pool)
             {
                 if (squad is null) continue;
-                bool available = !squad.IsBusy;
+                // Over-budget squads (deploy cost > the destination's max deploy budget) are
+                // treated as unavailable — they can't be billeted here. The current occupant
+                // stays available so it can be kept (no-op confirm) even if it's over budget.
+                bool overBudget = squad.DeploymentCost() > maxDeployCost;
+                bool available = !squad.IsBusy && (!overBudget || squad == currentSlotSquad);
                 if (availableOnly && !available && squad != currentSlotSquad) continue;
 
                 SquadPower sp = SquadPowerRegistry.Resolve(squad);

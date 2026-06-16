@@ -7,8 +7,7 @@ namespace FactionColonies
     /// <summary>
     /// Cached, deterministic baseline of an enemy faction's or settlement's military power.
     /// Stored in <see cref="WorldComponent_EnemyPower"/> and refreshed periodically so that
-    /// Empire Threat Level scaling, storyteller threat adaptation, and registered power
-    /// modifiers (faction-level / settlement-level) propagate over time.
+    /// registered power modifiers (faction-level / settlement-level) propagate over time.
     ///
     /// <para>The squad-attack picker reads <see cref="MinForceRemaining"/>/<see cref="MaxForceRemaining"/>
     /// to display a stable range. Battle resolution calls <see cref="SampleBattleForce"/>,
@@ -55,8 +54,8 @@ namespace FactionColonies
         /// <summary>
         /// Single RNG roll within the variance bounds. Called at battle engagement to produce
         /// the force the simulation actually fights. Pass <paramref name="handicap"/> = true
-        /// for AI-attacker contexts so the roll is capped by
-        /// <see cref="ThreatScalingUtil.ComputeHandicapCap"/>.
+        /// for AI-attacker contexts so the roll is capped by the early-game time grace
+        /// (<see cref="ThreatScalingUtil.ComputeEarlyGameRaidCap"/>).
         /// </summary>
         public MilitaryForce SampleBattleForce(Faction faction, bool handicap = false)
         {
@@ -65,7 +64,7 @@ namespace FactionColonies
             if (handicap)
             {
                 rolledLevel = Math.Min(rolledLevel,
-                    ThreatScalingUtil.ComputeHandicapCap(FindFC.FactionComp));
+                    ThreatScalingUtil.ComputeEarlyGameRaidCap(FindFC.FactionComp));
             }
             return new MilitaryForce(rolledLevel, rolledEfficiency, null, faction);
         }
