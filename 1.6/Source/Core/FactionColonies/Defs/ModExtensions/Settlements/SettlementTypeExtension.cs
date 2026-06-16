@@ -335,12 +335,7 @@ namespace FactionColonies
         /// </summary>
         public virtual bool TileIsValidForTypeTransition(PlanetTile tile, StringBuilder reason = null)
         {
-            if (parentDef.planetLayers.Count > 0 && !parentDef.planetLayers.Contains(tile.Layer.Def))
-            {
-                reason?.Append("FCTileWrongPlanetLayer".Translate());
-                return false;
-            }
-            else if (parentDef.planetLayers.Count == 0 && tile.Layer != Find.WorldGrid.Surface)
+            if (!parentDef.AllowsTileLayer(tile))
             {
                 reason?.Append("FCTileWrongPlanetLayer".Translate());
                 return false;

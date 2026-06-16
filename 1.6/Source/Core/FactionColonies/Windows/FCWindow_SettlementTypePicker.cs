@@ -10,6 +10,7 @@ namespace FactionColonies
     {
         private readonly Action<WorldSettlementDef> onSelect;
         private readonly List<WorldSettlementDef> allTypes;
+        private readonly string titleKey;
         private Vector2 scrollPos;
 
         private const float TitleHeight = 35f;
@@ -17,15 +18,26 @@ namespace FactionColonies
 
         public override Vector2 InitialSize => new Vector2(480f, 550f);
 
+        /// <summary>Picker over all available settlement types.</summary>
         public FCWindow_SettlementTypePicker(Action<WorldSettlementDef> onSelect)
+            : this(FactionCache.AvailableWorldSettlementDefs, onSelect)
+        {
+        }
+
+        /// <summary>
+        /// Picker over an explicit set of settlement types (e.g. the subset an outpost can convert into),
+        /// with an optional custom title key.
+        /// </summary>
+        public FCWindow_SettlementTypePicker(IEnumerable<WorldSettlementDef> types, Action<WorldSettlementDef> onSelect, string titleKey = "FCPickSettlementType")
         {
             this.onSelect = onSelect;
+            this.titleKey = titleKey;
             draggable = true;
             doCloseX = true;
             absorbInputAroundWindow = true;
             forcePause = false;
 
-            allTypes = FactionCache.AvailableWorldSettlementDefs
+            allTypes = types
                 .OrderBy(d => d.IsUnlocked() ? 0 : 1)
                 .ThenBy(d => d.LabelCap.ToString())
                 .ToList();
@@ -39,7 +51,7 @@ namespace FactionColonies
             // Title
             Text.Font = GameFont.Medium;
             Text.Anchor = TextAnchor.UpperLeft;
-            Widgets.Label(new Rect(0, 0, inRect.width, TitleHeight), "FCPickSettlementType".Translate());
+            Widgets.Label(new Rect(0, 0, inRect.width, TitleHeight), titleKey.Translate());
 
             // Scroll view
             float listTop = TitleHeight + SettlementCardDrawer.margin;

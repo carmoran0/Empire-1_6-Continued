@@ -26,29 +26,6 @@ namespace FactionColonies
         private int settlementCreationCost = 0;
         private readonly FactionFC faction = null;
 
-        private int SettlementCreationBaseCost => (int)(CombinedFoundingStat(FCStatDefOf.createSettlementMultiplier) *
-                                                        (currentSettlementType.GetSettlementTypeExtension().GetCreationCost() + CombinedFoundingStat(FCStatDefOf.createSettlementBaseCost)));
-
-        /// <summary>
-        /// Faction stat value for the selected tile's biome, folding in the biome's own statModifiers.
-        /// Lets a BiomeResourceDef carry settlement-cost modifiers that apply at founding time (before the
-        /// settlement object exists, so the normal settlement-stat aggregation can't see them yet).
-        /// </summary>
-        private double CombinedFoundingStat(FCStatDef stat)
-        {
-            double biome = stat.IdentityValue;
-            if (currentBiomeSelected?.statModifiers != null)
-            {
-                foreach (FCStatModifier m in currentBiomeSelected.statModifiers)
-                {
-                    if (m.stat == stat)
-                        biome = stat.aggregation == FCStatAggregation.Additive ? biome + m.value : biome * m.value;
-                }
-            }
-            double fac = faction.GetStatValue(stat);
-            return stat.aggregation == FCStatAggregation.Additive ? fac + biome : fac * biome;
-        }
-
         /* UI math stuff! Yaaaay!
          * what a pain
          */
@@ -240,6 +217,7 @@ namespace FactionColonies
             }
 
             FCWindow_CreateColonyStatModifiers.RefreshForTile(currentTileSelected, currentBiomeSelected);
+            FoundingScreenHooks.NotifySelectionChanged(currentTileSelected, currentSettlementType);
 
             if (IsTileValidForSettlement())
             {
@@ -263,10 +241,10 @@ namespace FactionColonies
 
         private void CalculateSettlementCreationCost()
         {
-            double baseCost = SettlementCreationBaseCost;
-            settlementCreationCost = (int)(baseCost * CombinedFoundingStat(FCStatDefOf.settlementCostMultiplier));
+            int baseCost = ColonyUtil.GetFoundingBaseCost(currentSettlementType, currentBiomeSelected, faction);
+            settlementCreationCost = ColonyUtil.GetFoundingCost(currentSettlementType, currentBiomeSelected, faction);
 
-            settlementCostModified = settlementCreationCost != (int)baseCost;
+            settlementCostModified = settlementCreationCost != baseCost;
         }
 
         private void DrawProduction(Rect prodBox)
@@ -379,6 +357,9 @@ namespace FactionColonies
                 {
                     currentSettlementType = selected;
                     FindFC.FactionComp.layersForTilePicker = selected.planetLayers;
+                    // Notify on type change even without a valid tile yet, so type-driven companions
+                    // (e.g. EmpireVOE's outpost-requirements window) refresh immediately.
+                    FoundingScreenHooks.NotifySelectionChanged(currentTileSelected, currentSettlementType);
                 }));
             }
             return button.yMax;
@@ -390,6 +371,19 @@ namespace FactionColonies
             Text.Anchor = TextAnchor.MiddleCenter;
             int buttonLength = 200;
             Rect button = new Rect((InitialSize.x - 32 - buttonLength) / 2f, curHeight + verticalMargins, buttonLength, button_height);
+
+            // A submod (e.g. EmpireVOE's "found only via outposts" mode) can replace the Settle button
+            // with an alternate action — e.g. "Send a Caravan" — instead of founding directly here.
+            FoundingButtonOverride ovr = FoundingScreenHooks.GetSettleButtonOverride(currentTileSelected, currentSettlementType);
+            if (ovr is object)
+            {
+                if (Widgets.ButtonText(button, ovr.Label))
+                {
+                    ovr.OnClick?.Invoke();
+                }
+                return button.yMax;
+            }
+
             if (Widgets.ButtonText(button, "FCSettle".Translate() + ": (" + settlementCreationCost + ")")) //add inital cost
             {
                 if (!CanCreateSettlementHere()) return button.yMax;
@@ -527,6 +521,7 @@ namespace FactionColonies
             }
             Find.TilePicker.StopTargeting();
             FCWindow_CreateColonyStatModifiers.TryClose();
+            FoundingScreenHooks.NotifySelectionChanged(PlanetTile.Invalid, null);
         }
 
         /// <summary>
@@ -535,6 +530,8 @@ namespace FactionColonies
         public override void PostOpen()
         {
             base.PostOpen();
+            // Let type-driven companion windows initialize for the default settlement type.
+            FoundingScreenHooks.NotifySelectionChanged(currentTileSelected, currentSettlementType);
         }
     }
 }

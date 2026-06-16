@@ -14,21 +14,10 @@ namespace FactionColonies.util
                 return false;
             }
 
-            if (settlementdef.planetLayers.Count == 0)
+            if (!settlementdef.AllowsTileLayer(tile))
             {
-                if (tile.Layer != Find.WorldGrid.Surface)
-                {
-                    reason?.Append("FCInvalidPlanetLayer".Translate());
-                    return false;
-                }
-            }
-            else
-            {
-                if (!settlementdef.planetLayers.Contains(tile.Layer.Def))
-                {
-                    reason?.Append("FCInvalidPlanetLayer".Translate());
-                    return false;
-                }
+                reason?.Append("FCInvalidPlanetLayer".Translate());
+                return false;
             }
 
             if (!(settlementdef.GetSettlementTypeExtension().TileIsValidForSettlement(tile, reason)))

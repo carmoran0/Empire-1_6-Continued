@@ -67,6 +67,18 @@ namespace FactionColonies
             planetLayers == null || planetLayers.Count == 0 || planetLayers.Contains(PlanetLayerDefOf.Surface);
 
         /// <summary>
+        /// True if this settlement type can be founded on the given tile's planet layer. Empty
+        /// planetLayers means Surface-only (the WorldTileChecker convention); otherwise the tile's
+        /// layer must be among the allowed layers. Callers append their own rejection reason.
+        /// </summary>
+        public bool AllowsTileLayer(PlanetTile tile)
+        {
+            if (planetLayers == null || planetLayers.Count == 0)
+                return tile.Layer == Find.WorldGrid.Surface;
+            return planetLayers.Contains(tile.Layer.Def);
+        }
+
+        /// <summary>
         /// Optional parent settlement type for inheritance-aware allow/block list checks on buildings.
         /// When a BuildingFCDef's allow/block list is checked, the chain of baseSettlementType references
         /// is walked upward, so subtypes automatically match their parent type.

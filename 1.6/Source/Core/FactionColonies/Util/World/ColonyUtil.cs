@@ -21,6 +21,47 @@ namespace FactionColonies.util
             return WorldSettlementDefOf.WorldSettlementDef_Surface;
         }
 
+        /// <summary>
+        /// Per-stat founding value for a tile's biome: folds the biome's own statModifiers into the
+        /// faction stat value. Shared by the Found screen and the outpost-conversion path so they
+        /// compute identical costs. (Mirrors what CreateColonyWindowFc previously did inline.)
+        /// </summary>
+        public static double CombinedFoundingStat(FCStatDef stat, BiomeResourceDef biome, FactionFC faction)
+        {
+            double biomeVal = stat.IdentityValue;
+            if (biome?.statModifiers != null)
+            {
+                foreach (FCStatModifier m in biome.statModifiers)
+                {
+                    if (m.stat == stat)
+                        biomeVal = stat.aggregation == FCStatAggregation.Additive ? biomeVal + m.value : biomeVal * m.value;
+                }
+            }
+            double fac = faction is object ? faction.GetStatValue(stat) : stat.IdentityValue;
+            return stat.aggregation == FCStatAggregation.Additive ? fac + biomeVal : fac * biomeVal;
+        }
+
+        /// <summary>
+        /// Silver cost to found a settlement of the given type/biome BEFORE the final
+        /// settlementCostMultiplier. Exposed so callers can detect whether that multiplier
+        /// actually changed the cost (used to fire policy "cost paid" hooks).
+        /// </summary>
+        public static int GetFoundingBaseCost(WorldSettlementDef type, BiomeResourceDef biome, FactionFC faction)
+        {
+            double mult = CombinedFoundingStat(FCStatDefOf.createSettlementMultiplier, biome, faction);
+            double baseAdd = CombinedFoundingStat(FCStatDefOf.createSettlementBaseCost, biome, faction);
+            return (int)(mult * (type.GetSettlementTypeExtension().GetCreationCost() + baseAdd));
+        }
+
+        /// <summary>
+        /// Full silver cost to found a settlement of the given type at a tile with the given biome.
+        /// </summary>
+        public static int GetFoundingCost(WorldSettlementDef type, BiomeResourceDef biome, FactionFC faction)
+        {
+            int baseCost = GetFoundingBaseCost(type, biome, faction);
+            return (int)(baseCost * CombinedFoundingStat(FCStatDefOf.settlementCostMultiplier, biome, faction));
+        }
+
         public static WorldSettlementFC CreatePlayerColonySettlement(PlanetTile tile, WorldSettlementDef settlementType)
         {
             if (settlementType == null)

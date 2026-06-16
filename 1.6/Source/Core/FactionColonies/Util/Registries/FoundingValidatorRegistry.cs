@@ -20,12 +20,12 @@ namespace FactionColonies
         /// Appends rejection reasons to <paramref name="reason"/>. Not short-circuiting:
         /// every validator runs so all rejection reasons accumulate.
         /// </summary>
-        public static bool CanFound(PlanetTile tile, WorldSettlementDef type, StringBuilder reason)
+        public static bool CanFound(PlanetTile tile, WorldSettlementDef type, StringBuilder reason, float costMultiplier = 1f)
         {
             bool allowed = true;
             RegistryDispatch.Each(_list.Items, validator =>
             {
-                if (!validator.CanFoundSettlement(tile, type, out string r))
+                if (!validator.CanFoundSettlement(tile, type, out string r, costMultiplier))
                 {
                     if (reason != null && !r.NullOrEmpty())
                     {
@@ -41,13 +41,13 @@ namespace FactionColonies
         /// <summary>
         /// Collects all non-null additional cost descriptions from registered validators.
         /// </summary>
-        public static List<string> GetCostDescriptions(PlanetTile tile, WorldSettlementDef type)
+        public static List<string> GetCostDescriptions(PlanetTile tile, WorldSettlementDef type, float costMultiplier = 1f)
         {
             if (_list.Count == 0) return _emptyDescriptions;
             List<string> descriptions = new List<string>();
             RegistryDispatch.Each(_list.Items, validator =>
             {
-                string desc = validator.GetAdditionalCostDescription(tile, type);
+                string desc = validator.GetAdditionalCostDescription(tile, type, costMultiplier);
                 if (!desc.NullOrEmpty()) descriptions.Add(desc);
             }, nameof(ISettlementFoundingValidator.GetAdditionalCostDescription));
             return descriptions;
@@ -57,9 +57,9 @@ namespace FactionColonies
         /// Notifies all validators that a settlement was successfully submitted for founding.
         /// Called after silver payment in DoFoundSettlement().
         /// </summary>
-        public static void NotifyFounded(PlanetTile tile, WorldSettlementDef type)
+        public static void NotifyFounded(PlanetTile tile, WorldSettlementDef type, float costMultiplier = 1f)
             => RegistryDispatch.Each(_list.Items,
-                v => v.OnSettlementFounded(tile, type),
+                v => v.OnSettlementFounded(tile, type, costMultiplier),
                 nameof(ISettlementFoundingValidator.OnSettlementFounded));
     }
 }
