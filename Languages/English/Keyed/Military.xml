@@ -330,6 +330,8 @@ Please report this if you don't get your colonists sent to defend back, or your 
 	<FCHireSquadsPoolNoneAffordable>No affordable squad templates.</FCHireSquadsPoolNoneAffordable>
 	<FCHireSquadsPoolEdit>Edit</FCHireSquadsPoolEdit>
 	<FCHireSquadsPoolEditTip>Open this template in the squad designer.</FCHireSquadsPoolEditTip>
+	<FCHireSquadsPoolOverDeploy>Deploy cost ${0} exceeds {1}'s max squad deploy cost of ${2}.</FCHireSquadsPoolOverDeploy>
+	<FCHireSquadsPoolSettlementFull>{0} is at its squad cap.</FCHireSquadsPoolSettlementFull>
 
 	<FCSettlementMilHeader>Squads: {0} / {1}  &#x2022;  Max squad size: {2}</FCSettlementMilHeader>
 	<FCSettlementMilSquadEntry>{0} (auto-defend: {1})</FCSettlementMilSquadEntry>

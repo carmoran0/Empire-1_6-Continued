@@ -38,6 +38,9 @@ namespace FactionColonies
 
         private readonly MilitaryFC mfc;
         private readonly WorldSettlementFC targetSettlement;
+        // Max deploy cost the target settlement can sustain (0 in pool mode — no settlement). In
+        // assign mode, templates whose projected deploy cost exceeds this can't be hired here.
+        private readonly int maxDeployCost;
         private Vector2 scrollPos;
         private bool affordableOnly = false;
 
@@ -45,6 +48,11 @@ namespace FactionColonies
         {
             this.targetSettlement = targetSettlement;
             mfc = FindFC.Military;
+            if (targetSettlement is object)
+            {
+                double budget = MilitaryFC.CalculateSquadBudget(targetSettlement.settlementMilitaryLevel);
+                maxDeployCost = MilitaryDeploymentUtil.CalculateDeploymentCost(budget);
+            }
             doCloseX = true;
             forcePause = false;
             absorbInputAroundWindow = true;
@@ -68,8 +76,30 @@ namespace FactionColonies
                 : (string)"FCHireSquadsPoolHeader".Translate();
             Widgets.Label(new Rect(0f, 0f, inRect.width, TitleH), title);
 
+            float y = TitleH + 4f;
+
+            // Assign mode: show the deploy ceiling and the slot occupancy, mirroring the
+            // assign-squad picker. A settlement can host SquadCap squads at once; when it's full
+            // hiring is blocked, and the window auto-closes once the last free slot is filled.
+            bool settlementFull = false;
+            if (targetSettlement is object)
+            {
+                int stationed = targetSettlement.StationedSquads?.Count ?? 0;
+                int cap = targetSettlement.SquadCap;
+                settlementFull = stationed >= cap;
+
+                Text.Font = GameFont.Small;
+                Text.Anchor = TextAnchor.MiddleLeft;
+                Widgets.Label(new Rect(0f, y, inRect.width, 22f),
+                    "FCAssignSquadPickerMaxDeploy".Translate(maxDeployCost));
+                y += 24f;
+                Widgets.Label(new Rect(0f, y, inRect.width, 22f),
+                    "FCAssignSquadPickerStationed".Translate(stationed, cap));
+                y += 24f;
+            }
+
             // Toolbar: affordable-only checkbox (left) + silver readout (right)
-            float toolbarY = TitleH + 4f;
+            float toolbarY = y;
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
             Widgets.CheckboxLabeled(new Rect(0f, toolbarY, 200f, ToolbarH),
@@ -83,13 +113,13 @@ namespace FactionColonies
             float listTop = toolbarY + ToolbarH + 6f;
             Rect listRect = new Rect(0f, listTop, inRect.width, inRect.height - listTop);
             Widgets.DrawMenuSection(listRect);
-            DrawCardList(listRect, silver);
+            DrawCardList(listRect, silver, settlementFull);
 
             Text.Font = fontBefore;
             Text.Anchor = anchorBefore;
         }
 
-        private void DrawCardList(Rect listRect, int silver)
+        private void DrawCardList(Rect listRect, int silver, bool settlementFull)
         {
             List<MilSquadFC> templates = mfc?.squads ?? new List<MilSquadFC>();
 
@@ -131,7 +161,7 @@ namespace FactionColonies
             {
                 Rect cardRect = new Rect(0f, runningY, scrollRect.width, CardH);
                 if (alternate) Widgets.DrawHighlight(cardRect);
-                DrawTemplateCard(cardRect, visible[i], silver, alternate);
+                DrawTemplateCard(cardRect, visible[i], silver, alternate, settlementFull);
                 runningY += CardH + RowGap;
                 alternate = !alternate;
             }
@@ -146,16 +176,27 @@ namespace FactionColonies
             (int)Math.Round(template.GetEquipmentTotalCost() * FCSettings.squadHireCostMultiplier);
 
         /* Per-template card. Header row: accent strip + template name. Detail row: projected
-           power | unit count | hire cost. Right column: Edit (jump to the designer) + Hire
-           buttons. Accent + labels go amber when unaffordable, green when affordable (MilReady /
-           MilUnderfunded convention shared across the military surfaces). */
-        private void DrawTemplateCard(Rect cardRect, MilSquadFC template, int silver, bool isHighlighted)
+           power | unit count | hire cost (pool mode) or deploy cost (assign mode). Right column:
+           Edit (jump to the designer) + Hire buttons. Accent + labels go amber when the squad
+           can't be hired here — unaffordable, or (assign mode) over the settlement's deploy
+           ceiling — green otherwise (MilReady / MilUnderfunded convention). */
+        private void DrawTemplateCard(Rect cardRect, MilSquadFC template, int silver, bool isHighlighted, bool settlementFull)
         {
             int cost = HireCost(template);
             bool affordable = silver >= cost;
 
-            Color accent = affordable ? AccentUtil.MilReady : AccentUtil.MilUnderfunded;
-            Color labelTint = affordable ? Color.white : AccentUtil.MilUnderfunded;
+            // In assign mode, a template whose projected deploy cost exceeds the settlement's
+            // ceiling can't be hired here (it could never deploy from this billet). Deploy cost is
+            // derived from the design's equipment cost — a fresh hire fills every slot, so this
+            // matches what the squad's DeploymentCost() will be once hired.
+            int deployCost = MilitaryDeploymentUtil.CalculateDeploymentCost(template.GetEquipmentTotalCost());
+            bool overDeploy = targetSettlement is object && deployCost > maxDeployCost;
+            // settlementFull blocks hiring once every slot is occupied (defensive — the window
+            // normally auto-closes the moment the last slot fills).
+            bool canHire = affordable && !overDeploy && !settlementFull;
+
+            Color accent = canHire ? AccentUtil.MilReady : AccentUtil.MilUnderfunded;
+            Color labelTint = canHire ? Color.white : AccentUtil.MilUnderfunded;
 
             // Accent strip
             Widgets.DrawBoxSolid(new Rect(cardRect.x, cardRect.y, AccentW, cardRect.height), accent);
@@ -176,17 +217,29 @@ namespace FactionColonies
             float hireBtnX = cardRect.xMax - hireBtnW - 4f;
             Rect hireRect = new Rect(hireBtnX, btnY, hireBtnW, btnH);
             if (UIUtil.ButtonFlat(hireRect, "FCHireSquadButton".Translate(cost),
-                    disabled: !affordable, highlighted: isHighlighted))
+                    disabled: !canHire, highlighted: isHighlighted))
             {
                 MercenarySquadFC hired = mfc?.HireSquad(captured);
                 if (hired is object && targetSettlement is object)
                 {
-                    mfc.AttemptToAssign(hired, targetSettlement);
-                    Close();
-                    return;
+                    bool assigned = mfc.AttemptToAssign(hired, targetSettlement);
+                    // Close once the settlement is full (single-slot: after the one hire);
+                    // otherwise stay open so the player can fill the remaining slots in one go.
+                    if (assigned && targetSettlement.StationedSquads.Count >= targetSettlement.SquadCap)
+                    {
+                        Close();
+                        return;
+                    }
                 }
             }
-            TooltipHandler.TipRegion(hireRect, "FCHireSquadButtonTip".Translate(cost));
+            string hireTip;
+            if (settlementFull)
+                hireTip = (string)"FCHireSquadsPoolSettlementFull".Translate(targetSettlement.Name);
+            else if (overDeploy)
+                hireTip = (string)"FCHireSquadsPoolOverDeploy".Translate(deployCost, targetSettlement.Name, maxDeployCost);
+            else
+                hireTip = (string)"FCHireSquadButtonTip".Translate(cost);
+            TooltipHandler.TipRegion(hireRect, hireTip);
 
             // Edit button — opens this template in the squad designer and closes the hire window.
             const float editBtnW = 54f;
@@ -217,7 +270,11 @@ namespace FactionColonies
 
             string powerLbl = (string)"FCSquadColPower".Translate() + ": " + power.ToString("0.0");
             string unitsLbl = "FCHireSquadsPoolUnits".Translate(unitCount);
-            string costLbl = (string)"FCSquadColCost".Translate() + ": $" + cost;
+            // Assign mode shows deploy cost (the gating value); pool mode shows the hire cost.
+            // The Hire button already carries the hire cost, so deploy cost isn't redundant here.
+            string costLbl = targetSettlement is object
+                ? (string)"FCSquadColDeploymentCost".Translate() + ": $" + deployCost
+                : (string)"FCSquadColCost".Translate() + ": $" + cost;
 
             float labelsW = labelsRight - contentX;
             if (labelsW < 0f) labelsW = 0f;
