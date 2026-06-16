@@ -18,7 +18,9 @@ namespace FactionColonies
     {
         /* Layout constants */
         private const float GroupHeaderHeight = 30f;
+        private const float GroupHeaderVPad = 8f;      // 22f line + 8f = 30f, matches current single-line group header
         private const float CategoryHeaderHeight = 26f;
+        private const float CategoryHeaderVPad = 4f;   // 22f line + 4f = 26f, matches current single-line category header
         private const float EntryRowHeight = 24f;
         private const float ImageMaxHeight = 300f;
         private const float ImageNavButtonSize = 28f;
@@ -149,7 +151,8 @@ namespace FactionColonies
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-**/
         public void DrawLeftPane(Rect rect)
         {
-            float totalHeight = CalculateLeftPaneHeight();
+            float measureWidth = rect.width - ScrollUtil.ScrollbarWidth - 1f;
+            float totalHeight = CalculateLeftPaneHeight(measureWidth);
             Rect viewRect = ScrollUtil.BeginScrollView(rect, ref leftScroll, totalHeight);
             float curY = 0f;
 
@@ -157,7 +160,8 @@ namespace FactionColonies
             {
                 bool modExpanded = expandedMods.Contains(mg.modId);
 
-                Rect groupRect = new Rect(0f, curY, viewRect.width, GroupHeaderHeight);
+                float groupHeight = HeaderHeightFor(mg.modName, viewRect.width - Margin * 2 - IconSize, GroupHeaderHeight, GroupHeaderVPad);
+                Rect groupRect = new Rect(0f, curY, viewRect.width, groupHeight);
                 Widgets.DrawBoxSolid(groupRect, GroupBgColor);
 
                 Text.Font = GameFont.Small;
@@ -165,7 +169,7 @@ namespace FactionColonies
                 GUI.color = Color.white;
                 Widgets.Label(new Rect(groupRect.x + Margin, groupRect.y, groupRect.width - Margin * 2 - IconSize, groupRect.height), mg.modName);
 
-                Rect arrowRect = new Rect(groupRect.xMax - IconSize - 2f, groupRect.y + (GroupHeaderHeight - IconSize) * 0.5f, IconSize, IconSize);
+                Rect arrowRect = new Rect(groupRect.xMax - IconSize - 2f, groupRect.y + (groupHeight - IconSize) * 0.5f, IconSize, IconSize);
                 Widgets.DrawTextureFitted(arrowRect, modExpanded ? TexButton.Collapse : TexButton.Reveal, 1f);
 
                 if (Widgets.ButtonInvisible(groupRect))
@@ -175,7 +179,7 @@ namespace FactionColonies
                     (modExpanded ? SoundDefOf.TabClose : SoundDefOf.TabOpen).PlayOneShotOnCamera();
                 }
 
-                curY += GroupHeaderHeight + 2f;
+                curY += groupHeight + 2f;
                 if (!modExpanded) continue;
 
                 foreach (CategoryGroup cg in mg.categories)
@@ -184,7 +188,8 @@ namespace FactionColonies
                     bool catExpanded = expandedCategories.Contains(catKey);
                     Color catColor = cg.categoryDef.color;
 
-                    Rect catRect = new Rect(10f, curY, viewRect.width - 10f, CategoryHeaderHeight);
+                    float catHeight = HeaderHeightFor(cg.categoryDef.LabelCap, (viewRect.width - 10f) - Margin * 2 - IconSize - 3f, CategoryHeaderHeight, CategoryHeaderVPad);
+                    Rect catRect = new Rect(10f, curY, viewRect.width - 10f, catHeight);
                     Widgets.DrawBoxSolid(catRect, CategoryBgColor);
                     TexLoad.DrawHorizontalGradient(catRect, ColorUtil.TransformA(catColor, 0.2f));
                     Widgets.DrawBoxSolid(new Rect(catRect.x, catRect.y, 3f, catRect.height), catColor);
@@ -196,7 +201,7 @@ namespace FactionColonies
                         cg.categoryDef.LabelCap,
                         ColorUtil.TransformRGB(catColor, 1.3f));
 
-                    Rect catArrow = new Rect(catRect.xMax - IconSize - 2f, catRect.y + (CategoryHeaderHeight - IconSize) * 0.5f, IconSize, IconSize);
+                    Rect catArrow = new Rect(catRect.xMax - IconSize - 2f, catRect.y + (catHeight - IconSize) * 0.5f, IconSize, IconSize);
                     Widgets.DrawTextureFitted(catArrow, catExpanded ? TexButton.Collapse : TexButton.Reveal, 1f);
 
                     if (Widgets.ButtonInvisible(catRect))
@@ -206,7 +211,7 @@ namespace FactionColonies
                         (catExpanded ? SoundDefOf.TabClose : SoundDefOf.TabOpen).PlayOneShotOnCamera();
                     }
 
-                    curY += CategoryHeaderHeight + 1f;
+                    curY += catHeight + 1f;
                     if (!catExpanded) continue;
 
                     foreach (CodexEntryDef entry in cg.entries)
@@ -258,21 +263,36 @@ namespace FactionColonies
             ResetText();
         }
 
-        private float CalculateLeftPaneHeight()
+        private float CalculateLeftPaneHeight(float contentWidth)
         {
             float total = 0f;
             foreach (ModGroup mg in modGroups)
             {
-                total += GroupHeaderHeight + 2f;
+                total += HeaderHeightFor(mg.modName, contentWidth - Margin * 2 - IconSize, GroupHeaderHeight, GroupHeaderVPad) + 2f;
                 if (!expandedMods.Contains(mg.modId)) continue;
                 foreach (CategoryGroup cg in mg.categories)
                 {
-                    total += CategoryHeaderHeight + 1f;
+                    total += HeaderHeightFor(cg.categoryDef.LabelCap, (contentWidth - 10f) - Margin * 2 - IconSize - 3f, CategoryHeaderHeight, CategoryHeaderVPad) + 1f;
                     if (expandedCategories.Contains(CatKey(cg)))
                         total += cg.entries.Count * EntryRowHeight;
                 }
             }
             return total;
+        }
+
+        /// <summary>
+        /// Height of a tree header row, grown to fit its full (wrapped) label at the given
+        /// available label width. Never shrinks below <paramref name="minHeight"/>, so
+        /// single-line labels keep the original look. <see cref="Text.CalcHeight"/> reads
+        /// the active font, so this sets <see cref="GameFont.Small"/> before measuring.
+        /// </summary>
+        private static float HeaderHeightFor(string label, float labelWidth, float minHeight, float vPad)
+        {
+            if (label.NullOrEmpty()) return minHeight;
+            Text.Font = GameFont.Small;
+            if (labelWidth < 1f) labelWidth = 1f;
+            float textHeight = Text.CalcHeight(label, labelWidth);
+            return Mathf.Max(minHeight, textHeight + vPad);
         }
 
         /**-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
