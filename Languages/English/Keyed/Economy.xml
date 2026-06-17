@@ -95,6 +95,7 @@
 	<FCTithe>Tithe</FCTithe>
 	<FCTithing>Tithing</FCTithing>
 	<FCTitheModifier>Tithe Modifier</FCTitheModifier>
+	<FCTitheValueMultiplierTooltip>{0} {1} tithe value multiplier = {2}</FCTitheValueMultiplierTooltip>
 	<FCTitheSelection>Item Selection</FCTitheSelection>
 	<FCTitheEnableAll>Enable All</FCTitheEnableAll>
 	<FCTitheDisableAll>Disable All</FCTitheDisableAll>

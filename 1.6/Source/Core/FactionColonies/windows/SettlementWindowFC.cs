@@ -454,6 +454,8 @@ namespace FactionColonies
 
             double extBudget = res.externalTitheBudget;
             bool hasInjection = extBudget > 0.01;
+            double titheMult = res.GetTitheValueMultiplier();
+            bool showMult = Math.Abs(titheMult - 1.0) > 0.001;
 
             Rect titheModBox = new Rect(boundingBox.x, iconBox.yMax + margin, (boundingBox.width - margin) / 2f, rowHeight * 3f);
             Rect prodBox = new Rect(titheModBox.xMax + margin, iconBox.yMax + margin, (boundingBox.width - margin) / 2f, rowHeight);
@@ -476,8 +478,18 @@ namespace FactionColonies
             Widgets.DrawHighlight(titheRow3);
             Widgets.Label(trow3label, "FCTotal".Translate());
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(trow2num, Math.Round(res.GetTitheModifierPerWorker()).ToString());
-            Widgets.Label(trow3num, Math.Round(res.GetTotalTitheModifierForWorkers()).ToString());
+            double perWorkerRaw = res.GetTitheModifierPerWorker();
+            double totalWorkerRaw = res.GetTotalTitheModifierForWorkers();
+            Widgets.Label(trow2num, Math.Round(perWorkerRaw * titheMult).ToString());
+            Widgets.Label(trow3num, Math.Round(totalWorkerRaw * titheMult).ToString());
+            if (showMult)
+            {
+                string multStr = TextUtil.ColorizeMultiplierBonus(titheMult);
+                string titheTip =
+                    "FCTitheValueMultiplierTooltip".Translate(Math.Round(perWorkerRaw).ToString(), multStr, Math.Round(perWorkerRaw * titheMult).ToString()) + "\n" +
+                    "FCTitheValueMultiplierTooltip".Translate(Math.Round(totalWorkerRaw).ToString(), multStr, Math.Round(totalWorkerRaw * titheMult).ToString());
+                TooltipHandler.TipRegion(titheModBox, titheTip);
+            }
 
             /* Production */
             Text.Anchor = TextAnchor.MiddleLeft;
@@ -486,7 +498,13 @@ namespace FactionColonies
             Widgets.DrawHighlight(prodBox);
             Widgets.Label(prodLabel, "FCTotalProd".Translate());
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(prodnum, Math.Round(res.taxableProductionMarketValue).ToString());
+            double prodRaw = res.taxableProductionMarketValue;
+            Widgets.Label(prodnum, Math.Round(prodRaw * titheMult).ToString());
+            if (showMult)
+            {
+                TooltipHandler.TipRegion(prodBox, "FCTitheValueMultiplierTooltip".Translate(
+                    Math.Round(prodRaw).ToString(), TextUtil.ColorizeMultiplierBonus(titheMult), Math.Round(prodRaw * titheMult).ToString()));
+            }
 
             /* External Tithe Injection */
             if (hasInjection)

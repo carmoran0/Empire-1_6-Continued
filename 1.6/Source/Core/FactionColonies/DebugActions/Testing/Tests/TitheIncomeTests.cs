@@ -140,6 +140,43 @@ namespace FactionColonies
         }
 
         [EmpireTest("TitheIncome")]
+        public static void GetTitheValueMultiplier_MatchesStat()
+        {
+            var settlement = GetFirstSettlement();
+            if (settlement == null) TestAssert.Skip("No settlement");
+
+            ResourceFC resource = GetFirstNonPoolResource(settlement);
+            if (resource == null) TestAssert.Skip("No non-pool resource");
+
+            double expected = FindFC.FactionComp.GetStatValue(FCStatDefOf.titheValueMultiplier, settlement);
+            double actual = resource.GetTitheValueMultiplier();
+
+            TestAssert.AreEqual(expected, actual,
+                message: "GetTitheValueMultiplier should equal the titheValueMultiplier stat for the settlement");
+        }
+
+        [EmpireTest("TitheIncome")]
+        public static void TitheIncome_PostMultiplierComponents_Reconcile()
+        {
+            var settlement = GetFirstSettlement();
+            if (settlement == null) TestAssert.Skip("No settlement");
+
+            ResourceFC resource = GetFirstNonPoolResource(settlement);
+            if (resource == null) TestAssert.Skip("No non-pool resource");
+
+            // Mirrors how the tithing screen header now displays its three numbers:
+            // each shown post-multiplier, summing (with external budget) to the total tithe budget.
+            double mult = resource.GetTitheValueMultiplier();
+            double prodComponent = resource.taxableProductionMarketValue * mult;
+            double workerComponent = resource.GetTotalTitheModifierForWorkers() * mult;
+            double expected = prodComponent + workerComponent + resource.externalTitheBudget;
+            double actual = resource.GetTitheIncome();
+
+            TestAssert.AreEqual(expected, actual,
+                message: "Post-multiplier production + worker components + external budget should reconcile to GetTitheIncome");
+        }
+
+        [EmpireTest("TitheIncome")]
         public static void TitheIncome_AllResources_NonNegative()
         {
             var faction = FindFC.FactionComp;
