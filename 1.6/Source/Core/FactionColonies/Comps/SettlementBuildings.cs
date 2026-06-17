@@ -225,6 +225,16 @@ namespace FactionColonies
             }
         }
 
+        public void DeconstructAllBuildings()
+        {
+            for (int i = buildings.Count - 1; i >= 0; i--)
+            {
+                BuildingFCDef def = buildings[i].def;
+                if (def == BuildingFCDefOf.Empty || def == BuildingFCDefOf.Construction) continue;
+                DeconstructBuilding(i);
+            }
+        }
+
         public static SettlementBuildingComp MakeSettlementBuildingComp(Type compClass, WorldSettlementFC settlement)
         {
             SettlementBuildingComp comp = (SettlementBuildingComp)Activator.CreateInstance(compClass);

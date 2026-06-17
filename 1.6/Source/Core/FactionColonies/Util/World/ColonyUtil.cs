@@ -125,6 +125,9 @@ namespace FactionColonies.util
                 }
             }
 
+            // Tear down buildings first so each building's comp/listener gets a proper OnDeconstruct.
+            settlement.BuildingsComp?.DeconstructAllBuildings();
+
             LifecycleRegistry.InvokeOnSettlementRemoved(settlement);
             faction.settlements.Remove(settlement);
 
