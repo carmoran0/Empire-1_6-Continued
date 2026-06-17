@@ -26,6 +26,11 @@ namespace FactionColonies
         /* Float-menu label, e.g. "Add prisoners to <settlement>". */
         public abstract string ArrivalMenuLabel { get; }
 
+        /* Message shown after this comp absorbs the pod's pawns. Override to describe the role;
+           the default is deliberately generic so it is never wrong for a new arrival type. */
+        public virtual string ArrivalMessage(List<Pawn> pawns)
+            => "FCPawnArrivalDefault".Translate(pawns.Count, Settlement.Label);
+
         /* Absorb the already-filtered pawns. By the time this runs they have already been removed
            from the pod containers, so this comp becomes their sole owner. */
         public abstract void ReceivePawns(List<Pawn> pawns);

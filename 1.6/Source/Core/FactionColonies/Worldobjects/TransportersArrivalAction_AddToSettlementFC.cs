@@ -77,8 +77,7 @@ namespace FactionColonies
             if (comp is object && accepted.Count > 0)
             {
                 comp.ReceivePawns(accepted);
-                Messages.Message("FCPawnsAddedToSettlement".Translate(accepted.Count, settlement.Label),
-                    settlement, MessageTypeDefOf.TaskCompletion);
+                Messages.Message(comp.ArrivalMessage(accepted), settlement, MessageTypeDefOf.TaskCompletion);
             }
 
             SettlementPawnArrivalFallback.RouteLeftovers(transporters, tile, settlement);

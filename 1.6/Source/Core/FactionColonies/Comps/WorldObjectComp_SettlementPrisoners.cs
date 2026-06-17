@@ -404,6 +404,9 @@ namespace FactionColonies
 
         public override string ArrivalMenuLabel => "FCAddPrisonersToSettlement".Translate(parent.Label);
 
+        public override string ArrivalMessage(List<Pawn> pawns)
+            => "FCPawnsAddedToSettlement".Translate(pawns.Count, parent.Label);
+
         public override void ReceivePawns(List<Pawn> pawns)
         {
             if (pawns is null) return;
