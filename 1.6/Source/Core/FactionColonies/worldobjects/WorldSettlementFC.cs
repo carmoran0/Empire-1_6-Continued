@@ -1063,6 +1063,35 @@ namespace FactionColonies
                     yield return option;
         }
 
+        /* Transport pods targeting this settlement. We deliberately do NOT chain to base:
+           Settlement adds Visit/Gift/Attack options (all wrong for the player's own colony).
+           Instead, we replicate only MapParent's "land in existing map" branch — available
+           only during a battle when Map != null — then append our "add pawns to settlement"
+           options. Keep this block in sync with MapParent.GetTransportersFloatMenuOptions. */
+        public override IEnumerable<FloatMenuOption> GetTransportersFloatMenuOptions(
+            IEnumerable<IThingHolder> pods, Action<PlanetTile, TransportersArrivalAction> launchAction)
+        {
+            if (TransportersArrivalAction_LandInSpecificCell.CanLandInSpecificCell(pods, this))
+            {
+                yield return new FloatMenuOption("LandInExistingMap".Translate(Label), delegate
+                {
+                    Map map = Map;
+                    Current.Game.CurrentMap = map;
+                    CameraJumper.TryHideWorld();
+                    Find.Targeter.BeginTargeting(TargetingParameters.ForDropPodsDestination(), delegate (LocalTargetInfo x)
+                    {
+                        launchAction(Tile, new TransportersArrivalAction_LandInSpecificCell(this, x.Cell, Rot4.North, landInShuttle: false));
+                    }, null, null, CompLaunchable.TargeterMouseAttachment);
+                });
+            }
+
+            foreach (FloatMenuOption option in
+                TransportersArrivalAction_AddToSettlementFC.GetFloatMenuOptions(pods, launchAction, this))
+            {
+                yield return option;
+            }
+        }
+
         public override bool ShouldRemoveMapNow(out bool removeWorldObject)
         {
             removeWorldObject = false;

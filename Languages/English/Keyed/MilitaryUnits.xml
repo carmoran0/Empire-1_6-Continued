@@ -231,6 +231,8 @@
 	<FCTransferPrisonerToSettlement>Transfer prisoner to settlement</FCTransferPrisonerToSettlement>
 	<FCTransferPrisonerOption>Transfer {0}</FCTransferPrisonerOption>
 	<FCTransferPrisonerGizmoDesc>Select a prisoner from this caravan to hand over to the settlement.</FCTransferPrisonerGizmoDesc>
+	<FCAddPrisonersToSettlement>Add prisoners to {0}</FCAddPrisonersToSettlement>
+	<FCPawnsAddedToSettlement>{0} prisoner(s) added to {1}</FCPawnsAddedToSettlement>
 
 	<!-- Mercenary -->
 	<FCRequestMercenary>Request Mercenary</FCRequestMercenary>
