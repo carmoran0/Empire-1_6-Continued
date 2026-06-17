@@ -210,6 +210,9 @@ namespace FactionColonies
             op.defender.squad = null;
             op.defender.force = defender.CreateDefendingForce();
             op.externalDefenderSource = defender.WorldObject;
+            // Pledge marks the defender busy now (warning window), not at engagement. ReleaseCurrentDefender
+            // above already fired OnDefenseReplaced on any prior external defender.
+            defender.OnDefensePledged(op.targetObject);
 
             manager.Register(op);
 

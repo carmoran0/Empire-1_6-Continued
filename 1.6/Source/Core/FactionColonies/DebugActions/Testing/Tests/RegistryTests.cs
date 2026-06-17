@@ -1174,6 +1174,7 @@ namespace FactionColonies
             public int Range => _range;
             public bool CanAutoDefend => _canAutoDefend;
             public MilitaryForce CreateDefendingForce() => null;
+            public void OnDefensePledged(WorldObject target) { }
             public void OnDefenseStarted(WorldObject target) { }
             public void OnDefenseComplete(bool won, BattleResult result) { }
             public void OnDefenseReplaced() { }
