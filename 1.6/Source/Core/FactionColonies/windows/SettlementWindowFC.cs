@@ -484,11 +484,11 @@ namespace FactionColonies
             Widgets.Label(trow3num, Math.Round(totalWorkerRaw * titheMult).ToString());
             if (showMult)
             {
-                string multStr = TextUtil.ColorizeMultiplierBonus(titheMult);
-                string titheTip =
-                    "FCTitheValueMultiplierTooltip".Translate(Math.Round(perWorkerRaw).ToString(), multStr, Math.Round(perWorkerRaw * titheMult).ToString()) + "\n" +
-                    "FCTitheValueMultiplierTooltip".Translate(Math.Round(totalWorkerRaw).ToString(), multStr, Math.Round(totalWorkerRaw * titheMult).ToString());
-                TooltipHandler.TipRegion(titheModBox, titheTip);
+                string titheTip = "FCTitheValueMultiplierTooltip".Translate(
+                    Math.Round(perWorkerRaw).ToString(),
+                    TextUtil.ColorizeMultiplierBonus(titheMult),
+                    Math.Round(perWorkerRaw * titheMult).ToString());
+                TooltipHandler.TipRegion(titheRow2, titheTip);
             }
 
             /* Production */
