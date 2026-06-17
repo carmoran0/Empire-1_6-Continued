@@ -1026,11 +1026,24 @@ namespace FactionColonies
                 ShaderDatabase.WorldOverlayTransparentLit, WorldMaterials.WorldObjectRenderQueue));
         }
 
+        /* Caravan gizmos for this settlement. We deliberately do NOT chain to base:
+           Settlement adds a vanilla Trade command (duplicates our own gated Trade below)
+           and an Attack command (wrong for the player's own colony). Replicate only the
+           Gift command (shows only for hostile factions) and the comp dispatch (e.g. the
+           SettlementMilitary "Defend" gizmo), then append our own gated Trade. Keep this
+           block in sync with Settlement.GetCaravanGizmos. */
         public override IEnumerable<Gizmo> GetCaravanGizmos(Caravan caravan)
         {
-            foreach (Gizmo gizmo in base.GetCaravanGizmos(caravan))
+            if ((bool)CaravanArrivalAction_OfferGifts.CanOfferGiftsTo(caravan, this))
             {
-                yield return gizmo;
+                yield return FactionGiftUtility.OfferGiftsCommand(caravan, this);
+            }
+            foreach (WorldObjectComp comp in AllComps)
+            {
+                foreach (Gizmo gizmo in comp.GetCaravanGizmos(caravan))
+                {
+                    yield return gizmo;
+                }
             }
             if (MilitaryComp?.isUnderAttack != true && FindFC.FactionComp.IsActionAllowed(FCActionType.TradeWithSettlement))
             {
@@ -1052,9 +1065,29 @@ namespace FactionColonies
             }
         }
 
+        /* Caravan float-menu options for this settlement. We deliberately do NOT chain to base:
+           Settlement adds a vanilla Trade option (duplicates our own gated Trade below) and an
+           Attack option (wrong for the player's own colony). Replicate only the comp dispatch
+           (e.g. the SettlementMilitary "Defend" option), the Visit option, and the Gift option
+           (shows only for hostile factions), then append our own gated Trade. Keep this block in
+           sync with Settlement.GetFloatMenuOptions. */
         public override IEnumerable<FloatMenuOption> GetFloatMenuOptions(Caravan caravan)
         {
-            foreach (FloatMenuOption option in base.GetFloatMenuOptions(caravan))
+            foreach (WorldObjectComp comp in AllComps)
+            {
+                foreach (FloatMenuOption option in comp.GetFloatMenuOptions(caravan))
+                {
+                    yield return option;
+                }
+            }
+            if (CaravanVisitUtility.SettlementVisitedNow(caravan) != this)
+            {
+                foreach (FloatMenuOption option in CaravanArrivalAction_VisitSettlement.GetFloatMenuOptions(caravan, this))
+                {
+                    yield return option;
+                }
+            }
+            foreach (FloatMenuOption option in CaravanArrivalAction_OfferGifts.GetFloatMenuOptions(caravan, this))
             {
                 yield return option;
             }
