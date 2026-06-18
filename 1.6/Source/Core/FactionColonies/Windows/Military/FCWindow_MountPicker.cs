@@ -63,9 +63,10 @@ namespace FactionColonies
             Rect searchRect = new Rect(0, 40f, inRect.width, SearchBarHeight);
             searchTerm = Widgets.TextField(searchRect, searchTerm);
 
-            // Build the list of mountable animal kinds (GU2 rules).
+            // Build the list of mountable animal kinds (GU2 rules), gated by any submod animal filter
+            // (e.g. Herds & Fisheries stocking). No filter registered => only the GU2 mountable check applies.
             List<PawnKindDef> animals = FactionCache.AllAnimalKindDefs
-                .Where(a => GiddyUpUtil.IsMountable(a))
+                .Where(a => GiddyUpUtil.IsMountable(a) && AnimalPickerFilterRegistry.IsAllowed(a))
                 .OrderBy(a => a.label ?? a.defName, StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
