@@ -95,6 +95,29 @@ namespace FactionColonies
             }
         }
 
+        /// <summary>
+        /// Builds a complete colored additive-bonus line of the form "&lt;color&gt;+X&lt;/color&gt;{separator}{label}".
+        /// <para>The label is taken as a string so any TaggedString (Def.LabelCap, "x".Translate()) is flattened
+        /// to text at the call boundary BEFORE the color is applied — this is what keeps the color alive. Building
+        /// the colored value and a TaggedString in the same expression and then forcing the result back to a string
+        /// (via AppendLine, a string accumulator/return, List&lt;string&gt;.Add, or "string + object") routes it
+        /// through TaggedString's implicit string conversion, which calls StripTags() and silently removes the color.
+        /// Returns a plain string; append it directly without mixing in more TaggedStrings.</para>
+        /// </summary>
+        public static string AdditiveBonusLine(double value, string label, string separator = " - ", bool invert = false, bool addPlusSign = true, bool hardinvert = false)
+        {
+            return ColorizeAdditiveBonus(value, invert, addPlusSign, hardinvert) + separator + label;
+        }
+
+        /// <summary>
+        /// Builds a complete colored multiplier-bonus line of the form "&lt;color&gt;xX&lt;/color&gt;{separator}{label}".
+        /// See <see cref="AdditiveBonusLine"/> for why the label is a string and the result must stay a plain string.
+        /// </summary>
+        public static string MultiplierBonusLine(double value, string label, string separator = " - ", bool invert = false, bool addXsign = true)
+        {
+            return ColorizeMultiplierBonus(value, invert, addXsign) + separator + label;
+        }
+
         public static string ColorizeBonus(double bonus, double compare, bool invert = false)
         {
             string result = Math.Round(bonus, 2).ToString();

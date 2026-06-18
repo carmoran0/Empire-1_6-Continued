@@ -1603,7 +1603,7 @@ namespace FactionColonies
             desc += "\n\n";
             string gain = "";
             if (FCSettings.happinessBaseGain != 0)
-                gain += TextUtil.ColorizeAdditiveBonus(FCSettings.happinessBaseGain) + " - " + "FCBaseGain".Translate() + "\n";
+                gain += TextUtil.AdditiveBonusLine(FCSettings.happinessBaseGain, "FCBaseGain".Translate()) + "\n";
 
             gain += GetStatDesc(FCStatDefOf.happinessGainedBase);
             gain += GetStatDesc(FCStatDefOf.happinessGainedMultiplier);
@@ -1611,7 +1611,7 @@ namespace FactionColonies
                 desc += gain + "\n";
 
             if (FCSettings.happinessBaseLost != 0)
-                desc += TextUtil.ColorizeAdditiveBonus(FCSettings.happinessBaseLost, hardinvert: true) + " - " + "FCBaseLoss".Translate() + "\n";
+                desc += TextUtil.AdditiveBonusLine(FCSettings.happinessBaseLost, "FCBaseLoss".Translate(), hardinvert: true) + "\n";
 
             desc += GetStatDesc(FCStatDefOf.happinessLostBase, hardinvert: true);
             desc += GetStatDesc(FCStatDefOf.happinessLostMultiplier);
@@ -1649,7 +1649,7 @@ namespace FactionColonies
             desc += "\n\n";
             string gain = "";
             if (FCSettings.loyaltyBaseGain != 0)
-                gain += TextUtil.ColorizeAdditiveBonus(FCSettings.loyaltyBaseGain) + " - " + "FCBaseGain".Translate() + "\n";
+                gain += TextUtil.AdditiveBonusLine(FCSettings.loyaltyBaseGain, "FCBaseGain".Translate()) + "\n";
 
             gain += GetStatDesc(FCStatDefOf.loyaltyGainedBase);
             gain += GetStatDesc(FCStatDefOf.loyaltyGainedMultiplier);
@@ -1657,7 +1657,7 @@ namespace FactionColonies
                 desc += gain + "\n";
 
             if (FCSettings.loyaltyBaseLost != 0)
-                desc += "\n" + TextUtil.ColorizeAdditiveBonus(FCSettings.loyaltyBaseLost, hardinvert: true) + " - " + "FCBaseLoss".Translate() + "\n";
+                desc += "\n" + TextUtil.AdditiveBonusLine(FCSettings.loyaltyBaseLost, "FCBaseLoss".Translate(), hardinvert: true) + "\n";
 
             desc += GetStatDesc(FCStatDefOf.loyaltyLostBase, hardinvert: true);
             desc += GetStatDesc(FCStatDefOf.loyaltyLostMultiplier);
@@ -1704,7 +1704,7 @@ namespace FactionColonies
                 Math.Round(100.0 - unrest, 1)) + "\n\n";
 
             double drift = GetProsperityDrift();
-            desc += TextUtil.ColorizeAdditiveBonus(Math.Round(drift, 1)) + " - " + "FCProsperityDrift".Translate() + "\n";
+            desc += TextUtil.AdditiveBonusLine(Math.Round(drift, 1), "FCProsperityDrift".Translate()) + "\n";
 
             desc += GetStatDesc(FCStatDefOf.prosperityGainedBase);
             desc += GetStatDesc(FCStatDefOf.prosperityLostBase, hardinvert: true);
@@ -1741,7 +1741,7 @@ namespace FactionColonies
             desc += "\n\n";
             string gain = "";
             if (FCSettings.unrestBaseGain != 0)
-                gain += TextUtil.ColorizeAdditiveBonus(FCSettings.unrestBaseGain, invert: true) + " - " + "FCBaseGain".Translate() + "\n";
+                gain += TextUtil.AdditiveBonusLine(FCSettings.unrestBaseGain, "FCBaseGain".Translate(), invert: true) + "\n";
 
             gain += GetStatDesc(FCStatDefOf.unrestGainedBase);
             gain += GetStatDesc(FCStatDefOf.unrestGainedMultiplier);
@@ -1749,7 +1749,7 @@ namespace FactionColonies
                 desc += gain + "\n";
 
             if (FCSettings.unrestBaseLost != 0)
-                desc += TextUtil.ColorizeAdditiveBonus(FCSettings.unrestBaseLost, invert: true, hardinvert: true) + " - " + "FCBaseLoss".Translate() + "\n";
+                desc += TextUtil.AdditiveBonusLine(FCSettings.unrestBaseLost, "FCBaseLoss".Translate(), invert: true, hardinvert: true) + "\n";
 
             desc += GetStatDesc(FCStatDefOf.unrestLostBase, hardinvert: true);
             desc += GetStatDesc(FCStatDefOf.unrestLostMultiplier);
@@ -2228,8 +2228,9 @@ namespace FactionColonies
                 foreach (DecayingStatPenalty penalty in decayingPenalties)
                 {
                     if (penalty.stat != stat) continue;
-                    desc += TextUtil.ColorizeAdditiveBonus(penalty.CurrentValue, invert: invert, hardinvert: hardinvert)
-                        + " - " + penalty.sourceLabel + " (" + "FCDecayingPenaltyDaysLeft".Translate(penalty.DaysLeft) + ")\n";
+                    desc += TextUtil.AdditiveBonusLine(penalty.CurrentValue,
+                        penalty.sourceLabel + " (" + "FCDecayingPenaltyDaysLeft".Translate(penalty.DaysLeft) + ")",
+                        invert: invert, hardinvert: hardinvert) + "\n";
                 }
 
                 // IStatModifierProvider comps

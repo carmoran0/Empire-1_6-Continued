@@ -164,7 +164,7 @@ namespace FactionColonies
                 }
 
                 // Active edict effects
-                string effectsText = FCStatModifier.GetDescription(activeEdict.def.statModifiers);
+                string effectsText = FCStatModifier.GetDescription(activeEdict.def.statModifiers).Resolve();
                 if (!effectsText.NullOrEmpty())
                 {
                     float effectsWidth = rect.width - CategoryPadding * 2;

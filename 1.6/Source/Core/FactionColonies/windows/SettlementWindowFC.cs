@@ -484,7 +484,9 @@ namespace FactionColonies
             Widgets.Label(trow3num, Math.Round(totalWorkerRaw * titheMult).ToString());
             if (showMult)
             {
-                string titheTip = "FCTitheValueMultiplierTooltip".Translate(
+                // Keep as TaggedString: assigning to a string here would StripTags() the colorized multiplier.
+                // TipRegion's TipSignal(TaggedString) ctor calls .Resolve(), preserving the color.
+                TaggedString titheTip = "FCTitheValueMultiplierTooltip".Translate(
                     Math.Round(perWorkerRaw).ToString(),
                     TextUtil.ColorizeMultiplierBonus(titheMult),
                     Math.Round(perWorkerRaw * titheMult).ToString());
