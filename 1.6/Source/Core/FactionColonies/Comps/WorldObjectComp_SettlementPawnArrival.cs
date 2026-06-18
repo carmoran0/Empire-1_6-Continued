@@ -19,8 +19,10 @@ namespace FactionColonies
 
         public abstract bool AcceptsPawn(Pawn pawn);
 
-        /* Settlement-level gate (permission / capacity / state), enforced at both menu time and
-           arrival. The central battle/raid block lives in the arrival action, not here. */
+        /* Launch-time gate (permission / capacity / state) controlling whether this comp's
+           float-menu option is offered. It is NOT re-checked on arrival: a pod already in flight
+           always completes, so ReceivePawns must place every pawn it accepts -- handle a slot that
+           filled mid-flight there (e.g. overflow to a resident), don't rely on this to block it. */
         public virtual FloatMenuAcceptanceReport CanReceive => true;
 
         /* Float-menu label, e.g. "Add prisoners to <settlement>". */

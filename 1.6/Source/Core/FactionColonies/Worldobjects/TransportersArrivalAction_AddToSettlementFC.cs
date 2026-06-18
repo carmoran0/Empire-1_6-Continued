@@ -42,16 +42,16 @@ namespace FactionColonies
 
         public override FloatMenuAcceptanceReport StillValid(IEnumerable<IThingHolder> pods, PlanetTile destinationTile)
         {
-            // The battle/raid gate is intentionally NOT re-checked here. It blocks *launching* new
-            // pods (the isUnderAttack early-out in GetFloatMenuOptions); a pod already in flight when
-            // a raid is scheduled or a battle begins is still allowed to complete its arrival.
+            // Neither the battle/raid gate nor the comp's CanReceive gate is re-checked here: both are
+            // launch-time gates (see GetFloatMenuOptions). A pod already in flight always completes its
+            // arrival, and the comp's ReceivePawns decides what to do given the settlement's current
+            // state. We only fail (-> engine caravan fallback) when the target itself is gone
+            // (settlement despawned/moved, or the comp type no longer exists).
             FloatMenuAcceptanceReport report = base.StillValid(pods, destinationTile);
             if (!report) return report;
             if (settlement is null || !settlement.Spawned || settlement.Tile != destinationTile)
                 return false;
-            WorldObjectComp_SettlementPawnArrival comp = ResolveComp(settlement, arrivalCompType);
-            if (comp is null) return false;
-            return comp.CanReceive;
+            return ResolveComp(settlement, arrivalCompType) is object;
         }
 
         public override void Arrived(List<ActiveTransporterInfo> transporters, PlanetTile tile)
