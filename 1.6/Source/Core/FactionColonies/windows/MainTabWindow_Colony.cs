@@ -1961,7 +1961,7 @@ namespace FactionColonies
             // Slot index column (indented to suggest it's a child of the settlement header)
             const float slotIndent = 18f;
             float idxW = 40f;
-            Rect fullSlot = new Rect(rect.x + slotIndent, rect.y, rect.width - slotIndent, rect.height);
+            Rect fullSlot = new Rect(rect.x + slotIndent, rect.y, rect.width - slotIndent + 4f, rect.height);
             Rect slotLabel = new Rect(rect.x + slotIndent, rect.y, idxW, rect.height);
 
             UIUtil.DrawColoredHighlight(fullSlot, AccentUtil.GetSquadAccent(squad));
@@ -1970,7 +1970,7 @@ namespace FactionColonies
             // (indent -> accent -> "Slot N"). GetSquadAccent returns grey (MilInactive) for empty slots.
             const float slotAccentW = 3f;
             Widgets.DrawBoxSolid(
-                new Rect(slotLabel.x - slotAccentW - 2f, rect.y + 3f, slotAccentW, rect.height - 6f),
+                new Rect(slotLabel.x, rect.y, slotAccentW, rect.height),
                 AccentUtil.GetSquadAccent(squad));
 
             Text.Anchor = TextAnchor.MiddleRight;
