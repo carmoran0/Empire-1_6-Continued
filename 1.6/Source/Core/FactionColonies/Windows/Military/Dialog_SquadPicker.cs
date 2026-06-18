@@ -238,6 +238,86 @@ namespace FactionColonies
          * gray (WinChanceColor returns MilInactive when ShowWinChance is false). */
         protected virtual Color AccentColor(RowData row) => WinChanceColor(row);
 
+        /* Single source for the Pow/Eff/WinChance box geometry — shared by squad cards and the
+         * defend picker's external-defender cards so the two sections line up. boxX is the box's
+         * left edge; name / detail columns size themselves to its left via boxGap. boxW/boxGap
+         * collapse with ShowWinChance/ShowForceMetrics exactly as the squad card always has. */
+        protected void GetBoxGeometry(Rect cardRect, out float boxX, out float boxW, out float boxGap)
+        {
+            const float rightColW = 180f;
+            boxW = ShowWinChance ? 150f : (ShowForceMetrics ? 90f : 0f);
+            boxGap = (boxW > 0f) ? 15f : 0f;
+            float rightColX = cardRect.xMax - rightColW - 4f;
+            boxX = rightColX - boxGap - boxW;
+        }
+
+        /* Draws the Pow/Eff/WinChance box: Pow + Eff stacked on the left half, Win chance on the
+         * right half with a horizontal peak-gradient band (dimmed win-chance color) behind it.
+         * Honors ShowForceMetrics / ShowWinChance (box shrinks to a single Pow/Eff column when
+         * WinChance is hidden; skipped entirely when both are hidden). winMin == winMax collapses
+         * to a single % via TextUtil.FormatRange. Sets Tiny font internally and restores
+         * font/anchor on exit so callers aren't disturbed. */
+        protected void DrawForceWinBox(Rect cardRect, float boxX, float boxW,
+            double power, double efficiency, bool hasForce,
+            double winMin, double winMax, Color winColor, Color powEffTint, bool dimWin)
+        {
+            if (!(ShowForceMetrics || ShowWinChance)) return;
+
+            GameFont fontBefore = Text.Font;
+            TextAnchor anchorBefore = Text.Anchor;
+            Text.Font = GameFont.Tiny;
+
+            Rect boxRect = new Rect(boxX, cardRect.y + 4f, boxW, cardRect.height - 8f);
+            float powEffW = ShowWinChance ? boxW * 0.5f : boxW;
+
+            if (ShowForceMetrics)
+            {
+                string powLbl = (string)"FCSquadColPower".Translate() + ": " + power.ToString("0.0");
+                string effLbl = hasForce
+                    ? (string)"FCSquadColEfficiency".Translate() + ": x" + efficiency.ToString("0.##")
+                    : (string)"FCSquadColEfficiency".Translate() + ": -";
+
+                float halfBoxH = boxRect.height * 0.5f;
+
+                // Pow / Eff stacked vertically on the left half (or full width if no win chance).
+                Text.Anchor = TextAnchor.MiddleLeft;
+                UIUtil.DrawColoredLabel(new Rect(boxX, boxRect.y, powEffW, halfBoxH), powLbl, powEffTint);
+                UIUtil.DrawColoredLabel(new Rect(boxX, boxRect.y + halfBoxH, powEffW, halfBoxH), effLbl, powEffTint);
+            }
+
+            if (ShowWinChance)
+            {
+                string winLbl;
+                if (hasForce && (winMin > 0 || winMax > 0))
+                {
+                    double minPct = Math.Round(winMin * 100);
+                    double maxPct = Math.Round(winMax * 100);
+                    winLbl = (string)"FCSquadColWinChance".Translate() + ": " + TextUtil.FormatRange(minPct, maxPct, "0") + "%";
+                }
+                else
+                {
+                    winLbl = (string)"FCSquadColWinChance".Translate() + ": -";
+                }
+
+                // Win chance on the right half (or full width if no Pow/Eff), vertically centered,
+                // with a peak-gradient band behind it tinted by a dimmed win-chance color so the
+                // full-saturation label stays legible even when the color is red.
+                float winX = boxX + (ShowForceMetrics ? powEffW : 0f);
+                float winW = ShowForceMetrics ? (boxW - powEffW) : boxW;
+                Rect winRect = new Rect(winX, boxRect.y, winW, boxRect.height);
+                const float gradH = 28f;
+                Rect gradRect = new Rect(winRect.x - 10f, winRect.center.y - gradH * 0.5f, winRect.width + 20f, gradH);
+                Color gradColor = ColorUtil.TransformRGB(winColor, 0.3f);
+                TexLoad.DrawHorizontalPeakGradient(gradRect, gradColor);
+
+                Text.Anchor = TextAnchor.MiddleCenter;
+                UIUtil.DrawColoredLabel(winRect, winLbl, dimWin ? ColorUtil.TransformA(winColor, 0.7f) : winColor);
+            }
+
+            Text.Font = fontBefore;
+            Text.Anchor = anchorBefore;
+        }
+
         /* Per-squad card. Header row: accent strip, squad name, win-chance box (Pow/Eff top,
          * WinChance bottom), and right-side column with status badge over Inspect button.
          * Detail row: Settlement / Travel / Cost cells. The whole card (minus the Inspect
@@ -290,15 +370,12 @@ namespace FactionColonies
 
             /* Right-side column: status badge (top) + Inspect button (bottom), same width.
              * rightColW (180) is the unconditional bump so longer statuses like
-             * "Busy: Defend Settlement" stop wrapping in tiny font. boxW/boxGap collapse to 0
-             * when both the Pow/Eff and WinChance halves are hidden; box shrinks to ~half-width
-             * when WinChance is hidden but Pow/Eff is still shown. */
+             * "Busy: Defending" stop wrapping in tiny font. Box geometry (boxX/boxW/boxGap)
+             * comes from GetBoxGeometry so the external-defender cards can align to it. */
             const float btnH = 20f;
             const float rightColW = 180f;
-            float boxW = ShowWinChance ? 150f : (ShowForceMetrics ? 90f : 0f);
-            float boxGap = (boxW > 0f) ? 15f : 0f;
-
             float rightColX = cardRect.xMax - rightColW - 4f;
+            GetBoxGeometry(cardRect, out float boxX, out float boxW, out float boxGap);
             float headerY = cardRect.y;
             float detailY = cardRect.y + CardHeaderH;
 
@@ -317,61 +394,9 @@ namespace FactionColonies
             }
             TooltipHandler.TipRegion(inspectRect, "FCMilBtnInspectTip".Translate());
 
-            /* Pow/Eff/WinChance box — Pow + Eff stacked vertically on the left, Win chance on
-             * the right with a horizontal peak-gradient band (dimmed win-chance color) behind
-             * it. When WinChance is hidden but ForceMetrics is shown, the box shrinks to a
-             * single Pow/Eff column. When both are hidden, the box is skipped entirely. */
-            float boxX = rightColX - boxGap - boxW;
-            if (ShowForceMetrics || ShowWinChance)
-            {
-                Rect boxRect = new Rect(boxX, cardRect.y + 4f, boxW, cardRect.height - 8f);
-                float powEffW = ShowWinChance ? boxW * 0.5f : boxW;
-
-                if (ShowForceMetrics)
-                {
-                    string powLbl = (string)"FCSquadColPower".Translate() + ": " + row.ourPower.ToString("0.0");
-                    string effLbl = row.hasOurForce
-                        ? (string)"FCSquadColEfficiency".Translate() + ": x" + row.ourEfficiency.ToString("0.##")
-                        : (string)"FCSquadColEfficiency".Translate() + ": -";
-
-                    float halfBoxH = boxRect.height * 0.5f;
-
-                    // Pow / Eff stacked vertically on the left half (or full width if no win chance).
-                    Text.Anchor = TextAnchor.MiddleLeft;
-                    UIUtil.DrawColoredLabel(new Rect(boxX, boxRect.y, powEffW, halfBoxH), powLbl, baseTint);
-                    UIUtil.DrawColoredLabel(new Rect(boxX, boxRect.y + halfBoxH, powEffW, halfBoxH), effLbl, baseTint);
-                }
-
-                if (ShowWinChance)
-                {
-                    string winLbl;
-                    if (row.hasOurForce && (row.winChanceMin > 0 || row.winChanceMax > 0))
-                    {
-                        double minPct = Math.Round(row.winChanceMin * 100);
-                        double maxPct = Math.Round(row.winChanceMax * 100);
-                        winLbl = (string)"FCSquadColWinChance".Translate() + ": " + TextUtil.FormatRange(minPct, maxPct, "0") + "%";
-                    }
-                    else
-                    {
-                        winLbl = (string)"FCSquadColWinChance".Translate() + ": -";
-                    }
-
-                    // Win chance on the right half (or full width if no Pow/Eff), vertically
-                    // centered, with a peak-gradient band behind it tinted by a dimmed
-                    // win-chance color so the full-saturation label remains legible even when
-                    // the color is red.
-                    float winX = boxX + (ShowForceMetrics ? powEffW : 0f);
-                    float winW = ShowForceMetrics ? (boxW - powEffW) : boxW;
-                    Rect winRect = new Rect(winX, boxRect.y, winW, boxRect.height);
-                    const float gradH = 28f;
-                    Rect gradRect = new Rect(winRect.x - 10f, winRect.center.y - gradH * 0.5f, winRect.width + 20f, gradH);
-                    Color gradColor = ColorUtil.TransformRGB(winColor, 0.3f);
-                    TexLoad.DrawHorizontalPeakGradient(gradRect, gradColor);
-
-                    Text.Anchor = TextAnchor.MiddleCenter;
-                    UIUtil.DrawColoredLabel(winRect, winLbl, row.available ? winColor : ColorUtil.TransformA(winColor, 0.7f));
-                }
-            }
+            // Pow/Eff/WinChance box (shared with the external-defender cards via DrawForceWinBox).
+            DrawForceWinBox(cardRect, boxX, boxW, row.ourPower, row.ourEfficiency, row.hasOurForce,
+                row.winChanceMin, row.winChanceMax, winColor, baseTint, !row.available);
 
             /* Squad name (left, win-chance colored) — header row, left of the box. When the box
              * is hidden, name extends all the way to the right column. Squads matching

@@ -1961,7 +1961,10 @@ namespace FactionColonies
             // Slot index column (indented to suggest it's a child of the settlement header)
             const float slotIndent = 18f;
             float idxW = 40f;
+            Rect fullSlot = new Rect(rect.x + slotIndent, rect.y, rect.width - slotIndent, rect.height);
             Rect slotLabel = new Rect(rect.x + slotIndent, rect.y, idxW, rect.height);
+
+            UIUtil.DrawColoredHighlight(fullSlot, AccentUtil.GetSquadAccent(squad));
 
             // Per-slot accent sub-mark: sits inside the indent, just left of the "Slot N" label
             // (indent -> accent -> "Slot N"). GetSquadAccent returns grey (MilInactive) for empty slots.

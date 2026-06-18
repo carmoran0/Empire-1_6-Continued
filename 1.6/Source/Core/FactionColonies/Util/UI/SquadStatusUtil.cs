@@ -38,7 +38,12 @@ namespace FactionColonies.util
                 && op.phase != MilitaryOperationPhase.CooldownPending)
             {
                 int ticksLeft = Math.Max(0, op.nextPhaseTick - now);
-                string opLabel = op.kind?.label ?? "?";
+                // Prefer the short status verb ("Defending", "Raiding") over the verbose
+                // op.kind.label ("defend friendly settlement") so the badge stays one line.
+                // Mirrors AccentUtil.GetMilitaryStatusLabel's statusLabelKey fallback.
+                string opLabel = op.kind?.statusLabelKey != null
+                    ? (string)op.kind.statusLabelKey.Translate()
+                    : (op.kind?.label ?? "?");
                 label = "FCSquadStatusBusyOp".Translate(opLabel, ticksLeft.ToTimeString());
                 color = AccentUtil.MilActiveMission;
                 return;
