@@ -194,5 +194,31 @@ namespace FactionColonies
             TestAssert.IsTrue(entry.MaxForceRemaining >= entry.MinForceRemaining,
                 "Max bound must be >= min bound");
         }
+
+        [EmpireTest("MilitaryForce")]
+        public static void EnemyPower_NoEntryForPlayerOrEmpire()
+        {
+            WorldComponent_EnemyPower registry = FindFC.EnemyPower;
+            if (registry == null) TestAssert.Skip("EnemyPower registry not available");
+
+            // The player and the allied empire faction must never get an enemy estimate; the
+            // world-map inspect line keys off this null to stay off player/empire settlements.
+            TestAssert.IsNull(registry.GetOrCompute(Faction.OfPlayer),
+                "Player faction must not have an EnemyPower entry");
+
+            if (FindFC.EmpireFaction is object)
+            {
+                TestAssert.IsNull(registry.GetOrCompute(FindFC.EmpireFaction),
+                    "Empire faction must not have an EnemyPower entry");
+            }
+
+            Settlement playerColony = Find.WorldObjects.Settlements
+                .FirstOrDefault(s => !(s is WorldSettlementFC) && s.Faction == Faction.OfPlayer);
+            if (playerColony is object)
+            {
+                TestAssert.IsNull(registry.GetOrCompute(playerColony),
+                    "Player colony must not have an EnemyPower entry");
+            }
+        }
     }
 }
