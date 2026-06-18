@@ -710,8 +710,8 @@ namespace FactionColonies
                 if (settlement != null)
                 {
                     double prosperityMult = settlement.prosperity / 100.0;
-                    desc += "\n" + TextUtil.ColorizeMultiplierBonus(prosperityMult) + " - " + "FCProsperity".Translate().CapitalizeFirst()
-                        + " (" + (int)settlement.prosperity + "%)";
+                    desc += "\n" + TextUtil.MultiplierBonusLine(prosperityMult,
+                        "FCProsperity".Translate().CapitalizeFirst() + " (" + (int)settlement.prosperity + "%)");
                 }
 
                 cachedProdMultDesc = desc.Trim();

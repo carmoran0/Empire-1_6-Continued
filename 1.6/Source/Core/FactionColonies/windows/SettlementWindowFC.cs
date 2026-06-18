@@ -484,11 +484,13 @@ namespace FactionColonies
             Widgets.Label(trow3num, Math.Round(totalWorkerRaw * titheMult).ToString());
             if (showMult)
             {
-                string multStr = TextUtil.ColorizeMultiplierBonus(titheMult);
-                string titheTip =
-                    "FCTitheValueMultiplierTooltip".Translate(Math.Round(perWorkerRaw).ToString(), multStr, Math.Round(perWorkerRaw * titheMult).ToString()) + "\n" +
-                    "FCTitheValueMultiplierTooltip".Translate(Math.Round(totalWorkerRaw).ToString(), multStr, Math.Round(totalWorkerRaw * titheMult).ToString());
-                TooltipHandler.TipRegion(titheModBox, titheTip);
+                // Keep as TaggedString: assigning to a string here would StripTags() the colorized multiplier.
+                // TipRegion's TipSignal(TaggedString) ctor calls .Resolve(), preserving the color.
+                TaggedString titheTip = "FCTitheValueMultiplierTooltip".Translate(
+                    Math.Round(perWorkerRaw).ToString(),
+                    TextUtil.ColorizeMultiplierBonus(titheMult),
+                    Math.Round(perWorkerRaw * titheMult).ToString());
+                TooltipHandler.TipRegion(titheRow2, titheTip);
             }
 
             /* Production */

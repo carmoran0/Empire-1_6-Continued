@@ -896,6 +896,47 @@ namespace FactionColonies
         }
 
         // ============================
+        // AnimalPickerFilterRegistry
+        // ============================
+
+        /// <summary>Returns a fixed verdict regardless of input, so tests don't need a real PawnKindDef.</summary>
+        private class StubAnimalPickerFilter : IAnimalPickerFilter
+        {
+            public bool Allow = true;
+            public bool IsAnimalAllowed(PawnKindDef animal) => Allow;
+        }
+
+        [EmpireTest("Registry")]
+        public static void AnimalPickerFilter_Register_AppearsInFilters()
+        {
+            StubAnimalPickerFilter filter = new StubAnimalPickerFilter();
+            EmpireRegistry.Register(filter);
+            try
+            {
+                TestAssert.Contains(AnimalPickerFilterRegistry.Filters, filter);
+            }
+            finally { EmpireRegistry.Unregister(filter); }
+        }
+
+        [EmpireTest("Registry")]
+        public static void AnimalPickerFilter_DisallowingFilter_Gates()
+        {
+            // AND semantics: one disallowing filter gates the kind regardless of any others.
+            bool baseline = AnimalPickerFilterRegistry.IsAllowed(null);
+            StubAnimalPickerFilter filter = new StubAnimalPickerFilter { Allow = false };
+            EmpireRegistry.Register(filter);
+            try
+            {
+                TestAssert.IsFalse(AnimalPickerFilterRegistry.IsAllowed(null),
+                    "A disallowing filter should gate the kind");
+            }
+            finally { EmpireRegistry.Unregister(filter); }
+
+            TestAssert.AreEqual(baseline, AnimalPickerFilterRegistry.IsAllowed(null),
+                "Unregistering should restore the prior verdict");
+        }
+
+        // ============================
         // EmpireCacheUtil (external invalidators)
         // ============================
 
@@ -1174,6 +1215,7 @@ namespace FactionColonies
             public int Range => _range;
             public bool CanAutoDefend => _canAutoDefend;
             public MilitaryForce CreateDefendingForce() => null;
+            public void OnDefensePledged(WorldObject target) { }
             public void OnDefenseStarted(WorldObject target) { }
             public void OnDefenseComplete(bool won, BattleResult result) { }
             public void OnDefenseReplaced() { }

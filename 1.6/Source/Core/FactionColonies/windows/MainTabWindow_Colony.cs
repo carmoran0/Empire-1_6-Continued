@@ -1961,7 +1961,18 @@ namespace FactionColonies
             // Slot index column (indented to suggest it's a child of the settlement header)
             const float slotIndent = 18f;
             float idxW = 40f;
+            Rect fullSlot = new Rect(rect.x + slotIndent, rect.y, rect.width - slotIndent + 4f, rect.height);
             Rect slotLabel = new Rect(rect.x + slotIndent, rect.y, idxW, rect.height);
+
+            UIUtil.DrawColoredHighlight(fullSlot, AccentUtil.GetSquadAccent(squad));
+
+            // Per-slot accent sub-mark: sits inside the indent, just left of the "Slot N" label
+            // (indent -> accent -> "Slot N"). GetSquadAccent returns grey (MilInactive) for empty slots.
+            const float slotAccentW = 3f;
+            Widgets.DrawBoxSolid(
+                new Rect(slotLabel.x, rect.y, slotAccentW, rect.height),
+                AccentUtil.GetSquadAccent(squad));
+
             Text.Anchor = TextAnchor.MiddleRight;
             Widgets.Label(slotLabel, "FCMilitaryTableSlotPrefix".Translate(slotIdx + 1));
 
@@ -1969,7 +1980,10 @@ namespace FactionColonies
             // why the deploy/op buttons are greyed. Red is reserved for under-attack state.
             string squadName = squad?.DisplayName ?? (string)"FCMilitaryTableSlotEmpty".Translate();
             float buttonAreaW = btnW * 4 + btnGap * 3;
-            float nameAreaW = rect.xMax - slotLabel.xMax - buttonAreaW - 4f - powW - depCostW - (margin * 2);
+            const float statusW = 150f;
+            // Name area also reserves the status column + a margin between name and status.
+            float nameAreaW = rect.xMax - slotLabel.xMax - buttonAreaW - 4f - powW - depCostW - statusW - (margin * 3);
+            if (nameAreaW < 40f) nameAreaW = 40f;
             Rect squadNameLabel = new Rect(slotLabel.xMax + 5f, rect.y, nameAreaW, rect.height);
             Text.Anchor = TextAnchor.MiddleLeft;
             int underSquadDeploy = 0;
@@ -1985,8 +1999,20 @@ namespace FactionColonies
                     "FCMilSlotUnderfundedTip".Translate(settlement.Name, underSquadDeploy, underMaxDeploy));
             }
 
+            // Squad status (between name and Power). Single source of truth: SquadStatusUtil.Resolve.
+            // Left-aligned (anchor still MiddleLeft from the name); clamped with ellipsis + tooltip when
+            // it doesn't fit. Mirrors the status shown in the Squads subtab.
+            Rect statusRect = new Rect(squadNameLabel.xMax + margin, rect.y, statusW, rect.height);
+            if (squad is object)
+            {
+                SquadStatusUtil.Resolve(squad, out string statusLabel, out Color statusColor, out _);
+                string statusShown = Text.ClampTextWithEllipsis(statusRect, statusLabel);
+                UIUtil.DrawColoredLabel(statusRect, statusShown, statusColor);
+                if (statusShown != statusLabel) TooltipHandler.TipRegion(statusRect, statusLabel);
+            }
+
             Text.Anchor = TextAnchor.MiddleCenter;
-            Rect powerLabel = new Rect(squadNameLabel.xMax + margin, rect.y, powW, rect.height);
+            Rect powerLabel = new Rect(statusRect.xMax + margin, rect.y, powW, rect.height);
             Rect depCostLabel = new Rect(powerLabel.xMax + margin, rect.y, depCostW, rect.height);
             if (squad is object)
             {

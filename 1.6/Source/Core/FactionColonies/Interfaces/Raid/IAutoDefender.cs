@@ -19,6 +19,12 @@ namespace FactionColonies
         /// <summary>True if the defender is available (enabled, not busy, not packing, etc.).</summary>
         bool CanAutoDefend { get; }
         MilitaryForce CreateDefendingForce();
+        /// <summary>Called when this defender is committed to an op during the pre-battle warning window
+        /// (auto-selection or manual assignment), BEFORE the battle starts. Implementations should mark
+        /// themselves busy so a second concurrent attack won't double-book them. A pledge is always
+        /// followed by either <see cref="OnDefenseReplaced"/> (if swapped out) or
+        /// <see cref="OnDefenseStarted"/> (at engagement).</summary>
+        void OnDefensePledged(WorldObject target);
         void OnDefenseStarted(WorldObject target);
         void OnDefenseComplete(bool won, BattleResult result);
         /// <summary>Called when this defender is replaced by another force (not defeated).</summary>

@@ -1026,11 +1026,24 @@ namespace FactionColonies
                 ShaderDatabase.WorldOverlayTransparentLit, WorldMaterials.WorldObjectRenderQueue));
         }
 
+        /* Caravan gizmos for this settlement. We deliberately do NOT chain to base:
+           Settlement adds a vanilla Trade command (duplicates our own gated Trade below)
+           and an Attack command (wrong for the player's own colony). Replicate only the
+           Gift command (shows only for hostile factions) and the comp dispatch (e.g. the
+           SettlementMilitary "Defend" gizmo), then append our own gated Trade. Keep this
+           block in sync with Settlement.GetCaravanGizmos. */
         public override IEnumerable<Gizmo> GetCaravanGizmos(Caravan caravan)
         {
-            foreach (Gizmo gizmo in base.GetCaravanGizmos(caravan))
+            if ((bool)CaravanArrivalAction_OfferGifts.CanOfferGiftsTo(caravan, this))
             {
-                yield return gizmo;
+                yield return FactionGiftUtility.OfferGiftsCommand(caravan, this);
+            }
+            foreach (WorldObjectComp comp in AllComps)
+            {
+                foreach (Gizmo gizmo in comp.GetCaravanGizmos(caravan))
+                {
+                    yield return gizmo;
+                }
             }
             if (MilitaryComp?.isUnderAttack != true && FindFC.FactionComp.IsActionAllowed(FCActionType.TradeWithSettlement))
             {
@@ -1052,15 +1065,64 @@ namespace FactionColonies
             }
         }
 
+        /* Caravan float-menu options for this settlement. We deliberately do NOT chain to base:
+           Settlement adds a vanilla Trade option (duplicates our own gated Trade below) and an
+           Attack option (wrong for the player's own colony). Replicate only the comp dispatch
+           (e.g. the SettlementMilitary "Defend" option), the Visit option, and the Gift option
+           (shows only for hostile factions), then append our own gated Trade. Keep this block in
+           sync with Settlement.GetFloatMenuOptions. */
         public override IEnumerable<FloatMenuOption> GetFloatMenuOptions(Caravan caravan)
         {
-            foreach (FloatMenuOption option in base.GetFloatMenuOptions(caravan))
+            foreach (WorldObjectComp comp in AllComps)
+            {
+                foreach (FloatMenuOption option in comp.GetFloatMenuOptions(caravan))
+                {
+                    yield return option;
+                }
+            }
+            if (CaravanVisitUtility.SettlementVisitedNow(caravan) != this)
+            {
+                foreach (FloatMenuOption option in CaravanArrivalAction_VisitSettlement.GetFloatMenuOptions(caravan, this))
+                {
+                    yield return option;
+                }
+            }
+            foreach (FloatMenuOption option in CaravanArrivalAction_OfferGifts.GetFloatMenuOptions(caravan, this))
             {
                 yield return option;
             }
             if ((MilitaryComp is null || !MilitaryComp.isUnderAttack) && FindFC.FactionComp.IsActionAllowed(FCActionType.TradeWithSettlement))
                 foreach (var option in WorldSettlementTradeAction.GetFloatMenuOptions(caravan, this))
                     yield return option;
+        }
+
+        /* Transport pods targeting this settlement. We deliberately do NOT chain to base:
+           Settlement adds Visit/Gift/Attack options (all wrong for the player's own colony).
+           Instead, we replicate only MapParent's "land in existing map" branch — available
+           only during a battle when Map != null — then append our "add pawns to settlement"
+           options. Keep this block in sync with MapParent.GetTransportersFloatMenuOptions. */
+        public override IEnumerable<FloatMenuOption> GetTransportersFloatMenuOptions(
+            IEnumerable<IThingHolder> pods, Action<PlanetTile, TransportersArrivalAction> launchAction)
+        {
+            if (TransportersArrivalAction_LandInSpecificCell.CanLandInSpecificCell(pods, this))
+            {
+                yield return new FloatMenuOption("LandInExistingMap".Translate(Label), delegate
+                {
+                    Map map = Map;
+                    Current.Game.CurrentMap = map;
+                    CameraJumper.TryHideWorld();
+                    Find.Targeter.BeginTargeting(TargetingParameters.ForDropPodsDestination(), delegate (LocalTargetInfo x)
+                    {
+                        launchAction(Tile, new TransportersArrivalAction_LandInSpecificCell(this, x.Cell, Rot4.North, landInShuttle: false));
+                    }, null, null, CompLaunchable.TargeterMouseAttachment);
+                });
+            }
+
+            foreach (FloatMenuOption option in
+                TransportersArrivalAction_AddToSettlementFC.GetFloatMenuOptions(pods, launchAction, this))
+            {
+                yield return option;
+            }
         }
 
         public override bool ShouldRemoveMapNow(out bool removeWorldObject)
@@ -1541,7 +1603,7 @@ namespace FactionColonies
             desc += "\n\n";
             string gain = "";
             if (FCSettings.happinessBaseGain != 0)
-                gain += TextUtil.ColorizeAdditiveBonus(FCSettings.happinessBaseGain) + " - " + "FCBaseGain".Translate() + "\n";
+                gain += TextUtil.AdditiveBonusLine(FCSettings.happinessBaseGain, "FCBaseGain".Translate()) + "\n";
 
             gain += GetStatDesc(FCStatDefOf.happinessGainedBase);
             gain += GetStatDesc(FCStatDefOf.happinessGainedMultiplier);
@@ -1549,7 +1611,7 @@ namespace FactionColonies
                 desc += gain + "\n";
 
             if (FCSettings.happinessBaseLost != 0)
-                desc += TextUtil.ColorizeAdditiveBonus(FCSettings.happinessBaseLost, hardinvert: true) + " - " + "FCBaseLoss".Translate() + "\n";
+                desc += TextUtil.AdditiveBonusLine(FCSettings.happinessBaseLost, "FCBaseLoss".Translate(), hardinvert: true) + "\n";
 
             desc += GetStatDesc(FCStatDefOf.happinessLostBase, hardinvert: true);
             desc += GetStatDesc(FCStatDefOf.happinessLostMultiplier);
@@ -1587,7 +1649,7 @@ namespace FactionColonies
             desc += "\n\n";
             string gain = "";
             if (FCSettings.loyaltyBaseGain != 0)
-                gain += TextUtil.ColorizeAdditiveBonus(FCSettings.loyaltyBaseGain) + " - " + "FCBaseGain".Translate() + "\n";
+                gain += TextUtil.AdditiveBonusLine(FCSettings.loyaltyBaseGain, "FCBaseGain".Translate()) + "\n";
 
             gain += GetStatDesc(FCStatDefOf.loyaltyGainedBase);
             gain += GetStatDesc(FCStatDefOf.loyaltyGainedMultiplier);
@@ -1595,7 +1657,7 @@ namespace FactionColonies
                 desc += gain + "\n";
 
             if (FCSettings.loyaltyBaseLost != 0)
-                desc += "\n" + TextUtil.ColorizeAdditiveBonus(FCSettings.loyaltyBaseLost, hardinvert: true) + " - " + "FCBaseLoss".Translate() + "\n";
+                desc += "\n" + TextUtil.AdditiveBonusLine(FCSettings.loyaltyBaseLost, "FCBaseLoss".Translate(), hardinvert: true) + "\n";
 
             desc += GetStatDesc(FCStatDefOf.loyaltyLostBase, hardinvert: true);
             desc += GetStatDesc(FCStatDefOf.loyaltyLostMultiplier);
@@ -1642,7 +1704,7 @@ namespace FactionColonies
                 Math.Round(100.0 - unrest, 1)) + "\n\n";
 
             double drift = GetProsperityDrift();
-            desc += TextUtil.ColorizeAdditiveBonus(Math.Round(drift, 1)) + " - " + "FCProsperityDrift".Translate() + "\n";
+            desc += TextUtil.AdditiveBonusLine(Math.Round(drift, 1), "FCProsperityDrift".Translate()) + "\n";
 
             desc += GetStatDesc(FCStatDefOf.prosperityGainedBase);
             desc += GetStatDesc(FCStatDefOf.prosperityLostBase, hardinvert: true);
@@ -1679,7 +1741,7 @@ namespace FactionColonies
             desc += "\n\n";
             string gain = "";
             if (FCSettings.unrestBaseGain != 0)
-                gain += TextUtil.ColorizeAdditiveBonus(FCSettings.unrestBaseGain, invert: true) + " - " + "FCBaseGain".Translate() + "\n";
+                gain += TextUtil.AdditiveBonusLine(FCSettings.unrestBaseGain, "FCBaseGain".Translate(), invert: true) + "\n";
 
             gain += GetStatDesc(FCStatDefOf.unrestGainedBase);
             gain += GetStatDesc(FCStatDefOf.unrestGainedMultiplier);
@@ -1687,7 +1749,7 @@ namespace FactionColonies
                 desc += gain + "\n";
 
             if (FCSettings.unrestBaseLost != 0)
-                desc += TextUtil.ColorizeAdditiveBonus(FCSettings.unrestBaseLost, invert: true, hardinvert: true) + " - " + "FCBaseLoss".Translate() + "\n";
+                desc += TextUtil.AdditiveBonusLine(FCSettings.unrestBaseLost, "FCBaseLoss".Translate(), invert: true, hardinvert: true) + "\n";
 
             desc += GetStatDesc(FCStatDefOf.unrestLostBase, hardinvert: true);
             desc += GetStatDesc(FCStatDefOf.unrestLostMultiplier);
@@ -2166,8 +2228,9 @@ namespace FactionColonies
                 foreach (DecayingStatPenalty penalty in decayingPenalties)
                 {
                     if (penalty.stat != stat) continue;
-                    desc += TextUtil.ColorizeAdditiveBonus(penalty.CurrentValue, invert: invert, hardinvert: hardinvert)
-                        + " - " + penalty.sourceLabel + " (" + "FCDecayingPenaltyDaysLeft".Translate(penalty.DaysLeft) + ")\n";
+                    desc += TextUtil.AdditiveBonusLine(penalty.CurrentValue,
+                        penalty.sourceLabel + " (" + "FCDecayingPenaltyDaysLeft".Translate(penalty.DaysLeft) + ")",
+                        invert: invert, hardinvert: hardinvert) + "\n";
                 }
 
                 // IStatModifierProvider comps

@@ -36,11 +36,11 @@ namespace FactionColonies
             var ext = Ext<FCPolicyBehaviorExt_Egalitarian>();
 
             if (stat == FCStatDefOf.taxBonusFlat)
-                return TextUtil.ColorizeAdditiveBonus(-ext.taxBreakPenalty) + " - " + policy.def.LabelCap + "\n";
+                return TextUtil.AdditiveBonusLine(-ext.taxBreakPenalty, policy.def.LabelCap) + "\n";
             if (stat == FCStatDefOf.happinessGainedBase)
-                return TextUtil.ColorizeAdditiveBonus(ext.taxBreakHappinessBonus) + " - " + policy.def.LabelCap + "\n";
+                return TextUtil.AdditiveBonusLine(ext.taxBreakHappinessBonus, policy.def.LabelCap) + "\n";
             if (stat == FCStatDefOf.prosperityGainedBase)
-                return TextUtil.ColorizeAdditiveBonus(ext.taxBreakProsperityBonus) + " - " + policy.def.LabelCap + "\n";
+                return TextUtil.AdditiveBonusLine(ext.taxBreakProsperityBonus, policy.def.LabelCap) + "\n";
 
             return null;
         }

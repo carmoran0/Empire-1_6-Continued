@@ -104,6 +104,8 @@ namespace FactionColonies
         public EnemyPower GetOrCompute(Faction faction)
         {
             if (faction is null || faction.def is null) return null;
+            /* Player and empire factions have no enemy estimate (mirrors RecomputeAll). */
+            if (faction.IsPlayer || FindFC.IsEmpireFaction(faction)) return null;
             EnemyPower p;
             if (factionPowers.TryGetValue(faction, out p)) return p;
             p = new EnemyPower();
@@ -121,6 +123,8 @@ namespace FactionColonies
         public EnemyPower GetOrCompute(Settlement settlement)
         {
             if (settlement is null || settlement.Destroyed) return null;
+            /* Empire's own settlements have no enemy estimate (mirrors RecomputeAll). */
+            if (settlement is WorldSettlementFC) return null;
             EnemyPower p;
             if (settlementPowers.TryGetValue(settlement, out p)) return p;
             if (settlement.Faction is null) return null;

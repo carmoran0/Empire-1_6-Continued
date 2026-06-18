@@ -506,4 +506,24 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_32</defName>
+		<label>Minor Features and Fixes</label>
+		<description>Numerous minor features and fixes, some primarily to help support submods that should release soon.</description>
+		<releaseDate>2026-06-17</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>In the Tithing section of the settlement window, the Per-Worker tithe modifier now includes the bonus from tithe value multipliers. A tooltip breaks down the math</li>
+		<li>Prisoners can now be added to a settlement by simply sending them via transport pod</li>
+		<li>Player caravans no longer have the option to attack Empire settlements</li>
+		<li>Player caravans should no longer see duplicate Trade options when right-click Empire settlements</li>
+		<li>Cleaner squad-level UI in the military main tab window</li>
+		<li>Fix a widespread issue where some numeric bonuses weren&apos;t being colorized in tooltips</li>
+		<li>Fix a handful of UI issues in the &quot;Choose Defender&quot; window</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

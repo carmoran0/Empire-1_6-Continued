@@ -364,6 +364,9 @@ namespace FactionColonies
                 op.defender.squad = null;
                 op.defender.force = bestExternal.CreateDefendingForce();
                 op.externalDefenderSource = bestExternal.WorldObject;
+                // Pledge now (during the warning window), not at engagement, so the defender reads as
+                // committed in its UI and can't be double-booked by a second concurrent attack.
+                bestExternal.OnDefensePledged(target);
                 return;
             }
 

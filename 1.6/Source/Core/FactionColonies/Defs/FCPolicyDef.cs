@@ -119,7 +119,9 @@ namespace FactionColonies
         }
         public string PolicyText()
         {
-            return LabelCap + "\n\n" + CachedPolicyDesc();
+            // LabelCap is a TaggedString; calling .Resolve() keeps the whole expression a plain string so the
+            // implicit TaggedString->string conversion (which runs StripTags) never removes the colors built below.
+            return LabelCap.Resolve() + "\n\n" + CachedPolicyDesc();
         }
         public string PolicyDesc()
         {
@@ -146,7 +148,7 @@ namespace FactionColonies
                 }
             }
 
-            string statDesc = FCStatModifier.GetDescription(statModifiers);
+            string statDesc = FCStatModifier.GetDescription(statModifiers).Resolve();
             if (!statDesc.NullOrEmpty())
             {
                 if (str.Length > 0) str += "\n";

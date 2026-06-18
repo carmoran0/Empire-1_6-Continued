@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Verse;
 
 namespace FactionColonies
 {
@@ -74,6 +75,26 @@ namespace FactionColonies
             if (disc < 0) return 1.0;
             double level = (-500.0 + Math.Sqrt(disc)) / 1200.0;
             return Math.Max(1.0, level);
+        }
+
+        /// <summary>Derives a military level from a set of LIVE pawns by summing each pawn's vanilla
+        /// <see cref="Verse.Thing.MarketValue"/> (body + worn gear + implants), weighted by
+        /// <see cref="SquadEffectivenessUtil.PawnEffectiveness"/> so downed/injured pawns contribute
+        /// proportionally, then mapping the total through <see cref="LevelFromCost"/>. Lets external
+        /// forces (e.g. defensive-outpost garrisons) be leveled on the same cost->level curve as squads
+        /// instead of a bespoke formula. Returns the LevelFromCost floor (1.0) for a null/empty set.</summary>
+        public static double LevelFromPawns(IEnumerable<Pawn> pawns)
+        {
+            if (pawns is null) return 1.0;
+            double cost = 0;
+            foreach (Pawn p in pawns)
+            {
+                if (p is null || p.Dead) continue;
+                double eff = SquadEffectivenessUtil.PawnEffectiveness(p);
+                if (eff <= 0) continue;
+                cost += p.MarketValue * eff;
+            }
+            return LevelFromCost(cost);
         }
 
         private static SquadPower ComputeBasePower(MercenarySquadFC squad)

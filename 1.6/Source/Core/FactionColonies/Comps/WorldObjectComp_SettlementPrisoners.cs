@@ -34,7 +34,7 @@ namespace FactionColonies
        caravan sits on the settlement's tile with at least one pawn flagged
        IsPrisonerOfColony. The gizmo is visible from both sides: selecting the
        caravan (GetCaravanGizmos) and selecting the settlement (GetGizmos). */
-    public class WorldObjectComp_SettlementPrisoners : WorldObjectComp
+    public class WorldObjectComp_SettlementPrisoners : WorldObjectComp_SettlementPawnArrival
     {
         public List<FCPrisoner> prisonerList = new List<FCPrisoner>();
         public WorldSettlementFC WorldSettlement => parent as WorldSettlementFC;
@@ -390,6 +390,27 @@ namespace FactionColonies
                 num += FCWorkLoadInfo.OverMaxSlots(p.workload);
             }
             return num;
+        }
+
+        /* -*-*-*- Pawn arrival via transport pod (WorldObjectComp_SettlementPawnArrival) -*-*-*- */
+
+        /* Gate on the same SendPrisoner permission as the caravan-transfer gizmo so the pod path
+           and the caravan path stay consistent. (The battle/raid block is enforced centrally in
+           TransportersArrivalAction_AddToSettlementFC.) */
+        public override FloatMenuAcceptanceReport CanReceive
+            => FindFC.FactionComp?.IsActionAllowed(FCActionType.SendPrisoner) ?? false;
+
+        public override bool AcceptsPawn(Pawn pawn) => pawn is object && pawn.IsPrisonerOfColony;
+
+        public override string ArrivalMenuLabel => "FCAddPrisonersToSettlement".Translate(parent.Label);
+
+        public override string ArrivalMessage(List<Pawn> pawns)
+            => "FCPawnsAddedToSettlement".Translate(pawns.Count, parent.Label);
+
+        public override void ReceivePawns(List<Pawn> pawns)
+        {
+            if (pawns is null) return;
+            for (int i = 0; i < pawns.Count; i++) AddPrisoner(pawns[i]);
         }
 
         public override IEnumerable<Gizmo> GetCaravanGizmos(Caravan caravan)

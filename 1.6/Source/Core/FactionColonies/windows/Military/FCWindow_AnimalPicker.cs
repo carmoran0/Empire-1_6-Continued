@@ -72,8 +72,10 @@ namespace FactionColonies
             Rect searchRect = new Rect(0, countRect.yMax + 2f, inRect.width, SearchBarHeight);
             searchTerm = Widgets.TextField(searchRect, searchTerm);
 
-            // Build animal list
+            // Build animal list. Submods (e.g. Herds & Fisheries) can gate the offered kinds via
+            // AnimalPickerFilterRegistry; with no filter registered every kind passes (base behavior).
             List<PawnKindDef> animals = FactionCache.AllAnimalKindDefs
+                .Where(a => AnimalPickerFilterRegistry.IsAllowed(a))
                 .OrderBy(a => a.label ?? a.defName, StringComparer.OrdinalIgnoreCase)
                 .ToList();
 

@@ -59,6 +59,7 @@ namespace FactionColonies
             if (participant is IMilitaryTabEntry mte)           { MilitaryTabRegistry.Register(mte);       any = true; }
             if (participant is IRoadNodeProvider rnp)           { RoadNodeProviderRegistry.Register(rnp);  any = true; }
             if (participant is BuildingFilter bf)               { BuildingFilterRegistry.Register(bf);     any = true; }
+            if (participant is IAnimalPickerFilter apf)         { AnimalPickerFilterRegistry.Register(apf); any = true; }
 
             if (!any)
             {
@@ -99,6 +100,7 @@ namespace FactionColonies
             if (participant is IMilitaryTabEntry mte)           MilitaryTabRegistry.Unregister(mte);
             if (participant is IRoadNodeProvider rnp)           RoadNodeProviderRegistry.Unregister(rnp);
             if (participant is BuildingFilter bf)               BuildingFilterRegistry.Unregister(bf);
+            if (participant is IAnimalPickerFilter apf)         AnimalPickerFilterRegistry.Unregister(apf);
         }
 
         /// <summary>
@@ -129,6 +131,7 @@ namespace FactionColonies
             MilitaryTabRegistry.ClearAll();
             RoadNodeProviderRegistry.ClearAll();
             BuildingFilterRegistry.ClearAll();
+            AnimalPickerFilterRegistry.ClearAll();
         }
     }
 }

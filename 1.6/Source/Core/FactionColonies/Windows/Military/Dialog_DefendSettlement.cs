@@ -40,6 +40,7 @@ namespace FactionColonies
             public double winChance;
             public bool hasForce;
             public double power;
+            public double efficiency;
         }
 
         public Dialog_DefendSettlement(FCEvent evt)
@@ -286,7 +287,8 @@ namespace FactionColonies
                     distance = distance,
                     winChance = extWc,
                     hasForce = extForce is object,
-                    power = defender.MilitaryLevel
+                    power = defender.MilitaryLevel,
+                    efficiency = extForce?.militaryEfficiency ?? 0
                 });
             }
 
@@ -328,9 +330,12 @@ namespace FactionColonies
             GUI.color = colorBefore;
         }
 
-        /* External-defender card — same rhythm as squad cards, but the data is from
-         * IAutoDefender (no settlement, no travel ticks, no deployment cost). The accent
-         * strip is win-chance-driven the same way squad cards are. */
+        /* External-defender card — mirrors the squad card layout via DrawForceWinBox so the two
+         * sections line up: name on the left, the Pow/Eff/WinChance box in the same horizontal
+         * position as squad cards, and the defender's travel distance in the detail row. Data
+         * comes from IAutoDefender (no settlement / deployment cost; the 180px status+Inspect
+         * column squad cards use stays empty here). The accent strip is win-chance-driven the
+         * same way squad cards are. */
         private void DrawExternalCard(Rect cardRect, ExternalRow row)
         {
             Color winColor = row.hasForce
@@ -354,30 +359,30 @@ namespace FactionColonies
             GameFont fontBefore = Text.Font;
             TextAnchor anchorBefore = Text.Anchor;
 
-            // Header row: name (left, win-color) + winLbl on the right
+            GetBoxGeometry(cardRect, out float boxX, out float boxW, out float boxGap);
+
+            // Pow/Eff (stacked) + WinChance (gradient band) box — same position as squad cards.
+            // External defenders are always selectable, so no dimming. The single win value is
+            // passed as min == max so FormatRange renders a single %.
+            DrawForceWinBox(cardRect, boxX, boxW, row.power, row.efficiency, row.hasForce,
+                row.winChance, row.winChance, winColor, Color.white, dimWin: false);
+
+            float nameW = Math.Max(0f, boxX - contentX - boxGap);
+
+            // Header row: defender name (left, win-color), sized to the box like squad names.
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleLeft;
             float headerY = cardRect.y;
-            UIUtil.DrawColoredLabel(
-                new Rect(contentX, headerY, cardRect.width - contentX - 110f, CardHeaderH),
-                row.defender.WorldObject.LabelCap,
-                winColor);
+            UIUtil.DrawColoredLabel(new Rect(contentX, headerY, nameW, CardHeaderH),
+                row.defender.WorldObject.LabelCap, winColor);
 
-            Text.Anchor = TextAnchor.MiddleRight;
-            string winLbl = row.hasForce
-                ? (string)"FCSquadColWinChance".Translate() + ": " + Math.Round(row.winChance * 100) + "%"
-                : (string)"FCSquadColWinChance".Translate() + ": -";
-            UIUtil.DrawColoredLabel(new Rect(cardRect.xMax - 110f, headerY, 106f, CardHeaderH), winLbl, winColor);
-
-            // Detail row: power | distance
+            // Detail row: travel distance (the slot squad cards use for Settlement).
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleLeft;
             float detailY = cardRect.y + CardHeaderH;
-            string powLbl = (string)"FCSquadColPower".Translate() + ": " + row.power.ToString("0.#");
             string distLbl = (string)"FCSquadColTravel".Translate() + ": "
                 + row.distance + " " + "FCDefenderPickerTiles".Translate();
-            UIUtil.DrawColoredLabel(new Rect(contentX, detailY, 200f, CardDetailH), powLbl, Color.white);
-            UIUtil.DrawColoredLabel(new Rect(contentX + 210f, detailY, 240f, CardDetailH), distLbl, Color.white);
+            UIUtil.DrawColoredLabel(new Rect(contentX, detailY, nameW, CardDetailH), distLbl, Color.white);
 
             if (Widgets.ButtonInvisible(cardRect))
             {
