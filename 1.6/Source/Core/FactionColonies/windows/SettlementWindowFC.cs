@@ -58,6 +58,10 @@ namespace FactionColonies
 
         private const int scrollSpacing = (int)ScrollUtil.ScrollbarWidth + 1;
 
+        // Production resource table row heights (shared by measurement and drawing)
+        private const float resourceRowHeight = 25f;
+        private const float resourceHeaderRowHeight = 25f;
+
         // UI State
         private int overviewTab = 0;
         private int titheTab = 0;
@@ -1667,9 +1671,24 @@ namespace FactionColonies
         {
             Text.Anchor = TextAnchor.MiddleCenter;
             Text.Font = GameFont.Tiny;
-            /* Header */
-            float colWidth = (boundingBox.width - (margin * 7)) / 8f;
             float headerHeight = 44;
+            Rect resourceArea = new Rect(boundingBox.x, boundingBox.y + headerHeight + margin,
+                boundingBox.width, boundingBox.yMax - (boundingBox.y + headerHeight + margin));
+
+            /* Measure the resource list up-front so the headers AND the columns can be laid out
+             * at the reduced width (and stay aligned with the scrolled content) when a scrollbar
+             * will appear. needsScroll mirrors ScrollUtil.BeginScrollView's contentHeight > height
+             * test on the same resourceArea, so the header and content never disagree. */
+            List<ResourceFC> incomeResources, poolResources;
+            float contentHeight = MeasureResources(out incomeResources, out poolResources);
+            bool needsScroll = contentHeight > resourceArea.height;
+            // scrollSpacing reserves the scrollbar itself; the extra 2px keeps the rightmost (Net)
+            // column's outline clear of the scroll-view clip edge so DrawMenuSection's right border
+            // actually renders (RimWorld eats the boundary pixels otherwise).
+            float availableWidth = needsScroll ? boundingBox.width - scrollSpacing - 2f : boundingBox.width;
+
+            /* Header */
+            float colWidth = (availableWidth - (margin * 7)) / 8f;
 
             Rect workersBox = new Rect(boundingBox.x + colWidth + margin, boundingBox.y, colWidth, headerHeight);
             Rect prodHeaderBox = new Rect(workersBox.xMax + margin, boundingBox.y, colWidth * 3 + margin * 2, headerHeight / 2f);
@@ -1707,22 +1726,19 @@ namespace FactionColonies
             Widgets.Label(incomeNetBox, "FCNet".Translate());
             TooltipHandler.TipRegion(incomeNetBox, "FCNetIncomeDesc".Translate());
 
-            Rect resourceArea = new Rect(boundingBox.x, workersBox.yMax + margin, boundingBox.width, boundingBox.yMax - (workersBox.yMax + margin));
-            DrawResources(resourceArea, colWidth);
+            DrawResources(resourceArea, colWidth, incomeResources, poolResources, contentHeight);
         }
-        private Vector2 scrollVectorResources = new Vector2();
-        private void DrawResources(Rect boundingBox, float colWidth)
-        {
-            const float rowHeight = 25f;
-            const float headerRowHeight = 25f;
 
-            /* Partition resources into income-generating and pool (non-income) resources.
-             * settlement.Resources is already sorted by uiPriority (see WorldSettlementFC's
-             * resources.Sort(ResourceFC.SortForUI)), and isPoolResource does not participate
-             * in that sort, so a stable partition keeps each group in its existing order. */
+        /* Partitions settlement.Resources into income-generating and pool (non-income) groups
+         * and returns the total laid-out content height. settlement.Resources is already sorted
+         * by uiPriority (see WorldSettlementFC's resources.Sort(ResourceFC.SortForUI)), and
+         * isPoolResource does not participate in that sort, so a stable partition keeps each
+         * group in its existing order. */
+        private float MeasureResources(out List<ResourceFC> incomeResources, out List<ResourceFC> poolResources)
+        {
+            incomeResources = new List<ResourceFC>();
+            poolResources = new List<ResourceFC>();
             List<ResourceFC> availableResources = settlement.Resources;
-            List<ResourceFC> incomeResources = new List<ResourceFC>();
-            List<ResourceFC> poolResources = new List<ResourceFC>();
             for (int i = 0; i < availableResources.Count; i++)
             {
                 ResourceFC resource = availableResources[i];
@@ -1730,11 +1746,15 @@ namespace FactionColonies
                 if (resource.def.isPoolResource) poolResources.Add(resource);
                 else incomeResources.Add(resource);
             }
-
-            bool hasPoolHeader = poolResources.Count > 0;
             int totalRows = incomeResources.Count + poolResources.Count;
-            float totalHeight = (totalRows * (rowHeight + margin))
-                                + (hasPoolHeader ? (headerRowHeight + margin) : 0f);
+            return (totalRows * (resourceRowHeight + margin))
+                   + (poolResources.Count > 0 ? (resourceHeaderRowHeight + margin) : 0f);
+        }
+
+        private Vector2 scrollVectorResources = new Vector2();
+        private void DrawResources(Rect boundingBox, float colWidth, List<ResourceFC> incomeResources, List<ResourceFC> poolResources, float totalHeight)
+        {
+            bool hasPoolHeader = poolResources.Count > 0;
             Rect viewRect = ScrollUtil.BeginScrollView(boundingBox, ref scrollVectorResources, totalHeight);
 
             /* Column background bands for total/raw/net. When a Non-Income section exists, the
@@ -1745,8 +1765,8 @@ namespace FactionColonies
             float contentBottom = Math.Max(viewRect.height, totalHeight) - (margin / 2f);
             if (hasPoolHeader)
             {
-                float headerTop = incomeResources.Count * (rowHeight + margin);
-                float poolFirstRowTop = headerTop + headerRowHeight + margin;
+                float headerTop = incomeResources.Count * (resourceRowHeight + margin);
+                float poolFirstRowTop = headerTop + resourceHeaderRowHeight + margin;
                 if (incomeResources.Count > 0)
                     DrawResourceColumnBands(colWidth, 0f, headerTop - (margin / 2f));
                 DrawResourceColumnBands(colWidth, poolFirstRowTop - (margin / 2f), contentBottom);
@@ -1761,19 +1781,19 @@ namespace FactionColonies
 
             for (int i = 0; i < incomeResources.Count; i++)
             {
-                DrawResourceRow(incomeResources[i], curY, colWidth, rowHeight, viewRect.width, rowIndex % 2 == 0);
-                curY += rowHeight + margin;
+                DrawResourceRow(incomeResources[i], curY, colWidth, resourceRowHeight, viewRect.width, rowIndex % 2 == 0);
+                curY += resourceRowHeight + margin;
                 rowIndex++;
             }
 
             if (hasPoolHeader)
             {
-                DrawNonIncomeResourceHeader(curY, viewRect.width, headerRowHeight);
-                curY += headerRowHeight + margin;
+                DrawNonIncomeResourceHeader(curY, viewRect.width, resourceHeaderRowHeight);
+                curY += resourceHeaderRowHeight + margin;
                 for (int i = 0; i < poolResources.Count; i++)
                 {
-                    DrawResourceRow(poolResources[i], curY, colWidth, rowHeight, viewRect.width, rowIndex % 2 == 0);
-                    curY += rowHeight + margin;
+                    DrawResourceRow(poolResources[i], curY, colWidth, resourceRowHeight, viewRect.width, rowIndex % 2 == 0);
+                    curY += resourceRowHeight + margin;
                     rowIndex++;
                 }
             }
