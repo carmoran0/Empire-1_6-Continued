@@ -130,17 +130,28 @@ namespace FactionColonies
             Scribe_Values.Look(ref hiredAtTick, "hiredAtTick", 0);
             Scribe_Values.Look(ref autoDefend, "autoDefend", false);
 
-            if (Scribe.mode == LoadSaveMode.LoadingVars)
+            /* Reference-mode legacy reads MUST run in both LoadingVars (register the loadID) and
+               ResolvingCrossRefs (resolve/consume it) — that two-phase handshake is how Scribe
+               references work. Gating them to LoadingVars alone leaks the loadIDs (the "Not all
+               loadIDs which were read were consumed" warning) AND leaves the buffers null (the
+               migration silently no-ops). Excluded from Saving/PostLoadInit so these pre-refactor
+               keys are never re-emitted into new saves.
+               Pre-refactor saves stored these as top-level fields on the squad; captured into
+               [Unsaved] buffers here and drained in PostLoadInit. */
+            if (Scribe.mode == LoadSaveMode.LoadingVars || Scribe.mode == LoadSaveMode.ResolvingCrossRefs)
             {
-                /* Pre-refactor saves stored these as top-level fields on the squad.
-                   Capture into [Unsaved] buffers; drained in PostLoadInit. */
                 Scribe_Collections.Look(ref _legacyUsedWeaponList, "UsedWeaponList", LookMode.Reference);
                 Scribe_Collections.Look(ref _legacyUsedApparelList, "UsedApparelList", LookMode.Reference);
-                /* Companion animals used to be deep-owned here; deep-load them so their handler
-                   refs resolve, then redistribute onto the owning merc in PostLoadInit. */
-                Scribe_Collections.Look(ref _legacyAnimals, "animals", LookMode.Deep);
                 Scribe_References.Look(ref _legacyLord, "lord");
                 Scribe_References.Look(ref _legacyMap, "map");
+            }
+
+            /* Value/deep legacy reads only make sense in LoadingVars. Companion animals were deep-owned
+               here; deep-load them so their handler refs resolve, then redistribute onto the owning
+               merc in PostLoadInit. */
+            if (Scribe.mode == LoadSaveMode.LoadingVars)
+            {
+                Scribe_Collections.Look(ref _legacyAnimals, "animals", LookMode.Deep);
                 Scribe_Values.Look(ref _legacyMilitaryOrder, "militaryOrder", MilitaryOrder.Undefined);
                 Scribe_Values.Look(ref _legacyOrderLocation, "orderLocation");
             }
