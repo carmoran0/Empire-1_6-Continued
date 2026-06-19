@@ -13,5 +13,12 @@ namespace FactionColonies
         void DrawOverviewTab(Rect boundingBox);
         void PostCloseWindow();
         string OverviewTabName();
+
+        /// <summary>
+        /// Whether this overview's tab should be shown for the given settlement. Evaluated once when the
+        /// settlement window opens; return false to hide the tab entirely (e.g. when the providing feature
+        /// is disabled). Implementers that always want the tab shown should return true.
+        /// </summary>
+        bool ShouldShowOverviewTab(WorldSettlementFC settlement);
     }
 }

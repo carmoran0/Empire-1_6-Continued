@@ -526,4 +526,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_33</defName>
+		<label>Minor Changes &amp; Fixes</label>
+		<description>A few minor updates.</description>
+		<releaseDate>2026-06-18</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Updates the loadAfter block in About.xml to list all mods that Empire has a compat patch for, to ensure that we load after all of them</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

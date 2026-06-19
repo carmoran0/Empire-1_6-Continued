@@ -85,6 +85,7 @@ namespace FactionColonies
                 ISettlementWindowOverview overview = comp as ISettlementWindowOverview;
                 if (!(overview is null))
                 {
+                    if (!overview.ShouldShowOverviewTab(settlement)) continue;
                     overview.PreOpenWindow(settlement);
                     overviews.Add(overview);
                     overviewTabs.Add(overview.OverviewTabName());

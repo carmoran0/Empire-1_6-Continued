@@ -7,7 +7,7 @@
 		<li>1.6</li>
 	</supportedVersions>
 	<packageId>Matathias.Empire</packageId>
-	<modVersion>1.5.32</modVersion>
+	<modVersion>1.5.33</modVersion>
 	<incompatibleWith>
 		<li>Saakra.Empire</li>
 	</incompatibleWith>
@@ -27,6 +27,11 @@
 		<li>TSA.WorldDominationExperimental</li>
 		<li>TSA.WorldDomination</li>
 		<li>OskarPotocki.VanillaFactionsExpanded.Core</li>
+		<li>Mlie.PawnkindRaceDiversification</li>
+		<li>SmashPhil.VehicleFramework</li>
+		<li>VanillaExpanded.VPsycastsE</li>
+		<li>MemeGoddess.GiddyUp</li>
+		<li>vanillaexpanded.gravship</li>
 	</loadAfter>
 
 	<description>Spread your rule across the Rimworld with self governing settlements that are loyal to you and you alone. Command them to fight in your name, and destroy your enemies.
