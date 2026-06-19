@@ -540,4 +540,23 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_34</defName>
+		<label>Further Fixes &amp; Clarity Changes</label>
+		<description>A couple of bug fixes and a handful of UI changes for information clarity.</description>
+		<releaseDate>2026-06-19</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Reword the Settlement Military Level tooltip (in the settlement window) to more clearly explain how military level is calculated, and what it derives from</li>
+		<li>Bugfix: fixed an issue with Mercenary v1.3 -&gt; v1.5 save migration</li>
+		<li>Bugfix: fixed a niche bug that could result in settlements appearing to disappear from the UI</li>
+		<li>Add a &quot;Non-Income Resource&quot; header to the settlement window production area, cordoning Research and Power from the list of regular resources</li>
+		<li>Add a Codex entry for Non-Income Resources, explaining that their income is converted to a faction-wide pool instead of silver</li>
+		<li>Clean up the settlement window production area when there are enough resources to spawn a scrollbar</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

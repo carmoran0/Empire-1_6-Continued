@@ -18,6 +18,9 @@ namespace FactionColonies
         public static readonly Color MilActiveMission = new Color(1.0f, 0.65f, 0.1f);
         public static readonly Color MilCooldown = new Color(1.0f, 0.85f, 0.1f);
         public static readonly Color MilReady = new Color(0.2f, 0.85f, 0.3f);
+        // Blue — for a unit holding a passive watch (e.g. a defensive outpost projecting its aura).
+        // Reads as "standing by / shielding", distinct from MilReady's "armed & active" green.
+        public static readonly Color MilDefensive = new Color(0.3f, 0.6f, 0.9f);
         public static readonly Color MilInactive = new Color(0.65f, 0.65f, 0.65f);
         // Bright amber — for squads whose DeploymentCost exceeds settlement budget. Red is
         // reserved for under-attack so this needs to read as "attention" without "danger".

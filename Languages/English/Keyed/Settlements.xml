@@ -80,6 +80,16 @@
 
 	<!-- Settlement Stat Descriptions -->
 	<FCSettlementMilitaryLevelDesc>The military level directly affects the settlement's ability to defend itself and host squads.</FCSettlementMilitaryLevelDesc>
+	<FCSettlementMilLevelExplain>A settlement's Offensive or Defensive military level is the number actually used in battles, derived from the squad or - if no squad - half of the level cap.
+	
+The level cap determines the strongest squad this settlement can field.
+
+All military level bonuses raise the cap, not the effective level.</FCSettlementMilLevelExplain>
+	<FCSettlementMilBaseLevel>Base level</FCSettlementMilBaseLevel>
+	<FCSettlementMilOffensiveLine>Offensive level: {0}  (×{1} efficiency)</FCSettlementMilOffensiveLine>
+	<FCSettlementMilDefensiveLine>Defensive level: {0}  (×{1} defender advantage)</FCSettlementMilDefensiveLine>
+	<FCSettlementMilLevelCap>Level cap</FCSettlementMilLevelCap>
+	<FCSettlementMilCapSettlementLevel>Settlement Level</FCSettlementMilCapSettlementLevel>
 	<FCSettlementHappinessDesc>The measure of the Settlement's overall happiness.
 
 A high happiness means that any internal conflict within the settlement will lean heavily to your favor.

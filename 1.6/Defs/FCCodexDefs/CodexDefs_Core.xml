@@ -74,6 +74,7 @@ At tax time, the produced resources are converted to silver at the configured si
             <li>Codex_Prosperity</li>
             <li>Codex_WorkerOverwork</li>
             <li>Codex_ResourceProduction_Snapshot</li>
+            <li>Codex_NonIncomeResources</li>
         </seeAlso>
     </FactionColonies.CodexEntryDef>
     <FactionColonies.CodexEntryDef>
@@ -108,6 +109,31 @@ You can also choose to enable Random Tithes. If enabled, you will be sent a rand
         <iconPath>GUI/ProductionFood</iconPath>
         <seeAlso>
             <li>Codex_ResourceProduction</li>
+        </seeAlso>
+    </FactionColonies.CodexEntryDef>
+
+    <FactionColonies.CodexEntryDef>
+        <defName>Codex_NonIncomeResources</defName>
+        <label>Non-Income Resources</label>
+        <description>Most resources are converted to silver (or tithed goods) when taxes are collected. A few are different: [b]Non-Income[/b] resources never become silver. Instead, each settlement's production is added to a dedicated, faction-wide pool that you spend in other ways.
+		
+Because they don't earn silver, they also can't be tithed. In the settlement window, they're grouped under the "Non-Income Resources" header, set apart from your silver-earning resources.
+
+There are two of them: [b]Research[/b] and [b]Power[/b].
+
+[b]Research.[/b] Each tax cycle, research production is banked into a research-point pool that carries over indefinitely. Those points are spent on whichever research project you currently have selected, advancing it a little each day. You can also spend the pool on demand from the main overview's "Activate Research" option. Any points left over when a project finishes roll forward to the next one, and if you have no active project they simply keep accumulating. Your storyteller's research-speed difficulty affects how far each point goes.
+
+[b]Power.[/b] Unlocked by Electricity. Unlike Research, the power pool resets every tax cycle – it represents a steady supply of electricity. To actually use it, build a [b]faction power generator[/b] in your colony and wire it into your power grid. Its "Set Power Output" command marks it as the active output, and it then feeds your colony the wattage your settlements are generating.
+
+The live values in the sidebar show your current research pool and power output.</description>
+        <category>CodexCat_Economy</category>
+        <displayOrder>23</displayOrder>
+        <iconPath>GUI/ProductionResearch</iconPath>
+        <dynamicProvider>FactionColonies.CodexProvider_NonIncomeResources</dynamicProvider>
+        <seeAlso>
+            <li>Codex_ResourceProduction</li>
+            <li>Codex_ResourceProduction_Tithing</li>
+            <li>Codex_TechProgression</li>
         </seeAlso>
     </FactionColonies.CodexEntryDef>
 
@@ -496,6 +522,7 @@ The live values below show your current tech level and what advances it next.</d
         <dynamicProvider>FactionColonies.CodexProvider_TechProgression</dynamicProvider>
         <seeAlso>
             <li>Codex_BuildingSlots</li>
+            <li>Codex_NonIncomeResources</li>
         </seeAlso>
     </FactionColonies.CodexEntryDef>
 
