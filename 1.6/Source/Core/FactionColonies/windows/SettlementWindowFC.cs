@@ -1713,110 +1713,184 @@ namespace FactionColonies
         private Vector2 scrollVectorResources = new Vector2();
         private void DrawResources(Rect boundingBox, float colWidth)
         {
-            float rowHeight = 25f;
+            const float rowHeight = 25f;
+            const float headerRowHeight = 25f;
+
+            /* Partition resources into income-generating and pool (non-income) resources.
+             * settlement.Resources is already sorted by uiPriority (see WorldSettlementFC's
+             * resources.Sort(ResourceFC.SortForUI)), and isPoolResource does not participate
+             * in that sort, so a stable partition keeps each group in its existing order. */
             List<ResourceFC> availableResources = settlement.Resources;
-            float totalHeight = (availableResources.Count * rowHeight) + (availableResources.Count * margin);
+            List<ResourceFC> incomeResources = new List<ResourceFC>();
+            List<ResourceFC> poolResources = new List<ResourceFC>();
+            for (int i = 0; i < availableResources.Count; i++)
+            {
+                ResourceFC resource = availableResources[i];
+                if (resource is null || resource.def is null) continue;
+                if (resource.def.isPoolResource) poolResources.Add(resource);
+                else incomeResources.Add(resource);
+            }
+
+            bool hasPoolHeader = poolResources.Count > 0;
+            int totalRows = incomeResources.Count + poolResources.Count;
+            float totalHeight = (totalRows * (rowHeight + margin))
+                                + (hasPoolHeader ? (headerRowHeight + margin) : 0f);
             Rect viewRect = ScrollUtil.BeginScrollView(boundingBox, ref scrollVectorResources, totalHeight);
 
-            Rect totalProdCol = new Rect(5f * (colWidth + margin), 0f, colWidth, viewRect.height - (margin / 2f));
-            Rect incomeRawCol = new Rect(6f * (colWidth + margin), 0f, colWidth, viewRect.height - (margin / 2f));
-            Rect incomeNetCol = new Rect(7f * (colWidth + margin), 0f, colWidth, viewRect.height - (margin / 2f));
+            /* Column background bands for total/raw/net. When a Non-Income section exists, the
+             * bands are split into a top (income) band and a bottom (pool) band, each stopping
+             * a small margin clear of the section header so the header reads as a divider rather
+             * than having the bands run through it. Bands are sized to cover all laid-out content
+             * (incl. the pool rows), not just the visible viewport. */
+            float contentBottom = Math.Max(viewRect.height, totalHeight) - (margin / 2f);
+            if (hasPoolHeader)
+            {
+                float headerTop = incomeResources.Count * (rowHeight + margin);
+                float poolFirstRowTop = headerTop + headerRowHeight + margin;
+                if (incomeResources.Count > 0)
+                    DrawResourceColumnBands(colWidth, 0f, headerTop - (margin / 2f));
+                DrawResourceColumnBands(colWidth, poolFirstRowTop - (margin / 2f), contentBottom);
+            }
+            else
+            {
+                DrawResourceColumnBands(colWidth, 0f, contentBottom);
+            }
+
+            float curY = 0f;
+            int rowIndex = 0; // counts only data rows so zebra striping stays continuous across both groups
+
+            for (int i = 0; i < incomeResources.Count; i++)
+            {
+                DrawResourceRow(incomeResources[i], curY, colWidth, rowHeight, viewRect.width, rowIndex % 2 == 0);
+                curY += rowHeight + margin;
+                rowIndex++;
+            }
+
+            if (hasPoolHeader)
+            {
+                DrawNonIncomeResourceHeader(curY, viewRect.width, headerRowHeight);
+                curY += headerRowHeight + margin;
+                for (int i = 0; i < poolResources.Count; i++)
+                {
+                    DrawResourceRow(poolResources[i], curY, colWidth, rowHeight, viewRect.width, rowIndex % 2 == 0);
+                    curY += rowHeight + margin;
+                    rowIndex++;
+                }
+            }
+
+            ScrollUtil.EndScrollView();
+        }
+
+        /* Draws the total/raw/net column background bands spanning the given vertical range.
+         * Called once per resource section so the bands stop clear of the Non-Income header. */
+        private void DrawResourceColumnBands(float colWidth, float yTop, float yBottom)
+        {
+            float h = yBottom - yTop;
+            if (h <= 0f) return;
+            Rect totalProdCol = new Rect(5f * (colWidth + margin), yTop, colWidth, h);
+            Rect incomeRawCol = new Rect(6f * (colWidth + margin), yTop, colWidth, h);
+            Rect incomeNetCol = new Rect(7f * (colWidth + margin), yTop, colWidth, h);
             UIUtil.DrawColoredHighlight(totalProdCol, highlightColor);
             UIUtil.DrawColoredHighlight(incomeRawCol, highlightColor);
             Widgets.DrawMenuSection(incomeNetCol);
             TooltipHandler.TipRegion(incomeRawCol, "FCRawIncomeDesc".Translate());
+        }
 
-            for (int i = 0; i < availableResources.Count; i++)
+        /* Section header dividing income resources from the pool (non-income) resources below.
+         * Mirrors the column-header styling used in DrawProductionOverview. Text.Anchor/Font are
+         * already set to MiddleCenter/Tiny by the caller, so they don't need to be re-set here. */
+        private void DrawNonIncomeResourceHeader(float rectY, float viewWidth, float headerRowHeight)
+        {
+            Rect headerBox = new Rect(0f, rectY, viewWidth, headerRowHeight);
+            UIUtil.DrawColoredHighlight(headerBox, highlightColor);
+            Widgets.Label(headerBox, "FCNonIncomeResourcesHeader".Translate());
+            TooltipHandler.TipRegion(headerBox, "FCNonIncomeResourcesDesc".Translate());
+        }
+
+        private void DrawResourceRow(ResourceFC resource, float rectY, float colWidth, float rowHeight, float viewWidth, bool altHighlight)
+        {
+            /* Alternating highlights, to make rows easier to read/track */
+            if (altHighlight)
             {
-                ResourceFC resource = availableResources[i];
-                if (resource == null) continue;
-
-                float rectY = i * (rowHeight + margin);
-                /* Alternating highlights, to make rows easier to read/track */
-                if (i % 2 == 0)
-                {
-                    Rect rowHighlight = new Rect(0f, rectY - (margin / 2f), viewRect.width, rowHeight + margin);
-                    UIUtil.DrawColoredHighlight(rowHighlight, highlightColor);
-                }
-
-                // Resource color accent
-                Widgets.DrawBoxSolid(new Rect(0f, rectY, 3f, rowHeight), resource.def.color);
-
-                float resourceImgSize = Math.Min(colWidth, rowHeight);
-                float resourceImxgX = (colWidth - resourceImgSize) / 2f;
-                Rect resourceImgRect = new Rect(resourceImxgX, rectY, resourceImgSize, resourceImgSize);
-                Widgets.ButtonImage(resourceImgRect, resource.def.Icon);
-                TooltipHandler.TipRegion(resourceImgRect, resource.def.LabelCap);
-
-                //Production Efficiency
-                float arrowButtonHeight = Math.Min(rowHeight, 20f);
-                float arrowButtonY = rectY + ((rowHeight - arrowButtonHeight) / 2f);
-                Rect workersDecArrow = new Rect(colWidth + margin, arrowButtonY, colWidth / 3f, arrowButtonHeight);
-                Rect workersNum = new Rect(workersDecArrow.xMax, rectY, workersDecArrow.width, rowHeight);
-                Rect workersIncArrow = new Rect(workersNum.xMax, arrowButtonY, workersDecArrow.width, arrowButtonHeight);
-                Widgets.Label(workersNum, resource.assignedWorkers.ToString());
-                if (Widgets.ButtonText(workersDecArrow, "<")) IncreaseWorkers(resource, true);
-                if (Widgets.ButtonText(workersIncArrow, ">")) IncreaseWorkers(resource);
-
-                //Base Production
-                Rect baseProd = new Rect(workersIncArrow.xMax + margin, rectY, colWidth, rowHeight);
-                Widgets.Label(baseProd, TextUtil.FloorStat(resource.productionBase));
-                TooltipHandler.TipRegion(baseProd, resource.GetProductionAdditivesDesc());
-
-                //Modifier
-                Rect multProd = new Rect(baseProd.xMax + margin, rectY, colWidth, rowHeight);
-                Widgets.Label(multProd, TextUtil.FloorStat(resource.productionMult));
-                TooltipHandler.TipRegion(multProd, resource.GetProductionMultipliersDesc());
-
-                //Final Base
-                Rect finalProd = new Rect(multProd.xMax + margin, rectY, colWidth, rowHeight);
-                Widgets.Label(finalProd, (TextUtil.FloorStat(resource.production)));
-
-                //Total Production
-                Rect totalProd = new Rect(finalProd.xMax + margin, rectY, colWidth, rowHeight);
-                Widgets.Label(totalProd, (TextUtil.FloorStat(resource.rawTotalProduction)));
-                if (resource.AccumulationDays > 0)
-                {
-                    int totalPeriodDays = FCSettings.timeBetweenTaxes / GenDate.TicksPerDay;
-                    string tooltip = "FCTotalProdTooltip".Translate(
-                        TextUtil.FloorStat(resource.InstantaneousProduction),
-                        TextUtil.FloorStat(resource.AccumulatedAverageProduction),
-                        resource.AccumulationDays.ToString(),
-                        totalPeriodDays.ToString());
-                    TooltipHandler.TipRegion(totalProd, tooltip);
-                }
-
-                //Raw Income (total production as silver, before stockpile diversions and tithes)
-                Rect incomeRawBox = new Rect(totalProd.xMax + margin, rectY, colWidth, rowHeight);
-                Widgets.Label(incomeRawBox, (TextUtil.FloorStat(resource.grossMarketValue)));
-
-                //Net Income, after stockpile diversions and tithes
-                Rect incomeNetBox = new Rect(incomeRawBox.xMax + margin, rectY, colWidth, rowHeight);
-                Widgets.Label(incomeNetBox, (TextUtil.FloorStat(resource.actualIncome)));
-
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine("FCNetIncomeBreakdownGross".Translate(TextUtil.FloorStat(resource.grossMarketValue)));
-                if (resource.stockpileMarketValue > 0)
-                    sb.AppendLine("FCNetIncomeBreakdownStockpile".Translate(TextUtil.FloorStat(resource.stockpileMarketValue)));
-                if (resource.titheTotalValue > 0)
-                    sb.AppendLine("FCNetIncomeBreakdownTithes".Translate(TextUtil.FloorStat(resource.titheTotalValue)));
-                double titheOffset = Math.Min(resource.titheTotalValue, resource.externalTitheBudget);
-                if (titheOffset > 0)
-                    sb.AppendLine("FCNetIncomeBreakdownTitheInjection".Translate(TextUtil.FloorStat(titheOffset)));
-                sb.AppendLine("FCNetIncomeBreakdownNet".Translate(TextUtil.FloorStat(resource.actualIncome)));
-                if (resource.AccumulationDays > 0)
-                {
-                    int totalPeriodDays = FCSettings.timeBetweenTaxes / GenDate.TicksPerDay;
-                    sb.AppendLine("-----");
-                    sb.Append("FCNetIncomeBreakdownAvg".Translate(
-                        TextUtil.FloorStat(resource.averageActualIncome),
-                        resource.AccumulationDays.ToString(),
-                        totalPeriodDays.ToString()));
-                }
-                TooltipHandler.TipRegion(incomeNetBox, sb.ToString());
+                Rect rowHighlight = new Rect(0f, rectY - (margin / 2f), viewWidth, rowHeight + margin);
+                UIUtil.DrawColoredHighlight(rowHighlight, highlightColor);
             }
 
-            ScrollUtil.EndScrollView();
+            // Resource color accent
+            Widgets.DrawBoxSolid(new Rect(0f, rectY, 3f, rowHeight), resource.def.color);
+
+            float resourceImgSize = Math.Min(colWidth, rowHeight);
+            float resourceImxgX = (colWidth - resourceImgSize) / 2f;
+            Rect resourceImgRect = new Rect(resourceImxgX, rectY, resourceImgSize, resourceImgSize);
+            Widgets.ButtonImage(resourceImgRect, resource.def.Icon);
+            TooltipHandler.TipRegion(resourceImgRect, resource.def.LabelCap);
+
+            //Production Efficiency
+            float arrowButtonHeight = Math.Min(rowHeight, 20f);
+            float arrowButtonY = rectY + ((rowHeight - arrowButtonHeight) / 2f);
+            Rect workersDecArrow = new Rect(colWidth + margin, arrowButtonY, colWidth / 3f, arrowButtonHeight);
+            Rect workersNum = new Rect(workersDecArrow.xMax, rectY, workersDecArrow.width, rowHeight);
+            Rect workersIncArrow = new Rect(workersNum.xMax, arrowButtonY, workersDecArrow.width, arrowButtonHeight);
+            Widgets.Label(workersNum, resource.assignedWorkers.ToString());
+            if (Widgets.ButtonText(workersDecArrow, "<")) IncreaseWorkers(resource, true);
+            if (Widgets.ButtonText(workersIncArrow, ">")) IncreaseWorkers(resource);
+
+            //Base Production
+            Rect baseProd = new Rect(workersIncArrow.xMax + margin, rectY, colWidth, rowHeight);
+            Widgets.Label(baseProd, TextUtil.FloorStat(resource.productionBase));
+            TooltipHandler.TipRegion(baseProd, resource.GetProductionAdditivesDesc());
+
+            //Modifier
+            Rect multProd = new Rect(baseProd.xMax + margin, rectY, colWidth, rowHeight);
+            Widgets.Label(multProd, TextUtil.FloorStat(resource.productionMult));
+            TooltipHandler.TipRegion(multProd, resource.GetProductionMultipliersDesc());
+
+            //Final Base
+            Rect finalProd = new Rect(multProd.xMax + margin, rectY, colWidth, rowHeight);
+            Widgets.Label(finalProd, (TextUtil.FloorStat(resource.production)));
+
+            //Total Production
+            Rect totalProd = new Rect(finalProd.xMax + margin, rectY, colWidth, rowHeight);
+            Widgets.Label(totalProd, (TextUtil.FloorStat(resource.rawTotalProduction)));
+            if (resource.AccumulationDays > 0)
+            {
+                int totalPeriodDays = FCSettings.timeBetweenTaxes / GenDate.TicksPerDay;
+                string tooltip = "FCTotalProdTooltip".Translate(
+                    TextUtil.FloorStat(resource.InstantaneousProduction),
+                    TextUtil.FloorStat(resource.AccumulatedAverageProduction),
+                    resource.AccumulationDays.ToString(),
+                    totalPeriodDays.ToString());
+                TooltipHandler.TipRegion(totalProd, tooltip);
+            }
+
+            //Raw Income (total production as silver, before stockpile diversions and tithes)
+            Rect incomeRawBox = new Rect(totalProd.xMax + margin, rectY, colWidth, rowHeight);
+            Widgets.Label(incomeRawBox, (TextUtil.FloorStat(resource.grossMarketValue)));
+
+            //Net Income, after stockpile diversions and tithes
+            Rect incomeNetBox = new Rect(incomeRawBox.xMax + margin, rectY, colWidth, rowHeight);
+            Widgets.Label(incomeNetBox, (TextUtil.FloorStat(resource.actualIncome)));
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("FCNetIncomeBreakdownGross".Translate(TextUtil.FloorStat(resource.grossMarketValue)));
+            if (resource.stockpileMarketValue > 0)
+                sb.AppendLine("FCNetIncomeBreakdownStockpile".Translate(TextUtil.FloorStat(resource.stockpileMarketValue)));
+            if (resource.titheTotalValue > 0)
+                sb.AppendLine("FCNetIncomeBreakdownTithes".Translate(TextUtil.FloorStat(resource.titheTotalValue)));
+            double titheOffset = Math.Min(resource.titheTotalValue, resource.externalTitheBudget);
+            if (titheOffset > 0)
+                sb.AppendLine("FCNetIncomeBreakdownTitheInjection".Translate(TextUtil.FloorStat(titheOffset)));
+            sb.AppendLine("FCNetIncomeBreakdownNet".Translate(TextUtil.FloorStat(resource.actualIncome)));
+            if (resource.AccumulationDays > 0)
+            {
+                int totalPeriodDays = FCSettings.timeBetweenTaxes / GenDate.TicksPerDay;
+                sb.AppendLine("-----");
+                sb.Append("FCNetIncomeBreakdownAvg".Translate(
+                    TextUtil.FloorStat(resource.averageActualIncome),
+                    resource.AccumulationDays.ToString(),
+                    totalPeriodDays.ToString()));
+            }
+            TooltipHandler.TipRegion(incomeNetBox, sb.ToString());
         }
 
         /// <summary>
