@@ -215,7 +215,7 @@ Total accrued budget: {2}</FCNoTitheLetterDesc2>
 	<FCNetIncomeBreakdownNet>Net income: {0}</FCNetIncomeBreakdownNet>
 	<FCNetIncomeBreakdownAvg>Period average net: {0} ({1} of {2} days sampled)</FCNetIncomeBreakdownAvg>
 	<FCNonIncomeResourcesHeader>Non-Income Resources</FCNonIncomeResourcesHeader>
-	<FCNonIncomeResourcesDesc>These resources do not generate silver income. Their production is added to a dedicated pool instead of being converted to silver. Check the main overview tab to interact with the pools.</FCNonIncomeResourcesDesc>
+	<FCNonIncomeResourcesDesc>These resources do not generate silver income. Their Raw Income is added to a dedicated pool instead of being converted to silver or tithes. Check the Codex for more information.</FCNonIncomeResourcesDesc>
 	<FCItemcost>{0}{1}</FCItemcost>
 
 	<!-- Period-average display (headline = expected payout, subtitle = current rate) -->
