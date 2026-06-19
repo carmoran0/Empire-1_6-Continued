@@ -938,14 +938,40 @@ namespace FactionColonies
                 : ((int)Math.Round(totalLevel)).ToString();
             UIUtil.DrawColoredLabel(labelBox, label, ColorForPowerStatus(powStatus));
 
-            string statusLine = StatusLineForPower(powStatus);
+            // Level chain — efficiency multiplies offense AND defense, so it's applied at the Offensive step:
+            //   Base (squad-derived powLevel, or half-cap "ghost") -> Offensive (× efficiency) -> Defensive
+            //   (× defender advantage; = the headline number). Separately, the level cap (settlementMilitaryLevel)
+            // is the strongest squad this settlement can field — split out so cap bonuses don't read as free defense.
+            // Power-source line mirrors the squad case ("Power source: {squad}") for the no-squad case, since
+            // the explanation already covers the half-power rule. Name the actual power-source squad when present.
+            MercenarySquadFC powerSource = settlement.GetPowerSourceSquad();
+            string powerSourceLine;
+            if (powerSource is object)
+                powerSourceLine = "FCMilPowerSource".Translate(powerSource.DisplayName);
+            else if (powStatus == SettlementPowerStatus.NoMilitary)
+                powerSourceLine = "FCMilPowerTipNoMilitary".Translate();
+            else if (powStatus == SettlementPowerStatus.AllBusy)
+                powerSourceLine = "FCMilPowerSourceNoneAvailable".Translate();
+            else
+                powerSourceLine = "FCMilPowerSourceNoSquad".Translate();
+
+            double offensiveLevel = powLevel * powEff;
             string tooltip = "FCSettlementMilitaryLevel".Translate() + "\n-----\n"
-                + "FCSettlementMilitaryLevelDesc".Translate() + "\n\n"
-                + statusLine + "\n\n"
-                + "Base Military Level: " + powLevel.ToString("0.#") + "\n"
-                + "  Military Efficiency: " + powEff.ToString("0.0#") + "x\n"
-                + "  Defender Advantage: " + defAdv.ToString("0.0#") + "x\n"
-                + "Total Military Level: " + ((int)Math.Round(totalLevel));
+                + "FCSettlementMilLevelExplain".Translate() + "\n\n"
+                + "FCSettlementMilBaseLevel".Translate() + ": " + powLevel.ToString("0.#") + "\n"
+                + "  " + powerSourceLine + "\n"
+                + "FCSettlementMilOffensiveLine".Translate(offensiveLevel.ToString("0.#"), powEff.ToString("0.0#")) + "\n"
+                + "FCSettlementMilDefensiveLine".Translate(totalLevel.ToString("0.#"), defAdv.ToString("0.0#")) + "\n\n"
+                + "FCSettlementMilLevelCap".Translate() + ": " + settlement.settlementMilitaryLevel;
+
+            // Cap breakdown: the settlement-level base (settlementLevel - 1) plus the militaryBaseLevel stat
+            // modifiers (buildings, events, policies, the defensive-outpost aura). Built as a string so the
+            // Colorize tags survive (a TaggedString cast would StripTags()); indent every line two spaces.
+            string capLines = TextUtil.AdditiveBonusLine(settlement.settlementLevel - 1,
+                "FCSettlementMilCapSettlementLevel".Translate()) + "\n";
+            string milMods = settlement.GetStatDesc(FCStatDefOf.militaryBaseLevel);
+            if (!milMods.NullOrEmpty()) capLines += milMods;
+            tooltip += "\n  " + capLines.TrimEnd().Replace("\n", "\n  ");
             return tooltip;
         }
 
@@ -958,18 +984,6 @@ namespace FactionColonies
                 case SettlementPowerStatus.Ghost: return new Color(1f, 0.85f, 0.4f);
                 case SettlementPowerStatus.NoMilitary: return Color.gray;
                 default: return Color.white;
-            }
-        }
-
-        private static string StatusLineForPower(SettlementPowerStatus status)
-        {
-            switch (status)
-            {
-                case SettlementPowerStatus.UnderAttack: return "FCMilPowerTipUnderAttack".Translate();
-                case SettlementPowerStatus.AllBusy: return "FCMilPowerTipAllBusy".Translate();
-                case SettlementPowerStatus.Ghost: return "FCMilPowerTipGhost".Translate();
-                case SettlementPowerStatus.NoMilitary: return "FCMilPowerTipNoMilitary".Translate();
-                default: return "FCMilPowerTipSquadShort".Translate();
             }
         }
 

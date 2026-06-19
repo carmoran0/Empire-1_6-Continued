@@ -197,6 +197,8 @@ Please report this if you don't get your colonists sent to defend back, or your 
 	<FCMilitary>Military</FCMilitary>
 	<FCMilitaryLevel>Mil Level</FCMilitaryLevel>
 	<FCMilitaryTableMilitaryBudget>Military Budget</FCMilitaryTableMilitaryBudget>
+	<FCMilitaryTableBaseLevel>Base Level</FCMilitaryTableBaseLevel>
+	<FCMilitaryTableLevelCap>Level Cap</FCMilitaryTableLevelCap>
 	<FCMilitaryTableAvailable>Military Available?</FCMilitaryTableAvailable>
 	<FCMilitaryTableUnderAttack>Under Attack</FCMilitaryTableUnderAttack>
 	<FCMilitaryTableFireSupport>Fire Support</FCMilitaryTableFireSupport>
@@ -235,6 +237,9 @@ Please report this if you don't get your colonists sent to defend back, or your 
 	<FCMilBadge>Def {0}  &#x2022;  Max Deploy Cost: ${1}</FCMilBadge>
 	<FCMilPowerTipSquad>Power from {0}</FCMilPowerTipSquad>
 	<FCMilPowerTipSquadShort>Power source: stationed squad</FCMilPowerTipSquadShort>
+	<FCMilPowerSource>Power source: {0}</FCMilPowerSource>
+	<FCMilPowerSourceNoSquad>Power source: no squad</FCMilPowerSourceNoSquad>
+	<FCMilPowerSourceNoneAvailable>Power source: no available squad</FCMilPowerSourceNoneAvailable>
 	<FCMilPowerTipAllBusy>None of the squads stationed at this settlement are available. Until one becomes available, this settlement will defend at half power.</FCMilPowerTipAllBusy>
 	<FCMilPowerTipGhost>Defending at half power due to not having an assigned squad.</FCMilPowerTipGhost>
 	<FCMilPowerTipNoMilitary>This settlement type has no military capacity.</FCMilPowerTipNoMilitary>

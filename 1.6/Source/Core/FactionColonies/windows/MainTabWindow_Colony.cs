@@ -1822,8 +1822,12 @@ namespace FactionColonies
                 string squadName = stationed.Count > 0
                     ? (stationed[0]?.DisplayName ?? "FCNone".Translate())
                     : (string)"FCNone".Translate();
+                // Effective level (what defends now, squad-derived powLevel) vs the level cap
+                // (settlementMilitaryLevel — strongest squad this settlement can field). Kept concise;
+                // the "Def" badge + its tooltip cover the full defensive-power breakdown.
                 string tooltip = settlement.Name + "\n\n"
-                    + "FCSettlementTableMilLevel".Translate() + ": " + settlement.settlementMilitaryLevel + "\n"
+                    + "FCMilitaryTableBaseLevel".Translate() + ": " + powLevel.ToString("0.#") + "\n"
+                    + "FCMilitaryTableLevelCap".Translate() + ": " + settlement.settlementMilitaryLevel + "\n"
                     + "FCMilitaryTableMilitaryBudget".Translate() + ": $" + rawBudget + "\n"
                     + "FCMilitaryTableSquad".Translate() + ": " + squadName + "\n"
                     + "FCMilitaryTableAvailable".Translate() + ": " + (milComp.militaryBusy ? "FCNo".Translate() : "FCYes".Translate()) + "\n"
