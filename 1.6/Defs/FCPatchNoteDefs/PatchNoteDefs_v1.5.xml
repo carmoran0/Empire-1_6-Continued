@@ -573,4 +573,19 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_36</defName>
+		<label>Death Penalty Increase</label>
+		<description>Increases the penalty for a player killing their Empire&apos;s pawns. It really needs to *bite* in order to matter.</description>
+		<releaseDate>2026-06-20</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Unhappiness for killing a pawn: 6 -&gt; 12</li>
+		<li>Penalty magnitude for wiping out a trading caravan: 50 -&gt; 64</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

@@ -27,11 +27,11 @@ namespace FactionColonies
         /* -*- Tunable constants -*- */
         // Happiness severity (total, pre-multiplier) delivered over PENALTY_DAYS for a single death.
         public const double DEATH_HAPPINESS_SMALL = 2.0;   // not player-caused
-        public const double DEATH_HAPPINESS_LARGE = 6.0;   // player-caused (murder/collapse)
+        public const double DEATH_HAPPINESS_LARGE = 12.0;   // player-caused (murder/collapse)
         public const double DEATH_UNREST_PLAYER = 4.0;     // extra unrest, player-caused only
         // Per-settlement severity for a faction-wide caravan-wipe (applied to happiness AND loyalty).
-        public const double PACK_WIPE_SMALL = 8.0;         // enemy landed the last blow
-        public const double PACK_WIPE_LARGE = 20.0;         // player landed the last blow
+        public const double PACK_WIPE_SMALL = 16.0;         // enemy landed the last blow
+        public const double PACK_WIPE_LARGE = 64.0;         // player landed the last blow
         public const int PENALTY_DAYS = 4;                 // drip duration
         public const double CASCADE_SPILL_RATE = 0.5;      // fraction of a saturated penalty spilled to others
         public const double THRESHOLD_LOW = 25.0;          // happiness/loyalty floor that trips cascade + caravan gate
