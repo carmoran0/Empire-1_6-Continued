@@ -559,4 +559,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_35</defName>
+		<label>Merc Inventory Update</label>
+		<description>Changes the list of items that mercs are allowed to carry in their inventory. The new calculation is more permissive, which *should* (ideally) mean fewer necessary compatibility patches with other mods.</description>
+		<releaseDate>2026-06-20</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Use a blocklist instead of an allowlist as the base for building the list of items that a merc can carry in their inventory</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
