@@ -156,6 +156,7 @@ namespace FactionColonies
 
             float curHeight = prodBox.yMax;
             curHeight = DrawChooseSettlementTypeButton(curHeight);
+            curHeight = DrawAvailableSilverLabel(curHeight);
             curHeight = DrawCreateSettlementButton(curHeight);
 
             windowRect.height = curHeight + (verticalMargins * 7);
@@ -363,6 +364,19 @@ namespace FactionColonies
                 }));
             }
             return button.yMax;
+        }
+
+        private float DrawAvailableSilverLabel(float curHeight)
+        {
+            Text.Font = GameFont.Small;
+            Text.Anchor = TextAnchor.MiddleCenter;
+            int available = PaymentUtil.GetSilver();
+            Rect labelRect = new Rect(0, curHeight + verticalMargins, InitialSize.x - 32, button_height);
+            // Color red when the player can't cover the current cost (matches PlayerHasEnoughSilver).
+            GUI.color = available >= settlementCreationCost ? Color.white : ColorLibrary.RedReadable;
+            Widgets.Label(labelRect, "FCAvailableSilver".Translate() + ": " + available);
+            GUI.color = Color.white;
+            return labelRect.yMax;
         }
 
         private float DrawCreateSettlementButton(float curHeight)

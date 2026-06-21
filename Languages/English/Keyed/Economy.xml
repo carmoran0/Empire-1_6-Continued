@@ -195,6 +195,7 @@ Total accrued budget: {2}</FCNoTitheLetterDesc2>
 	<FCSilver>Silver</FCSilver>
 	<FCCashSymbol>$</FCCashSymbol>
 	<FCInitialCost>Initial Cost</FCInitialCost>
+	<FCAvailableSilver>Available Silver</FCAvailableSilver>
 	<FCNotEnoughSilverToSettle>You do not have enough silver on the current map to found a new settlement</FCNotEnoughSilverToSettle>
 	<FCNotEnoughSilverConstructBuilding>You do not have enough silver on the current map to construct that building
 	</FCNotEnoughSilverConstructBuilding>
