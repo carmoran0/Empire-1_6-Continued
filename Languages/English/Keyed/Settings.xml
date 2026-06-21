@@ -130,6 +130,12 @@ The cost becomes a bill against the squad's home settlement, due after the lifes
 0% disables the cost.</FCSettingSquadDeploymentCostPercentageTip>
 	<FCSettingDeploymentBillLifespan>Deployment Bill Lifespan</FCSettingDeploymentBillLifespan>
 	<FCSettingDeploymentBillLifespanTip>Number of days a deployment-cost bill remains payable before it expires and the settlement takes the late- or unpaid-bill penalty. Independent of the tax cycle.</FCSettingDeploymentBillLifespanTip>
+	<FCSettingSquadRestockCostPercentage>Squad Restock Cost</FCSettingSquadRestockCostPercentage>
+	<FCSettingSquadRestockCostPercentageTip>Percentage of the market value of carried inventory (ammo, medicine, drugs) a surviving merc actually used up in a manual battle that is billed in silver to restock it. The items are automatically refilled to the squad's loadout regardless.
+
+Only manual battles consume inventory; auto-resolved battles incur no restock charge. The cost becomes a bill against the squad's home settlement, due after the deployment bill lifespan expires.
+
+0% disables the cost.</FCSettingSquadRestockCostPercentageTip>
 	<FCSettingGeneValueHeader>Gene Valuation</FCSettingGeneValueHeader>
 	<FCSettingGeneValueHelpText>Weights controlling how a xenotype's genes inflate the cost of a mercenary template. Final cost factor is 1 + (sum of weighted per-gene contributions).</FCSettingGeneValueHelpText>
 	<FCSettingGeneValueWeightMvf>Market Value Factor</FCSettingGeneValueWeightMvf>

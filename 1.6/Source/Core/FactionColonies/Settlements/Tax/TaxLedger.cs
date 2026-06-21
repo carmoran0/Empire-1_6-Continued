@@ -330,10 +330,39 @@ namespace FactionColonies
             bill.taxes.silverAmount = -cost;
             /* silverAmount must be set BEFORE the Scaled helpers — they read it for
              * the linear scaling computation. */
-            bill.AddUnpaidPenaltyScaled(BillPenaltyStat.Unrest, 10);
-            bill.AddUnpaidPenaltyScaled(BillPenaltyStat.Happiness, 10);
-            bill.AddLatePaidPenaltyScaled(BillPenaltyStat.Unrest, 4);
-            bill.AddLatePaidPenaltyScaled(BillPenaltyStat.Happiness, 4);
+            bill.AddUnpaidPenaltyScaled(BillPenaltyStat.Unrest, 25);
+            bill.AddUnpaidPenaltyScaled(BillPenaltyStat.Happiness, 25);
+            bill.AddLatePaidPenaltyScaled(BillPenaltyStat.Unrest, 5);
+            bill.AddLatePaidPenaltyScaled(BillPenaltyStat.Happiness, 5);
+            AddBill(bill);
+            return bill;
+        }
+
+        /// <summary>Creates a restock-cost bill against the squad's home settlement for carried
+        /// inventory consumed in a manual battle (see <see cref="SquadRestockUtil"/>) and adds it to
+        /// this ledger. No-op when cost is non-positive, godMode is on, or the squad has no home
+        /// settlement. Cost is computed by the caller; this just authors the bill.</summary>
+        public BillFC CreateRestockCostBill(MercenarySquadFC squad, int cost)
+        {
+            if (squad is null || cost <= 0 || DebugSettings.godMode) return null;
+
+            WorldSettlementFC home = squad.settlement;
+            if (home is null)
+            {
+                LogUtil.Warning($"TaxLedger.CreateRestockCostBill: squad {squad.GetUniqueLoadID()} has no home settlement; skipping bill.");
+                return null;
+            }
+
+            int lifespanTicks = Math.Max(1, FCSettings.deploymentBillLifespan_days) * GenDate.TicksPerDay;
+            BillFC bill = new BillFC(home, lifespanTicks);
+            bill.label = "FCBillKindSquadRestock".Translate();
+            bill.taxes.silverAmount = -cost;
+            /* silverAmount must be set BEFORE the Scaled helpers — they read it for
+             * the linear scaling computation. */
+            bill.AddUnpaidPenaltyScaled(BillPenaltyStat.Unrest, 15);
+            bill.AddUnpaidPenaltyScaled(BillPenaltyStat.Happiness, 15);
+            bill.AddLatePaidPenaltyScaled(BillPenaltyStat.Unrest, 3);
+            bill.AddLatePaidPenaltyScaled(BillPenaltyStat.Happiness, 3);
             AddBill(bill);
             return bill;
         }

@@ -588,4 +588,20 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_37</defName>
+		<label>Minor Updates &amp; Merc Fixes</label>
+		<description>Minor UI and Merc fixes.</description>
+		<releaseDate>2026-06-21</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Show the player&apos;s available silver in the Found New Settlement dialog</li>
+		<li>When Merc Squads use items from their inventory or have their weapons or apparel damaged in a fight, they are now restocked afterwards, with the cost being billed to the player (seperate from the cost of deploying)</li>
+		<li>Change the default Max Concurrent Battle Maps to 3 (instead of Unlimited), and increase the max slider value to 10 (from 5)</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

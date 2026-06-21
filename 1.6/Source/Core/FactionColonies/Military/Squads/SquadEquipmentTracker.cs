@@ -145,23 +145,15 @@ namespace FactionColonies
         {
             if (merc?.pawn == null || loadout == null) return;
 
+            // Ensure the snapshot lists exist even if this loadout has no apparel/weapons; the
+            // per-item helpers below append the worn items as they go (see RemoveDroppedEquipment).
+            if (UsedWeaponList == null) UsedWeaponList = new List<ThingWithComps>();
+            if (UsedApparelList == null) UsedApparelList = new List<Apparel>();
+
             if (merc.pawn.apparel != null)
             {
-                FactionFC factionComp = FindFC.FactionComp;
                 foreach (SavedThing apparelDef in loadout.apparel)
-                {
-                    Thing thing = apparelDef.CreateThing();
-                    if (thing is Apparel ap)
-                    {
-                        Color resolved = factionComp?.ResolveApparelColor(apparelDef) ?? Color.white;
-                        thing.SetColor(resolved, reportFailure: false);
-                        merc.pawn.apparel.Wear(ap);
-                        // Anti-exploit: biocode worn apparel to the merc so looted gear is unusable.
-                        // No-op on apparel without CompBiocodable.
-                        if (FCSettings.antiExploit)
-                            ap.TryGetComp<CompBiocodable>()?.CodeFor(merc.pawn);
-                    }
-                }
+                    WearApparelItem(merc, apparelDef);
             }
 
             // Carried inventory — the unit's player-chosen loadout (including any ammo). Counts
@@ -169,47 +161,87 @@ namespace FactionColonies
             if (merc.pawn.inventory?.innerContainer != null && loadout.inventory != null)
             {
                 foreach (SavedThing invDef in loadout.inventory)
-                {
-                    if (invDef.thing == null) continue;
-                    int remaining = Mathf.Max(1, invDef.count);
-                    int stackLimit = Mathf.Max(1, invDef.thing.stackLimit);
-                    while (remaining > 0)
-                    {
-                        int take = Mathf.Min(remaining, stackLimit);
-                        Thing invThing = new SavedThing(invDef.thing, invDef.stuff, take, invDef.quality).CreateThing();
-                        if (invThing == null) break;
-                        merc.pawn.inventory.innerContainer.TryAdd(invThing, true);
-                        remaining -= take;
-                    }
-                }
+                    AddInventoryThings(merc.pawn, invDef.thing, invDef.stuff, invDef.quality, invDef.count);
             }
 
             if (merc.pawn.equipment != null)
             {
                 foreach (SavedThing weaponDef in loadout.weapons)
-                {
-                    Thing weaponThing = weaponDef.CreateThing();
-                    if (weaponThing is ThingWithComps twc)
-                    {
-                        merc.pawn.equipment.AddEquipment(twc);
-                        // Anti-exploit: biocode equipped weapons to the merc so looted gear is
-                        // useless to other pawns. No-op on weapons without CompBiocodable.
-                        if (FCSettings.antiExploit)
-                            twc.TryGetComp<CompBiocodable>()?.CodeFor(merc.pawn);
-                    }
-                }
+                    AddWeaponItem(merc, weaponDef);
             }
 
             // Let CE re-index the pawn's inventory/ammo after we populated it.
             CombatExtendedUtil.UpdateInventory(merc.pawn);
+        }
 
-            // Snapshot the equipped items so RemoveDroppedEquipment can find them after a battle.
-            if (UsedWeaponList == null) UsedWeaponList = new List<ThingWithComps>();
+        /// <summary>Creates one apparel item from <paramref name="apparelDef"/> and wears it on
+        /// <paramref name="merc"/> — resolving faction color, biocoding when antiExploit is on, and
+        /// appending the worn item to <see cref="UsedApparelList"/>. Shared by <see cref="EquipPawn"/>
+        /// (initial outfit) and <see cref="SquadRestockUtil"/> (post-battle replacement of destroyed
+        /// apparel). No-op on a null pawn / apparel tracker or a non-apparel def.</summary>
+        public void WearApparelItem(Mercenary merc, SavedThing apparelDef)
+        {
+            if (merc?.pawn?.apparel == null) return;
+            Thing thing = apparelDef.CreateThing();
+            if (!(thing is Apparel ap)) return;
+
+            Color resolved = FindFC.FactionComp?.ResolveApparelColor(apparelDef) ?? Color.white;
+            ap.SetColor(resolved, reportFailure: false);
+            merc.pawn.apparel.Wear(ap);
+            // Anti-exploit: biocode worn apparel to the merc so looted gear is unusable.
+            // No-op on apparel without CompBiocodable.
+            if (FCSettings.antiExploit)
+                ap.TryGetComp<CompBiocodable>()?.CodeFor(merc.pawn);
+
             if (UsedApparelList == null) UsedApparelList = new List<Apparel>();
-            if (merc.pawn.equipment?.AllEquipmentListForReading != null)
-                UsedWeaponList.AddRange(merc.pawn.equipment.AllEquipmentListForReading);
-            if (merc.pawn.apparel?.WornApparel != null)
-                UsedApparelList.AddRange(merc.pawn.apparel.WornApparel);
+            UsedApparelList.Add(ap);
+        }
+
+        /// <summary>Creates one weapon from <paramref name="weaponDef"/> and equips it on
+        /// <paramref name="merc"/> — biocoding when antiExploit is on, and appending it to
+        /// <see cref="UsedWeaponList"/>. Shared by <see cref="EquipPawn"/> (initial outfit) and
+        /// <see cref="SquadRestockUtil"/> (post-battle replacement of a destroyed weapon). No-op on a
+        /// null pawn / equipment tracker or a non-ThingWithComps def.</summary>
+        public void AddWeaponItem(Mercenary merc, SavedThing weaponDef)
+        {
+            if (merc?.pawn?.equipment == null) return;
+            Thing weaponThing = weaponDef.CreateThing();
+            if (!(weaponThing is ThingWithComps twc)) return;
+
+            // Free the primary slot if something else holds it (e.g. a weapon looted mid-battle, when
+            // re-equipping the merc's destroyed issued weapon) so AddEquipment doesn't error. In the
+            // EquipPawn path StripPawn already cleared equipment, so this is a no-op there.
+            if (twc.def.equipmentType == EquipmentType.Primary && merc.pawn.equipment.Primary is object)
+                merc.pawn.equipment.DestroyEquipment(merc.pawn.equipment.Primary);
+
+            merc.pawn.equipment.AddEquipment(twc);
+            // Anti-exploit: biocode equipped weapons to the merc so looted gear is useless to
+            // other pawns. No-op on weapons without CompBiocodable.
+            if (FCSettings.antiExploit)
+                twc.TryGetComp<CompBiocodable>()?.CodeFor(merc.pawn);
+
+            if (UsedWeaponList == null) UsedWeaponList = new List<ThingWithComps>();
+            UsedWeaponList.Add(twc);
+        }
+
+        /// <summary>Adds <paramref name="count"/> of (<paramref name="thing"/>, <paramref name="stuff"/>,
+        /// <paramref name="quality"/>) to <paramref name="pawn"/>'s carried inventory, splitting counts above
+        /// the item's stack limit across multiple stacks. Shared by <see cref="EquipPawn"/> (initial outfit)
+        /// and <see cref="SquadRestockUtil"/> (post-battle refill of consumed items). No-op on a null thing /
+        /// pawn / inventory container or non-positive count.</summary>
+        public static void AddInventoryThings(Pawn pawn, ThingDef thing, ThingDef stuff, QualityCategory? quality, int count)
+        {
+            if (thing == null || pawn?.inventory?.innerContainer == null) return;
+            int remaining = Mathf.Max(1, count);
+            int stackLimit = Mathf.Max(1, thing.stackLimit);
+            while (remaining > 0)
+            {
+                int take = Mathf.Min(remaining, stackLimit);
+                Thing invThing = new SavedThing(thing, stuff, take, quality).CreateThing();
+                if (invThing == null) break;
+                pawn.inventory.innerContainer.TryAdd(invThing, true);
+                remaining -= take;
+            }
         }
 
         public virtual void StripPawn(Mercenary merc)

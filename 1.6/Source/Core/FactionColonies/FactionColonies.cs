@@ -88,7 +88,7 @@ namespace FactionColonies
         public const float DEFAULT_EFFICIENCY_DAMPING = 0.5f;
         public const bool DEFAULT_ANTI_EXPLOIT = true;
         public const bool DEFAULT_RESTRICT_DEFENSE_MAP_LOOT = true;
-        public const int DEFAULT_MAX_CONCURRENT_BATTLE_MAPS = 0;
+        public const int DEFAULT_MAX_CONCURRENT_BATTLE_MAPS = 3;
         // Manual-defense battle map sizing. Final edge length =
         // clamp(baseSize + settlementLevel * perLevelStep, minSize, maxSize).
         public const int DEFAULT_DEFENSE_MAP_BASE_SIZE = 110;
@@ -248,6 +248,14 @@ namespace FactionColonies
         public const int DEFAULT_DEPLOYMENT_BILL_LIFESPAN_DAYS = 5;
         public static float squadDeploymentCostPercentage = DEFAULT_SQUAD_DEPLOYMENT_COST_PERCENTAGE;
         public static int deploymentBillLifespan_days = DEFAULT_DEPLOYMENT_BILL_LIFESPAN_DAYS;
+
+        /* Squad restock economy. After a MANUAL battle, carried inventory (ammo / meds / drugs) a
+         * surviving merc actually consumed is diffed against its loadout design, refilled, and billed
+         * as a restock BillFC (reusing deploymentBillLifespan_days). squadRestockCostPercentage is the
+         * fraction of that consumed market value charged: 1.0 = full replacement value, 0 = free.
+         * Auto-resolved battles never touch inventory and so incur no restock charge. */
+        public const float DEFAULT_SQUAD_RESTOCK_COST_PERCENTAGE = 1.0f;
+        public static float squadRestockCostPercentage = DEFAULT_SQUAD_RESTOCK_COST_PERCENTAGE;
 
         /// <summary>Max simultaneous manual battle maps across all settlements. 0 = unlimited.</summary>
         public static int maxConcurrentBattleMaps = DEFAULT_MAX_CONCURRENT_BATTLE_MAPS;
@@ -441,6 +449,7 @@ namespace FactionColonies
             Scribe_Values.Look(ref geneValueMaxFactor,       "geneValueMaxFactor",       DEFAULT_GENE_MAX_FACTOR);
             Scribe_Values.Look(ref squadDeploymentCostPercentage, "squadDeploymentCostPercentage", DEFAULT_SQUAD_DEPLOYMENT_COST_PERCENTAGE);
             Scribe_Values.Look(ref deploymentBillLifespan_days, "deploymentBillLifespan_days", DEFAULT_DEPLOYMENT_BILL_LIFESPAN_DAYS);
+            Scribe_Values.Look(ref squadRestockCostPercentage, "squadRestockCostPercentage", DEFAULT_SQUAD_RESTOCK_COST_PERCENTAGE);
             if (Scribe.mode == LoadSaveMode.LoadingVars && maxSquadSize < 1)
             {
                 LogUtil.Warning($"Loaded suspicious maxSquadSize={maxSquadSize}; resetting to {DEFAULT_MAX_SQUAD_SIZE}.");
@@ -639,6 +648,7 @@ namespace FactionColonies
             squadUpgradeCostMultiplier = DEFAULT_SQUAD_UPGRADE_COST_MULTIPLIER;
             squadDeploymentCostPercentage = DEFAULT_SQUAD_DEPLOYMENT_COST_PERCENTAGE;
             deploymentBillLifespan_days = DEFAULT_DEPLOYMENT_BILL_LIFESPAN_DAYS;
+            squadRestockCostPercentage = DEFAULT_SQUAD_RESTOCK_COST_PERCENTAGE;
             militaryPsylinkCostMultiplier = DEFAULT_MILITARY_PSYLINK_COST_MULTIPLIER;
             militaryMechCostMultiplier = DEFAULT_MILITARY_MECH_COST_MULTIPLIER;
             militaryMechlinkCost = DEFAULT_MILITARY_MECHLINK_COST;
@@ -1088,7 +1098,7 @@ namespace FactionColonies
 
             string concurrentLabel = maxConcurrentBattleMaps == 0 ? (string)"FCUnlimited".Translate() : maxConcurrentBattleMaps.ToString();
             ls.Label("FCSettingMaxConcurrentBattleMaps".Translate() + ": " + concurrentLabel, -1f, "FCSettingMaxConcurrentBattleMapsTip".Translate());
-            maxConcurrentBattleMaps = (int)ls.Slider(maxConcurrentBattleMaps, 0f, 5f);
+            maxConcurrentBattleMaps = (int)ls.Slider(maxConcurrentBattleMaps, 0f, 10f);
 
             ls.Label("FCSettingDefenseMapBaseSize".Translate() + ": " + defenseMapBaseSize.ToString(), -1f, "FCSettingDefenseMapBaseSizeTip".Translate());
             defenseMapBaseSize = (int)ls.Slider(defenseMapBaseSize, 50f, 250f);
@@ -1169,6 +1179,9 @@ namespace FactionColonies
 
             ls.Label("FCSettingDeploymentBillLifespan".Translate() + ": " + deploymentBillLifespan_days.ToString() + " d", -1f, "FCSettingDeploymentBillLifespanTip".Translate());
             deploymentBillLifespan_days = (int)ls.Slider(deploymentBillLifespan_days, 1f, 60f);
+
+            ls.Label("FCSettingSquadRestockCostPercentage".Translate() + ": " + (squadRestockCostPercentage * 100f).ToString("0") + "%", -1f, "FCSettingSquadRestockCostPercentageTip".Translate());
+            squadRestockCostPercentage = ls.Slider(squadRestockCostPercentage, 0.0f, 1.0f);
 
             // Vanilla psylink cost (base-game psycasts). Hidden when VPE is active — VPE makes psylink
             // levels free and charges per chosen psycast instead (see the Compatibility tab).

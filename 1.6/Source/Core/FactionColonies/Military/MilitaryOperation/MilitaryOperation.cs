@@ -388,6 +388,19 @@ namespace FactionColonies
                     mfc.RegisterSquadInjuries(defender.squad);
             }
 
+            // Real pawns on a real map actually consumed carried inventory (ammo / meds / drugs):
+            // diff each surviving merc's inventory against its design, bill the player for what was
+            // used, and refill it. This is the case for manual battles AND deployments (call-ins to a
+            // player map) — the latter resolve as a non-battle (wasManualBattle == false), so they're
+            // matched on kind instead. Auto-resolved battles never touch pawn inventory and get no charge.
+            if (battleResult is object && battleResult.winner != BattleWinner.Error
+                && (battleResult.wasManualBattle || kind == MilitaryJobDefOf.Deploy))
+            {
+                if (aggressor?.squad is object) SquadRestockUtil.ReconcileAndBill(aggressor.squad);
+                if (defender?.squad is object && defender.squad != aggressor?.squad)
+                    SquadRestockUtil.ReconcileAndBill(defender.squad);
+            }
+
             LifecycleRegistry.InvokeOnBattleResolved(this, victory, battleResult);
 
             if (externalDefenderSource is object)
