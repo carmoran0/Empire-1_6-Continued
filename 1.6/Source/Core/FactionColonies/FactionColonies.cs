@@ -843,6 +843,7 @@ namespace FactionColonies
             Rect listRect = new Rect(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
             Listing_Standard ls = new Listing_Standard();
             ls.Begin(listRect);
+            Listing_StandardExtensions.ResetRowStripe();
 
             // Display mod version
             ls.Label("FCModVersion".Translate(GetModVersion()));
@@ -929,10 +930,10 @@ namespace FactionColonies
             if (ls.ButtonText("FCSelectTaxDeliveryModeButton".Translate() + forcedTaxDeliveryMode)) Find.WindowStack.Add(new FloatMenu(ForcedTaxDeliveryOptions));
             if (ls.ButtonText("FCTaxNotificationModeButton".Translate() + taxNotificationMode)) Find.WindowStack.Add(new FloatMenu(TaxNotificationOptions));
 
-            ls.Label("FCSettingSettlementUpgradeTime".Translate() + ": " + settlementUpgradeTimeMultiplier.ToString("0.0") + "x", -1f);
-            settlementUpgradeTimeMultiplier = (float)Math.Round(ls.Slider(settlementUpgradeTimeMultiplier, 0f, 10f), 1);
-            ls.Label("FCSettingBuildingConstructTime".Translate() + ": " + buildingConstructTimeMultiplier.ToString("0.0") + "x", -1f);
-            buildingConstructTimeMultiplier = (float)Math.Round(ls.Slider(buildingConstructTimeMultiplier, 0f, 10f), 1);
+            settlementUpgradeTimeMultiplier = ls.SliderTextField("FCSettingSettlementUpgradeTime",
+                "FCSettingSettlementUpgradeTime".Translate(), settlementUpgradeTimeMultiplier, 0f, 10f, decimals: 1, unit: "x");
+            buildingConstructTimeMultiplier = ls.SliderTextField("FCSettingBuildingConstructTime",
+                "FCSettingBuildingConstructTime".Translate(), buildingConstructTimeMultiplier, 0f, 10f, decimals: 1, unit: "x");
 
             ls.GapLine();
 
@@ -986,20 +987,17 @@ namespace FactionColonies
             Rect listRect = new Rect(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
             Listing_Standard ls = new Listing_Standard();
             ls.Begin(listRect);
+            Listing_StandardExtensions.ResetRowStripe();
 
             ls.CheckboxLabeled("FCSettingDisableRandomEvents".Translate(), ref disableRandomEvents);
             ls.CheckboxLabeled("FCSettingDisableEventsWithOptions".Translate(), ref disableEventsWithOptions);
             ls.CheckboxLabeled("FCSettingBlockEventsDuringChain".Translate(), ref blockEventsDuringChain,
                 "FCSettingBlockEventsDuringChainDesc".Translate());
-            eventOptionDelaySeconds = ls.SliderLabeled(
-                "FCSettingEventOptionDelay".Translate(eventOptionDelaySeconds.ToString("0.0")),
-                eventOptionDelaySeconds, 0f, 2f);
-            eventOptionDelaySeconds = (float)Math.Round(eventOptionDelaySeconds, 1);
+            eventOptionDelaySeconds = ls.SliderTextField("FCSettingEventOptionDelay",
+                "FCSettingEventOptionDelay".Translate(), eventOptionDelaySeconds, 0f, 2f, decimals: 1, unit: "s");
 
-            eventSilverCostMultiplier = ls.SliderLabeled(
-                "FCSettingEventSilverCostMultiplier".Translate(eventSilverCostMultiplier.ToString("0.0")),
-                eventSilverCostMultiplier, 0f, 10f);
-            eventSilverCostMultiplier = (float)Math.Round(eventSilverCostMultiplier, 1);
+            eventSilverCostMultiplier = ls.SliderTextField("FCSettingEventSilverCostMultiplier",
+                "FCSettingEventSilverCostMultiplier".Translate(), eventSilverCostMultiplier, 0f, 10f, decimals: 1, unit: "x");
 
             ls.Gap(5f);
 
@@ -1077,6 +1075,7 @@ namespace FactionColonies
             Rect listRect = new Rect(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
             Listing_Standard ls = new Listing_Standard();
             ls.Begin(listRect);
+            Listing_StandardExtensions.ResetRowStripe();
 
             ls.CheckboxLabeled("FCSettingDisableHostileMilActions".Translate(), ref disableHostileMilitaryActions);
             ls.CheckboxLabeled("FCSettingAntiExploit".Translate(), ref antiExploit, "FCSettingAntiExploitTip".Translate());
@@ -1090,28 +1089,32 @@ namespace FactionColonies
             minDaysTillMilitaryAction = minMaxDaysTillMilitaryAction.min;
             maxDaysTillMilitaryAction = Math.Max(1, minMaxDaysTillMilitaryAction.max);
 
-            ls.Label("FCSettingMaxThreatScaling".Translate() + ": " + maxThreatMultiplier.ToString("0.0") + "x");
-            maxThreatMultiplier = ls.Slider(maxThreatMultiplier, 1.0f, 5.0f);
+            maxThreatMultiplier = ls.SliderTextField("FCSettingMaxThreatScaling",
+                "FCSettingMaxThreatScaling".Translate(), maxThreatMultiplier, 1.0f, 5.0f, decimals: 1, unit: "x");
 
-            ls.Label("FCSettingDefenderAdvantage".Translate() + ": " + defenderAdvantage.ToString("0.00") + "x");
-            defenderAdvantage = ls.Slider(defenderAdvantage, 1.0f, 1.5f);
+            defenderAdvantage = ls.SliderTextField("FCSettingDefenderAdvantage",
+                "FCSettingDefenderAdvantage".Translate(), defenderAdvantage, 1.0f, 1.5f, decimals: 2, unit: "x");
 
-            string concurrentLabel = maxConcurrentBattleMaps == 0 ? (string)"FCUnlimited".Translate() : maxConcurrentBattleMaps.ToString();
-            ls.Label("FCSettingMaxConcurrentBattleMaps".Translate() + ": " + concurrentLabel, -1f, "FCSettingMaxConcurrentBattleMapsTip".Translate());
-            maxConcurrentBattleMaps = (int)ls.Slider(maxConcurrentBattleMaps, 0f, 10f);
+            maxConcurrentBattleMaps = ls.SliderTextField("FCSettingMaxConcurrentBattleMaps",
+                "FCSettingMaxConcurrentBattleMaps".Translate(), maxConcurrentBattleMaps, 0, 10,
+                tooltip: "FCSettingMaxConcurrentBattleMapsTip".Translate());
 
-            ls.Label("FCSettingDefenseMapBaseSize".Translate() + ": " + defenseMapBaseSize.ToString(), -1f, "FCSettingDefenseMapBaseSizeTip".Translate());
-            defenseMapBaseSize = (int)ls.Slider(defenseMapBaseSize, 50f, 250f);
+            defenseMapBaseSize = ls.SliderTextField("FCSettingDefenseMapBaseSize",
+                "FCSettingDefenseMapBaseSize".Translate(), defenseMapBaseSize, 50, 250,
+                tooltip: "FCSettingDefenseMapBaseSizeTip".Translate());
 
-            ls.Label("FCSettingDefenseMapPerLevelStep".Translate() + ": " + defenseMapPerLevelStep.ToString(), -1f, "FCSettingDefenseMapPerLevelStepTip".Translate());
-            defenseMapPerLevelStep = (int)ls.Slider(defenseMapPerLevelStep, 0f, 20f);
+            defenseMapPerLevelStep = ls.SliderTextField("FCSettingDefenseMapPerLevelStep",
+                "FCSettingDefenseMapPerLevelStep".Translate(), defenseMapPerLevelStep, 0, 20,
+                tooltip: "FCSettingDefenseMapPerLevelStepTip".Translate());
 
             int oldMinSize = defenseMapMinSize;
-            ls.Label("FCSettingDefenseMapMinSize".Translate() + ": " + defenseMapMinSize.ToString(), -1f, "FCSettingDefenseMapMinSizeTip".Translate());
-            defenseMapMinSize = (int)ls.Slider(defenseMapMinSize, 60f, 250f);
+            defenseMapMinSize = ls.SliderTextField("FCSettingDefenseMapMinSize",
+                "FCSettingDefenseMapMinSize".Translate(), defenseMapMinSize, 60, 250,
+                tooltip: "FCSettingDefenseMapMinSizeTip".Translate());
 
-            ls.Label("FCSettingDefenseMapMaxSize".Translate() + ": " + defenseMapMaxSize.ToString(), -1f, "FCSettingDefenseMapMaxSizeTip".Translate());
-            defenseMapMaxSize = (int)ls.Slider(defenseMapMaxSize, 100f, 500f);
+            defenseMapMaxSize = ls.SliderTextField("FCSettingDefenseMapMaxSize",
+                "FCSettingDefenseMapMaxSize".Translate(), defenseMapMaxSize, 100, 500,
+                tooltip: "FCSettingDefenseMapMaxSizeTip".Translate());
 
             // Keep the cap >= the floor: nudge whichever slider the player didn't just move.
             if (defenseMapMaxSize < defenseMapMinSize)
@@ -1120,14 +1123,17 @@ namespace FactionColonies
                 else defenseMapMinSize = defenseMapMaxSize;                                 // lowered the cap   -> lower the floor
             }
 
-            ls.Label("FCSettingEfficiencyDamping".Translate() + ": " + efficiencyDamping.ToString("0.00"), -1f, "FCSettingEfficiencyDampingTooltip".Translate());
-            efficiencyDamping = ls.Slider(efficiencyDamping, 0.0f, 1.0f);
+            efficiencyDamping = ls.SliderTextField("FCSettingEfficiencyDamping",
+                "FCSettingEfficiencyDamping".Translate(), efficiencyDamping, 0.0f, 1.0f, decimals: 2,
+                tooltip: "FCSettingEfficiencyDampingTooltip".Translate());
 
-            ls.Label("FCSettingMercHealRate".Translate() + ": " + mercenaryHealRatePerHour.ToString("0.00") + "x", -1f, "FCSettingMercHealRateTip".Translate());
-            mercenaryHealRatePerHour = ls.Slider(mercenaryHealRatePerHour, 0.1f, 100f);
+            mercenaryHealRatePerHour = ls.SliderTextField("FCSettingMercHealRate",
+                "FCSettingMercHealRate".Translate(), mercenaryHealRatePerHour, 0.1f, 100f, decimals: 2, unit: "x",
+                tooltip: "FCSettingMercHealRateTip".Translate());
 
-            ls.Label("FCSettingMechRepairRate".Translate() + ": " + militaryMechRepairRate.ToString("0") + " HP", -1f, "FCSettingMechRepairRateTip".Translate());
-            militaryMechRepairRate = ls.Slider(militaryMechRepairRate, 0f, 50f);
+            militaryMechRepairRate = ls.SliderTextField("FCSettingMechRepairRate",
+                "FCSettingMechRepairRate".Translate(), militaryMechRepairRate, 0f, 50f, decimals: 0, unit: "HP",
+                tooltip: "FCSettingMechRepairRateTip".Translate());
 
             DrawSectionResetButton(ls, ResetMilitaryActionToDefaults);
 
@@ -1139,17 +1145,21 @@ namespace FactionColonies
 
             ls.CheckboxLabeled("FCSettingApplyAutoResolveInjuries".Translate(), ref applyAutoResolveInjuries, "FCSettingApplyAutoResolveInjuriesTip".Translate());
 
-            ls.Label("FCSettingAutoResolveDeathThreshold".Translate() + ": " + (autoResolveCasualtyDeathThreshold * 100f).ToString("0") + "%", -1f, "FCSettingAutoResolveDeathThresholdTip".Translate());
-            autoResolveCasualtyDeathThreshold = ls.Slider(autoResolveCasualtyDeathThreshold, 0.0f, 1.0f);
+            autoResolveCasualtyDeathThreshold = ls.SliderTextField("FCSettingAutoResolveDeathThreshold",
+                "FCSettingAutoResolveDeathThreshold".Translate(), autoResolveCasualtyDeathThreshold, 0.0f, 1.0f, decimals: 2,
+                tooltip: "FCSettingAutoResolveDeathThresholdTip".Translate());
 
-            ls.Label("FCSettingAutoResolveMaxDeathFraction".Translate() + ": " + (autoResolveCasualtyMaxDeathFraction * 100f).ToString("0") + "%", -1f, "FCSettingAutoResolveMaxDeathFractionTip".Translate());
-            autoResolveCasualtyMaxDeathFraction = ls.Slider(autoResolveCasualtyMaxDeathFraction, 0.0f, 1.0f);
+            autoResolveCasualtyMaxDeathFraction = ls.SliderTextField("FCSettingAutoResolveMaxDeathFraction",
+                "FCSettingAutoResolveMaxDeathFraction".Translate(), autoResolveCasualtyMaxDeathFraction, 0.0f, 1.0f, decimals: 2,
+                tooltip: "FCSettingAutoResolveMaxDeathFractionTip".Translate());
 
-            ls.Label("FCSettingCrushingDefeatPenaltyMultiplier".Translate() + ": " + crushingDefeatPenaltyMultiplier.ToString("0.00") + "x", -1f, "FCSettingCrushingDefeatPenaltyMultiplierTip".Translate());
-            crushingDefeatPenaltyMultiplier = ls.Slider(crushingDefeatPenaltyMultiplier, 1.0f, 5.0f);
+            crushingDefeatPenaltyMultiplier = ls.SliderTextField("FCSettingCrushingDefeatPenaltyMultiplier",
+                "FCSettingCrushingDefeatPenaltyMultiplier".Translate(), crushingDefeatPenaltyMultiplier, 1.0f, 5.0f, decimals: 2, unit: "x",
+                tooltip: "FCSettingCrushingDefeatPenaltyMultiplierTip".Translate());
 
-            ls.Label("FCSettingOverwhelmingVictoryRewardMultiplier".Translate() + ": " + overwhelmingVictoryRewardMultiplier.ToString("0.00") + "x", -1f, "FCSettingOverwhelmingVictoryRewardMultiplierTip".Translate());
-            overwhelmingVictoryRewardMultiplier = ls.Slider(overwhelmingVictoryRewardMultiplier, 0.0f, 5.0f);
+            overwhelmingVictoryRewardMultiplier = ls.SliderTextField("FCSettingOverwhelmingVictoryRewardMultiplier",
+                "FCSettingOverwhelmingVictoryRewardMultiplier".Translate(), overwhelmingVictoryRewardMultiplier, 0.0f, 5.0f, decimals: 2, unit: "x",
+                tooltip: "FCSettingOverwhelmingVictoryRewardMultiplierTip".Translate());
 
             ls.CheckboxLabeled("FCSettingRespectLethalDamageThreshold".Translate(), ref respectLethalDamageThreshold, "FCSettingRespectLethalDamageThresholdTip".Translate());
 
@@ -1161,45 +1171,55 @@ namespace FactionColonies
             ls.Label("FCSettingSquadsHeader".Translate());
             Text.Font = GameFont.Small;
 
-            ls.Label("FCSettingMaxSquadSize".Translate() + ": " + maxSquadSize.ToString(), -1f, "FCSettingMaxSquadSizeTip".Translate());
-            maxSquadSize = (int)ls.Slider(maxSquadSize, 1f, 60f);
+            maxSquadSize = ls.SliderTextField("FCSettingMaxSquadSize",
+                "FCSettingMaxSquadSize".Translate(), maxSquadSize, 1, 60,
+                tooltip: "FCSettingMaxSquadSizeTip".Translate());
 
             string tip = FactionCompat.GiddyUp2Active ? "FCSettingMaxAnimalSubpawnsGiddyUpTip".Translate() : "FCSettingMaxAnimalSubpawnsTip".Translate();
-            ls.Label("FCSettingMaxAnimalSubpawns".Translate() + ": " + maxAnimalSubpawns.ToString(), -1f, tip);
-            maxAnimalSubpawns = (int)ls.Slider(maxAnimalSubpawns, MIN_ANIMAL_SUBPAWNS, MAX_ANIMAL_SUBPAWNS_SLIDER);
+            maxAnimalSubpawns = ls.SliderTextField("FCSettingMaxAnimalSubpawns",
+                "FCSettingMaxAnimalSubpawns".Translate(), maxAnimalSubpawns, MIN_ANIMAL_SUBPAWNS, MAX_ANIMAL_SUBPAWNS_SLIDER,
+                tooltip: tip);
 
-            ls.Label("FCSettingSquadHireCostMultiplier".Translate() + ": " + squadHireCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingSquadHireCostMultiplierTip".Translate());
-            squadHireCostMultiplier = ls.Slider(squadHireCostMultiplier, 0.0f, 5.0f);
+            squadHireCostMultiplier = ls.SliderTextField("FCSettingSquadHireCostMultiplier",
+                "FCSettingSquadHireCostMultiplier".Translate(), squadHireCostMultiplier, 0.0f, 5.0f, decimals: 2, unit: "x",
+                tooltip: "FCSettingSquadHireCostMultiplierTip".Translate());
 
-            ls.Label("FCSettingSquadUpgradeCostMultiplier".Translate() + ": " + squadUpgradeCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingSquadUpgradeCostMultiplierTip".Translate());
-            squadUpgradeCostMultiplier = ls.Slider(squadUpgradeCostMultiplier, 0.0f, 5.0f);
+            squadUpgradeCostMultiplier = ls.SliderTextField("FCSettingSquadUpgradeCostMultiplier",
+                "FCSettingSquadUpgradeCostMultiplier".Translate(), squadUpgradeCostMultiplier, 0.0f, 5.0f, decimals: 2, unit: "x",
+                tooltip: "FCSettingSquadUpgradeCostMultiplierTip".Translate());
 
-            ls.Label("FCSettingSquadDeploymentCostPercentage".Translate() + ": " + (squadDeploymentCostPercentage * 100f).ToString("0") + "%", -1f, "FCSettingSquadDeploymentCostPercentageTip".Translate());
-            squadDeploymentCostPercentage = ls.Slider(squadDeploymentCostPercentage, 0.0f, 1.0f);
+            squadDeploymentCostPercentage = ls.SliderTextField("FCSettingSquadDeploymentCostPercentage",
+                "FCSettingSquadDeploymentCostPercentage".Translate(), squadDeploymentCostPercentage, 0.0f, 1.0f, decimals: 2,
+                tooltip: "FCSettingSquadDeploymentCostPercentageTip".Translate());
 
-            ls.Label("FCSettingDeploymentBillLifespan".Translate() + ": " + deploymentBillLifespan_days.ToString() + " d", -1f, "FCSettingDeploymentBillLifespanTip".Translate());
-            deploymentBillLifespan_days = (int)ls.Slider(deploymentBillLifespan_days, 1f, 60f);
+            deploymentBillLifespan_days = ls.SliderTextField("FCSettingDeploymentBillLifespan",
+                "FCSettingDeploymentBillLifespan".Translate(), deploymentBillLifespan_days, 1, 60, unit: "d",
+                tooltip: "FCSettingDeploymentBillLifespanTip".Translate());
 
-            ls.Label("FCSettingSquadRestockCostPercentage".Translate() + ": " + (squadRestockCostPercentage * 100f).ToString("0") + "%", -1f, "FCSettingSquadRestockCostPercentageTip".Translate());
-            squadRestockCostPercentage = ls.Slider(squadRestockCostPercentage, 0.0f, 1.0f);
+            squadRestockCostPercentage = ls.SliderTextField("FCSettingSquadRestockCostPercentage",
+                "FCSettingSquadRestockCostPercentage".Translate(), squadRestockCostPercentage, 0.0f, 1.0f, decimals: 2,
+                tooltip: "FCSettingSquadRestockCostPercentageTip".Translate());
 
             // Vanilla psylink cost (base-game psycasts). Hidden when VPE is active — VPE makes psylink
             // levels free and charges per chosen psycast instead (see the Compatibility tab).
             // Only shows if Royalty is active (psylinks come with Royalty, after all)
             if (!FactionCompat.VPEActive && ModsConfig.RoyaltyActive)
             {
-                ls.Label("FCSettingPsylinkCostMult".Translate() + ": " + militaryPsylinkCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingPsylinkCostMultTip".Translate());
-                militaryPsylinkCostMultiplier = ls.Slider((float)militaryPsylinkCostMultiplier, 0f, 5f);
+                militaryPsylinkCostMultiplier = ls.SliderTextField("FCSettingPsylinkCostMult",
+                    "FCSettingPsylinkCostMult".Translate(), (float)militaryPsylinkCostMultiplier, 0f, 5f, decimals: 2, unit: "x",
+                    tooltip: "FCSettingPsylinkCostMultTip".Translate());
             }
 
             // Mechanitor merc costs (Biotech only).
             if (ModsConfig.BiotechActive)
             {
-                ls.Label("FCSettingMechCostMult".Translate() + ": " + militaryMechCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingMechCostMultTip".Translate());
-                militaryMechCostMultiplier = ls.Slider((float)militaryMechCostMultiplier, 0f, 5f);
+                militaryMechCostMultiplier = ls.SliderTextField("FCSettingMechCostMult",
+                    "FCSettingMechCostMult".Translate(), (float)militaryMechCostMultiplier, 0f, 5f, decimals: 2, unit: "x",
+                    tooltip: "FCSettingMechCostMultTip".Translate());
 
-                ls.Label("FCSettingMechlinkCost".Translate() + ": " + militaryMechlinkCost.ToString("0"), -1f, "FCSettingMechlinkCostTip".Translate());
-                militaryMechlinkCost = ls.Slider((float)militaryMechlinkCost, 0f, 5000f);
+                militaryMechlinkCost = ls.SliderTextField("FCSettingMechlinkCost",
+                    "FCSettingMechlinkCost".Translate(), (float)militaryMechlinkCost, 0f, 5000f, decimals: 0,
+                    tooltip: "FCSettingMechlinkCostTip".Translate());
             }
 
             ls.Gap(8f);
@@ -1210,29 +1230,36 @@ namespace FactionColonies
                 Text.Font = GameFont.Small;
                 ls.Label("FCSettingGeneValueHelpText".Translate(), -1f);
 
-                ls.Label("FCSettingGeneValueWeightMvf".Translate() + ": " + geneValueWeightMvf.ToString("0.00"), -1f, "FCSettingGeneValueWeightMvfTip".Translate());
-                geneValueWeightMvf = ls.Slider(geneValueWeightMvf, 0f, 3f);
+                geneValueWeightMvf = ls.SliderTextField("FCSettingGeneValueWeightMvf",
+                    "FCSettingGeneValueWeightMvf".Translate(), geneValueWeightMvf, 0f, 3f, decimals: 2,
+                    tooltip: "FCSettingGeneValueWeightMvfTip".Translate());
 
-                ls.Label("FCSettingGeneValueWeightMet".Translate() + ": " + geneValueWeightMet.ToString("0.00"), -1f, "FCSettingGeneValueWeightMetTip".Translate());
-                geneValueWeightMet = ls.Slider(geneValueWeightMet, 0f, 0.5f);
+                geneValueWeightMet = ls.SliderTextField("FCSettingGeneValueWeightMet",
+                    "FCSettingGeneValueWeightMet".Translate(), geneValueWeightMet, 0f, 0.5f, decimals: 2,
+                    tooltip: "FCSettingGeneValueWeightMetTip".Translate());
 
-                ls.Label("FCSettingGeneValueWeightArc".Translate() + ": " + geneValueWeightArc.ToString("0.00"), -1f, "FCSettingGeneValueWeightArcTip".Translate());
-                geneValueWeightArc = ls.Slider(geneValueWeightArc, 0f, 2f);
+                geneValueWeightArc = ls.SliderTextField("FCSettingGeneValueWeightArc",
+                    "FCSettingGeneValueWeightArc".Translate(), geneValueWeightArc, 0f, 2f, decimals: 2,
+                    tooltip: "FCSettingGeneValueWeightArcTip".Translate());
 
-                ls.Label("FCSettingGeneValueWeightEffects".Translate() + ": " + geneValueWeightEffects.ToString("0.00"), -1f, "FCSettingGeneValueWeightEffectsTip".Translate());
-                geneValueWeightEffects = ls.Slider(geneValueWeightEffects, 0f, 2f);
+                geneValueWeightEffects = ls.SliderTextField("FCSettingGeneValueWeightEffects",
+                    "FCSettingGeneValueWeightEffects".Translate(), geneValueWeightEffects, 0f, 2f, decimals: 2,
+                    tooltip: "FCSettingGeneValueWeightEffectsTip".Translate());
 
-                ls.Label("FCSettingGeneValueWeightPain".Translate() + ": " + geneValueWeightPain.ToString("0.00"), -1f, "FCSettingGeneValueWeightPainTip".Translate());
-                geneValueWeightPain = ls.Slider(geneValueWeightPain, 0f, 2f);
+                geneValueWeightPain = ls.SliderTextField("FCSettingGeneValueWeightPain",
+                    "FCSettingGeneValueWeightPain".Translate(), geneValueWeightPain, 0f, 2f, decimals: 2,
+                    tooltip: "FCSettingGeneValueWeightPainTip".Translate());
 
-                ls.Label("FCSettingGeneValueWeightDmgResist".Translate() + ": " + geneValueWeightDmgResist.ToString("0.00"), -1f, "FCSettingGeneValueWeightDmgResistTip".Translate());
-                geneValueWeightDmgResist = ls.Slider(geneValueWeightDmgResist, 0f, 2f);
+                geneValueWeightDmgResist = ls.SliderTextField("FCSettingGeneValueWeightDmgResist",
+                    "FCSettingGeneValueWeightDmgResist".Translate(), geneValueWeightDmgResist, 0f, 2f, decimals: 2,
+                    tooltip: "FCSettingGeneValueWeightDmgResistTip".Translate());
 
                 ls.CheckboxLabeled("FCSettingGeneValueFactorUnlimited".Translate(), ref geneValueFactorUnlimited, "FCSettingGeneValueFactorUnlimitedTip".Translate());
                 if (!geneValueFactorUnlimited)
                 {
-                    ls.Label("FCSettingGeneValueMaxFactor".Translate() + ": " + geneValueMaxFactor.ToString("0.00") + "x", -1f, "FCSettingGeneValueMaxFactorTip".Translate());
-                    geneValueMaxFactor = ls.Slider(geneValueMaxFactor, MIN_GENE_MAX_FACTOR, MAX_GENE_MAX_FACTOR);
+                    geneValueMaxFactor = ls.SliderTextField("FCSettingGeneValueMaxFactor",
+                        "FCSettingGeneValueMaxFactor".Translate(), geneValueMaxFactor, MIN_GENE_MAX_FACTOR, MAX_GENE_MAX_FACTOR, decimals: 2, unit: "x",
+                        tooltip: "FCSettingGeneValueMaxFactorTip".Translate());
                 }
             }
 
@@ -1247,8 +1274,9 @@ namespace FactionColonies
             ls.CheckboxLabeled("FCBattleArchiveUnlimited".Translate(), ref battleArchiveUnlimited, "FCBattleArchiveUnlimitedTip".Translate());
             if (!battleArchiveUnlimited)
             {
-                ls.Label("FCBattleArchiveMaxEntriesLabel".Translate() + ": " + battleArchiveMaxEntries.ToString(), -1f, "FCBattleArchiveMaxEntriesTip".Translate());
-                battleArchiveMaxEntries = (int)ls.Slider(battleArchiveMaxEntries, MIN_BATTLE_ARCHIVE_MAX_ENTRIES, MAX_BATTLE_ARCHIVE_MAX_ENTRIES);
+                battleArchiveMaxEntries = ls.SliderTextField("FCBattleArchiveMaxEntriesLabel",
+                    "FCBattleArchiveMaxEntriesLabel".Translate(), battleArchiveMaxEntries, MIN_BATTLE_ARCHIVE_MAX_ENTRIES, MAX_BATTLE_ARCHIVE_MAX_ENTRIES,
+                    tooltip: "FCBattleArchiveMaxEntriesTip".Translate());
             }
 
             DrawSectionResetButton(ls, ResetBattleArchiveToDefaults);
@@ -1265,6 +1293,7 @@ namespace FactionColonies
             Rect listRect = new Rect(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
             Listing_Standard ls = new Listing_Standard();
             ls.Begin(listRect);
+            Listing_StandardExtensions.ResetRowStripe();
 
             // Description box
             Rect descRect = ls.GetRect(Text.CalcHeight("FCSettingRoadBuilderDesc".Translate(), listRect.width - 16f) + 16f);
@@ -1278,10 +1307,9 @@ namespace FactionColonies
             ls.CheckboxLabeled("FCSettingUseThreadedRoadComputation".Translate(), ref useThreadedRoadComputation, "FCSettingUseThreadedRoadComputationDesc".Translate());
             if (!useThreadedRoadComputation)
             {
-                string edgesLabel = edgesPerRoadTick <= 0
-                    ? $"{"FCSettingEdgesPerRoadTick".Translate()}: {"Unlimited".Translate()}"
-                    : $"{"FCSettingEdgesPerRoadTick".Translate()}: {edgesPerRoadTick}";
-                edgesPerRoadTick = (int)ls.SliderLabeled(edgesLabel, edgesPerRoadTick, 0, 50);
+                edgesPerRoadTick = ls.SliderTextField("FCSettingEdgesPerRoadTick",
+                    "FCSettingEdgesPerRoadTick".Translate(), edgesPerRoadTick, 0, 50,
+                    tooltip: "FCSettingEdgesPerRoadTickTip".Translate());
             }
 
             ls.Gap(12f);
@@ -1309,6 +1337,7 @@ namespace FactionColonies
             Rect listRect = new Rect(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
             Listing_Standard ls = new Listing_Standard();
             ls.Begin(listRect);
+            Listing_StandardExtensions.ResetRowStripe();
 
             bool any = false;
 
@@ -1323,20 +1352,25 @@ namespace FactionColonies
                 ls.Label("FCSettingsCompatVPEDesc".Translate());
                 ls.Gap(6f);
 
-                ls.Label("FCSettingVPEBasePsycastCost".Translate() + ": " + vpePsycastBaseCost.ToString(), -1f, "FCSettingVPEBasePsycastCostTip".Translate());
-                vpePsycastBaseCost = (int)ls.Slider(vpePsycastBaseCost, 0f, 2000f);
+                vpePsycastBaseCost = ls.SliderTextField("FCSettingVPEBasePsycastCost",
+                    "FCSettingVPEBasePsycastCost".Translate(), vpePsycastBaseCost, 0, 2000,
+                    tooltip: "FCSettingVPEBasePsycastCostTip".Translate());
 
-                ls.Label("FCSettingVPEPerLevelCost".Translate() + ": " + vpePsycastPerLevelCost.ToString(), -1f, "FCSettingVPEPerLevelCostTip".Translate());
-                vpePsycastPerLevelCost = (int)ls.Slider(vpePsycastPerLevelCost, 0f, 2000f);
+                vpePsycastPerLevelCost = ls.SliderTextField("FCSettingVPEPerLevelCost",
+                    "FCSettingVPEPerLevelCost".Translate(), vpePsycastPerLevelCost, 0, 2000,
+                    tooltip: "FCSettingVPEPerLevelCostTip".Translate());
 
-                ls.Label("FCSettingVPEFocusCost".Translate() + ": " + vpeFocusCost.ToString(), -1f, "FCSettingVPEFocusCostTip".Translate());
-                vpeFocusCost = (int)ls.Slider(vpeFocusCost, 0f, 2000f);
+                vpeFocusCost = ls.SliderTextField("FCSettingVPEFocusCost",
+                    "FCSettingVPEFocusCost".Translate(), vpeFocusCost, 0, 2000,
+                    tooltip: "FCSettingVPEFocusCostTip".Translate());
 
-                ls.Label("FCSettingVPEStatPointCost".Translate() + ": " + vpeStatPointCost.ToString(), -1f, "FCSettingVPEStatPointCostTip".Translate());
-                vpeStatPointCost = (int)ls.Slider(vpeStatPointCost, 0f, 2000f);
+                vpeStatPointCost = ls.SliderTextField("FCSettingVPEStatPointCost",
+                    "FCSettingVPEStatPointCost".Translate(), vpeStatPointCost, 0, 2000,
+                    tooltip: "FCSettingVPEStatPointCostTip".Translate());
 
-                ls.Label("FCSettingPsycastCostMult".Translate() + ": " + militaryPsycastCostMultiplier.ToString("0.00") + "x", -1f, "FCSettingPsycastCostMultTip".Translate());
-                militaryPsycastCostMultiplier = ls.Slider((float)militaryPsycastCostMultiplier, 0f, 5f);
+                militaryPsycastCostMultiplier = ls.SliderTextField("FCSettingPsycastCostMult",
+                    "FCSettingPsycastCostMult".Translate(), (float)militaryPsycastCostMultiplier, 0f, 5f, decimals: 2, unit: "x",
+                    tooltip: "FCSettingPsycastCostMultTip".Translate());
 
                 DrawSectionResetButton(ls, ResetCompatToDefaults);
             }

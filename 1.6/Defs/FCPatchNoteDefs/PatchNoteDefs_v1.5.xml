@@ -604,4 +604,20 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_38</defName>
+		<label>Mod Settings Update</label>
+		<description>Updates the mod settings with the aim of increasing readability and control.</description>
+		<releaseDate>2026-06-21</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Condense all of the slider settings to one line, instead of two</li>
+		<li>Add a numeric text field to all slider settings so the user can input exact values</li>
+		<li>Use zebra striping and tooltip-signaling mouseover highlights to increase overall readability</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

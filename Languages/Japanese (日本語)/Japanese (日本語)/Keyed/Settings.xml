@@ -53,8 +53,8 @@ Spreading out the computation will reduce the impact on performance, but no road
   <FCSettingDeadPawnsIncreaseMilCooldown>戦死者が軍事クールダウンを増加させる</FCSettingDeadPawnsIncreaseMilCooldown>
 	<!-- EN: Disable Forced Pausing During Events -->
   <FCSettingForcedPausing>イベント中の強制一時停止を無効化</FCSettingForcedPausing>
-	<!-- EN: Event option misclick protection: {0}s -->
-  <FCSettingEventOptionDelay>イベント選択の誤クリック防止時間：{0}秒</FCSettingEventOptionDelay>
+	<!-- EN: Event option misclick protection -->
+  <FCSettingEventOptionDelay>イベント選択の誤クリック防止時間</FCSettingEventOptionDelay>
 	<!-- EN: Battle Mode:  -->
   <FCSettingBattleMode>戦闘モード：</FCSettingBattleMode>
 	<!-- EN: Auto-Resolve -->
