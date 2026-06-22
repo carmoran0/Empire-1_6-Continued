@@ -478,8 +478,14 @@ namespace FactionColonies
                     }
                     evt.phase = FCEventPhase.Fired;     // tentative; mid-processing only. Handlers wanting persistence transition to Resolving during their run.
 
-                    // Record cooldown for events that define one
-                    if (evt.def != null && evt.def.cooldownTicks > 0)
+                    // Defer the cooldown to the last chain step: re-stamp the chain root's cooldown each
+                    // time any member of its chain fires.
+                    FCEventDef cooldownRoot = FactionCache.ChainCooldownRootOf(evt.def);
+                    if (cooldownRoot != null)
+                    {
+                        faction.RecordEventCooldown(cooldownRoot);
+                    }
+                    else if (evt.def != null && evt.def.cooldownTicks > 0)
                     {
                         faction.RecordEventCooldown(evt.def);
                     }
