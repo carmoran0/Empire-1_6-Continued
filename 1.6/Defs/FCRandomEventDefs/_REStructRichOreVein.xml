@@ -10,6 +10,7 @@
     <activateAtStart>true</activateAtStart>
     <isRandomEvent>true</isRandomEvent>
     <weight>25</weight>
+    <cooldownTicks>900000</cooldownTicks>
     <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
     <requiredResource>RTD_Mining</requiredResource>
     <incompatibleEvents>

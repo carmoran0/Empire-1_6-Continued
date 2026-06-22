@@ -11,6 +11,7 @@
     <activateAtStart>true</activateAtStart>
     <isRandomEvent>true</isRandomEvent>
     <weight>25</weight>
+    <cooldownTicks>1800000</cooldownTicks>
     <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
     <requiredResource>RTD_Food</requiredResource>
     <incompatibleEvents>

@@ -10,6 +10,7 @@
     <activateAtStart>true</activateAtStart>
     <isRandomEvent>true</isRandomEvent>
     <weight>10</weight>
+    <cooldownTicks>600000</cooldownTicks>
     <rangeSettlementsAffected>1~1</rangeSettlementsAffected>
     <requiredResource>RTD_Animals</requiredResource>
     <incompatibleEvents>
