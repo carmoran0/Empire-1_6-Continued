@@ -160,6 +160,14 @@ namespace FactionColonies
                 && res.def.CanTithe;
         }
         /// <summary>
+        /// Baseline (pre tech-level) trader wealth multiplier. A default-tech (Industrial)
+        /// empire at default <see cref="FCSettings.silverPerResource"/> ends up at exactly this
+        /// scale, so it doubles as the reference point for scaling caravan size relative to a
+        /// "normal" empire (see EmpireCaravanStockGenerator.baseThingCount).
+        /// </summary>
+        internal const float BaseExtraScale = 3f;
+
+        /// <summary>
         /// Provides extra scaling for the trader's wealth. Centralized for ease of editing.
         /// </summary>
         /// <returns></returns>
@@ -169,7 +177,7 @@ namespace FactionColonies
             // 20 if overmax is assigned. If we assume that each worker produces 1.5 production, and that 1 production
             // is 100 silver, then that's only about 2250 - 3000 silver. That's a very small amount for settlement
             // trading.
-            float extraScale = 3f;
+            float extraScale = BaseExtraScale;
 
             FactionFC faction = FindFC.FactionComp;
             if (faction is object)
