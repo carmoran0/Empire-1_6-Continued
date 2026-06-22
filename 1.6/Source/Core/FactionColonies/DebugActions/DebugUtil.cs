@@ -738,6 +738,49 @@ namespace FactionColonies
             });
         }
 
+        [DebugAction("Empire", "Set Settlement Stat (All Settlements)", allowedGameStates = AllowedGameStates.Playing)]
+        private static void SetSettlementStatAll()
+        {
+            if (FindFC.Settlements.NullOrEmpty())
+            {
+                LogUtil.MessageForce("Debug - Set Settlement Stat (All Settlements): no settlements.");
+                return;
+            }
+
+            List<DebugMenuOption> stats = new List<DebugMenuOption>();
+            string[] statNames = { "happiness", "loyalty", "unrest", "prosperity" };
+            foreach (string stat in statNames)
+            {
+                string localStat = stat;
+                stats.Add(new DebugMenuOption(localStat, DebugMenuOptionMode.Action, () =>
+                {
+                    List<DebugMenuOption> values = new List<DebugMenuOption>();
+                    foreach (int val in new[] { 0, 25, 50, 75, 100 })
+                    {
+                        int localVal = val;
+                        values.Add(new DebugMenuOption(localVal.ToString(), DebugMenuOptionMode.Action, () =>
+                        {
+                            int count = 0;
+                            foreach (WorldSettlementFC settlement in FindFC.Settlements)
+                            {
+                                switch (localStat)
+                                {
+                                    case "happiness": settlement.happiness = localVal; break;
+                                    case "loyalty": settlement.loyalty = localVal; break;
+                                    case "unrest": settlement.unrest = localVal; break;
+                                    case "prosperity": settlement.prosperity = localVal; break;
+                                }
+                                count++;
+                            }
+                            LogUtil.MessageForce($"Debug - Set {localStat} = {localVal} for {count} settlement(s)");
+                        }));
+                    }
+                    Find.WindowStack.Add(new Dialog_DebugOptionListLister(values));
+                }));
+            }
+            Find.WindowStack.Add(new Dialog_DebugOptionListLister(stats));
+        }
+
         [DebugAction("Empire", "Create Settlement (Instant)", allowedGameStates = AllowedGameStates.PlayingOnWorld)]
         private static void CreateSettlementInstant()
         {
