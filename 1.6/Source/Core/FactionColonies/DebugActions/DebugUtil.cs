@@ -834,6 +834,86 @@ namespace FactionColonies
             LogUtil.MessageForce($"Debug - Created {created}/10 random settlements.");
         }
 
+        [DebugAction("Empire", "Create Settlement Per Resource (L5, workers maxed)", allowedGameStates = AllowedGameStates.Playing)]
+        private static void CreateSettlementPerResource()
+        {
+            FactionFC faction = FindFC.FactionComp;
+            if (faction is null)
+            {
+                LogUtil.MessageForce("Debug - FactionFC WorldComponent is null, cannot create settlements.");
+                return;
+            }
+
+            WorldSettlementDef def = WorldSettlementDefOf.WorldSettlementDef_Surface;
+            const int maxAttempts = 300;
+
+            int created = 0;
+            int specialtyCount = 0;
+            int skipped = 0;
+            StringBuilder summary = new StringBuilder();
+
+            foreach (ResourceTypeDef rtd in FactionCache.AllResourceTypeDefs)
+            {
+                /* Find a settleable surface tile, preferring a biome that boosts this resource (additive > 1) */
+                PlanetTile bestTile = PlanetTile.Invalid;
+                PlanetTile fallbackTile = PlanetTile.Invalid;
+                for (int attempt = 0; attempt < maxAttempts; attempt++)
+                {
+                    PlanetTile tile = TileFinder.RandomSettlementTileFor(Find.WorldGrid.Surface, FindFC.EmpireFaction);
+                    if (!tile.Valid) continue;
+                    if (!WorldTileChecker.IsValidTileForNewSettlement(tile, def)) continue;
+
+                    BiomeResourceDef bres = DefDatabase<BiomeResourceDef>.GetNamed(tile.Tile.PrimaryBiome.defName, false)
+                        ?? BiomeResourceDefOf.defaultBiome;
+                    ResourceAvailability avail = bres.GetBiomeResource(rtd);
+                    if (avail is null) continue; /* biome blocks this resource entirely */
+
+                    if (!fallbackTile.Valid) fallbackTile = tile;
+                    if (avail.additive > 1)
+                    {
+                        bestTile = tile;
+                        break;
+                    }
+                }
+
+                bool usedSpecialty = bestTile.Valid;
+                PlanetTile chosen = usedSpecialty ? bestTile : fallbackTile;
+                if (!chosen.Valid)
+                {
+                    LogUtil.Warning($"Create Settlement Per Resource - no placeable tile found for {rtd.defName}, skipping.");
+                    summary.AppendLine($"  {rtd.defName}: SKIPPED (no tile)");
+                    skipped++;
+                    continue;
+                }
+
+                WorldSettlementFC s = ColonyUtil.CreatePlayerColonySettlement(chosen, def);
+                created++;
+                if (usedSpecialty) specialtyCount++;
+
+                /* Level to 5 (clamped to FCSettings.settlementMaxLevel / def.maxSettlementLevel) */
+                s.UpgradeSettlement(5 - s.settlementLevel);
+
+                /* Load the whole worker pool onto this settlement's matching resource */
+                ResourceFC target = s.GetResource(rtd);
+                int cap = (int)s.workersUltraMax;
+                string biomeNote = usedSpecialty ? "specialty biome" : "base biome";
+                if (target is null)
+                {
+                    LogUtil.Warning($"Create Settlement Per Resource - {s.Name} has no {rtd.defName} resource (biome/tech restricted), skipping worker assignment.");
+                    summary.AppendLine($"  {rtd.defName}: {s.Name} L{s.settlementLevel} ({biomeNote}), no workers (resource absent)");
+                }
+                else
+                {
+                    /* Drain any pre-assigned workers, then fill the target resource to the cap */
+                    foreach (ResourceFC r in s.Resources) s.IncreaseWorkers(r, -(cap + 1));
+                    s.IncreaseWorkers(target, cap);
+                    summary.AppendLine($"  {rtd.defName}: {s.Name} L{s.settlementLevel} ({biomeNote}), {target.assignedWorkers} workers");
+                }
+            }
+
+            LogUtil.MessageForce($"Debug - Create Settlement Per Resource: created {created} settlement(s) ({specialtyCount} on specialty biomes, {skipped} skipped).\n{summary}");
+        }
+
         [DebugAction("Empire", "Remove Player Settlement", allowedGameStates = AllowedGameStates.Playing)]
         private static void RemovePlayerSettlement()
         {
