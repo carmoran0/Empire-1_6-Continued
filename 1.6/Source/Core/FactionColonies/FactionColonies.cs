@@ -340,7 +340,7 @@ namespace FactionColonies
         public static Dictionary<string, string> lastSeenVersions = new Dictionary<string, string>();
 
         // Patch notes auto-open threshold
-        public const PatchNoteType DEFAULT_PATCH_NOTE_AUTO_OPEN_THRESHOLD = PatchNoteType.Major;
+        public const PatchNoteType DEFAULT_PATCH_NOTE_AUTO_OPEN_THRESHOLD = PatchNoteType.Undefined;
         public static PatchNoteType patchNoteAutoOpenThreshold = DEFAULT_PATCH_NOTE_AUTO_OPEN_THRESHOLD;
 
         // Saved color picker colors (persisted across sessions)
