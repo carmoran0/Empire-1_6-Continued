@@ -29,6 +29,14 @@ namespace FactionColonies
         public List<FCPolicyDef> requiredPolicies = new List<FCPolicyDef>();
         public FCRequirementMode requirementMode = FCRequirementMode.All;
 
+        /* Ideology meme gate, parallel to requiredPolicies. Stored as MemeDef defName strings
+         * (not List<MemeDef>) because MemeDefs only exist when the Ideology DLC is loaded; strings
+         * have no cross-reference to resolve, so meme-gated option defs load error-free even
+         * without Ideology. When Ideology is off, FCOptionWindow hides any option with a meme gate.
+         * Resolved to MemeDef at runtime via MemeUtilFC only when Ideology is active. */
+        public List<string> requiredMemes = new List<string>();
+        public FCRequirementMode memeRequirementMode = FCRequirementMode.All;
+
         public int EffectiveSilverCost
         {
             get { return Math.Max(0, (int)Math.Round(silverCost * FCSettings.eventSilverCostMultiplier, MidpointRounding.AwayFromZero)); }
@@ -45,6 +53,25 @@ namespace FactionColonies
                 && evt.optionCostSnapshots.TryGetValue(this.defName, out int snapped))
                 return snapped;
             return FCOptionCostUtil.ComputeScaledCost(this, evt);
+        }
+
+        public override IEnumerable<string> ConfigErrors()
+        {
+            foreach (string err in base.ConfigErrors())
+                yield return err;
+
+            /* Validate meme defNames only when Ideology is active. Without the DLC the MemeDefs
+             * legitimately don't exist, so an unresolved name is expected, not an error. */
+            if (ModsConfig.IdeologyActive && requiredMemes != null)
+            {
+                foreach (string memeName in requiredMemes)
+                {
+                    if (memeName.NullOrEmpty())
+                        yield return $"{defName}: requiredMemes contains an empty entry";
+                    else if (DefDatabase<MemeDef>.GetNamedSilentFail(memeName) is null)
+                        yield return $"{defName}: requiredMemes contains unknown meme '{memeName}'";
+                }
+            }
         }
     }
 
@@ -68,6 +95,9 @@ namespace FactionColonies
         public string header;
         public string desc;
         public FCEvent parentEvent;
+
+        // Set when the constructor finds no visible options; PostOpen closes the window at once.
+        private bool closeImmediately;
 
         private Color categoryColor;
         private List<WorldSettlementFC> affectedSettlements;
@@ -101,7 +131,32 @@ namespace FactionColonies
             this.preventSave = true;
 
             this.header = evt.label;
-            this.options = evt.options;
+
+            /* Hide meme-gated options entirely when the Ideology DLC is off (the only behavioral
+             * difference from policy gating, which greys unmet options instead). Build a filtered
+             * copy — never mutate the def's list. */
+            if (!ModsConfig.IdeologyActive)
+            {
+                this.options = evt.options
+                    .Where(o => o.requiredMemes == null || o.requiredMemes.Count == 0)
+                    .ToList();
+            }
+            else
+            {
+                this.options = evt.options;
+            }
+
+            /* An event with options must always present at least one pickable (free, ungated)
+             * choice — enforced by FCEventDef.ConfigErrors. If filtering still leaves nothing to
+             * show, the def is misconfigured (e.g. every option meme-gated while Ideology is off).
+             * Don't soldier on with an empty, undismissable window: log and close immediately. */
+            if (this.options.Count == 0)
+            {
+                LogUtil.Error($"FCOptionWindow for event '{evt.defName}' has no visible options"
+                    + (!ModsConfig.IdeologyActive ? " (all options are meme-gated and Ideology is disabled)" : "")
+                    + "; closing. Every event with options must have at least one free, non-gated option.");
+                closeImmediately = true;
+            }
             this.desc = (evt.optionDescription.NullOrEmpty() ? evt.desc : evt.optionDescription).Format();
             this.parentEvent = parentEvent;
 
@@ -233,6 +288,13 @@ namespace FactionColonies
             );
         }
 
+        public override void PostOpen()
+        {
+            base.PostOpen();
+            // Constructor flagged an empty option list — close before the first frame is drawn.
+            if (closeImmediately) Close(false);
+        }
+
         public override void DoWindowContents(Rect inRect)
         {
             GameFont fontBefore = Text.Font;
@@ -312,8 +374,10 @@ namespace FactionColonies
                 int effectiveCost = opt.GetEffectiveSilverCost(parentEvent);
                 bool affordable = currentSilver >= effectiveCost;
                 bool isFree = effectiveCost <= 0;
-                string requirementFailReason;
-                bool meetsRequirements = MeetsPolicyRequirements(opt, out requirementFailReason);
+                bool meetsPolicy = MeetsPolicyRequirements(opt, out string policyFail);
+                bool meetsMeme = MeetsMemeRequirements(opt, out string memeFail);
+                bool meetsRequirements = meetsPolicy && meetsMeme;
+                string requirementFailReason = policyFail ?? memeFail;
                 string handlerUnavailableReason = null;
                 bool handlerAvailable = optHandler == null ||
                     optHandler.IsOptionAvailable(opt, parentEvent, out handlerUnavailableReason);
@@ -376,14 +440,23 @@ namespace FactionColonies
                 if (!available) successColor = new Color(successColor.r * 0.5f, successColor.g * 0.5f, successColor.b * 0.5f);
                 UIUtil.DrawColoredLabel(new Rect(metaRect.x, metaRect.y, metaRect.width * 0.6f, metaRect.height), successLabel, successColor);
 
-                // Policy tag (always visible)
-                if (opt.requiredPolicies != null && opt.requiredPolicies.Count > 0)
+                // Requirement tag (policy and/or meme; always visible)
+                bool hasPolicyReq = opt.requiredPolicies != null && opt.requiredPolicies.Count > 0;
+                bool hasMemeReq = opt.requiredMemes != null && opt.requiredMemes.Count > 0;
+                if (hasPolicyReq || hasMemeReq)
                 {
-                    string policyTag;
-                    if (opt.requirementMode == FCRequirementMode.Any)
-                        policyTag = string.Join(" / ", opt.requiredPolicies.Select(p => p.LabelCap));
-                    else
-                        policyTag = string.Join(", ", opt.requiredPolicies.Select(p => p.LabelCap));
+                    List<string> tagParts = new List<string>();
+                    if (hasPolicyReq)
+                    {
+                        string sep = opt.requirementMode == FCRequirementMode.Any ? " / " : ", ";
+                        tagParts.Add(string.Join(sep, opt.requiredPolicies.Select(p => p.LabelCap.ToString())));
+                    }
+                    if (hasMemeReq)
+                    {
+                        string sep = opt.memeRequirementMode == FCRequirementMode.Any ? " / " : ", ";
+                        tagParts.Add(string.Join(sep, opt.requiredMemes.Select(m => MemeUtilFC.EmpireMemeLabel(m))));
+                    }
+                    string policyTag = string.Join(", ", tagParts);
 
                     // Measure cost area so the tag gets all remaining space
                     float costAreaWidth;
@@ -693,6 +766,43 @@ namespace FactionColonies
                 if (missing.Count > 0)
                 {
                     failReason = "FCOptionRequiresPolicy".Translate(string.Join(", ", missing));
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        /* Meme sibling of MeetsPolicyRequirements. Checks the empire's primary ideo via
+         * MemeUtilFC. Meme-gated options are only ever drawn when Ideology is active (they're
+         * filtered out otherwise), so this runs only in that context. */
+        private static bool MeetsMemeRequirements(FCOptionDef opt, out string failReason)
+        {
+            failReason = null;
+            if (opt.requiredMemes == null || opt.requiredMemes.Count == 0)
+                return true;
+
+            if (opt.memeRequirementMode == FCRequirementMode.Any)
+            {
+                foreach (string required in opt.requiredMemes)
+                {
+                    if (MemeUtilFC.EmpireHasMeme(required))
+                        return true;
+                }
+                string allNames = string.Join(", ", opt.requiredMemes.Select(m => MemeUtilFC.EmpireMemeLabel(m)));
+                failReason = "FCOptionRequiresMemeAny".Translate(allNames);
+                return false;
+            }
+            else
+            {
+                List<string> missing = new List<string>();
+                foreach (string required in opt.requiredMemes)
+                {
+                    if (!MemeUtilFC.EmpireHasMeme(required))
+                        missing.Add(MemeUtilFC.EmpireMemeLabel(required));
+                }
+                if (missing.Count > 0)
+                {
+                    failReason = "FCOptionRequiresMeme".Translate(string.Join(", ", missing));
                     return false;
                 }
                 return true;
