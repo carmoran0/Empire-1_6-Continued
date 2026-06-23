@@ -1350,6 +1350,68 @@ namespace FactionColonies
             Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
         }
 
+        /* Mirror of "Force Trigger Event" that lets you pick which follow-up of a queued
+         * chain event to spawn, bypassing the random roll in FCEventMaker.ProcessEvents. */
+        [DebugAction("Empire", "Force Trigger Followup", allowedGameStates = AllowedGameStates.Playing)]
+        private static void ForceTriggerFollowup()
+        {
+            List<DebugMenuOption> list = new List<DebugMenuOption>();
+            foreach (FCEvent evt in FindFC.Events)
+            {
+                if (!evt.def.HasFollowUp) continue;
+                FCEvent localEvt = evt;
+                int ticksLeft = localEvt.timeTillTrigger - Find.TickManager.TicksGame;
+                list.Add(new DebugMenuOption(
+                    $"{localEvt.def.defName} (in {ticksLeft} ticks)",
+                    DebugMenuOptionMode.Action, () => Find.WindowStack.Add(
+                        new Dialog_DebugOptionListLister(BuildFollowupOptions(localEvt)))));
+            }
+            Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
+        }
+
+        // Builds the second-level menu of follow-up branches for a queued chain event,
+        // mirroring the branch semantics of FCEventMaker.ProcessEvents.
+        private static List<DebugMenuOption> BuildFollowupOptions(FCEvent parent)
+        {
+            List<DebugMenuOption> options = new List<DebugMenuOption>();
+            FCEventDef def = parent.def;
+            if (def.splitEventFollows)
+            {
+                if (def.followingEvent is object)
+                    options.Add(MakeFollowupOption(parent, def.followingEvent,
+                        $"{def.followingEvent.defName} (split {def.splitEventChance}%)"));
+                if (def.followingEvent2 is object)
+                    options.Add(MakeFollowupOption(parent, def.followingEvent2,
+                        $"{def.followingEvent2.defName} (split {100 - def.splitEventChance}%)"));
+            }
+            else if (def.followingEvent is object)
+            {
+                options.Add(MakeFollowupOption(parent, def.followingEvent,
+                    $"{def.followingEvent.defName} (guaranteed)"));
+            }
+            return options;
+        }
+
+        // Spawns the chosen follow-up immediately, reusing the spawn logic from
+        // FCEventMaker.ProcessEvents (MakeRandomEvent + AddEvent + letter).
+        private static DebugMenuOption MakeFollowupOption(FCEvent parent, FCEventDef target, string label)
+        {
+            return new DebugMenuOption(label, DebugMenuOptionMode.Action, () =>
+            {
+                List<WorldSettlementFC> settlements = parent.def.settlementsCarryOver
+                    ? parent.settlementTraitLocations
+                    : null;
+                FCEvent tempEvent = FCEventMaker.MakeRandomEvent(target, settlements);
+                if (tempEvent != null)
+                {
+                    FindFC.EventManager.AddEvent(tempEvent);
+                    Find.LetterStack.ReceiveLetter(tempEvent.def.label,
+                        FCEventMaker.BuildEventLetterBody(tempEvent), LetterDefOf.NeutralEvent);
+                }
+                LogUtil.MessageForce($"Debug - Force triggering followup {target.defName} of {parent.def.defName}");
+            });
+        }
+
         // ============================
         // Road Debug Actions
         // ============================
