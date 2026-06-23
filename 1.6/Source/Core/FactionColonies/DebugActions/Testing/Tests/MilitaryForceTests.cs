@@ -123,11 +123,10 @@ namespace FactionColonies
         [EmpireTest("MilitaryForce")]
         public static void CreateFromSquad_ForceEqualsResolvedSquadPower_NoHiddenSettlementBonus()
         {
-            // Regression: previously, the defender-selection paths added the besieged settlement's
-            // settlementMilitaryLevel onto a foreign squad's force via homeDefendingForce, while
-            // the home squad fought without it. The squad-only model means CreateMilitaryForceFromSquad
-            // (with no homeDefendingForce) should produce a militaryLevel equal to the squad's
-            // resolved power level (no settlement-based addition).
+            // The squad-only model means CreateMilitaryForceFromSquad produces a militaryLevel
+            // equal to the squad's resolved power level (plus faction-wide bonuses only) — the
+            // settlement being defended contributes nothing. This guards against any settlement-
+            // based addition creeping back into the defender-selection paths.
             FactionFC faction = FindFC.FactionComp;
             if (faction is null) TestAssert.Skip("No FactionFC");
 

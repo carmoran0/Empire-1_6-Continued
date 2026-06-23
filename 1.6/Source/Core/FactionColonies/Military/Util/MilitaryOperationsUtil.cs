@@ -105,8 +105,7 @@ namespace FactionColonies
             }
             else
             {
-                MilitaryForce homeForce = MilitaryForce.CreateMilitaryForceFromSettlement(homeSettlement, isAttacking: true);
-                newForce = MilitaryForce.CreateMilitaryForceFromSettlement(settlementOfMilitaryForce, homeDefendingForce: homeForce);
+                newForce = MilitaryForce.CreateMilitaryForceFromSettlement(settlementOfMilitaryForce);
                 op.defender.homeSettlement = settlementOfMilitaryForce;
                 op.defender.squad = PickFirstAvailableStationedSquad(settlementOfMilitaryForce);
                 op.defender.force = newForce;
@@ -123,8 +122,8 @@ namespace FactionColonies
         /// <summary>
         /// Replaces the defending side of the op linked to <paramref name="evt"/> with the
         /// given <paramref name="squad"/>. The squad's <see cref="MercenarySquadFC.settlement"/>
-        /// becomes the new <c>op.defender.homeSettlement</c>; foreign squads blend the home
-        /// settlement's base force into the projected defender.
+        /// becomes the new <c>op.defender.homeSettlement</c>. The defending force is
+        /// squad-only: the settlement being defended contributes nothing.
         /// <para>User-facing entry. For the auto-defender / debug paths still routed through settlements,
         /// see <see cref="ChangeDefendingMilitaryForce"/>.</para>
         /// </summary>
