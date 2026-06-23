@@ -22,6 +22,7 @@
       <li>denseWildlife_1-1</li>
       <li>denseWildlife_1-2</li>
       <li>denseWildlife_1-3</li>
+      <li>denseWildlife_1-sanctuary</li>
       <li>sparseWildlife_0</li>
       <li>sparseWildlife_1-1</li>
       <li>sparseWildlife_1-2</li>
@@ -31,6 +32,7 @@
       <li>denseWildlife_0_1</li>
       <li>denseWildlife_0_2</li>
       <li>denseWildlife_0_3</li>
+      <li>denseWildlife_0_sanctuary</li>
     </options>
   </FactionColonies.FCEventDef>
 
@@ -56,6 +58,17 @@
     <parentEvent>denseWildlife_0</parentEvent>
     <baseChanceOfSuccess>100</baseChanceOfSuccess>
     <successEvent>denseWildlife_1-3</successEvent>
+  </FactionColonies.FCOptionDef>
+
+  <FactionColonies.FCOptionDef>
+    <defName>denseWildlife_0_sanctuary</defName>
+    <label>Establish a sanctuary. These creatures are people too, and they share this world with us.</label>
+    <parentEvent>denseWildlife_0</parentEvent>
+    <baseChanceOfSuccess>100</baseChanceOfSuccess>
+    <successEvent>denseWildlife_1-sanctuary</successEvent>
+    <requiredMemes>
+      <li>AnimalPersonhood</li>
+    </requiredMemes>
   </FactionColonies.FCOptionDef>
 
   <FactionColonies.FCEventDef>
@@ -130,6 +143,29 @@
     </incompatibleEvents>
     <randomThingValue>2200</randomThingValue>
     <randomThingRewardDef>RERD_Animals</randomThingRewardDef>
+  </FactionColonies.FCEventDef>
+
+  <FactionColonies.FCEventDef>
+    <defName>denseWildlife_1-sanctuary</defName>
+    <label>Dense Wildlife (Sanctuary)</label>
+    <desc>Rather than hunt or pen the animals, your settlements set aside the land as a sanctuary where the creatures live unmolested. The people take quiet pride in sharing their world rather than ruling it, and the herds that linger near the settlements still provide for those who tend them gently.</desc>
+    <category>EC_Economy</category>
+    <timeTillTrigger>1500</timeTillTrigger>
+    <rangeSettlementsAffected>1~3</rangeSettlementsAffected>
+    <incompatibleEvents>
+      <li>denseWildlife_0</li>
+      <li>sparseWildlife_0</li>
+    </incompatibleEvents>
+    <permanentStatModifiers>
+      <li>
+        <stat>happinessGainedBase</stat>
+        <value>0.5</value>
+      </li>
+      <li>
+        <stat>RTD_Animals_ProductionAdditive</stat>
+        <value>0.25</value>
+      </li>
+    </permanentStatModifiers>
   </FactionColonies.FCEventDef>
 
 </Defs>
