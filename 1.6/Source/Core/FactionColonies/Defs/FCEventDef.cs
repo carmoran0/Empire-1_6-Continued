@@ -56,6 +56,10 @@ namespace FactionColonies
         public bool splitEventFollows = false;
         public int splitEventChance = 50;
 
+        // A follow-up exists if EITHER flag is set: eventFollows = deterministic follow-up,
+        // splitEventFollows = probabilistic/branching follow-up. Requiring both was a footgun.
+        public bool HasFollowUp => eventFollows || splitEventFollows;
+
         //Rewards
         public List<ThingDef> loot = new List<ThingDef>();
         public int randomThingValue = 0;

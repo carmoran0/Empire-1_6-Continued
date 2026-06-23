@@ -653,7 +653,7 @@ namespace FactionColonies
                     }
 
                     //if has following event
-                    if (evt.def.eventFollows)
+                    if (evt.def.HasFollowUp)
                     {
                         FCEventDef target;
                         if (evt.def.splitEventFollows)

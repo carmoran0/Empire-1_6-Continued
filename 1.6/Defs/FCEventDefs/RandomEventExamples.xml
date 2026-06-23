@@ -25,12 +25,17 @@
 			<!--<li>randomEventExample2</li>-->
 		</incompatibleEvents>
 		
-		<eventFollows>false</eventFollows> <!-- If an event (or two possible events) follow this one without input -->
+		<!-- Follow-up chaining: a follow-up fires if EITHER eventFollows OR splitEventFollows is true.
+		     Use eventFollows for a guaranteed follow-up; use splitEventFollows for a chance-based one.
+		     For a chance-based follow-up you set splitEventFollows true (eventFollows can stay false).
+		     splitEventChance is the % chance followingEvent fires; otherwise followingEvent2 fires
+		     (leave followingEvent2 empty to make the chain simply end on that roll). -->
+		<eventFollows>false</eventFollows> <!-- Set true for a guaranteed followingEvent after this one (no player input) -->
 		<followingEvent><!--first event--></followingEvent>
-		
-		<splitEventFollows>false</splitEventFollows> <!-- If true, can make a second event happen instead-->
-		<splitEventChance>50</splitEventChance> <!-- The chance that the first event will occur-->
-		<followingEvent2><!--Second event (if random)--></followingEvent2>
+
+		<splitEventFollows>false</splitEventFollows> <!-- Set true for a chance-based follow-up driven by splitEventChance -->
+		<splitEventChance>50</splitEventChance> <!-- % chance followingEvent fires (else followingEvent2, or nothing if it's empty). Only used when splitEventFollows is true -->
+		<followingEvent2><!--Second event (if random); leave empty so the chain ends on the 'else' roll--></followingEvent2>
 		
 		
 		

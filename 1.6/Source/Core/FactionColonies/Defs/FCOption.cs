@@ -604,7 +604,7 @@ namespace FactionColonies
             // Follow-up indicator: note when the success event chains into a further event.
             // One-hop lookahead only. Possible = split branch may be null (chain may terminate);
             // certain covers both unsplit and split-with-both-branches-defined.
-            if (resultEvent.eventFollows)
+            if (resultEvent.HasFollowUp)
             {
                 bool hasBranch1 = resultEvent.followingEvent is object;
                 bool hasBranch2 = resultEvent.followingEvent2 is object;
