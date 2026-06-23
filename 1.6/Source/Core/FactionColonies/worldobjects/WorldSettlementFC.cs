@@ -1479,10 +1479,14 @@ namespace FactionColonies
             settlementMilitaryLevel = settlementLevel - 1 + Convert.ToInt32(GetStatValue(FCStatDefOf.militaryBaseLevel));
 
             //Worker Stats
-            _workersMax = settlementDef.workersMaxBase + (settlementLevel * (settlementDef.workersMaxMult + extraWorkersSoftcap)) +
-                         GetStatValue(FCStatDefOf.workerBaseMax) + (PrisonerComp?.ReturnMaxWorkersFromPrisoners() ?? 0);
-            _workersUltraMax = _workersMax + settlementDef.workersUltraMaxBase + overMaxAdjustment + (settlementLevel * settlementDef.workersUltraMaxMult) +
-                              GetStatValue(FCStatDefOf.workerBaseOverMax) + (PrisonerComp?.ReturnOverMaxWorkersFromPrisoners() ?? 0);
+            //Floor at 1: harsh event modifiers (negative workerBaseMax) can otherwise drive the max below zero
+            //on low-level settlements. There must always be at least 1 worker slot available for assignment.
+            _workersMax = Math.Max(1, settlementDef.workersMaxBase + (settlementLevel * (settlementDef.workersMaxMult + extraWorkersSoftcap)) +
+                         GetStatValue(FCStatDefOf.workerBaseMax) + (PrisonerComp?.ReturnMaxWorkersFromPrisoners() ?? 0));
+            //Floor at _workersMax: negative overMaxAdjustment/workerBaseOverMax must never push the ultra cap below the normal max
+            //(keeps the overmax capacity, workersUltraMax - workersMax, non-negative).
+            _workersUltraMax = Math.Max(_workersMax, _workersMax + settlementDef.workersUltraMaxBase + overMaxAdjustment + (settlementLevel * settlementDef.workersUltraMaxMult) +
+                              GetStatValue(FCStatDefOf.workerBaseOverMax) + (PrisonerComp?.ReturnOverMaxWorkersFromPrisoners() ?? 0));
 
             dirtyStatsCache = false;
             dirtyProfitCache = true;

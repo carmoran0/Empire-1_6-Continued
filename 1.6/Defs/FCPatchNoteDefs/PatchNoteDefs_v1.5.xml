@@ -620,4 +620,26 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_39</defName>
+		<label>Even More Fixes</label>
+		<description>Several more fixes and minor changes prior to this week&apos;s update.</description>
+		<releaseDate>2026-06-22</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Add cooldowns to all random events, including a 60 day cooldown on the infamous Death In The Family event</li>
+		<li>The Gravtech resource is now locked behind Basic Gravtech</li>
+		<li>Empire Caravans are now limited in the number of items they stock, which should eliminate the possibility of caravans with tons of pack animals (that likely only would happen with 10+ level settlements anyways)</li>
+		<li>Fix for minor stat modifier colorizing issues in some UI</li>
+		<li>Events can be gated by Ideology memes now. Meme-gated options are culled from the list entirely if Ideology isn&apos;t active</li>
+		<li>Add meme-gated options to Dense Wildlife and Widespread Food Shortage events</li>
+		<li>Bugfix: it was possible for the number of available workers at a settlement to go negative</li>
+		<li>When an event affects more than 3 settlements, the options window now says merely &quot;N Settlements&quot; (or &quot;All Settlements&quot; if actually all settlements are affected)</li>
+		<li>The &quot;Assigned Workers&quot; and &quot;Assigned Overmax Workers&quot; boxes in the settlement window now have tooltips listing all active stat modifiers on them</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

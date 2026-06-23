@@ -86,5 +86,7 @@
 	<FCNotEnoughSilverOption>You do not have enough silver on the map to pay for that option</FCNotEnoughSilverOption>
 	<FCOptionRequiresPolicy>Requires: {0}</FCOptionRequiresPolicy>
 	<FCOptionRequiresPolicyAny>Requires one of: {0}</FCOptionRequiresPolicyAny>
+	<FCOptionRequiresMeme>Requires meme: {0}</FCOptionRequiresMeme>
+	<FCOptionRequiresMemeAny>Requires one of these memes: {0}</FCOptionRequiresMemeAny>
 
 </LanguageData>

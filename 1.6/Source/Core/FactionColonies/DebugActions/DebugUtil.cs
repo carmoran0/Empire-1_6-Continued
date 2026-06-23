@@ -738,6 +738,49 @@ namespace FactionColonies
             });
         }
 
+        [DebugAction("Empire", "Set Settlement Stat (All Settlements)", allowedGameStates = AllowedGameStates.Playing)]
+        private static void SetSettlementStatAll()
+        {
+            if (FindFC.Settlements.NullOrEmpty())
+            {
+                LogUtil.MessageForce("Debug - Set Settlement Stat (All Settlements): no settlements.");
+                return;
+            }
+
+            List<DebugMenuOption> stats = new List<DebugMenuOption>();
+            string[] statNames = { "happiness", "loyalty", "unrest", "prosperity" };
+            foreach (string stat in statNames)
+            {
+                string localStat = stat;
+                stats.Add(new DebugMenuOption(localStat, DebugMenuOptionMode.Action, () =>
+                {
+                    List<DebugMenuOption> values = new List<DebugMenuOption>();
+                    foreach (int val in new[] { 0, 25, 50, 75, 100 })
+                    {
+                        int localVal = val;
+                        values.Add(new DebugMenuOption(localVal.ToString(), DebugMenuOptionMode.Action, () =>
+                        {
+                            int count = 0;
+                            foreach (WorldSettlementFC settlement in FindFC.Settlements)
+                            {
+                                switch (localStat)
+                                {
+                                    case "happiness": settlement.happiness = localVal; break;
+                                    case "loyalty": settlement.loyalty = localVal; break;
+                                    case "unrest": settlement.unrest = localVal; break;
+                                    case "prosperity": settlement.prosperity = localVal; break;
+                                }
+                                count++;
+                            }
+                            LogUtil.MessageForce($"Debug - Set {localStat} = {localVal} for {count} settlement(s)");
+                        }));
+                    }
+                    Find.WindowStack.Add(new Dialog_DebugOptionListLister(values));
+                }));
+            }
+            Find.WindowStack.Add(new Dialog_DebugOptionListLister(stats));
+        }
+
         [DebugAction("Empire", "Create Settlement (Instant)", allowedGameStates = AllowedGameStates.PlayingOnWorld)]
         private static void CreateSettlementInstant()
         {
@@ -832,6 +875,86 @@ namespace FactionColonies
             }
 
             LogUtil.MessageForce($"Debug - Created {created}/10 random settlements.");
+        }
+
+        [DebugAction("Empire", "Create Settlement Per Resource (L5, workers maxed)", allowedGameStates = AllowedGameStates.Playing)]
+        private static void CreateSettlementPerResource()
+        {
+            FactionFC faction = FindFC.FactionComp;
+            if (faction is null)
+            {
+                LogUtil.MessageForce("Debug - FactionFC WorldComponent is null, cannot create settlements.");
+                return;
+            }
+
+            WorldSettlementDef def = WorldSettlementDefOf.WorldSettlementDef_Surface;
+            const int maxAttempts = 300;
+
+            int created = 0;
+            int specialtyCount = 0;
+            int skipped = 0;
+            StringBuilder summary = new StringBuilder();
+
+            foreach (ResourceTypeDef rtd in FactionCache.AllResourceTypeDefs)
+            {
+                /* Find a settleable surface tile, preferring a biome that boosts this resource (additive > 1) */
+                PlanetTile bestTile = PlanetTile.Invalid;
+                PlanetTile fallbackTile = PlanetTile.Invalid;
+                for (int attempt = 0; attempt < maxAttempts; attempt++)
+                {
+                    PlanetTile tile = TileFinder.RandomSettlementTileFor(Find.WorldGrid.Surface, FindFC.EmpireFaction);
+                    if (!tile.Valid) continue;
+                    if (!WorldTileChecker.IsValidTileForNewSettlement(tile, def)) continue;
+
+                    BiomeResourceDef bres = DefDatabase<BiomeResourceDef>.GetNamed(tile.Tile.PrimaryBiome.defName, false)
+                        ?? BiomeResourceDefOf.defaultBiome;
+                    ResourceAvailability avail = bres.GetBiomeResource(rtd);
+                    if (avail is null) continue; /* biome blocks this resource entirely */
+
+                    if (!fallbackTile.Valid) fallbackTile = tile;
+                    if (avail.additive > 1)
+                    {
+                        bestTile = tile;
+                        break;
+                    }
+                }
+
+                bool usedSpecialty = bestTile.Valid;
+                PlanetTile chosen = usedSpecialty ? bestTile : fallbackTile;
+                if (!chosen.Valid)
+                {
+                    LogUtil.Warning($"Create Settlement Per Resource - no placeable tile found for {rtd.defName}, skipping.");
+                    summary.AppendLine($"  {rtd.defName}: SKIPPED (no tile)");
+                    skipped++;
+                    continue;
+                }
+
+                WorldSettlementFC s = ColonyUtil.CreatePlayerColonySettlement(chosen, def);
+                created++;
+                if (usedSpecialty) specialtyCount++;
+
+                /* Level to 5 (clamped to FCSettings.settlementMaxLevel / def.maxSettlementLevel) */
+                s.UpgradeSettlement(5 - s.settlementLevel);
+
+                /* Load the whole worker pool onto this settlement's matching resource */
+                ResourceFC target = s.GetResource(rtd);
+                int cap = (int)s.workersUltraMax;
+                string biomeNote = usedSpecialty ? "specialty biome" : "base biome";
+                if (target is null)
+                {
+                    LogUtil.Warning($"Create Settlement Per Resource - {s.Name} has no {rtd.defName} resource (biome/tech restricted), skipping worker assignment.");
+                    summary.AppendLine($"  {rtd.defName}: {s.Name} L{s.settlementLevel} ({biomeNote}), no workers (resource absent)");
+                }
+                else
+                {
+                    /* Drain any pre-assigned workers, then fill the target resource to the cap */
+                    foreach (ResourceFC r in s.Resources) s.IncreaseWorkers(r, -(cap + 1));
+                    s.IncreaseWorkers(target, cap);
+                    summary.AppendLine($"  {rtd.defName}: {s.Name} L{s.settlementLevel} ({biomeNote}), {target.assignedWorkers} workers");
+                }
+            }
+
+            LogUtil.MessageForce($"Debug - Create Settlement Per Resource: created {created} settlement(s) ({specialtyCount} on specialty biomes, {skipped} skipped).\n{summary}");
         }
 
         [DebugAction("Empire", "Remove Player Settlement", allowedGameStates = AllowedGameStates.Playing)]
@@ -1225,6 +1348,68 @@ namespace FactionColonies
                     }));
             }
             Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
+        }
+
+        /* Mirror of "Force Trigger Event" that lets you pick which follow-up of a queued
+         * chain event to spawn, bypassing the random roll in FCEventMaker.ProcessEvents. */
+        [DebugAction("Empire", "Force Trigger Followup", allowedGameStates = AllowedGameStates.Playing)]
+        private static void ForceTriggerFollowup()
+        {
+            List<DebugMenuOption> list = new List<DebugMenuOption>();
+            foreach (FCEvent evt in FindFC.Events)
+            {
+                if (!evt.def.HasFollowUp) continue;
+                FCEvent localEvt = evt;
+                int ticksLeft = localEvt.timeTillTrigger - Find.TickManager.TicksGame;
+                list.Add(new DebugMenuOption(
+                    $"{localEvt.def.defName} (in {ticksLeft} ticks)",
+                    DebugMenuOptionMode.Action, () => Find.WindowStack.Add(
+                        new Dialog_DebugOptionListLister(BuildFollowupOptions(localEvt)))));
+            }
+            Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
+        }
+
+        // Builds the second-level menu of follow-up branches for a queued chain event,
+        // mirroring the branch semantics of FCEventMaker.ProcessEvents.
+        private static List<DebugMenuOption> BuildFollowupOptions(FCEvent parent)
+        {
+            List<DebugMenuOption> options = new List<DebugMenuOption>();
+            FCEventDef def = parent.def;
+            if (def.splitEventFollows)
+            {
+                if (def.followingEvent is object)
+                    options.Add(MakeFollowupOption(parent, def.followingEvent,
+                        $"{def.followingEvent.defName} (split {def.splitEventChance}%)"));
+                if (def.followingEvent2 is object)
+                    options.Add(MakeFollowupOption(parent, def.followingEvent2,
+                        $"{def.followingEvent2.defName} (split {100 - def.splitEventChance}%)"));
+            }
+            else if (def.followingEvent is object)
+            {
+                options.Add(MakeFollowupOption(parent, def.followingEvent,
+                    $"{def.followingEvent.defName} (guaranteed)"));
+            }
+            return options;
+        }
+
+        // Spawns the chosen follow-up immediately, reusing the spawn logic from
+        // FCEventMaker.ProcessEvents (MakeRandomEvent + AddEvent + letter).
+        private static DebugMenuOption MakeFollowupOption(FCEvent parent, FCEventDef target, string label)
+        {
+            return new DebugMenuOption(label, DebugMenuOptionMode.Action, () =>
+            {
+                List<WorldSettlementFC> settlements = parent.def.settlementsCarryOver
+                    ? parent.settlementTraitLocations
+                    : null;
+                FCEvent tempEvent = FCEventMaker.MakeRandomEvent(target, settlements);
+                if (tempEvent != null)
+                {
+                    FindFC.EventManager.AddEvent(tempEvent);
+                    Find.LetterStack.ReceiveLetter(tempEvent.def.label,
+                        FCEventMaker.BuildEventLetterBody(tempEvent), LetterDefOf.NeutralEvent);
+                }
+                LogUtil.MessageForce($"Debug - Force triggering followup {target.defName} of {parent.def.defName}");
+            });
         }
 
         // ============================

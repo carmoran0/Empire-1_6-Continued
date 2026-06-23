@@ -37,6 +37,27 @@ namespace FactionColonies
         /// </summary>
         public int maxPawnCount = 15;
 
+        /// <summary>
+        /// Fraction of the aggregated (already tech-scaled) budget emitted as the trader's
+        /// buying silver. Emitting the full budget over-funds the trader and — because silver
+        /// has stackLimit 500 — fragments into many near-weightless ware stacks, which vanilla
+        /// <see cref="RimWorld.PawnGroupKindWorker_Trader"/> turns into excess pack animals
+        /// (carriers scale with stack count, not mass). Override per caravan kind in XML.
+        /// </summary>
+        public float silverBudgetFraction = 0.5f;
+
+        /// <summary>
+        /// Baseline (1x) count of non-pawn ware STACKS — silver + items — a "normal" empire's
+        /// caravan emits. This is both the line-item count the player sees in trade and the input
+        /// to vanilla's <c>ceil(stacks / 8)</c> pack-animal formula
+        /// (<see cref="RimWorld.PawnGroupKindWorker_Trader"/>), so bounding it keeps carrier counts
+        /// sane without patching vanilla. Calibrated to a vanilla specialized trader (e.g.
+        /// Caravan_Outlander_CombatSupplier). Without this cap, per-item budget slices produce unbounded
+        /// copies of cheap non-stacking goods (weapons, stackLimit 1), one stack each, and the caravan
+        /// arrives with a herd of near-empty pack animals. Override per caravan kind in XML.
+        /// </summary>
+        public int baseThingCount = 30;
+
         /// <summary>Randomness range for per-item budget (multiplier).</summary>
         private const float BudgetRandomMin = 0.5f;
         private const float BudgetRandomMax = 1.5f;
@@ -77,8 +98,17 @@ namespace FactionColonies
 
             totalBudget *= extraScale;
 
-            // Generate silver proportional to budget
-            int silverCount = Mathf.Max(100, Mathf.RoundToInt((float)totalBudget));
+            /* Total non-pawn ware stacks (silver + items) this caravan emits. Bounding it keeps
+               vanilla PawnGroupKindWorker_Trader's ceil(stacks / 8) carrier formula in check. */
+            int targetStacks = CaravanStockMath.TargetStacks(baseThingCount, extraScale, EmpireStockGenerator.BaseExtraScale);
+            int silverStackLimit = Mathf.Max(1, ThingDefOf.Silver.stackLimit);
+
+            // Silver is the trader's buying power. Scale its value by silverBudgetFraction, but
+            // never let it claim more than ~half the stack target (silver fragments at stackLimit).
+            int desiredSilver = Mathf.Max(100, Mathf.RoundToInt((float)totalBudget * silverBudgetFraction));
+            int silverStacks = CaravanStockMath.SilverStacks(desiredSilver, targetStacks, silverStackLimit);
+            int silverCount = Mathf.Min(desiredSilver, silverStacks * silverStackLimit);
+            int targetItemStacks = Mathf.Max(0, targetStacks - silverStacks);
             foreach (Thing silver in StockGeneratorUtility.TryMakeForStock(ThingDefOf.Silver, silverCount, faction))
             {
                 yield return silver;
@@ -114,6 +144,19 @@ namespace FactionColonies
                     itemCandidates.Add(td);
             }
 
+            /* Each emitted item type is at least one stack, so never plan more item *types* than
+               the item-stack budget — otherwise total stacks (and pack animals) overshoot the
+               target. This makes targetStacks a real ceiling; varietyRange stays the upper
+               bound on distinct types, which this can tighten further when the budget is small. */
+            if (targetItemStacks > 0 && itemCandidates.Count > targetItemStacks)
+                itemCandidates = itemCandidates.Take(targetItemStacks).ToList();
+
+            /* Per-type stack cap: spread the item-stack target across the item candidates so a
+               single cheap non-stacking good (stackLimit 1) can't consume the whole stack budget
+               with dozens of copies. Combined with targetItemStacks this is what keeps the
+               caravan's line-item (and therefore pack-animal) count near vanilla. */
+            int perTypeStackCap = CaravanStockMath.PerTypeStackCap(targetItemStacks, itemCandidates.Count);
+
             /* Plan pawn yields up to maxPawnCount. Surplus per-item budget is captured
                as divertedBudget for redistribution to items below. */
             List<KeyValuePair<PawnKindDef, int>> plannedPawns = new List<KeyValuePair<PawnKindDef, int>>();
@@ -128,6 +171,7 @@ namespace FactionColonies
                     marketValue = 1f;
 
                 int desiredCount = Mathf.Max(1, Mathf.RoundToInt(randomizedBudget / marketValue));
+                desiredCount = Mathf.Min(desiredCount, perTypeStackCap);   // keep within this type's share of the caravan
                 int remainingCap = Mathf.Max(0, maxPawnCount - runningPawnTotal);
                 int allowedCount = Mathf.Min(desiredCount, remainingCap);
 
@@ -172,7 +216,11 @@ namespace FactionColonies
                 if (marketValue <= 0f)
                     marketValue = 1f;
 
-                int stackCount = Mathf.Max(1, Mathf.RoundToInt(randomizedBudget / marketValue));
+                /* Clamp the unit count to this type's stack share. Multiplying by stackLimit lets
+                   stackables (food, ore) still carry near-full stacks while non-stacking goods (stackLimit 1)
+                   are held to ~perTypeStackCap units. */
+                int desiredUnits = Mathf.RoundToInt(randomizedBudget / marketValue);
+                int stackCount = CaravanStockMath.ClampItemUnits(desiredUnits, perTypeStackCap, td.stackLimit);
 
                 foreach (Thing thing in StockGeneratorUtility.TryMakeForStock(td, stackCount, faction))
                 {
@@ -180,10 +228,12 @@ namespace FactionColonies
                 }
             }
 
-            // Fallback: no items to absorb the diverted budget — emit it as extra silver
+            // Fallback: no items to absorb the diverted budget — emit it as extra silver,
+            // bounded by the leftover (unused-by-items) stack allowance so a pure-pawn caravan
+            // (e.g. the animals trader) doesn't re-explode into a silver-fragment herd.
             if (itemCandidates.Count == 0 && divertedBudget > 0f)
             {
-                int bonusSilver = Mathf.RoundToInt(divertedBudget);
+                int bonusSilver = Mathf.Min(Mathf.RoundToInt(divertedBudget), targetItemStacks * silverStackLimit);
                 if (bonusSilver > 0)
                 {
                     foreach (Thing silver in StockGeneratorUtility.TryMakeForStock(ThingDefOf.Silver, bonusSilver, faction))

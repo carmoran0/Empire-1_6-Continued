@@ -56,6 +56,10 @@ namespace FactionColonies
         public bool splitEventFollows = false;
         public int splitEventChance = 50;
 
+        // A follow-up exists if EITHER flag is set: eventFollows = deterministic follow-up,
+        // splitEventFollows = probabilistic/branching follow-up. Requiring both was a footgun.
+        public bool HasFollowUp => eventFollows || splitEventFollows;
+
         //Rewards
         public List<ThingDef> loot = new List<ThingDef>();
         public int randomThingValue = 0;
@@ -169,6 +173,35 @@ namespace FactionColonies
                 yield return $"{defName}: minDaysSinceFounded ({minDaysSinceFounded}) must not be negative";
             if (timeTillTriggerMax != -1 && timeTillTriggerMax < timeTillTrigger)
                 yield return $"{defName}: timeTillTriggerMax ({timeTillTriggerMax}) < timeTillTrigger ({timeTillTrigger})";
+
+            /* An event that presents options must always offer at least one the player can pick:
+             * free (no silver / dynamic cost) and ungated (no policy or meme requirement). The
+             * FCOptionWindow has no close button, so without a guaranteed option a player who can't
+             * afford or doesn't qualify for any choice would be soft-locked. This also makes the
+             * Ideology-off meme hiding safe — the guaranteed option has no meme gate, so it always
+             * survives the filter. */
+            if (options.Count > 0)
+            {
+                bool hasFreeUngated = false;
+                foreach (FCOptionDef opt in options)
+                {
+                    if (opt is null) continue;
+                    if (opt.silverCost != 0) continue;
+                    if (opt.requiredPolicies != null && opt.requiredPolicies.Count > 0) continue;
+                    if (opt.requiredMemes != null && opt.requiredMemes.Count > 0) continue;
+
+                    // A positive dynamic cost makes the option not truly free.
+                    FCDynamicCostExtension dyn = opt.GetModExtension<FCDynamicCostExtension>();
+                    if (dyn != null && (dyn.costPerEmpireIncomeUnit > 0f
+                        || (dyn.costPerResourceProduction != null && dyn.costPerResourceProduction.Count > 0)))
+                        continue;
+
+                    hasFreeUngated = true;
+                    break;
+                }
+                if (!hasFreeUngated)
+                    yield return $"{defName}: has options but no free, non-gated option — players could be unable to dismiss the event window";
+            }
         }
     }
 }

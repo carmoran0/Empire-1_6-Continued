@@ -19,6 +19,8 @@
 
 	<!-- Event Option Window -->
 	<FCEventAffecting>Affecting:</FCEventAffecting>
+	<FCEventAllSettlements>All Settlements</FCEventAllSettlements>
+	<FCEventNumSettlements>{0} Settlements</FCEventNumSettlements>
 	<FCEventOptionFree>Free</FCEventOptionFree>
 	<FCEventSuccessGuaranteed>Success: Guaranteed</FCEventSuccessGuaranteed>
 	<FCEventSuccessLikely>Success: Likely</FCEventSuccessLikely>

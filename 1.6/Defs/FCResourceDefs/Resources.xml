@@ -615,6 +615,9 @@
 			<thingDef>BlocksVacstone</thingDef>
 		</li>
 	</thingAllowList>
+	<researchProjectDefs>
+		<li>BasicGravtech</li>
+	</researchProjectDefs>
 	<associatedSkills>
 		<li>Intellectual</li>
 		<li>Crafting</li>

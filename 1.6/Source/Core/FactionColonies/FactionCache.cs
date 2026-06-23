@@ -54,6 +54,7 @@ namespace FactionColonies
         private static List<FCEventDef> _cachedAllRandomEventDefs = null;
         private static HashSet<string> _cachedEventDefNamesWithOptionsInChain = null;
         private static HashSet<FCEventDef> _cachedRandomChainMemberDefs = null;
+        private static Dictionary<FCEventDef, FCEventDef> _cachedChainCooldownRootByMember = null;
         private static HashSet<BiomeResourceDef> _cachedBiomeResourceDefSet = null;
         private static Dictionary<TechLevel, List<BuildingFCDef>> _cachedBuildingDefsByTechLevel = null;
 
@@ -790,7 +791,7 @@ namespace FactionColonies
         {
             if (def is null || !visited.Add(def)) return false;
             if (def.options is object && def.options.Count > 0) return true;
-            if (!def.eventFollows) return false;
+            if (!def.HasFollowUp) return false;
             if (ChainHasOptions(def.followingEvent, visited)) return true;
             if (def.splitEventFollows && ChainHasOptions(def.followingEvent2, visited)) return true;
             return false;
@@ -824,7 +825,7 @@ namespace FactionColonies
         // with a success/fail event). An options-only event with no follow-up does not count.
         private static bool LeadsToFollowUp(FCEventDef def)
         {
-            if (def.eventFollows && (def.followingEvent != null ||
+            if (def.HasFollowUp && (def.followingEvent != null ||
                 (def.splitEventFollows && def.followingEvent2 != null))) return true;
             if (def.options != null)
             {
@@ -839,7 +840,7 @@ namespace FactionColonies
         private static void CollectChainMembers(FCEventDef def, HashSet<FCEventDef> acc)
         {
             if (def is null || !acc.Add(def)) return;
-            if (def.eventFollows)
+            if (def.HasFollowUp)
             {
                 CollectChainMembers(def.followingEvent, acc);
                 if (def.splitEventFollows) CollectChainMembers(def.followingEvent2, acc);
@@ -852,6 +853,31 @@ namespace FactionColonies
                     CollectChainMembers(opt.failEvent, acc);
                 }
             }
+        }
+
+        /// <summary>
+        /// Maps every event def in a cooldown-bearing random chain back to that chain's root (the def
+        /// that declares <c>cooldownTicks</c>). One-shot cooldown roots map to themselves. Returns null
+        /// for defs not in any such chain. Used to defer the cooldown stamp to the last chain step that
+        /// fires (= resolves), so a chain's cooldown window effectively starts when the chain concludes.
+        /// </summary>
+        public static FCEventDef ChainCooldownRootOf(FCEventDef member)
+        {
+            if (member is null) return null;
+            if (_cachedChainCooldownRootByMember is null)
+            {
+                _cachedChainCooldownRootByMember = new Dictionary<FCEventDef, FCEventDef>();
+                foreach (FCEventDef root in AllRandomEventDefs)
+                {
+                    if (root.cooldownTicks <= 0) continue;
+                    HashSet<FCEventDef> members = new HashSet<FCEventDef>();
+                    CollectChainMembers(root, members);
+                    foreach (FCEventDef m in members)
+                        if (!_cachedChainCooldownRootByMember.ContainsKey(m)) // first writer wins; base chains are disjoint
+                            _cachedChainCooldownRootByMember[m] = root;
+                }
+            }
+            return _cachedChainCooldownRootByMember.TryGetValue(member, out FCEventDef r) ? r : null;
         }
 
         public static HashSet<BiomeResourceDef> BiomeResourceDefSet => _cachedBiomeResourceDefSet ??
@@ -925,6 +951,7 @@ namespace FactionColonies
             _cachedAllRandomEventDefs = null;
             _cachedEventDefNamesWithOptionsInChain = null;
             _cachedRandomChainMemberDefs = null;
+            _cachedChainCooldownRootByMember = null;
             _cachedBiomeResourceDefSet = null;
             _cachedBuildingDefsByTechLevel = null;
 

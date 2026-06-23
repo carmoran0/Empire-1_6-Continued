@@ -16,6 +16,7 @@
 		<isRandomEvent>true</isRandomEvent>
 		<isNegative>true</isNegative>
 		<weight>25</weight>
+		<cooldownTicks>900000</cooldownTicks>
 		<incompatibleEvents>
 			<li>missedSupplyDelivery_1-1</li>
 			<li>missedSupplyDelivery_1-2</li>
