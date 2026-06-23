@@ -331,20 +331,37 @@ namespace FactionColonies
                 UIUtil.DrawColoredLabel(new Rect(inRect.x + Padding, curY, 60f, 16f), "FCEventAffecting".Translate(), new Color(0.6f, 0.6f, 0.6f));
                 curY += 16f + 2f;
 
-                float btnX = inRect.x + Padding;
                 Text.Font = GameFont.Tiny;
-                for (int i = 0; i < affectedSettlements.Count; i++)
+                if (affectedSettlements.Count > 3)
                 {
-                    WorldSettlementFC settlement = affectedSettlements[i];
-                    float btnWidth = Text.CalcSize(settlement.Name).x + 16f;
-                    Rect btnRect = new Rect(btnX, curY, btnWidth, SettlementButtonHeight);
+                    // Collapse to a single summary chip with a hover tooltip listing every settlement.
+                    int total = FindFC.FactionComp?.settlements?.Count ?? 0;
+                    bool trulyAll = total > 0 && affectedSettlements.Count >= total;
+                    string label = trulyAll
+                        ? "FCEventAllSettlements".Translate().ToString()
+                        : "FCEventNumSettlements".Translate(affectedSettlements.Count).ToString();
 
-                    if (UIUtil.ButtonFlat(btnRect, settlement.Name, categoryColor))
+                    float btnWidth = Text.CalcSize(label).x + 16f;
+                    Rect btnRect = new Rect(inRect.x + Padding, curY, btnWidth, SettlementButtonHeight);
+                    UIUtil.ButtonFlat(btnRect, label, categoryColor);
+                    TooltipHandler.TipRegion(btnRect, string.Join("\n", affectedSettlements.Select(s => s.Name)));
+                }
+                else
+                {
+                    float btnX = inRect.x + Padding;
+                    for (int i = 0; i < affectedSettlements.Count; i++)
                     {
-                        Find.WindowStack.Add(new SettlementWindowFc(settlement));
-                    }
+                        WorldSettlementFC settlement = affectedSettlements[i];
+                        float btnWidth = Text.CalcSize(settlement.Name).x + 16f;
+                        Rect btnRect = new Rect(btnX, curY, btnWidth, SettlementButtonHeight);
 
-                    btnX += btnWidth + SettlementButtonSpacing;
+                        if (UIUtil.ButtonFlat(btnRect, settlement.Name, categoryColor))
+                        {
+                            Find.WindowStack.Add(new SettlementWindowFc(settlement));
+                        }
+
+                        btnX += btnWidth + SettlementButtonSpacing;
+                    }
                 }
                 curY += SettlementButtonHeight;
             }
