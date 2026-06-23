@@ -613,13 +613,13 @@ namespace FactionColonies
                     if (hasBranch1 || hasBranch2)
                     {
                         if (result.Length > 0) result += "\n";
-                        result += "FCOption_Followup_Possible".Translate();
+                        result += "FCOption_Followup_Possible".Translate().Resolve();
                     }
                 }
                 else if (hasBranch1)
                 {
                     if (result.Length > 0) result += "\n";
-                    result += "FCOption_Followup_Certain".Translate();
+                    result += "FCOption_Followup_Certain".Translate().Resolve();
                 }
             }
 
