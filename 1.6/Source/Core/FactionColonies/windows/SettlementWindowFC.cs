@@ -1652,7 +1652,8 @@ namespace FactionColonies
             Rect upkeepNum = new Rect(upkeepLabel.xMax, upkeepLabel.y, labelWidth * 0.25f, labelHeight);
 
             UIUtil.DrawColoredHighlight(workerBox, highlightColor);
-            TooltipHandler.TipRegion(overMaxBox, "FCAssignedOvermaxWorkersTooltip".Translate());
+            TooltipHandler.TipRegion(workerBox, BuildWorkerCapacityTooltip());
+            TooltipHandler.TipRegion(overMaxBox, BuildOvermaxCapacityTooltip());
             UIUtil.DrawColoredHighlight(upkeepBox, highlightColor);
 
             Widgets.Label(workerLabel, "FCAssignedWorkers".Translate());
@@ -1665,6 +1666,70 @@ namespace FactionColonies
             Widgets.Label(workerNum, "FCAssignedWorkersValue".Translate(numWorkers, settlement.workersMax));
             Widgets.Label(overMaxNum, "FCAssignedOvermaxWorkersValue".Translate(numOvermaxWorkers, settlement.workersUltraMax - settlement.workersMax));
             Widgets.Label(upkeepNum, settlement.workerCost.ToString());
+        }
+
+        /// <summary>
+        /// Builds the hover tooltip for the Assigned Workers box: a per-source breakdown of
+        /// every modifier currently affecting worker capacity (workersMax). Sources are the
+        /// workerBaseMax stat, the faction-wide per-level extraWorkersSoftcap, and prisoner slots.
+        /// </summary>
+        private string BuildWorkerCapacityTooltip()
+        {
+            string body = "";
+
+            // Direct worker-cap modifiers: buildings, settlement type, events, policies,
+            // traits, edicts, permanent/decaying modifiers, behaviors (each line ends in \n).
+            body += settlement.GetStatDesc(FCStatDefOf.workerBaseMax);
+
+            // Faction-wide softcap bonus — applied per settlement level, so flagged separately.
+            string softcap = FindFC.FactionComp.GetFactionStatDesc(FCStatDefOf.extraWorkersSoftcap);
+            if (!softcap.NullOrEmpty())
+                body += "FCExtraWorkersSoftcapTooltipSub".Translate().Resolve() + "\n" + softcap;
+
+            // Prisoner-provided worker slots.
+            int prisonerWorkers = settlement.PrisonerComp?.ReturnMaxWorkersFromPrisoners() ?? 0;
+            if (prisonerWorkers != 0)
+                body += TextUtil.AdditiveBonusLine(prisonerWorkers, "FCWorkersFromPrisoners".Translate()) + "\n";
+
+            if (body.NullOrEmpty())
+                body = "FCNoActiveModifiers".Translate();
+
+            // Resolve() the header to a plain string first: a leading TaggedString would make the
+            // whole concatenation a TaggedString, whose implicit string cast StripTags()s body's
+            // <color> rich text. Keeping it string-typed preserves the colored modifier values.
+            return "FCAssignedWorkersTooltip".Translate().Resolve() + "\n\n" + body;
+        }
+
+        /// <summary>
+        /// Builds the hover tooltip for the Assigned Overmax Workers box: a per-source breakdown of
+        /// every modifier affecting overmax capacity (workersUltraMax - workersMax), followed by the
+        /// existing explanation of how overmax workers raise the per-worker cost. Sources are the
+        /// workerBaseOverMax stat, the faction-wide overMaxWorkersAdjustment, and prisoner slots.
+        /// </summary>
+        private string BuildOvermaxCapacityTooltip()
+        {
+            string body = "";
+
+            // Direct overmax-cap modifiers: buildings, settlement type, events, policies,
+            // traits, edicts, permanent/decaying modifiers, behaviors (each line ends in \n).
+            body += settlement.GetStatDesc(FCStatDefOf.workerBaseOverMax);
+
+            // Faction-wide overmax adjustment — a flat additive (not scaled by settlement level),
+            // so it's listed inline rather than under a per-level sub-header. "" when no modifiers.
+            body += FindFC.FactionComp.GetFactionStatDesc(FCStatDefOf.overMaxWorkersAdjustment);
+
+            // Prisoner-provided overmax slots.
+            int prisonerOvermax = settlement.PrisonerComp?.ReturnOverMaxWorkersFromPrisoners() ?? 0;
+            if (prisonerOvermax != 0)
+                body += TextUtil.AdditiveBonusLine(prisonerOvermax, "FCWorkersFromPrisoners".Translate());
+
+            if (body.NullOrEmpty())
+                body = "FCNoActiveModifiers".Translate();
+
+            // Header + breakdown, then keep the existing cost explanation below. Resolve()d as in
+            // BuildWorkerCapacityTooltip to keep the concatenation string-typed (preserves color).
+            return "FCAssignedOvermaxWorkersBreakdownTooltip".Translate().Resolve() + "\n\n" + body
+                + "\n\n" + "FCAssignedOvermaxWorkersTooltip".Translate().Resolve();
         }
 
         private void DrawProductionOverview(Rect boundingBox)
