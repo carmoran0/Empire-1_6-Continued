@@ -87,6 +87,12 @@ namespace FactionColonies
             }, allowEscape: true, showRandomButton: false, showNextButton: false, canCancel: true);
         }
 
+        public override void WindowUpdate()
+        {
+            base.WindowUpdate();
+            FoundingScreenHooks.ReflowCompanions();
+        }
+
         //Drawing
         public override void DoWindowContents(Rect inRect)
         {

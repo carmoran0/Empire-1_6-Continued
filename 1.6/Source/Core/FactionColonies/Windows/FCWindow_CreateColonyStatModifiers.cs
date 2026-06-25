@@ -12,8 +12,10 @@ namespace FactionColonies
     /// landmark, before the settlement is founded. Mirrors the post-founding bake at
     /// WorldSettlementFC.cs:420-444.
     /// </summary>
-    public class FCWindow_CreateColonyStatModifiers : Window
+    public class FCWindow_CreateColonyStatModifiers : Window, IFoundingCompanionWindow
     {
+        public int CompanionOrder => 0;
+
         private const float WindowWidth = 280f;
         private const float Padding = 8f;
 
@@ -39,8 +41,6 @@ namespace FactionColonies
             CreateColonyWindowFc createWindow = Find.WindowStack.WindowOfType<CreateColonyWindowFc>();
             if (createWindow != null)
             {
-                windowRect.x = createWindow.windowRect.x - WindowWidth - 10f;
-                windowRect.y = createWindow.windowRect.y;
                 lastTile = createWindow.currentTileSelected;
             }
             if (cachedGroups != null && cachedGroups.Count > 0)
@@ -60,6 +60,7 @@ namespace FactionColonies
                 windowRect.height = h + StandardMargin * 2;
                 Text.Font = fontBefore;
             }
+            FoundingScreenHooks.ReflowCompanions();
         }
 
         public override void DoWindowContents(Rect inRect)
