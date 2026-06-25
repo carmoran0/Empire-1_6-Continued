@@ -18,6 +18,14 @@ namespace FactionColonies
         public string title = "FCEmpire".Translate();
         public Texture2D factionIcon = TexLoad.factionIcons[0];
         public string factionIconPath = TexLoad.factionIcons[0].name;
+
+        /* Reflection handle to RimWorld's private FactionDef.factionIcon texture cache.
+         * The cache is lazy-loaded once by the FactionIcon getter and never re-read, so we
+         * must null it whenever we reassign factionIconPath on the shared PColony def
+         * (otherwise the previous save's icon leaks into the next load). */
+        private static readonly System.Reflection.FieldInfo factionDefIconCache =
+            typeof(FactionDef).GetField("factionIcon",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         public Color factionColorPrimary = Color.white;
         public Color factionColorSecondary = Color.white;
         public bool hasFactionColor;
@@ -1906,6 +1914,7 @@ namespace FactionColonies
             if (faction?.def != null)
             {
                 faction.def.factionIconPath = iconPath;
+                factionDefIconCache?.SetValue(faction.def, null);
             }
             if (settlements.Any() && settlements[0]?.def != null && UnityData.IsInMainThread)
             {
@@ -1922,6 +1931,7 @@ namespace FactionColonies
                 if (settlement?.Faction?.def != null)
                 {
                     settlement.Faction.def.factionIconPath = iconPath;
+                    factionDefIconCache?.SetValue(settlement.Faction.def, null);
                 }
             }
         }
