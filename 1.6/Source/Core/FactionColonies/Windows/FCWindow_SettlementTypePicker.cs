@@ -13,6 +13,13 @@ namespace FactionColonies
         private readonly string titleKey;
         private Vector2 scrollPos;
 
+        /// <summary>
+        /// The settlement type the cursor is currently over (null if none). Exposed so a companion
+        /// window docked beside the picker can preview cost/info for the hovered type. Updated each
+        /// frame in <see cref="DrawSettlementTypeRow"/>; retains its last value when nothing is hovered.
+        /// </summary>
+        public WorldSettlementDef HoveredType { get; private set; }
+
         private const float TitleHeight = 35f;
         private const float SeparatorHeight = 1f;
 
@@ -119,6 +126,11 @@ namespace FactionColonies
         {
             string lockedReason;
             bool unlocked = def.IsUnlocked(out lockedReason);
+
+            if (Mouse.IsOver(rect))
+            {
+                HoveredType = def;
+            }
 
             // Background
             if (unlocked && Mouse.IsOver(rect))
