@@ -671,4 +671,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_42</defName>
+		<label>Mercenary Fix for 1.3 -&gt; 1.5</label>
+		<description>Fixes an issue with mercenary save migration from Empire Refactored 1.3 -&gt; 1.5.</description>
+		<releaseDate>2026-06-26</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Bugfix: a save migration issue would cause mercs to load incorrectly in Empire Refactored v1.5 when loading a v1.3 save</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>

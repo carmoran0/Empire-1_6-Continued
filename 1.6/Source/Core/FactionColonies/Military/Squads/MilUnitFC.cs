@@ -90,7 +90,10 @@ namespace FactionColonies
 
         public MilUnitFC(bool blank)
         {
-            loadID = FindFC.Military.NextUnitId();
+            // Defensive: FindFC.Military can be null if this is constructed mid-load before
+            // FactionFC's legacy-military migration has populated it. Fall back to 0 rather than NRE.
+            MilitaryFC mil = FindFC.Military;
+            loadID = mil is object ? mil.NextUnitId() : 0;
             isBlank = blank;
             equipmentTotalCost = 0;
 

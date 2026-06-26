@@ -478,17 +478,19 @@ namespace FactionColonies
                     eventManager.SeedNextEventId(legacyNextEventId);
                     legacyNextEventId = -1;
                 }
-            }
 
-            /* Phase 3: PostLoadInit migrations. Cross-refs resolved by this point. */
-            if (Scribe.mode == LoadSaveMode.PostLoadInit)
-            {
+                /* Military migration must run here (not PostLoadInit): mercenaries live inside
+                 * _legacyMilitary's deep subtree, and their PostLoadInit (which clones loadouts via
+                 * MilUnitFC(bool) -> FindFC.Military.NextUnitId()) fires BEFORE FactionFC's own
+                 * PostLoadInit (children register for PostLoad before parents). Swapping military in
+                 * and seeding the ID counters here — before any PostLoadInit consumer reads them —
+                 * keeps FindFC.Military non-null and hands clones non-colliding loadIDs. */
                 // Pre-1.5 military rename swap + new-instance fallback.
                 if (military is null && _legacyMilitary is object) military = _legacyMilitary;
                 if (military is null) military = new MilitaryFC();
                 _legacyMilitary = null;
 
-                // ID counters → military.SeedNextIds
+                // ID counters -> military.SeedNextIds
                 if (legacyNextUnitId != -1 || legacyNextSquadId != -1
                     || legacyNextMercId != -1 || legacyNextMercSquadId != -1
                     || legacyNextFireSupportId != -1)
@@ -505,7 +507,11 @@ namespace FactionColonies
                     legacyNextMercSquadId = -1;
                     legacyNextFireSupportId = -1;
                 }
+            }
 
+            /* Phase 3: PostLoadInit migrations. Cross-refs resolved by this point. */
+            if (Scribe.mode == LoadSaveMode.PostLoadInit)
+            {
                 // Pre-manager policy/trait/edict lists → policyManager
                 if (legacyPolicies != null || legacyFactionTraits != null || legacyEdicts != null)
                 {

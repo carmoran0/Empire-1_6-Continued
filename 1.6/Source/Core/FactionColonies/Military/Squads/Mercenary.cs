@@ -142,7 +142,10 @@ namespace FactionColonies
 
         public Mercenary(bool blank)
         {
-            loadID = FindFC.Military.NextMercenaryId();
+            // Defensive: FindFC.Military can be null if this is constructed mid-load before
+            // FactionFC's legacy-military migration has populated it. Fall back to 0 rather than NRE.
+            MilitaryFC mil = FindFC.Military;
+            loadID = mil is object ? mil.NextMercenaryId() : 0;
         }
 
         public void ExposeData()
