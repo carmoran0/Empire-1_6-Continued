@@ -109,7 +109,17 @@ namespace FactionColonies
         public const int DEFAULT_VPE_PSYCAST_PER_LEVEL_COST = 300;
         public const int DEFAULT_VPE_FOCUS_COST = 300;
         public const int DEFAULT_VPE_STAT_POINT_COST = 250;
-        /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* 
+        // Advanced-tab settlement tuning knobs (unrest/loyalty/happiness daily drift, prosperity drift, research base).
+        public const double DEFAULT_UNREST_BASE_GAIN = 0;
+        public const double DEFAULT_UNREST_BASE_LOST = 1;
+        public const double DEFAULT_LOYALTY_BASE_GAIN = 1;
+        public const double DEFAULT_LOYALTY_BASE_LOST = 0;
+        public const double DEFAULT_HAPPINESS_BASE_GAIN = 1;
+        public const double DEFAULT_HAPPINESS_BASE_LOST = 0;
+        public const double DEFAULT_PROSPERITY_DRIFT_RATE = 1;
+        public const double DEFAULT_PROSPERITY_DRIFT_STEP = 5;
+        public const int DEFAULT_PRODUCTION_RESEARCH_BASE = 100;
+        /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
          *           ~  DEFAULTS END ~
          *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
@@ -158,18 +168,16 @@ namespace FactionColonies
         public static int maxDaysTillRandomEvent = DEFAULT_MAX_DAYS_TIL_RANDOM_EVENT;
         public static IntRange minMaxDaysTillRandomEvent = new IntRange(minDaysTillRandomEvent, maxDaysTillRandomEvent);
 
-        /* TODO: might be interesting to expose these values in the settings. Might be a bit much
-         * for the user though. Perhaps can add an "advanced settings" tab that lets the user
-         * fine-tune a lot of the smaller values? */
-        public static double unrestBaseGain = 0;
-        public static double unrestBaseLost = 1;
-        public static double loyaltyBaseGain = 1;
-        public static double loyaltyBaseLost = 0;
-        public static double happinessBaseGain = 1;
-        public static double happinessBaseLost = 0;
-        public static double prosperityDriftRate = 1;   // drift floor (minimum points/day)
-        public static double prosperityDriftStep = 5;    // distance points per +1 drift/day
-        public static int productionResearchBase = 100;
+        /* Settlement tuning knobs, exposed on the Advanced settings tab. */
+        public static double unrestBaseGain = DEFAULT_UNREST_BASE_GAIN;
+        public static double unrestBaseLost = DEFAULT_UNREST_BASE_LOST;
+        public static double loyaltyBaseGain = DEFAULT_LOYALTY_BASE_GAIN;
+        public static double loyaltyBaseLost = DEFAULT_LOYALTY_BASE_LOST;
+        public static double happinessBaseGain = DEFAULT_HAPPINESS_BASE_GAIN;
+        public static double happinessBaseLost = DEFAULT_HAPPINESS_BASE_LOST;
+        public static double prosperityDriftRate = DEFAULT_PROSPERITY_DRIFT_RATE;   // drift floor (minimum points/day)
+        public static double prosperityDriftStep = DEFAULT_PROSPERITY_DRIFT_STEP;    // distance points per +1 drift/day
+        public static int productionResearchBase = DEFAULT_PRODUCTION_RESEARCH_BASE;
         public static double militaryAnimalCostMultiplier = 1.5;
         public static double militaryRaceCostMultiplier = 0.075;
         public static double militaryPsylinkCostMultiplier = DEFAULT_MILITARY_PSYLINK_COST_MULTIPLIER;
@@ -480,6 +488,15 @@ namespace FactionColonies
                 LogUtil.Warning($"Loaded suspicious maxAnimalSubpawns={maxAnimalSubpawns}; resetting to {DEFAULT_MAX_ANIMAL_SUBPAWNS}.");
                 maxAnimalSubpawns = DEFAULT_MAX_ANIMAL_SUBPAWNS;
             }
+            Scribe_Values.Look(ref unrestBaseGain, "unrestBaseGain", DEFAULT_UNREST_BASE_GAIN);
+            Scribe_Values.Look(ref unrestBaseLost, "unrestBaseLost", DEFAULT_UNREST_BASE_LOST);
+            Scribe_Values.Look(ref loyaltyBaseGain, "loyaltyBaseGain", DEFAULT_LOYALTY_BASE_GAIN);
+            Scribe_Values.Look(ref loyaltyBaseLost, "loyaltyBaseLost", DEFAULT_LOYALTY_BASE_LOST);
+            Scribe_Values.Look(ref happinessBaseGain, "happinessBaseGain", DEFAULT_HAPPINESS_BASE_GAIN);
+            Scribe_Values.Look(ref happinessBaseLost, "happinessBaseLost", DEFAULT_HAPPINESS_BASE_LOST);
+            Scribe_Values.Look(ref prosperityDriftRate, "prosperityDriftRate", DEFAULT_PROSPERITY_DRIFT_RATE);
+            Scribe_Values.Look(ref prosperityDriftStep, "prosperityDriftStep", DEFAULT_PROSPERITY_DRIFT_STEP);
+            Scribe_Values.Look(ref productionResearchBase, "productionResearchBase", DEFAULT_PRODUCTION_RESEARCH_BASE);
             Scribe_Collections.Look(ref lastSeenVersions, "lastSeenVersions", LookMode.Value, LookMode.Value);
             if (lastSeenVersions is null) lastSeenVersions = new Dictionary<string, string>();
             Scribe_Values.Look(ref patchNoteAutoOpenThreshold, "patchNoteAutoOpenThreshold", DEFAULT_PATCH_NOTE_AUTO_OPEN_THRESHOLD);
@@ -721,6 +738,19 @@ namespace FactionColonies
             edgesPerRoadTick = DEFAULT_EDGES_PER_ROAD_TICK;
         }
 
+        public static void ResetAdvancedToDefaults()
+        {
+            unrestBaseGain = DEFAULT_UNREST_BASE_GAIN;
+            unrestBaseLost = DEFAULT_UNREST_BASE_LOST;
+            loyaltyBaseGain = DEFAULT_LOYALTY_BASE_GAIN;
+            loyaltyBaseLost = DEFAULT_LOYALTY_BASE_LOST;
+            happinessBaseGain = DEFAULT_HAPPINESS_BASE_GAIN;
+            happinessBaseLost = DEFAULT_HAPPINESS_BASE_LOST;
+            prosperityDriftRate = DEFAULT_PROSPERITY_DRIFT_RATE;
+            prosperityDriftStep = DEFAULT_PROSPERITY_DRIFT_STEP;
+            productionResearchBase = DEFAULT_PRODUCTION_RESEARCH_BASE;
+        }
+
         public static void ResetCompatToDefaults()
         {
             vpePsycastBaseCost = DEFAULT_VPE_PSYCAST_BASE_COST;
@@ -743,6 +773,7 @@ namespace FactionColonies
             ResetBattleArchiveToDefaults();
             ResetRoadBuilderToDefaults();
             ResetCompatToDefaults();
+            ResetAdvancedToDefaults();
             LogUtil.Message($"Settings reset: timeBetweenTaxes_days={timeBetweenTaxes_days}");
         }
 
@@ -784,6 +815,7 @@ namespace FactionColonies
         private Vector2 scrollVectorMilitary = new Vector2();
         private Vector2 scrollVectorRoadBuilder = new Vector2();
         private Vector2 scrollVectorCompat = new Vector2();
+        private Vector2 scrollVectorAdvanced = new Vector2();
 
         /* Per-tab content heights, measured from the previous frame's Listing_Standard and
          * fed back into the scroll view so the scrollbar matches the real content length. */
@@ -792,6 +824,7 @@ namespace FactionColonies
         private float contentHeightMilitary;
         private float contentHeightRoadBuilder;
         private float contentHeightCompat;
+        private float contentHeightAdvanced;
 
         /// <summary>
         /// Creates an option for the list of ForcedTaxDeliveryOptions. Shuttles may not be used if royality is inactive
@@ -856,6 +889,7 @@ namespace FactionColonies
             settingsTabs.Add(new TabRecord("FCSettingsTabMilitary".Translate(), delegate { settingsTab = 2; }, settingsTab == 2));
             settingsTabs.Add(new TabRecord("FCSettingsTabRoadBuilder".Translate(), delegate { settingsTab = 3; }, settingsTab == 3));
             settingsTabs.Add(new TabRecord("FCSettingsTabCompat".Translate(), delegate { settingsTab = 4; }, settingsTab == 4));
+            settingsTabs.Add(new TabRecord("FCSettingsTabAdvanced".Translate(), delegate { settingsTab = 5; }, settingsTab == 5));
 
             Rect contentRect = new Rect(inRect.x, inRect.y + 40f, inRect.width, inRect.height - 40f);
             Widgets.DrawMenuSection(contentRect);
@@ -871,6 +905,7 @@ namespace FactionColonies
                 case 2: DoMilitaryTab(innerRect); break;
                 case 3: DoRoadBuilderTab(innerRect); break;
                 case 4: DoCompatTab(innerRect); break;
+                case 5: DoAdvancedTab(innerRect); break;
             }
         }
 
@@ -1023,6 +1058,56 @@ namespace FactionColonies
             }
 
             contentHeightGeneral = ls.CurHeight + 12f;
+            ls.End();
+
+            ScrollUtil.EndScrollView();
+        }
+
+        private void DoAdvancedTab(Rect rect)
+        {
+            Rect viewRect = ScrollUtil.BeginScrollView(rect, ref scrollVectorAdvanced, contentHeightAdvanced);
+            Rect listRect = new Rect(viewRect.x, viewRect.y, viewRect.width, float.MaxValue);
+            Listing_Standard ls = new Listing_Standard();
+            ls.Begin(listRect);
+            Listing_StandardExtensions.ResetRowStripe();
+
+            ls.Label("FCSettingAdvancedWarn".Translate());
+            ls.GapLine();
+
+            /* Daily settlement drift. Each pair is a per-day gain/loss applied to the relevant stat; defaults match the
+             * original hardcoded values, so leaving this tab untouched preserves vanilla balance. */
+            unrestBaseGain = ls.SliderTextField("FCSettingUnrestBaseGain",
+                "FCSettingUnrestBaseGain".Translate(), (float)unrestBaseGain, 0f, 10f, decimals: 2);
+            unrestBaseLost = ls.SliderTextField("FCSettingUnrestBaseLost",
+                "FCSettingUnrestBaseLost".Translate(), (float)unrestBaseLost, 0f, 10f, decimals: 2);
+            loyaltyBaseGain = ls.SliderTextField("FCSettingLoyaltyBaseGain",
+                "FCSettingLoyaltyBaseGain".Translate(), (float)loyaltyBaseGain, 0f, 10f, decimals: 2);
+            loyaltyBaseLost = ls.SliderTextField("FCSettingLoyaltyBaseLost",
+                "FCSettingLoyaltyBaseLost".Translate(), (float)loyaltyBaseLost, 0f, 10f, decimals: 2);
+            happinessBaseGain = ls.SliderTextField("FCSettingHappinessBaseGain",
+                "FCSettingHappinessBaseGain".Translate(), (float)happinessBaseGain, 0f, 10f, decimals: 2);
+            happinessBaseLost = ls.SliderTextField("FCSettingHappinessBaseLost",
+                "FCSettingHappinessBaseLost".Translate(), (float)happinessBaseLost, 0f, 10f, decimals: 2);
+
+            ls.GapLine();
+
+            // Prosperity drift floor + how far from target prosperity raises the drift by one point/day.
+            prosperityDriftRate = ls.SliderTextField("FCSettingProsperityDriftRate",
+                "FCSettingProsperityDriftRate".Translate(), (float)prosperityDriftRate, 0f, 20f, decimals: 2);
+            prosperityDriftStep = ls.SliderTextField("FCSettingProsperityDriftStep",
+                "FCSettingProsperityDriftStep".Translate(), (float)prosperityDriftStep, 1f, 50f, decimals: 2);
+
+            ls.GapLine();
+
+            productionResearchBase = ls.SliderTextField("FCSettingProductionResearchBase",
+                "FCSettingProductionResearchBase".Translate(), productionResearchBase, 0, 1000);
+
+            ls.GapLine();
+            ls.Gap(11f);
+
+            DrawSectionResetButton(ls, ResetAdvancedToDefaults, "FCSettingResetSectionTag".Translate("FCSettingsTabAdvanced".Translate()));
+
+            contentHeightAdvanced = ls.CurHeight + 12f;
             ls.End();
 
             ScrollUtil.EndScrollView();
