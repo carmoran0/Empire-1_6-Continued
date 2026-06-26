@@ -2,7 +2,9 @@
 
 Now under new management!
 
-This branch of Empire is under active development. Bugs are still being stamped out, but things are more stable than before.
+[Get Empire Refactored now on the Steam workshop!](https://steamcommunity.com/sharedfiles/filedetails/?id=3701480464)
+
+This branch of Empire is under active development. Adding features and stamping out bugs is the name of the game.
 
 If you do run into a bug, please report it in the issues section with logs and, if applicable, screenshots. The more information I have, the faster I can fix issues.
 
@@ -27,13 +29,13 @@ Any mod whose compatibility with Empire depends entirely on referencing the PCol
 - UI overhaul -- the vast majority of the UI has been reworked and updated. Previously hidden information has been brought to the fore, and tooltips reveal even more!
 - Edicts -- old, unused policies were reworked as three new categories of edicts: Social, Tax, and Military. Each edict provices faction-wide bonuses and maluses. Each category unlocks as your faction levels up.
 - Reworked Events -- Most of the existing events were reworked to give the player a choice over how they respond
+- New Squad mechanics -- squads cost money to hire, but are now individually customizable. You can even add implants, psycasts, and mechs to your units
+- Empire Codex -- a helpful in-game resource to explain the mod's mechanics, similar to the Civilopedia from the Civilization games
 
 ## Manual Battles!
-Yes, you heard that right. Manual battles are back! ...Tentatively!
+Yes, you heard that right. Manual battles are back!
 
-I've fixed a lot of bugs with them, and they seem more stable than before. But as a historically fragile feature, I can't gaurantee that they're truly stable. We're still finding and stamping out bugs.
-
-I would like to keep manual battles available, but if their legendary bugginess persists, then I may disable them again.
+Currently, only defense battles can be run manually. I have plans to *eventually* implement manual offense battles. Have some patience.
 
 ## Submods and Extensibility
 Along with the refactor comes far greater extensibility. Settlement and resource types are defined by XML defs now; basic resources and settlements can be created in XML alone. And if you want to get fancy, there is a handy set of extensible abstract classes to use.
@@ -56,6 +58,6 @@ Translations are especially welcome. There are a *lot* of new translation keys, 
 Depending on what you want to add, though, consider making a submod (especially for new resource types or settlement types). It's way easier than ever before!
 
 # Credit
-This mod was initially developed by Saakra, a lone Mod Dev. He has since moved on due to IRL issues and handed over the reigns of development to the community.
+This mod was initially developed by Saakra, a lone Mod Dev. He has since moved on due to IRL issues and handed over the reins of development to the community.
 
 The current active maintainer is yours truly, Matathias.
