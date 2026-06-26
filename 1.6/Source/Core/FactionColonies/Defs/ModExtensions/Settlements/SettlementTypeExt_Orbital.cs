@@ -76,17 +76,19 @@ namespace FactionColonies
         {
             int baseCost = 5000;
 
-            //TODO: reconsider how these are priced. "25% discount" for the advanced orbital makes no damn sense when we add a "premimum" anyways
+            /* The four orbital types are horizontal specializations off the base station (each gated behind its own
+             * research, each adding two exclusive buildings), so cost is base-cheapest, Glitter highest, with Advanced
+             * nudged just above Logistics for its permanent build-time-cutting shipyard. */
             switch (parentDef.defName)
             {
                 case "WorldSettlementDef_Orbital":
                     return baseCost;
                 case "WorldSettlementDef_Orbital_Logistics":
-                    return baseCost + 2000;
+                    return 7000;
                 case "WorldSettlementDef_Orbital_Advanced":
-                    return (int)(baseCost * 0.75f) + 3000; // 25% discount + premium
+                    return 7500;
                 case "WorldSettlementDef_Orbital_Glitter":
-                    return (int)(baseCost * 0.75f) + 5000;
+                    return 9000;
                 default:
                     return baseCost;
             }
@@ -121,16 +123,17 @@ namespace FactionColonies
         {
             int baseDays = constructionDays;
 
+            // Build time scales with tier to mirror creation cost (Advanced just above Logistics, Glitter highest).
             switch (parentDef.defName)
             {
                 case "WorldSettlementDef_Orbital":
-                    return baseDays * GenDate.TicksPerDay;
+                    return baseDays * GenDate.TicksPerDay;        // 8 days
                 case "WorldSettlementDef_Orbital_Logistics":
-                    return (baseDays + 5) * GenDate.TicksPerDay;
+                    return (baseDays + 5) * GenDate.TicksPerDay;  // 13 days
                 case "WorldSettlementDef_Orbital_Advanced":
-                    return (int)((baseDays + 8) * 0.75f * GenDate.TicksPerDay); // 25% faster due to research
+                    return (baseDays + 6) * GenDate.TicksPerDay;  // 14 days
                 case "WorldSettlementDef_Orbital_Glitter":
-                    return (int)((baseDays + 12) * 0.75f * GenDate.TicksPerDay);
+                    return (baseDays + 8) * GenDate.TicksPerDay;  // 16 days
                 default:
                     return baseDays * GenDate.TicksPerDay;
             }
