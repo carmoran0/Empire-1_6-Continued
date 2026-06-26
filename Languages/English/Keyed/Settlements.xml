@@ -47,8 +47,7 @@
 
 	<!-- Settlement Window -->
 	<FCGoToLocation>Go To Location</FCGoToLocation>
-	<FCLocated>Located in the</FCLocated>
-	<FCLandOf>land of a</FCLandOf>
+	<FCSettlementLocation>Located in the {0} land of a {1}</FCSettlementLocation>
 	<FCOpenSettlementWindowDefaultLabel>See settlement information</FCOpenSettlementWindowDefaultLabel>
 	<FCOpenSettlementWindowDefaultDesc>Opens the settlement window</FCOpenSettlementWindowDefaultDesc>
 	<FCBuildRoads>Build Roads</FCBuildRoads>
