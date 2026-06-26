@@ -202,7 +202,8 @@ namespace FactionColonies
 
         public virtual string GetLocationText(WorldSettlementFC settlement)
         {
-            return "FCLocated".Translate() + " " + settlement.Tile.Tile.hilliness.GetLabel() + " " + "FCLandOf".Translate() + " " + settlement.Tile.Tile.PrimaryBiome.LabelCap.ToLower();
+            // Single format key so translations control word order (the derived hilliness/biome labels are already localized by the engine).
+            return "FCSettlementLocation".Translate(settlement.Tile.Tile.hilliness.GetLabel(), settlement.Tile.Tile.PrimaryBiome.LabelCap.ToLower());
         }
 
         public virtual TaxDeliveryMode GetTaxDeliveryMode(bool canUseShuttle, PlanetTile sourceTile)
