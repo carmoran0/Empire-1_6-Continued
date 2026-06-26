@@ -25,6 +25,17 @@
 	<FCSettingsTabMilitary>Military</FCSettingsTabMilitary>
 	<FCSettingsTabRoadBuilder>Road Builder</FCSettingsTabRoadBuilder>
 	<FCSettingsTabCompat>Compatibility</FCSettingsTabCompat>
+	<FCSettingsTabAdvanced>Advanced</FCSettingsTabAdvanced>
+	<FCSettingAdvancedWarn>Advanced tuning for settlement drift rates. The defaults match the mod's intended balance.</FCSettingAdvancedWarn>
+	<FCSettingUnrestBaseGain>Unrest gained per day (base)</FCSettingUnrestBaseGain>
+	<FCSettingUnrestBaseLost>Unrest lost per day (base)</FCSettingUnrestBaseLost>
+	<FCSettingLoyaltyBaseGain>Loyalty gained per day (base)</FCSettingLoyaltyBaseGain>
+	<FCSettingLoyaltyBaseLost>Loyalty lost per day (base)</FCSettingLoyaltyBaseLost>
+	<FCSettingHappinessBaseGain>Happiness gained per day (base)</FCSettingHappinessBaseGain>
+	<FCSettingHappinessBaseLost>Happiness lost per day (base)</FCSettingHappinessBaseLost>
+	<FCSettingProsperityDriftRate>Prosperity drift floor (points/day)</FCSettingProsperityDriftRate>
+	<FCSettingProsperityDriftStep>Prosperity drift step (distance per +1/day)</FCSettingProsperityDriftStep>
+	<FCSettingProductionResearchBase>Research production base</FCSettingProductionResearchBase>
 	<FCSettingRoadBuilderDesc>The Road Builder automatically connects your Empire settlements with roads using a Minimum Spanning Tree algorithm, which is recalculated (with caching) on the following events:
  - each time a settlement is founded or lost
  - when you research a new level of roads

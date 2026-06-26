@@ -149,7 +149,6 @@
 		<iconPath>GUI/Buildings/AmmoMines</iconPath>
 	</FactionColonies.BuildingFCDef>
 
-	<!--TODO: change this from flat modifiers to turning animal production into clothing production? -->
 	<FactionColonies.BuildingFCDef ParentName="BuildingFCDef_Surface_Undefined">
 		<defName>TanningWorkshop</defName>
 		<!--Name of Def -->

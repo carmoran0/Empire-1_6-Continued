@@ -1914,7 +1914,6 @@ namespace FactionColonies
             return Color.white;
         }
 
-        //TODO: this whole function is playing with defs. Doesn't seem great. Not sure if there's another way to set icons, though. Need to investigate
         public void UpdateFactionIcon(ref Faction faction, string iconPath)
         {
             LogUtil.Message("Updated Icon - " + iconPath);
@@ -1925,7 +1924,6 @@ namespace FactionColonies
             }
             if (settlements.Any() && settlements[0]?.def != null && UnityData.IsInMainThread)
             {
-                //TODO: not sure if this will interact wierdly with the new SettlementDef. Keep an eye on this
                 WorldSettlementFC.traitCachedIcon.SetValue(settlements[0].def, ContentFinder<Texture2D>.Get(iconPath));
             }
 

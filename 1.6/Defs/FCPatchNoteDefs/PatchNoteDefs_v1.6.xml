@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_6_0</defName>
+		<label>Backend Cleanup</label>
+		<description>A few minor bits of code cleanup.</description>
+		<releaseDate>2026-06-26</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>Small change to the location text translation key for settlements</li>
+		<li>Update costs and build times for the orbital settlement types</li>
+		<li>Add mod settings for previously un-tweakable values</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
+</Defs>

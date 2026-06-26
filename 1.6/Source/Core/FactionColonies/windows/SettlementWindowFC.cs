@@ -269,7 +269,7 @@ namespace FactionColonies
             Text.Font = GameFont.Tiny;
             Widgets.Label(basicDescTextBox, TextUtil.GetTownTitle(settlement));
             UIUtil.DrawColoredVerticalLine(basicDescBox.xMax, basicDescBox.y + margin, basicDescBox.height - (margin * 2), accentColor);
-            //TODO: localize this. LabelCap and description can be localized through def injection, but locationText is derived differently
+            // locationText is derived in SettlementTypeExtension.GetLocationText, which now resolves through the FCSettlementLocation format key.
             Widgets.Label(locTextBox, settlement.locationText);
         }
         private void DrawBasicOverview(Rect boundingBox)
