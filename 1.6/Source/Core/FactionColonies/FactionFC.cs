@@ -650,6 +650,7 @@ namespace FactionColonies
                 return;
             }
             ScrubNullSettlements("FactionFC.PostLoadInit");
+            eventManager.PruneNullDefEvents("FactionFC.PostLoadInit");
             RebuildPendingEdictActivations();
 
             // Squad-first refactor migration: bind any legacy comp.militarySquad onto the squad

@@ -226,6 +226,21 @@ namespace FactionColonies
             version++;
         }
 
+        /// <summary>Drops events whose def failed to resolve on load (removed/renamed
+        /// FCEventDef). Such events carry no label/desc/handler and only crash display
+        /// and processing. Raw removal — they were never indexed or stat-applied, so
+        /// there is no expiry lifecycle to run. Returns the number purged.</summary>
+        public int PruneNullDefEvents(string caller = "")
+        {
+            int removed = events.RemoveAll(e => e is null || e.def is null);
+            if (removed > 0)
+            {
+                version++;
+                LogUtil.Warning($"{caller}: Purged {removed} event(s) with null/unresolved def from save data.");
+            }
+            return removed;
+        }
+
         // Collects every Queued event whose timeTillTrigger has passed, returning them as a new list.
         // Events stay in the queue; ProcessEvents transitions phase Queued -> Fired (tentative)
         // -> Completed (default at end of body) inside its per-event re-entrancy guard, and a sweep

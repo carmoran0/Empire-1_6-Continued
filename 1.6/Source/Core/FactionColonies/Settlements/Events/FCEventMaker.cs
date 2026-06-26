@@ -498,7 +498,8 @@ namespace FactionColonies
 
                     if (evt.def == null)
                     {
-                        LogUtil.Warning($"Skipping event with null def (loadID={evt.loadID}). Likely corrupted save data.");
+                        LogUtil.Warning($"Purging event with null def (loadID={evt.loadID}). Likely corrupted save data.");
+                        evt.phase = FCEventPhase.Completed; // let the end-of-pass sweep remove it
                         continue;
                     }
 
