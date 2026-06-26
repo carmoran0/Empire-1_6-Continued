@@ -54,7 +54,7 @@ namespace FactionColonies
         /// The amount of budget available to this resource for random tithing. If the lowest-value random tithing thing is still higher in value than the available titheStock,
         /// then production is rolled over to the next tax period, until enough has accrued to actually produce the tithe.
         /// </summary>
-        // TODO: alert the player when tithing has rolled over?
+        // When budget rolls over (no items enabled, or budget below the cheapest item) the player is alerted via the FCNoTitheLetter letters in GenerateTithe.
         public double randomTitheStock = 0;
         public bool disburseTitheStock = false;
 
@@ -182,7 +182,7 @@ namespace FactionColonies
             get
             {
                 // Pool resources are always counted as though they are tithing, since you can't actually get any silver from them.
-                // TODO: change this? Make it possible to control how much of a pool resources's pool goes into the actual pool, and how much gets shipped as silver?
+                // By design, a pool resource's full value goes into the pool — there is no player-facing pool/silver split.
                 if (def.isPoolResource)
                 {
                     return taxableProductionMarketValue;
@@ -769,7 +769,7 @@ namespace FactionColonies
                 def.FilterResource(param.filter, faction.techLevel, this);
 
                 /* AllGenerateableThingsDebug(param).ToList() was taken from PaymentUtil.debugGenerateTithe(), which was used to generate the selection float menu
-                 * in the settlement screen. Is this really the right function to use? TODO: look into this. */
+                 * in the settlement screen. */
                 thingsForRandomTithes = thingSetMaker.AllGeneratableThingsDebug(param).ToList();
                 dirtyRandomTitheCache = false;
             }
@@ -970,7 +970,7 @@ namespace FactionColonies
         }
         public bool CanSetTitheQuality(out QualityCategory maxQuality)
         {
-            //TODO: add a building or something that enables selecting item quality when tithing
+            // Quality selection is intentionally unrestricted. A building or stat could gate the max quality here in future.
             maxQuality = QualityCategory.Legendary;
             return true;
         }
@@ -989,7 +989,7 @@ namespace FactionColonies
         }
         public bool CanSetTitheStuff()
         {
-            //TODO: add a building or something that enables selecting item stuff when tithing
+            // Stuff selection is intentionally unrestricted. A building or stat could gate this here in future.
             return true;
         }
         public List<ThingDef> GetStuffListForThingDef(ThingDef thing)
