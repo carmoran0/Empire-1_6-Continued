@@ -32,10 +32,10 @@ namespace FactionColonies
         public string iconPath;
 
         /// <summary>
-        /// Optional list of defNames of related CodexEntryDefs, rendered as
-        /// "See Also" links at the bottom of the detail pane.
+        /// Optional list of related CodexEntryDefs, rendered as "See Also"
+        /// links at the bottom of the detail pane.
         /// </summary>
-        public List<string> seeAlso;
+        public List<CodexEntryDef> seeAlso;
 
         /// <summary>
         /// Optional list of texture paths for an image carousel displayed
@@ -135,14 +135,8 @@ namespace FactionColonies
             if (dynamicProvider is object && !typeof(ICodexDynamicProvider).IsAssignableFrom(dynamicProvider))
                 yield return $"dynamicProvider type '{dynamicProvider.FullName}' does not implement ICodexDynamicProvider";
 
-            if (!seeAlso.NullOrEmpty())
-            {
-                foreach (string refName in seeAlso)
-                {
-                    if (DefDatabase<CodexEntryDef>.GetNamedSilentFail(refName) is null)
-                        LogUtil.Warning($"CodexEntryDef '{defName}' references unknown seeAlso entry '{refName}'");
-                }
-            }
+            // Unknown seeAlso entries are reported by the cross-reference loader (the
+            // field is List<CodexEntryDef>, resolved from defNames in XML).
         }
     }
 }
