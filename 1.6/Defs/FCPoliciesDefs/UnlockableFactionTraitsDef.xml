@@ -103,7 +103,7 @@
 		<modExtensions>
 			<li Class="FactionColonies.FCPolicyBehaviorExt_RoadBuilders">
 				<behaviorClass>FactionColonies.FCPolicyBehavior_RoadBuilders</behaviorClass>
-				<autoUnlockResearchDefName>FCRoadBuildingDirt</autoUnlockResearchDefName>
+				<autoUnlockResearch>FCRoadBuildingDirt</autoUnlockResearch>
 			</li>
 		</modExtensions>
 		<enabledActions>
