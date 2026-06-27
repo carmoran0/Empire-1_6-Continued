@@ -372,9 +372,8 @@ namespace FactionColonies
                 ResetText();
                 curY += 22f;
 
-                foreach (string refName in selectedEntry.seeAlso)
+                foreach (CodexEntryDef linked in selectedEntry.seeAlso)
                 {
-                    CodexEntryDef linked = DefDatabase<CodexEntryDef>.GetNamedSilentFail(refName);
                     if (linked is null) continue;
 
                     Rect linkRect = new Rect(0f, curY, contentWidth, SeeAlsoButtonHeight);

@@ -25,8 +25,8 @@ namespace FactionColonies
     public class FCEventManager : IExposable
     {
         private List<FCEvent> events = new List<FCEvent>();
-        private Dictionary<string, int> eventCooldowns = new Dictionary<string, int>();
-        private Dictionary<string, int> eventFireCounts = new Dictionary<string, int>();
+        private Dictionary<FCEventDef, int> eventCooldowns = new Dictionary<FCEventDef, int>();
+        private Dictionary<FCEventDef, int> eventFireCounts = new Dictionary<FCEventDef, int>();
         private int version;
         private int nextEventId = 1;
 
@@ -279,27 +279,27 @@ namespace FactionColonies
         public void RecordCooldown(FCEventDef def)
         {
             if (def is null) return;
-            eventCooldowns[def.defName] = Find.TickManager.TicksGame;
+            eventCooldowns[def] = Find.TickManager.TicksGame;
         }
 
         public bool IsOnCooldown(FCEventDef def)
         {
             if (def is null || def.cooldownTicks <= 0) return false;
-            if (!eventCooldowns.TryGetValue(def.defName, out int lastTick)) return false;
+            if (!eventCooldowns.TryGetValue(def, out int lastTick)) return false;
             return Find.TickManager.TicksGame - lastTick < def.cooldownTicks;
         }
 
         public void RecordFired(FCEventDef def)
         {
             if (def is null) return;
-            eventFireCounts.TryGetValue(def.defName, out int count);
-            eventFireCounts[def.defName] = count + 1;
+            eventFireCounts.TryGetValue(def, out int count);
+            eventFireCounts[def] = count + 1;
         }
 
         public bool HasReachedMaxFireCount(FCEventDef def)
         {
             if (def is null || def.maxFireCount <= 0) return false;
-            if (!eventFireCounts.TryGetValue(def.defName, out int count)) return false;
+            if (!eventFireCounts.TryGetValue(def, out int count)) return false;
             return count >= def.maxFireCount;
         }
 
@@ -307,10 +307,10 @@ namespace FactionColonies
         {
             Scribe_Collections.Look(ref events, "events", LookMode.Deep);
             if (events is null) events = new List<FCEvent>();
-            Scribe_Collections.Look(ref eventCooldowns, "eventCooldowns", LookMode.Value, LookMode.Value);
-            if (eventCooldowns is null) eventCooldowns = new Dictionary<string, int>();
-            Scribe_Collections.Look(ref eventFireCounts, "eventFireCounts", LookMode.Value, LookMode.Value);
-            if (eventFireCounts is null) eventFireCounts = new Dictionary<string, int>();
+            Scribe_Collections.Look(ref eventCooldowns, "eventCooldowns", LookMode.Def, LookMode.Value);
+            if (eventCooldowns is null) eventCooldowns = new Dictionary<FCEventDef, int>();
+            Scribe_Collections.Look(ref eventFireCounts, "eventFireCounts", LookMode.Def, LookMode.Value);
+            if (eventFireCounts is null) eventFireCounts = new Dictionary<FCEventDef, int>();
             Scribe_Values.Look(ref nextEventId, "nextEventId", 1);
 
             // Indexes are transient — rebuild as soon as the events list is populated.
