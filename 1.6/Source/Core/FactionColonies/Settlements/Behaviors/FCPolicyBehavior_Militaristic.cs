@@ -33,8 +33,8 @@ namespace FactionColonies
             WorldObjectComp_SettlementBuildings buildingsComp = settlement.BuildingsComp;
             if (buildingsComp == null) return;
 
-            string defName = Ext<FCPolicyBehaviorExt_Militaristic>().autoPlaceBuildingDefName;
-            BuildingFCDef building = DefDatabase<BuildingFCDef>.GetNamed(defName);
+            BuildingFCDef building = Ext<FCPolicyBehaviorExt_Militaristic>().autoPlaceBuilding;
+            if (building is null) return;
             if (!building.CanBeBuiltForSettlementType(settlement.settlementDef)) return;
             if (buildingsComp.HasBuilding(building)) return;
 

@@ -26,7 +26,7 @@
 				<behaviorClass>FactionColonies.FCPolicyBehavior_Militaristic</behaviorClass>
 				<extraSquadCooldownDays>5</extraSquadCooldownDays>
 				<extraSquadCostFraction>0.4</extraSquadCostFraction>
-				<autoPlaceBuildingDefName>barracks</autoPlaceBuildingDefName>
+				<autoPlaceBuilding>barracks</autoPlaceBuilding>
 			</li>
 		</modExtensions>
 		<statModifiers>
