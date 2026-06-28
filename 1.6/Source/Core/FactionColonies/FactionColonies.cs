@@ -339,6 +339,18 @@ namespace FactionColonies
         // Patch notes version tracking — per-mod dictionary of "major.minor.patch" strings
         public static Dictionary<string, string> lastSeenVersions = new Dictionary<string, string>();
 
+        // Settings-format version stamp (independent of the patch-notes lastSeenVersions above).
+        // Semantic mod version that last wrote the settings file. Re-stamped on every save. Null pre-stamp.
+        public static string settingsModVersion;
+
+        // The running mod's version, set by FactionColoniesMod's constructor from ModMetaData.ModVersion.
+        // Reliable source for the save-time stamp (GetModVersion() is unreliable during settings load). Not scribed.
+        public static string activeModVersion;
+
+        // The value read from the settings file on load, before re-stamping. Migration reads this. Not scribed.
+        private static string loadedSettingsVersion;
+        public static string LoadedSettingsVersion => loadedSettingsVersion;
+
         // Patch notes auto-open threshold
         public const PatchNoteType DEFAULT_PATCH_NOTE_AUTO_OPEN_THRESHOLD = PatchNoteType.Undefined;
         public static PatchNoteType patchNoteAutoOpenThreshold = DEFAULT_PATCH_NOTE_AUTO_OPEN_THRESHOLD;
@@ -358,6 +370,14 @@ namespace FactionColonies
         public override void ExposeData()
         {
             base.ExposeData();
+
+            // Settings-format version stamp. Re-stamp to the active version on save (using the reliable
+            // constructor-captured value, since GetModVersion() is unreliable during settings load); capture
+            // the previously-stored value on load so MigrateSettingsFormat() can detect a version change.
+            if (Scribe.mode == LoadSaveMode.Saving) settingsModVersion = activeModVersion;
+            Scribe_Values.Look(ref settingsModVersion, "settingsModVersion", null);
+            if (Scribe.mode == LoadSaveMode.LoadingVars) loadedSettingsVersion = settingsModVersion;
+
             Scribe_Values.Look(ref silverPerResource, "silverPerResource", DEFAULT_SILVER_PER_RESOURCE);
             Scribe_Values.Look(ref timeBetweenTaxes_days, "timeBetweenTaxes_days", DEFAULT_TAX_INTERVAL_DAYS);
             if (Scribe.mode == LoadSaveMode.LoadingVars)
@@ -513,6 +533,33 @@ namespace FactionColonies
         public static void SetLastSeenVersion(string modId, int major, int minor, int patch)
         {
             lastSeenVersions[modId] = major + "." + minor + "." + patch;
+        }
+
+        // Detects whether the settings file was written by a different mod version than the active one,
+        // and is the single entry point for version-gated settings migrations. No migrations exist yet.
+        // Returns true if the settings were stamped/migrated and should be written back to disk.
+        public static bool MigrateSettingsFormat()
+        {
+            if (activeModVersion.NullOrEmpty()) return false; // no reliable active version to compare against
+
+            if (loadedSettingsVersion.NullOrEmpty())
+            {
+                LogUtil.MessageForce($"Settings have no version stamp (pre-stamp); active version {activeModVersion}.");
+                // Future: migrations for settings written before the stamp existed.
+                settingsModVersion = activeModVersion;
+                return true;
+            }
+
+            if (loadedSettingsVersion == activeModVersion) return false; // same version, nothing to do
+
+            LogUtil.MessageForce($"Settings were written with Empire {loadedSettingsVersion}; active version is {activeModVersion}.");
+            if (FCVersion.TryParse(loadedSettingsVersion, out FCVersion loaded))
+            {
+                // Future: version-gated settings migrations, ordered oldest-first, e.g.
+                //   if (loaded.IsOlderThan(new FCVersion(1, 6, 0))) { /* adjust a renamed/rescaled setting ... */ }
+            }
+            settingsModVersion = activeModVersion;
+            return true;
         }
 
         public static bool IsModLoaded(string packageID) => LoadedModManager.RunningModsListForReading.Any(mod => mod.PackageIdPlayerFacing == packageID);
@@ -1416,6 +1463,11 @@ namespace FactionColonies
             {
                 LogUtil.MessageForce($"v{modVersion}");
             }
+
+            // Reliable active version for the settings-format stamp/migration (set before any WriteSettings,
+            // which stamps settingsModVersion from activeModVersion via FCSettings.ExposeData's Saving branch).
+            FCSettings.activeModVersion = modVersion.NullOrEmpty() ? null : modVersion;
+            if (FCSettings.MigrateSettingsFormat()) WriteSettings();
 
             FactionCompat.CheckForMods();
         }

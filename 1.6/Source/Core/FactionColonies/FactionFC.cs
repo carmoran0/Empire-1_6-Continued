@@ -33,6 +33,15 @@ namespace FactionColonies
         public bool factionCreated;
         private int foundingTick = 0;
         public int FoundingTick => foundingTick;
+
+        /* Save-format version stamp */
+        // Semantic mod version (major.minor.patch) that wrote the currently-loaded save.
+        // Re-stamped to the active version on every save. Null for pre-stamp (legacy) saves.
+        private string savedModVersion;
+
+        // The value read from the save on load, before re-stamping. Migration reads this. Not scribed.
+        private string loadedModVersion;
+        public string LoadedModVersion => loadedModVersion;
         private Vector2 startingLongLat = new Vector2();
         public Vector2 StartingLongLat => startingLongLat;
 
@@ -302,6 +311,12 @@ namespace FactionColonies
             Scribe_Values.Look(ref capitalLocation, "capitalLocation");
             Scribe_References.Look(ref taxMap, "taxMap");
             Scribe_Values.Look(ref factionCreated, "factionCreated");
+
+            // Save-format version stamp. Always re-stamp to the active version on save; capture the
+            // previously-stored value on load so MigrateSaveFormat() can detect schema differences.
+            if (Scribe.mode == LoadSaveMode.Saving) savedModVersion = FCSettings.GetModVersion();
+            Scribe_Values.Look(ref savedModVersion, "savedModVersion", null);
+            if (Scribe.mode == LoadSaveMode.LoadingVars) loadedModVersion = savedModVersion;
 
             Scribe_Values.Look(ref _averageHappiness, "averageHappiness");
             Scribe_Values.Look(ref _averageLoyalty, "averageLoyalty");
@@ -658,6 +673,7 @@ namespace FactionColonies
             ScrubNullSettlements("FactionFC.PostLoadInit");
             eventManager.PruneNullDefEvents("FactionFC.PostLoadInit");
             RebuildPendingEdictActivations();
+            MigrateSaveFormat();
 
             // Squad-first refactor migration: bind any legacy comp.militarySquad onto the squad
             // itself (sets squad.settlement) and propagate comp.autoDefend to squad.autoDefend.
@@ -674,6 +690,30 @@ namespace FactionColonies
                 MilitaryMigrationUtil.Migrate(this);
             }
             militaryOperationManager?.RebuildIndices();
+        }
+
+        // Detects whether the loaded save was written by a different mod version than the active one,
+        // and is the single entry point for version-gated save migrations. No migrations exist yet.
+        private void MigrateSaveFormat()
+        {
+            string active = FCSettings.GetModVersion();
+
+            if (loadedModVersion.NullOrEmpty())
+            {
+                LogUtil.MessageForce($"Loaded a pre-stamp Empire save (no version recorded); active version {active}.");
+                // Future: migrations for saves written before the stamp existed.
+                return;
+            }
+
+            if (loadedModVersion == active) return; // same version, nothing to do
+
+            LogUtil.MessageForce($"Loaded save was written with Empire {loadedModVersion}; active version is {active}.");
+
+            if (FCVersion.TryParse(loadedModVersion, out FCVersion loaded))
+            {
+                // Future: version-gated migrations, ordered oldest-first, e.g.
+                //   if (loaded.IsOlderThan(new FCVersion(1, 6, 0))) { /* migrate ... */ }
+            }
         }
 
         private void RebuildPendingEdictActivations()
