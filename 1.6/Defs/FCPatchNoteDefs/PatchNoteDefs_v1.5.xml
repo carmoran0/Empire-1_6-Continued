@@ -699,4 +699,18 @@
 		<li>Matathias</li>
 		</authors>
 	</FactionColonies.PatchNoteDef>
+
+	<FactionColonies.PatchNoteDef ParentName="EmpirePatchBase">
+		<defName>1_5_44</defName>
+		<label>Minor Changes</label>
+		<description>A couple of minor backend changes. No impact to user-facing behavior.</description>
+		<releaseDate>2026-06-27</releaseDate>
+		<patchNoteType>Minor</patchNoteType>
+		<patchNoteLines>
+		<li>A couple of minor backend changes. No impact to user-facing behavior.</li>
+		</patchNoteLines>
+		<authors>
+		<li>Matathias</li>
+		</authors>
+	</FactionColonies.PatchNoteDef>
 </Defs>
