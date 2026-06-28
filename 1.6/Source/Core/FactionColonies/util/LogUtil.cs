@@ -24,7 +24,7 @@ namespace FactionColonies
         /// <param name="message"></param>
         public static void MessageForce(string message)
         {
-            Log.Message($"{slug}[Forced] {message}");
+            Log.Message($"{slug} {message}");
         }
         public static void Warning(string message)
         {
