@@ -2,7 +2,7 @@
 <LanguageData>
 
 	<WorldSettlementDef_Orbital.label>estación orbital básica</WorldSettlementDef_Orbital.label>
-	<WorldSettlementDef_Orbital.description>Una estación orbital de uso general. Produce todos los recursos estándar más biocombustible y gravtec. Solo saqueable por facciones con tecnología espacial. Las batallas solo se resuelven automáticamente.</WorldSettlementDef_Orbital.description>
+	<WorldSettlementDef_Orbital.description>Una estación orbital de uso general. Produce todos los recursos estándar más biocombustible y gravtech. Solo saqueable por facciones con tecnología espacial. Las batallas solo se resuelven automáticamente.</WorldSettlementDef_Orbital.description>
 	<WorldSettlementDef_Orbital_Logistics.label>estación orbital logística</WorldSettlementDef_Orbital_Logistics.label>
 	<WorldSettlementDef_Orbital_Logistics.description>Una estación orbital centrada en el comercio. Desbloquea edificios exclusivos que aumentan la tasa impositiva y el valor del diezmo.</WorldSettlementDef_Orbital_Logistics.description>
 	<WorldSettlementDef_Orbital_Advanced.label>estación orbital avanzada</WorldSettlementDef_Orbital_Advanced.label>

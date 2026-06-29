@@ -43,9 +43,9 @@
 <FCTitle_RTD_Chemfuel_2>Refinería de combustible</FCTitle_RTD_Chemfuel_2>
 <FCTitle_RTD_Chemfuel_3>Complejo industrial de combustible</FCTitle_RTD_Chemfuel_3>
 
-<FCTitle_RTD_Gravtech_1>Laboratorio gravtec</FCTitle_RTD_Gravtech_1>
-<FCTitle_RTD_Gravtech_2>Instalación gravtec</FCTitle_RTD_Gravtech_2>
-<FCTitle_RTD_Gravtech_3>Instituto gravtec</FCTitle_RTD_Gravtech_3>
+<FCTitle_RTD_Gravtech_1>Laboratorio gravtech</FCTitle_RTD_Gravtech_1>
+<FCTitle_RTD_Gravtech_2>Instalación gravtech</FCTitle_RTD_Gravtech_2>
+<FCTitle_RTD_Gravtech_3>Instituto gravtech</FCTitle_RTD_Gravtech_3>
 
 <!-- Orbital-specific titles (override generic when settlement has titleKey="Orbital") -->
 
@@ -90,7 +90,7 @@
 <FCTitle_Orbital_RTD_Chemfuel_3>Complejo de combustible del espacio profundo</FCTitle_Orbital_RTD_Chemfuel_3>
 
 <FCTitle_Orbital_RTD_Gravtech_1>Cápsula de investigación en gravedad cero</FCTitle_Orbital_RTD_Gravtech_1>
-<FCTitle_Orbital_RTD_Gravtech_2>Estación gravtec orbital</FCTitle_Orbital_RTD_Gravtech_2>
-<FCTitle_Orbital_RTD_Gravtech_3>Nexo gravtec</FCTitle_Orbital_RTD_Gravtech_3>
+<FCTitle_Orbital_RTD_Gravtech_2>Estación gravtech orbital</FCTitle_Orbital_RTD_Gravtech_2>
+<FCTitle_Orbital_RTD_Gravtech_3>Nexo gravtech</FCTitle_Orbital_RTD_Gravtech_3>
 
 </LanguageData>
