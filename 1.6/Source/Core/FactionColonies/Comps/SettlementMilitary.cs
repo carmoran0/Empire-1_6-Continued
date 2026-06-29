@@ -545,14 +545,19 @@ namespace FactionColonies
             if (manager is null)
             {
                 LogUtil.Error($"StartDefence: no MilitaryManager available for {WorldSettlement?.Name}.");
-                FindFC.FactionComp?.RemoveEvent(evt);
+                if (evt is object) FindFC.FactionComp?.RemoveEvent(evt);
                 return;
             }
-            MilitaryOperation op = evt.linkedOperation;
+            // isUnderAttack is derived from MilitaryManager.HasDefenseAt (an active defensive op),
+            // not from the existence of a settlementBeingAttacked warning event. The warning event
+            // may already be gone (fired/removed) while the op is still live, so the player-facing
+            // Defend actions can legitimately call in with a null evt. Fall back to resolving the
+            // active defensive op straight from the manager in that case.
+            MilitaryOperation op = evt?.linkedOperation ?? FindActiveDefenseOp(manager);
             if (op is null)
             {
-                LogUtil.Error($"StartDefence: warning event for {WorldSettlement?.Name} has no linked op.");
-                FindFC.FactionComp?.RemoveEvent(evt);
+                LogUtil.Error($"StartDefence: no active defensive op found for {WorldSettlement?.Name}.");
+                if (evt is object) FindFC.FactionComp?.RemoveEvent(evt);
                 return;
             }
 
@@ -568,6 +573,24 @@ namespace FactionColonies
 
             BattlefieldContext bf = manager.GetOrCreateBattlefield(WorldSettlement.Tile);
             bf.StartDefense(op, after);
+        }
+
+        /// <summary>Finds the active defensive op targeting this settlement, mirroring the lookup
+        /// used by <see cref="MilitaryOperationManager.HasDefenseAt"/> (which backs
+        /// <see cref="isUnderAttack"/>). Used as a fallback when a Defend action arrives without a
+        /// linked warning event.</summary>
+        private MilitaryOperation FindActiveDefenseOp(MilitaryOperationManager manager)
+        {
+            IReadOnlyList<MilitaryOperation> ops = manager.GetOpsAt(WorldSettlement.Tile);
+            for (int i = 0; i < ops.Count; i++)
+            {
+                MilitaryOperation op = ops[i];
+                if (op.targetObject != WorldSettlement) continue;
+                if (op.phase == MilitaryOperationPhase.CooldownPending) continue;
+                if (op.phase == MilitaryOperationPhase.Resolved) continue;
+                return op;
+            }
+            return null;
         }
 
 
