@@ -19,8 +19,8 @@
 	<RTD_Research.description>Una categoría de recursos para investigación.</RTD_Research.description>
 	<RTD_Power.label>energía</RTD_Power.label>
 	<RTD_Power.description>Una categoría de recursos para energía.</RTD_Power.description>
-	<RTD_Chemfuel.label>combustible químico</RTD_Chemfuel.label>
-	<RTD_Chemfuel.description>Una categoría de recursos para combustible químico.</RTD_Chemfuel.description>
+	<RTD_Chemfuel.label>biocombustible</RTD_Chemfuel.label>
+	<RTD_Chemfuel.description>Una categoría de recursos para biocombustible.</RTD_Chemfuel.description>
 	<RTD_Gravtech.label>gravtec</RTD_Gravtech.label>
 	<RTD_Gravtech.description>Una categoría de recursos para recursos gravtec.</RTD_Gravtech.description>
 
