@@ -260,19 +260,19 @@ Por favor, informa de esto si no recuperas a los colonos que enviaste a defender
 
 	<FCSquadHired>El escuadrón "{0}" ha sido contratado por ${1} de plata.</FCSquadHired>
 	<FCSquadHireInsufficientSilver>No tienes suficiente plata ({0} necesarios) para contratar ese escuadrón.</FCSquadHireInsufficientSilver>
-	<FCSquadDismissed>El escuadrón "{0}" ha sido licenciado.</FCSquadDismissed>
+	<FCSquadDismissed>El escuadrón "{0}" ha sido despedido.</FCSquadDismissed>
 	<FCSquadAssigned>Escuadrón "{0}" asignado a {1}.</FCSquadAssigned>
 	<FCCannotReassignBusySquad>"{0}" está ocupado y no puede reasignarse ahora mismo.</FCCannotReassignBusySquad>
 	<FCCannotUnassignBusySquad>"{0}" está ocupado y no se puede desasignar ahora mismo.</FCCannotUnassignBusySquad>
-	<FCCannotDismissBusySquad>"{0}" está ocupado y no puede licenciarse ahora mismo.</FCCannotDismissBusySquad>
+	<FCCannotDismissBusySquad>"{0}" está ocupado y no puede ser despedido ahora mismo.</FCCannotDismissBusySquad>
 	<FCSquadCannotUpgradeBusy>El escuadrón está ocupado y no puede mejorarse ahora mismo.</FCSquadCannotUpgradeBusy>
 	<FCSquadCannotModifyBusyTip>El escuadrón no puede modificarse mientras está ocupado.</FCSquadCannotModifyBusyTip>
 	<FCSquadUpgradeInsufficientSilver>No tienes suficiente plata ({0} necesarios) para mejorar ese escuadrón.</FCSquadUpgradeInsufficientSilver>
-	<FCSquadUpgradeFirePersonalizedConfirm>Mejorar este escuadrón a su plantilla licenciará a uno o más personajes con un equipamiento personalizado, ya que su raza o xenotipo ya no coincide con ninguna ranura de la plantilla. Sus equipamientos personalizados se perderán. ¿Continuar?</FCSquadUpgradeFirePersonalizedConfirm>
+	<FCSquadUpgradeFirePersonalizedConfirm>Mejorar este escuadrón a su plantilla echará a uno o más personajes con un equipamiento personalizado, ya que su raza o xenotipo ya no coincide con ninguna ranura de la plantilla. Sus equipamientos personalizados se perderán. ¿Continuar?</FCSquadUpgradeFirePersonalizedConfirm>
 	<FCSquadCapReached>{0} ya está en su capacidad de escuadrones ({1}/{2}).</FCSquadCapReached>
 	<FCSquadSizeExceeded>Este escuadrón tiene más mercenarios ({1}) que el tamaño máximo de escuadrón permitido por {0} ({2}).</FCSquadSizeExceeded>
 	<FCSquadValueExceeded>El presupuesto de {0} no puede cubrir este escuadrón. El coste de despliegue de ${1} supera el coste máximo de despliegue de ${2}.</FCSquadValueExceeded>
-	<FCSquadUnderfunded>{0} está infrafinanciado en {1}: el coste de despliegue de ${2} supera el coste máximo de despliegue de ${3}. No puede desplegarse hasta que lo degrades, licencies mercenarios caros o mejores {1}.</FCSquadUnderfunded>
+	<FCSquadUnderfunded>{0} está infrafinanciado en {1}: el coste de despliegue de ${2} supera el coste máximo de despliegue de ${3}. No puede desplegarse hasta que lo degrades, despidas mercenarios caros o mejores {1}.</FCSquadUnderfunded>
 	<FCMilSlotUnderfundedTip>Este escuadrón está infrafinanciado para {0}. El coste de despliegue de ${1} supera el coste máximo de despliegue del asentamiento de ${2}. No puede participar en operaciones militares hasta que el coste encaje.</FCMilSlotUnderfundedTip>
 	<FCUnnamedSquad>Escuadrón sin nombre</FCUnnamedSquad>
 
@@ -319,8 +319,8 @@ Por favor, informa de esto si no recuperas a los colonos que enviaste a defender
 
 	<FCSquadActReassign>Reasignar</FCSquadActReassign>
 	<FCSquadActUpgrade>Mejorar</FCSquadActUpgrade>
-	<FCSquadActDismiss>Licenciar</FCSquadActDismiss>
-	<FCSquadActDismissConfirm>¿Licenciar "{0}"?</FCSquadActDismissConfirm>
+	<FCSquadActDismiss>Despedir</FCSquadActDismiss>
+	<FCSquadActDismissConfirm>¿Despedir "{0}"?</FCSquadActDismissConfirm>
 
 	<FCHireSquadsHeader>Reserva de escuadrones</FCHireSquadsHeader>
 	<FCHireSquadsEmpty>No hay escuadrones contratados.</FCHireSquadsEmpty>
@@ -357,7 +357,7 @@ Por favor, informa de esto si no recuperas a los colonos que enviaste a defender
 	<FCSquadMenuToggleAutoDefend>Defensa automática: {0}</FCSquadMenuToggleAutoDefend>
 	<FCSquadMenuReassign>Reasignar...</FCSquadMenuReassign>
 	<FCSquadMenuUpgrade>Mejorar (${0} de plata)</FCSquadMenuUpgrade>
-	<FCSquadMenuDismiss>Licenciar</FCSquadMenuDismiss>
+	<FCSquadMenuDismiss>Despedir</FCSquadMenuDismiss>
 	<FCSquadMenuInspect>Inspeccionar...</FCSquadMenuInspect>
 
 	<FCOn>Sí</FCOn>
@@ -429,12 +429,12 @@ Por favor, informa de esto si no recuperas a los colonos que enviaste a defender
 	<FCSquadInspectionContextTemplateCaption>Plantilla</FCSquadInspectionContextTemplateCaption>
 	<FCSquadInspectionContextSettlementUnassigned>Sin asignar</FCSquadInspectionContextSettlementUnassigned>
 	<FCSquadInspectionContextTemplateNone>(ninguna)</FCSquadInspectionContextTemplateNone>
-	<FCSquadActDismissSquad>Licenciar escuadrón</FCSquadActDismissSquad>
-	<FCMercDismiss>Licenciar</FCMercDismiss>
+	<FCSquadActDismissSquad>Despedir escuadrón</FCSquadActDismissSquad>
+	<FCMercDismiss>Despedir</FCMercDismiss>
 	<FCMercDismissTip>Despide a este mercenario y vacía la ranura para que pueda rellenarse.</FCMercDismissTip>
-	<FCMercDismissConfirm>¿Licenciar a {0}?</FCMercDismissConfirm>
-	<FCMercDismissed>Mercenario licenciado.</FCMercDismissed>
-	<FCCannotDismissBusyMerc>No se puede licenciar a {0}: el escuadrón está ocupado</FCCannotDismissBusyMerc>
+	<FCMercDismissConfirm>¿Despedir a {0}?</FCMercDismissConfirm>
+	<FCMercDismissed>Mercenario despedido.</FCMercDismissed>
+	<FCCannotDismissBusyMerc>No se puede despedir a {0}: el escuadrón está ocupado</FCCannotDismissBusyMerc>
 
 	<FCSquadInspectionPowerLine>Poder: {0} ({1}/{2} ranuras)</FCSquadInspectionPowerLine>
 	<FCSquadInspectionStatsValueCaption>Valor actual</FCSquadInspectionStatsValueCaption>
@@ -450,7 +450,7 @@ Por favor, informa de esto si no recuperas a los colonos que enviaste a defender
 	<FCSquadInspectionAddUnitTip>Contrata una nueva unidad de tus planos de unidad guardados. Elimina la asociación de plantilla del escuadrón.</FCSquadInspectionAddUnitTip>
 	<FCSquadInspectionAddUnitBusy>No se puede añadir una unidad mientras el escuadrón está ocupado.</FCSquadInspectionAddUnitBusy>
 	<FCSquadInspectionAddUnitNoBlueprints>No hay planos de unidad guardados. Diseña uno primero en la ventana de Plantillas de unidad.</FCSquadInspectionAddUnitNoBlueprints>
-	<FCSquadInspectionAddUnitFull>El escuadrón no tiene ranuras vacías. Licencia una unidad primero.</FCSquadInspectionAddUnitFull>
+	<FCSquadInspectionAddUnitFull>El escuadrón no tiene ranuras vacías. Despide una unidad primero.</FCSquadInspectionAddUnitFull>
 
 	<!-- Per-pawn loadout dialog -->
 	<FCDialogPawnLoadoutTitle>Editar personaje: {0}</FCDialogPawnLoadoutTitle>
